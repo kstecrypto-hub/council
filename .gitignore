@@ -1,0 +1,35 @@
+# Credentials and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+credentials/
+
+# Private investigation state and source material
+runtime/
+artifacts/
+inputs/
+local-data/
+exports/
+*.log
+
+# Development caches
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+dist/
+build/
+coverage/
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+
+# Local publishing receipts (not application state)
+.publish-state.json
