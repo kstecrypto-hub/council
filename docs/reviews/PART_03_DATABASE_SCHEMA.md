@@ -1,6 +1,6 @@
 # Part 3 of 15 — Durable Data Model, Runtime Retention & Solution Registry
 
-**Status:** approved schema design; not yet implemented.  
+**Status:** active Part 3 design; schema/storage model drafted, Part 3 not yet approved.  
 **Branch:** `design/code-level-implementation`.  
 **Authority:** this document refines Part 3 of [CODE_IMPLEMENTATION_PLAN.md](../CODE_IMPLEMENTATION_PLAN.md) using the approved Part 1 runtime model and Part 2 repository/environment boundaries.
 
@@ -1047,9 +1047,9 @@ HDD deployment remains supported. Index count and write amplification must be me
 - Cross-database references use stable opaque identifiers and application validation rather than unsupported cross-database foreign keys.
 - A migration must never silently discard active run recovery state.
 
-## 22. Part 3 acceptance conditions
+## 22. Schema-subsection acceptance conditions
 
-Part 3 is designed correctly when a future implementation can answer:
+This schema subsection is sufficiently specified when a future implementation can answer:
 
 1. what Council configuration persists across all projects;
 2. what data belongs only to one active run;
@@ -1065,3 +1065,21 @@ Part 3 is designed correctly when a future implementation can answer:
 12. how the schema remains recoverable on the supported HDD-backed deployment.
 
 Detailed typed command payloads and command handler semantics now move to Part 4.
+
+## 23. Part 3 still open
+
+This document currently captures the proposed storage/schema model only. It does **not** by itself complete Part 3.
+
+Before Part 3 can be approved, the remaining database-design decisions must be reviewed explicitly with the owner, including at minimum:
+
+- stable identity versus immutable-version semantics for every versioned record family;
+- exact branch/private/published visibility enforcement at the database and query layers;
+- which invariants are hard database constraints versus application-level transactional checks;
+- deletion, archival, purge, retention, and legal/audit behavior after user acceptance;
+- exact indexing/query patterns and HDD-specific performance strategy;
+- migration discipline, backfills, compatibility, rollback/forward-fix rules, and recovery from failed migrations;
+- concurrency behavior that belongs to schema design rather than later transaction/queue parts;
+- Solution Registry lifecycle, reuse metadata quality, and how stale/deprecated solutions are represented;
+- final review of table necessity so the runtime schema does not become over-modeled before implementation evidence exists.
+
+No Part 3 approval is implied until these items are discussed and explicitly accepted.
