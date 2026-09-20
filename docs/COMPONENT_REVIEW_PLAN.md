@@ -1,6 +1,6 @@
 # Component-by-component implementation review
 
-**Status:** active design review; Parts 1-3 approved, Part 4 next.  
+**Status:** active design review; Parts 1-2 approved, Part 3 active.  
 **Baseline:** [CODE_IMPLEMENTATION_PLAN.md](CODE_IMPLEMENTATION_PLAN.md) preserves the approved code-level proposal. [APP_DESIGN.md](APP_DESIGN.md) remains the complete product specification.  
 **Working branch:** `design/code-level-implementation`. Keep changes on this branch unless the owner authorizes another target or a merge.
 
@@ -22,8 +22,8 @@ The owner approved the overall code-level proposal. Component refinements become
 |---|---|---|
 | 1 | Runtime architecture, processes, event-driven waits, concurrency/resource boundaries, branch-environment/sandbox separation, HDD constraint | **Approved** — [final design](reviews/PART_01_RUNTIME_ARCHITECTURE.md) |
 | 2 | Repository layout, agent/application/environment boundaries, and enforceable import/dependency rules | **Approved** — [final design](reviews/PART_02_REPOSITORY_BOUNDARIES.md) |
-| 3 | Database schema, runtime retention, Solution Registry, identities, immutable versions, constraints, migrations | **Approved** — [final design](reviews/PART_03_DATABASE_SCHEMA.md) |
-| 4 | Typed commands, validation, actor attribution, error contracts | **Next** |
+| 3 | Database schema, runtime retention, Solution Registry, identities, immutable versions, constraints, migrations | **Active** — [schema draft](reviews/PART_03_DATABASE_SCHEMA.md) |
+| 4 | Typed commands, validation, actor attribution, error contracts | Pending |
 | 5 | Transactions, idempotency, concurrent revisions, event/outbox consistency | Pending |
 | 6 | Dependency tracing, claim history, shared-evidence lineage, graph correctness | Pending |
 | 7 | Task/job distinction, leases, fencing, reconciliation, budgets and exact fairness/resource-admission algorithm | Pending |
@@ -57,12 +57,12 @@ It establishes the following runtime-level decisions:
 
 Part 1 intentionally does not finalize detailed queue leases, schema, SSE payloads, provider wire formats, database tuning, or exact resource/fairness algorithms. Those remain assigned to later parts.
 
-## Next discussion boundary — Part 4
+## Current discussion boundary — Part 3
 
 Part 2 is finalized in [reviews/PART_02_REPOSITORY_BOUNDARIES.md](reviews/PART_02_REPOSITORY_BOUNDARIES.md). It locks the domain/application/agents/environment split, exact import matrix, typed command boundary, declarative environment policy, execution-relevant branch environments, Docker as only one execution mechanism, shared-versus-branch-local record classes, environment-adapter contract, candidate/selection/promotion separation, and automated architecture enforcement.
 
-Part 3 is finalized in [reviews/PART_03_DATABASE_SCHEMA.md](reviews/PART_03_DATABASE_SCHEMA.md). It separates hot Council runtime state from the long-term Solution Registry, defines persistent Council configuration versus run-scoped data, branch/environment/candidate/promotion records, publication privacy boundaries, immutable versioning, runtime archive/purge behavior, reusable solution/component records, critical constraints, indexing, and migration rules.
+Part 3 is active. [reviews/PART_03_DATABASE_SCHEMA.md](reviews/PART_03_DATABASE_SCHEMA.md) currently records the storage/schema proposal: hot Council runtime state, long-term Solution Registry, platform configuration, run-scoped records, branch/environment/candidate/promotion records, and initial retention/versioning/constraint ideas. These are not yet the final Part 3 decisions.
 
-Part 4 will now define the exact typed command and rejection contracts that operate over this schema.
+Part 3 must still explicitly review identity/version semantics, visibility enforcement, DB-versus-application invariants, retention/purge behavior, indexing/HDD strategy, migration/backfill/recovery rules, concurrency-sensitive schema decisions, Solution Registry lifecycle, and whether the proposed tables are all justified.
 
 No application implementation, pull-request merge, deployment, or live provider execution is authorized by this documentation publication alone.
