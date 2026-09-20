@@ -15,7 +15,8 @@ The implementation must distinguish:
 - a **model session** — one bounded LLM conversation for that logical agent;
 - a **task** — an investigation objective or deliverable;
 - a **trusted executor process** — software that temporarily advances eligible agent work;
-- an **untrusted sandbox container** — isolated local execution for generated code, calculations, or other heavier local tools.
+- a **branch execution environment** — an isolated, task-relevant environment derived from a recorded canonical baseline; it may use containers, VMs, native hosts, hardware-backed test targets, or other mechanisms as fidelity requires;
+- an **untrusted sandbox** — an optional restricted execution mechanism for generated code, calculations, or other local tools.
 
 The application will run logically ready work concurrently whenever the relevant resource pool has capacity. It will not assign intellectual priority to one council member's hypothesis over another.
 
@@ -40,7 +41,8 @@ One backend codebase supplies several process entry points:
 | Maintenance/recovery process | Expired lease detection, reconciliation, projection/index maintenance | Research planner or intellectual supervisor |
 | PostgreSQL | Durable tasks, sessions, evidence metadata, claims, operations, events, queue state | Disposable cache |
 | Artifact storage | Original documents, retained outputs, large artifacts | Only source of task or claim state |
-| Docker sandbox pool | Isolated generated-code/calculation execution | Holder of DB/provider credentials or council memory |
+| Branch environment manager | Builds and tracks isolated branch environments from a recorded execution-relevant baseline; chooses container/VM/native/other mechanisms based on fidelity needs | Canonical target writer or assumption that Docker alone reproduces every environment |
+| Sandbox pool | Optional restricted generated-code/calculation execution inside suitable branch environments | Holder of DB/provider credentials, council memory, or substitute for environment fidelity |
 
 The API, executor, and maintenance processes can run on the same physical machine initially. This is process separation, not high availability.
 
@@ -197,7 +199,7 @@ Example principle:
 
 The exact fairness algorithm belongs to Part 7.
 
-## 8. Trusted executors vs Docker sandboxes
+## 8. Trusted executors, branch environments, and sandboxes
 
 ### 8.1 Trusted executor
 
@@ -212,9 +214,19 @@ The trusted executor may:
 
 It may hold controlled references to provider/database credentials required for those trusted operations.
 
-### 8.2 Untrusted sandbox
+### 8.2 Branch execution environments
 
-Generated code, calculations, scripts, or other locally executable workloads run in a separate disposable/restartable Docker sandbox.
+When the investigation changes or validates behavior against an external target, each council branch operates against an isolated branch environment derived from a recorded canonical baseline.
+
+The branch environment is not required to be a complete clone. It must reproduce every known condition capable of materially changing the behavior under investigation and record any condition that is simulated, unreproducible, unknown, or intentionally omitted as irrelevant.
+
+Environment construction may use containers, VMs, copy-on-write snapshots, native-host test machines, hardware passthrough, isolated database replicas, representative datasets, network policy, identity emulation, or other mechanisms. Docker is one implementation tool, not the environment abstraction.
+
+Investigative branches cannot write the canonical environment. Candidate promotion is a later explicit operation against the current canonical version.
+
+### 8.3 Untrusted sandbox
+
+Generated code, calculations, scripts, or other locally executable workloads may run in a separate disposable/restartable restricted sandbox when that mechanism is appropriate.
 
 A sandbox must not receive:
 
@@ -240,7 +252,7 @@ The initial development machine has limited local resources and uses HDD storage
 Therefore:
 
 - the implementation must run correctly with PostgreSQL and active application storage on HDD;
-- Docker/sandbox design must not assume SSD latency;
+- branch-environment and sandbox design must not assume SSD latency;
 - performance tuning must be measured on the real machine rather than designed around an unavailable SSD;
 - correctness and recoverability take precedence over high local IOPS.
 
@@ -260,7 +272,7 @@ No arbitrary low sandbox count is an architectural requirement. If the machine c
 
 High CPU utilization alone is not a reason to kill work.
 
-Use OS/Docker CPU sharing/limits. Parallel jobs may continue when the system remains responsive and control-plane services have adequate capacity.
+Use OS/container/VM resource controls appropriate to the selected execution mechanism. Parallel jobs may continue when the system remains responsive and control-plane services have adequate capacity.
 
 ### 9.4 Memory pressure
 
@@ -293,7 +305,7 @@ Operational consequences to account for later include:
 - need to keep large artifacts out of frequently scanned relational rows;
 - need to benchmark indexes, checkpoints, artifact reads, and sandbox filesystem behavior on HDD.
 
-Part 1 does not choose PostgreSQL WAL/checkpoint settings, Docker storage-driver tuning, or artifact placement between D:/E:. Those decisions belong to later implementation/deployment reviews.
+Part 1 does not choose PostgreSQL WAL/checkpoint settings, container/VM storage tuning, or artifact placement between D:/E:. Those decisions belong to later implementation/deployment reviews.
 
 The architecture must simply avoid making SSD availability a requirement.
 
@@ -387,8 +399,8 @@ When implemented later, Part 1 is considered operationally correct only if tests
 4. An agent waiting for another member becomes `WAITING` and consumes no ongoing LLM request solely for that wait.
 5. A committed dependency result wakes or is subsequently discovered by executors even if a PostgreSQL notification is missed.
 6. Two agents using the same executor pool never receive one another's private session/context state.
-7. Remote model calls and local sandbox jobs can proceed concurrently using separate capacity accounting.
-8. Untrusted sandbox code cannot read provider/database credentials or unrestricted host resources.
+7. Remote model calls and local branch-environment/sandbox jobs can proceed concurrently using separate capacity accounting.
+8. Branch environments preserve execution-relevant constraints; untrusted sandbox code cannot read provider/database credentials or unrestricted host resources.
 9. A sandbox resource spike cannot silently starve the durable control plane without admission/limit safeguards.
 10. Executor death and uncertain provider/tool outcomes remain explicitly recoverable rather than silently duplicated or marked successful.
 11. The application remains functionally correct when active storage is hosted on HDD.
@@ -418,12 +430,13 @@ When implemented later, Part 1 is considered operationally correct only if tests
         |
   local execution needed
         v
-      Sandbox Manager
-       /     |      \
-  Docker  Docker  Docker
-  sandbox sandbox sandbox
+   Branch Environment Manager
+       /        |         \
+  container     VM     native/other
+      |          |          |
+ optional restricted sandboxes where appropriate
 ```
 
 Final Part 1 rule:
 
-> **Run all logically ready work concurrently when its required resource pool has capacity. Persist dependency waits instead of holding requests open. Keep trusted orchestration separate from untrusted sandbox execution. Use PostgreSQL as durable truth and notifications/SSE only as delivery mechanisms. Support HDD-backed local operation as an explicit initial constraint.**
+> **Run all logically ready work concurrently when its required resource pool has capacity. Persist dependency waits instead of holding requests open. Keep trusted orchestration separate from branch execution and untrusted sandbox execution. Reproduce execution-relevant conditions rather than assuming Docker is a universal environment. Use PostgreSQL as durable truth and notifications/SSE only as delivery mechanisms. Support HDD-backed local operation as an explicit initial constraint.**
