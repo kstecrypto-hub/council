@@ -1,6 +1,6 @@
 # Part 2 of 15 — Repository Layout & Enforceable Boundaries
 
-**Status:** active component design; major architecture decisions approved, completion checklist below.  
+**Status:** approved component design; not yet implemented.  
 **Branch:** `design/code-level-implementation`.  
 **Authority:** this document refines Part 2 of [CODE_IMPLEMENTATION_PLAN.md](../CODE_IMPLEMENTATION_PLAN.md). It does not authorize application implementation or merge to `main`.
 
@@ -210,67 +210,184 @@ Hard prohibitions already approved:
 - tool adapters cannot mutate Council state directly;
 - agent code cannot access canonical-environment write adapters.
 
-## 5. Part 2 completion checklist
+## 5. Final import matrix
 
-Part 2 is considered complete when the following four remaining items are finalized and recorded.
+The following dependency matrix is approved.
 
-### A. Exact import matrix
+| Package | May import | Must not import |
+|---|---|---|
+| `domain` | standard library, other `domain` modules | application, agents, environments, persistence, security implementations, API, frameworks/providers/ORM |
+| `application` | `domain`, `application` modules/ports | agents, API, concrete persistence, concrete providers, concrete environment adapters |
+| `agents.runtime` | application public interfaces, agent modules, environment contracts, security capability interfaces | ORM/database models, canonical write adapters |
+| `agents.graph` | approved application read interfaces, domain identifiers/contracts | direct persistence mutation, provider implementations as authority |
+| `agents.context` | approved application reads, graph query interfaces, evidence/source interfaces | direct authoritative writes |
+| `agents.providers` | provider contracts, domain/value types needed for model I/O | application business-rule ownership, persistence mutation |
+| `agents.tools` | application command/query interfaces, environment/tool capability contracts | direct authoritative state mutation, raw canonical credentials |
+| `environments` core/contracts | domain/value types, application ports needed for recorded operations | agent intellectual logic |
+| `environments.adapters` | environment contracts plus concrete infrastructure libraries | application business rules, candidate ranking |
+| `persistence` | domain/application persistence ports, concrete DB/artifact libraries | agent reasoning or API behavior |
+| `security` implementations | security contracts/ports, concrete identity/secret backends | investigation reasoning |
+| `api` | application public interfaces, security interfaces, read models | direct ORM/database mutation, provider/environment implementation details except composition wiring |
 
-Define, package by package, what may import what.
+Composition-root code may instantiate concrete adapters and connect them to abstract ports. That exception does not grant ordinary modules permission to import concrete implementations freely.
 
-This must cover at least:
+## 6. Shared versus branch-local record ownership
 
-- domain;
-- application;
-- agents.runtime;
-- agents.graph;
-- agents.context;
-- agents.providers;
-- agents.tools;
-- environments;
-- persistence;
-- security;
-- api.
+Part 2 fixes record **classes**, while Part 3 will define SQL tables.
 
-The matrix should distinguish interfaces/contracts from concrete implementations.
+### 6.1 Canonical/shared baseline records
 
-### B. Shared versus branch-local record ownership
+These describe the real starting target and common authorized inputs:
 
-Define which records are:
+- run identity/configuration;
+- canonical environment identity and version;
+- execution-relevant environment specification;
+- source identities and retained source versions;
+- common raw evidence/source material;
+- environment policy/capability profile;
+- council membership and branch identities.
 
-- canonical/shared baseline;
-- branch-private;
-- explicitly published/shared;
-- candidate-specific;
-- promotion/canonical-operation records.
+These records are shared, but access remains permission scoped.
 
-This is a package-boundary decision in Part 2; detailed SQL tables remain Part 3.
+### 6.2 Branch-private records
 
-### C. Minimum environment-adapter contract
+Until publication, these remain visible only within the owning branch and its authorized workers:
 
-Define the abstract operations every environment adapter must expose or explicitly declare unsupported, including the capability model around:
+- private hypotheses and notes;
+- unpublished findings/claims;
+- branch-local graph annotations;
+- branch-local context/checkpoints;
+- worker outputs;
+- experimental environment changes;
+- unsubmitted candidate drafts;
+- unpublished test interpretations.
 
-- inspect/discover;
-- snapshot/baseline;
-- create branch;
-- read;
-- branch write;
-- execute/test;
-- diff;
-- produce candidate;
-- validate fidelity;
-- promote;
-- rollback/reconcile where supported.
+Shared raw-source caching is allowed, but another branch's interpretation must not leak through caches, previews, graph neighborhoods, retrieval, or context assembly.
 
-The contract must be capability-based so a research/document environment is not forced to implement meaningless software operations.
+### 6.3 Published/shared records
 
-### D. Architecture enforcement mechanism
+An explicit publication operation moves a declared artifact across the privacy boundary.
 
-Choose the implementation-time enforcement approach for import/dependency rules and require architecture tests in CI.
+Published records may include:
 
-The specific Python package/tool can remain replaceable, but the repository must have a deterministic automated check that fails on forbidden imports/boundary violations.
+- findings;
+- claims;
+- evidence references;
+- assumptions;
+- methods;
+- gaps/limitations;
+- candidate revision manifests;
+- declared validation/test results;
+- challenges and responses.
 
-## 6. Not blockers for Part 2
+Publication does not expose the branch's entire live workspace.
+
+### 6.4 Candidate-specific records
+
+Each candidate revision records:
+
+- branch and actor identity;
+- baseline environment version;
+- intended change set;
+- environment diff;
+- relevant evidence;
+- tests/validation actually performed;
+- assumptions and known limitations;
+- environment-fidelity classification;
+- unresolved blockers.
+
+### 6.5 Promotion/canonical-operation records
+
+Promotion is its own durable history:
+
+- selected candidate;
+- target canonical version;
+- pre-promotion validation;
+- permissions/approval;
+- rebase/revalidation if required;
+- applied operations;
+- resulting canonical version;
+- rollback/reconciliation state.
+
+Investigative agents cannot rewrite this history.
+
+## 7. Minimum environment-adapter contract
+
+Environment adapters are capability based. They expose only supported operations and must explicitly declare unsupported capabilities.
+
+The abstract contract contains these conceptual operations:
+
+```text
+describe_capabilities()
+discover()
+capture_baseline()
+create_branch()
+read()
+branch_write()
+execute()
+test()
+diff()
+capture_candidate()
+validate_fidelity()
+validate_promotion()
+promote()
+rollback_or_reconcile()
+```
+
+### Required semantics
+
+- `describe_capabilities()` declares which operations are supported and relevant constraints.
+- `discover()` identifies execution-relevant conditions without assuming every machine property matters.
+- `capture_baseline()` records the canonical version/snapshot from which council branches derive.
+- `create_branch()` creates an isolated branch representation without granting canonical write access.
+- `read()` exposes permitted target state.
+- `branch_write()` changes only the branch environment.
+- `execute()` / `test()` operate only where the adapter declares them meaningful and safe.
+- `diff()` explains branch-versus-baseline changes.
+- `capture_candidate()` freezes the intended candidate revision and fidelity record.
+- `validate_fidelity()` reports reproduced/simulated/irrelevant/unreproducible/unknown conditions.
+- `validate_promotion()` checks current canonical compatibility and operational prerequisites without ranking candidate quality.
+- `promote()` is available only to adapters and actors explicitly authorized for canonical mutation.
+- `rollback_or_reconcile()` declares how partial/failed canonical operations are handled when rollback is supported or impossible.
+
+A document/research environment may legitimately declare execution, promotion, or rollback unsupported. A Git/software environment may support all of them. A database environment may implement them through snapshots/overlays rather than file branches.
+
+## 8. Architecture enforcement mechanism
+
+Part 2 chooses automated import contracts plus architecture tests.
+
+When implementation begins:
+
+1. configure **Import Linter** contracts (or an explicitly documented replacement if tooling constraints require one) for package dependency direction;
+2. run those contracts in CI on every change;
+3. add deterministic architecture tests for rules that imports alone cannot prove, such as:
+   - no direct ORM mutation from API/agent/tool code;
+   - canonical write adapters unavailable to investigative agent composition;
+   - graph/context records cannot become authoritative mutation paths;
+   - branch adapters cannot silently target canonical resources;
+4. make architectural violations build/test failures, not warnings.
+
+The exact package version is an implementation-time dependency decision; the enforcement behavior defined here is not optional.
+
+## 9. Part 2 completion decision
+
+All Part 2 architectural questions required before database design are now resolved:
+
+- repository ownership boundaries;
+- dependency direction and exact import matrix;
+- agent/application typed-command boundary;
+- universal rules versus environment policy;
+- canonical versus branch environment separation;
+- execution-relevant environment fidelity model;
+- Docker/VM/native/other mechanism abstraction;
+- shared versus branch-private/publication/candidate/promotion record classes;
+- minimum environment-adapter contract;
+- candidate/selection/promotion separation;
+- automated architecture enforcement.
+
+Detailed persistence representation now belongs to Part 3.
+
+## 10. Deferred to later parts
 
 The following are intentionally deferred and do not prevent Part 2 approval:
 
@@ -288,9 +405,9 @@ The following are intentionally deferred and do not prevent Part 2 approval:
 - full test implementation — Part 14;
 - implementation/build slices — Part 15.
 
-## 7. Part 2 acceptance condition
+## 11. Part 2 acceptance condition
 
-Part 2 is approved when a future implementation agent can answer, without architectural guesswork:
+Part 2 is approved because a future implementation agent can now answer, without architectural guesswork:
 
 1. which package owns a behavior;
 2. which direction dependencies are allowed to flow;
