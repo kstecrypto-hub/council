@@ -20,7 +20,7 @@ The owner approved the overall code-level proposal. Component refinements become
 
 | Part | Focus | Review state |
 |---|---|---|
-| 1 | Runtime architecture, processes, event-driven waits, concurrency/resource boundaries, Docker sandbox separation, HDD constraint | **Approved** — [final design](reviews/PART_01_RUNTIME_ARCHITECTURE.md) |
+| 1 | Runtime architecture, processes, event-driven waits, concurrency/resource boundaries, branch-environment/sandbox separation, HDD constraint | **Approved** — [final design](reviews/PART_01_RUNTIME_ARCHITECTURE.md) |
 | 2 | Repository layout, agent/application/environment boundaries, and enforceable import/dependency rules | **Approved** — [final design](reviews/PART_02_REPOSITORY_BOUNDARIES.md) |
 | 3 | Database schema, identities, immutable versions, constraints, migrations | **Next** |
 | 4 | Typed commands, validation, actor attribution, error contracts | Pending |
