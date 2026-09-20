@@ -377,9 +377,17 @@ Read-only investigation is the default.
 
 External writes or consequential actions require explicitly granted authority. Approvals are bound to the particular action and parameters rather than giving an agent unlimited permission afterward.
 
-Agents have separate sessions and workspaces. Executable workloads run in restricted sandboxes with approved inputs, resource limits, and no provider credentials.
+Agents have separate sessions and branch workspaces. When an investigation concerns a mutable external target, investigative branches must not mutate the canonical environment directly. Each branch works from a recorded baseline and may change only its own isolated branch environment until an implementation is explicitly selected and promoted.
 
-For the controlled initial deployment, Docker is the proposed execution boundary. Its security depends on configuration and daemon access, so it must not be represented as absolute isolation against hostile workloads. See [references](REFERENCES.md).
+A branch environment is not a byte-for-byte clone of the user's machine. Before branching, environment discovery produces an **execution-relevant environment specification**: the smallest practical set of known conditions capable of materially changing the behavior under investigation. Relevant conditions can include OS/build/architecture, runtimes and libraries, services, filesystem and permission behavior, network/firewall/proxy/VPN rules, identity and certificate configuration, security software, kernel drivers, hardware/driver dependencies, data schema/scale/latency/concurrency characteristics, external integrations, and project configuration. Irrelevant installed software is excluded.
+
+Every relevant condition is recorded as reproduced, simulated, omitted-as-irrelevant, unreproducible, or unknown. Unreproduced or uncertain conditions remain attached to candidate results as environment-fidelity limitations. If later discovery shows that an omitted condition could materially affect behavior, affected candidates must be revalidated.
+
+Docker is one possible execution mechanism, not the environment abstraction. Containers are appropriate when they can reproduce the required behavior and constraints. VM, native-host, hardware-backed, or other isolated execution may be required for OS-, kernel-, driver-, device-, or security-product-sensitive behavior. Restricted Docker execution remains useful for generated code and calculations, but it must not be represented as a universal reproduction of the canonical environment. See [references](REFERENCES.md).
+
+Large production systems do not require naive full duplication. A branch may use copy-on-write snapshots, overlays, isolated replicas, representative/anonymized datasets, simulated integrations, or read-only shared baselines when those preserve the behavior relevant to the investigation. All council branches must derive from the same recorded baseline specification so their candidate implementations remain comparable.
+
+Promotion is distinct from investigation. An agent may have broad authority inside its own branch environment while having no authority to write the canonical target. After the council selects a candidate revision, promotion validates the candidate against the current canonical version, required permissions, environment-fidelity assumptions, and operational checks before any real change occurs.
 
 Credentials stay in backend-managed secret storage. Raw keys do not reach browser state, generated scripts, source documents, or ordinary logs.
 
