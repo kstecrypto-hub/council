@@ -1,6 +1,6 @@
 # Component-by-component implementation review
 
-**Status:** active design review; Part 1 approved, Part 2 active.  
+**Status:** active design review; Parts 1-2 approved, Part 3 next.  
 **Baseline:** [CODE_IMPLEMENTATION_PLAN.md](CODE_IMPLEMENTATION_PLAN.md) preserves the approved code-level proposal. [APP_DESIGN.md](APP_DESIGN.md) remains the complete product specification.  
 **Working branch:** `design/code-level-implementation`. Keep changes on this branch unless the owner authorizes another target or a merge.
 
@@ -21,8 +21,8 @@ The owner approved the overall code-level proposal. Component refinements become
 | Part | Focus | Review state |
 |---|---|---|
 | 1 | Runtime architecture, processes, event-driven waits, concurrency/resource boundaries, Docker sandbox separation, HDD constraint | **Approved** — [final design](reviews/PART_01_RUNTIME_ARCHITECTURE.md) |
-| 2 | Repository layout, agent/application/environment boundaries, and enforceable import/dependency rules | **Active** — [review](reviews/PART_02_REPOSITORY_BOUNDARIES.md) |
-| 3 | Database schema, identities, immutable versions, constraints, migrations | Pending |
+| 2 | Repository layout, agent/application/environment boundaries, and enforceable import/dependency rules | **Approved** — [final design](reviews/PART_02_REPOSITORY_BOUNDARIES.md) |
+| 3 | Database schema, identities, immutable versions, constraints, migrations | **Next** |
 | 4 | Typed commands, validation, actor attribution, error contracts | Pending |
 | 5 | Transactions, idempotency, concurrent revisions, event/outbox consistency | Pending |
 | 6 | Dependency tracing, claim history, shared-evidence lineage, graph correctness | Pending |
@@ -57,10 +57,10 @@ It establishes the following runtime-level decisions:
 
 Part 1 intentionally does not finalize detailed queue leases, schema, SSE payloads, provider wire formats, database tuning, or exact resource/fairness algorithms. Those remain assigned to later parts.
 
-## Current discussion boundary — Part 2
+## Next discussion boundary — Part 3
 
-Part 2 is being finalized in [reviews/PART_02_REPOSITORY_BOUNDARIES.md](reviews/PART_02_REPOSITORY_BOUNDARIES.md). Major approved decisions include the domain/application/agents/environment split, typed command boundary, declarative environment policy, execution-relevant branch environments, Docker as only one execution mechanism, candidate/selection/promotion separation, and automated architecture enforcement.
+Part 2 is finalized in [reviews/PART_02_REPOSITORY_BOUNDARIES.md](reviews/PART_02_REPOSITORY_BOUNDARIES.md). It locks the domain/application/agents/environment split, exact import matrix, typed command boundary, declarative environment policy, execution-relevant branch environments, Docker as only one execution mechanism, shared-versus-branch-local record classes, environment-adapter contract, candidate/selection/promotion separation, and automated architecture enforcement.
 
-The remaining Part 2 checklist is: exact import matrix, shared-versus-branch-local record ownership, minimum environment-adapter contract, and the concrete architecture-enforcement approach.
+Part 3 will now define the concrete persistence model: identities, immutable versions, branch visibility, canonical versus branch-local records, candidate/promotion history, source/evidence versions, constraints, indexes, and migrations.
 
 No application implementation, pull-request merge, deployment, or live provider execution is authorized by this documentation publication alone.
