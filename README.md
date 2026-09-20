@@ -31,7 +31,7 @@ The graph answers these from recorded actions, source lineage, claim versions, a
 
 Peer council, not a single intellectual leader. Domain-agnostic investigators, not coding-only agents. Independent initial investigations followed by targeted cross-examination. Evidence support recorded separately from agreement. Persistent logical agents with replaceable bounded sessions. A runtime-recorded, agent-annotated provenance graph alongside checkpoints, search, and compaction. A mandatory simulated six-month-plus premortem before fully reviewed finalization.
 
-The proposed stack is React/TypeScript/React Flow, Python/FastAPI/Pydantic, LangGraph, PostgreSQL, versioned artifact storage, and optional restricted Docker execution. This repository contains no implementation or dependency pins yet.
+The proposed stack is React/TypeScript/React Flow, Python/FastAPI/Pydantic, LangGraph, PostgreSQL, versioned artifact storage, and a capability-based environment layer that may use restricted Docker execution, VMs, native test hosts, snapshots/overlays, or other mechanisms as fidelity requires. This repository contains no implementation or dependency pins yet.
 
 ## Current contents and verification boundary
 
