@@ -14,6 +14,9 @@ The initial authorization was to create a repository and publish the approved de
 - DeepSeek is the initial default, not a globally hard-wired provider. Support per-seat and per-worker model overrides, safe session migration, and provider-specific data permissions.
 - The same-model council must be labeled honestly. A new session is not a new independent reviewer.
 - Keep independent unpublished branches private across retrieval, graph queries, context packets, caches, and exports.
+- Treat branch environments as behaviorally faithful reproductions of execution-relevant conditions, not literal machine clones. Docker is one mechanism, not the environment abstraction.
+- Investigative branches must not mutate the canonical target. Candidate selection and operational promotion are separate boundaries; stale or fidelity-incomplete candidates require revalidation.
+- Keep Council core rules universal. Add deployment-specific restrictions through policy/capability profiles and environment adapters instead of hard-coding separate Council variants.
 - Runtime events are authoritative for observed execution. Agent-submitted semantic relationships remain attributed, reviewable interpretations.
 - Keep evidence support separate from council agreement. Preserve contrary evidence, minority positions, uncertainties, and source lineage.
 - Treat assumptions as first-class records. Preserve joint premises and alternative supporting routes. Do not equate citations with proof, chronology with causation, or different documents with independent evidence.
