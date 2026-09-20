@@ -257,70 +257,29 @@ At minimum, CI must reject:
 
 ## 3. Database implementation
 
-Use SQLAlchemy 2, PostgreSQL, and Alembic migrations.
+Part 3 is finalized in [reviews/PART_03_DATABASE_SCHEMA.md](reviews/PART_03_DATABASE_SCHEMA.md).
 
-Each request or independently executing task gets its own database session. Do not share one mutable SQLAlchemy `AsyncSession` across concurrent agents. SQLAlchemy documents separate sessions for concurrent tasks: [SQLAlchemy asyncio](https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html).
+The approved design separates durable storage into:
 
-Migrations are committed and reviewed. Alembic's generated migrations are candidates, not automatically trustworthy changes; review and correct them: [Alembic autogeneration](https://alembic.sqlalchemy.org/en/latest/autogenerate.html).
+1. **`council_runtime` PostgreSQL** for active/recoverable Council operation and persistent platform configuration;
+2. **`solution_registry` PostgreSQL** for long-term reusable solutions/components and reuse metadata;
+3. **artifact/object storage** for large immutable payloads such as source snapshots, repository bundles, diffs, test logs, transcripts, archives, and build artifacts.
 
-### Important tables
+The runtime database is deliberately lifecycle-managed. Run-scoped execution history can be archived and purged after user acceptance and retention requirements are satisfied; Council does not keep every completed project's full operational history in hot tables forever.
 
-| Area | Main tables |
-|---|---|
-| Ownership | `workspaces`, `projects`, `memberships`, `access_grants` |
-| Investigations | `runs`, `run_config_versions`, `branches`, `agents`, `agent_sessions` |
-| Work | `tasks`, `task_dependencies`, `jobs`, `operations` |
-| Sources | `sources`, `source_versions`, `run_sources`, `evidence_items`, `evidence_origins` |
-| Reasoning records | `claims`, `claim_versions`, `assumptions`, `assumption_versions`, `analysis_steps` |
-| Support structure | `support_routes`, `route_premises`, `origin_links` |
-| Review | `challenges`, `challenge_responses`, `claim_revisions`, `review_dispositions` |
-| Continuity | `context_packets`, `context_packet_items`, runtime checkpoints |
-| Audit and delivery | `events`, `outbox_messages`, `message_deliveries`, `command_receipts` |
-| Models and spending | `model_profiles`, `model_invocations`, `budget_accounts`, `budget_reservations` |
+Persistent Council configuration includes agent profiles, model profiles, tool definitions/versions/capabilities, and environment-adapter definitions.
 
-Introduce them through milestones; do not build every table before the first working feature.
+Run-scoped data includes runs, actors, sessions, tasks, branches, disposable environment-instance metadata, candidates, publications, evidence, claims, challenges, context/checkpoints, tool/model invocations, operations, events, budgets, selections, promotions, and acceptance/archive records.
 
-### Stable identities versus immutable versions
+The Solution Registry stores immutable solution versions, reusable component versions, capabilities, integrations, environment requirements, validation evidence, artifact references, lineage, permissions/reuse scope, and searchable documents. New work queries this registry before expensive independent branch creation. Originality is not a criterion; close validated solutions should be reused unless a concrete requirement or environment incompatibility prevents reuse.
 
-A claim needs both a stable identity and versioned content:
+Stable identities use immutable version rows for claims, assumptions, source versions, solution versions, and other historical records. Branch-private data never becomes shared by flipping a mutable visibility flag; an explicit publication record exposes exact records/versions.
 
-```text
-claims
-    id
-    project_id
-    run_id
-    owning_agent_id
-    current_version_id
+Disposable branch environments may be destroyed after the user accepts the work. Their important outputs remain through candidate records, validation results, artifacts, events, archives, promotion history, and optional Solution Registry publication.
 
-claim_versions
-    id
-    claim_id
-    version_number
-    previous_version_id
-    statement
-    applicability_conditions
-    claim_kind
-    author_session_id
-    created_at
-```
+MCP remains one possible tool transport. Tool identity, schemas, capabilities, grants, versions, invocations, and secret references live in Council's durable configuration/runtime schema; the MCP server itself is not a database.
 
-The stable claim means the proposition being investigated. A version means the exact statement as recorded at this point.
-
-Changing the wording creates a new version. It does not overwrite the earlier statement.
-
-Review assessments are recorded separately. Reviewing an unchanged statement should not unnecessarily create a new textual version.
-
-Important database constraints include unique version numbers per claim, valid references, same-project boundaries, and revision links belonging to the same claim.
-
-### Sources also need versions
-
-A URL is not a source snapshot.
-
-`source_versions` records the retained content hash, artifact reference, retrieval time, extraction information, and original location.
-
-`evidence_items` point into that version using a typed locator: text offsets, page references, dataset selections, or tool-result references.
-
-When possible, the backend checks that a submitted quotation matches the retained source representation. Failure to find the quoted text must not silently produce a valid evidence record.
+Detailed tables, constraints, indexing families, retention/purge rules, environment fidelity records, candidate/promotion tables, and migration rules are specified in the Part 3 review document.
 
 ## 4. Typed agent commands
 
