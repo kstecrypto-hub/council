@@ -54,6 +54,8 @@ Do not use FastAPI's ordinary `BackgroundTasks` as the durable investigation eng
 
 ## 2. Repository layout
 
+Part 2 makes the application/agent/environment boundaries explicit and mechanically enforceable.
+
 ```text
 council/
 |-- AGENTS.md
@@ -61,6 +63,7 @@ council/
 |   |-- APP_DESIGN.md
 |   |-- IMPLEMENTATION_HANDOFF.md
 |   |-- CODE_IMPLEMENTATION_PLAN.md
+|   |-- COMPONENT_REVIEW_PLAN.md
 |   `-- REFERENCES.md
 |
 |-- backend/
@@ -68,59 +71,67 @@ council/
 |   |-- uv.lock
 |   |-- migrations/
 |   |-- src/council/
-|   |   |-- api/
-|   |   |   |-- app.py
-|   |   |   |-- dependencies.py
-|   |   |   `-- routes/
 |   |   |-- domain/
+|   |   |   |-- entities/
+|   |   |   |-- value_objects/
 |   |   |   |-- commands.py
 |   |   |   |-- events.py
+|   |   |   |-- enums.py
 |   |   |   |-- contracts.py
 |   |   |   `-- errors.py
-|   |   |-- services/
-|   |   |   |-- runs.py
-|   |   |   |-- claims.py
-|   |   |   |-- evidence.py
-|   |   |   |-- publications.py
-|   |   |   |-- reviews.py
-|   |   |   `-- budgets.py
-|   |   |-- graph/
-|   |   |   |-- projection.py
-|   |   |   |-- dependencies.py
-|   |   |   |-- revisions.py
-|   |   |   `-- lineage.py
-|   |   |-- runtime/
-|   |   |   |-- worker.py
-|   |   |   |-- agent_graph.py
-|   |   |   |-- phases.py
-|   |   |   |-- queue.py
-|   |   |   `-- reconciliation.py
-|   |   |-- providers/
-|   |   |   |-- base.py
-|   |   |   |-- deepseek.py
-|   |   |   |-- scripted.py
-|   |   |   `-- registry.py
-|   |   |-- context/
-|   |   |   |-- builder.py
-|   |   |   |-- retrieval.py
-|   |   |   `-- rollover.py
-|   |   |-- tools/
-|   |   |   |-- registry.py
-|   |   |   |-- gateway.py
-|   |   |   `-- research.py
-|   |   |-- security/
-|   |   |   |-- authorization.py
-|   |   |   `-- secrets.py
+|   |   |
+|   |   |-- application/
+|   |   |   |-- runs/
+|   |   |   |-- tasks/
+|   |   |   |-- claims/
+|   |   |   |-- evidence/
+|   |   |   |-- publications/
+|   |   |   |-- challenges/
+|   |   |   |-- reviews/
+|   |   |   |-- budgets/
+|   |   |   `-- ports/
+|   |   |
+|   |   |-- agents/
+|   |   |   |-- runtime/
+|   |   |   |-- graph/
+|   |   |   |   |-- projection/
+|   |   |   |   `-- queries/
+|   |   |   |-- context/
+|   |   |   |-- providers/
+|   |   |   |-- tools/
+|   |   |   `-- prompts/
+|   |   |
+|   |   |-- environments/
+|   |   |   |-- contracts.py
+|   |   |   |-- discovery.py
+|   |   |   |-- fidelity.py
+|   |   |   |-- branches.py
+|   |   |   |-- candidates.py
+|   |   |   |-- promotion.py
+|   |   |   `-- adapters/
+|   |   |
 |   |   |-- persistence/
-|   |   |   |-- models/
+|   |   |   |-- postgres/
 |   |   |   |-- repositories/
 |   |   |   |-- unit_of_work.py
-|   |   |   `-- artifacts.py
-|   |   `-- prompts/
+|   |   |   `-- artifacts/
+|   |   |
+|   |   |-- security/
+|   |   |   |-- authorization.py
+|   |   |   |-- identity.py
+|   |   |   `-- secrets.py
+|   |   |
+|   |   `-- api/
+|   |       |-- app.py
+|   |       |-- dependencies.py
+|   |       |-- routes/
+|   |       `-- sse/
+|   |
 |   `-- tests/
 |       |-- unit/
 |       |-- integration/
 |       |-- contracts/
+|       |-- architecture/
 |       |-- evaluations/
 |       `-- fixtures/
 |
@@ -136,19 +147,113 @@ council/
     `-- compose.yaml
 ```
 
-These are responsibility boundaries, not a requirement to create dozens of empty files immediately.
+These are responsibility boundaries, not a requirement to create empty files up front.
 
-### Dependency rule
+### Core dependency rule
 
-`domain/` defines the application's concepts without depending on FastAPI, LangGraph, or a model provider.
+The dependency direction is inward:
 
-`services/` implements business rules.
+```text
+domain
+  ^
+application
+  ^
+api / agents / environment orchestration
+  ^
+infrastructure adapters
+```
 
-`api/`, `runtime/`, and `tools/` call those services.
+More precisely:
 
-`persistence/` implements storage.
+- `domain/` owns Council concepts and invariants and imports no framework, provider, database, HTTP, Docker, VM, or environment-specific implementation.
+- `application/` owns valid Council use cases and state transitions. It depends on domain concepts and abstract ports, not concrete infrastructure.
+- `agents/` owns reasoning machinery: council protocol, agent loops, workers, graph views, context assembly, providers, prompts, and agent tool access. Agents use the application; the application does not depend on agents.
+- `environments/` owns canonical-baseline discovery, execution-relevant environment specifications, isolated branch environments, candidate revisions, fidelity records, and controlled promotion. It does not decide which candidate is intellectually best.
+- `api/` is transport. It does not contain business rules or direct database mutation paths.
+- `persistence/` implements storage ports. Application code must not import concrete ORM/database models.
+- `security/` enforces actor authorization, identity, and secret boundaries across both humans and agents.
 
-A claim submitted from the UI and a claim submitted by an agent must pass through the same claim service. Neither gets a shortcut into the database.
+A human-originated action and an agent-originated action that change Council state must pass through the same application operation.
+
+### Agent/application boundary
+
+Agents observe approved read models and change Council state only through typed application commands. Rejections are structured and explain why the command was rejected so the requesting agent can adapt.
+
+The application validates:
+
+1. command/schema validity;
+2. actor authorization;
+3. current-state legality and concurrency/version constraints;
+4. universal Council invariants;
+5. configured environment policy.
+
+It does **not** judge whether the agent's argument, hypothesis, conclusion, or implementation is intellectually good.
+
+Tool calls and application commands are distinct. Tools retrieve information or operate on permitted external capabilities; commands change authoritative Council state.
+
+### Core rules versus environment policy
+
+Council core rules are universal. Environment-specific rules are supplied through declarative policy/capability profiles where possible.
+
+Examples of environment policy include allowed tools, available sources, evidence requirements, branch-write permissions, external-write restrictions, budgets, and data-access scopes.
+
+Do not create a separate hard-coded Council implementation for each deployment.
+
+### Branch environment model
+
+When an investigation concerns a mutable external target, the canonical environment is not changed during deliberation.
+
+All council members derive isolated branch environments from the same recorded baseline. Workers inherit their parent member's branch and permissions; spawning a worker does not create an additional independent council branch.
+
+A branch environment is **not** a full machine clone. It is the smallest practical environment that preserves all known conditions capable of materially changing the behavior under investigation.
+
+Environment discovery records an execution-relevant environment specification that may include:
+
+- OS/build/architecture and relevant kernel behavior;
+- runtimes, libraries, services, filesystem semantics, and permissions;
+- network, proxy, VPN, firewall, DNS, identity, certificate, and SSO constraints;
+- security software, endpoint controls, and kernel drivers when relevant;
+- hardware and device/driver dependencies;
+- project/configuration dependencies;
+- database schema, cardinality, latency, concurrency, indexes, and data-shape characteristics;
+- relevant external integrations and their behavioral constraints.
+
+Irrelevant installed software is not reproduced.
+
+Each relevant condition must be classified at least as reproduced, simulated, intentionally omitted as irrelevant, unreproducible, or unknown. Fidelity gaps remain attached to candidate results and can force revalidation if later shown to matter.
+
+Docker is one execution mechanism, not the environment abstraction. Containers, VMs, native-host test targets, hardware-backed targets, copy-on-write snapshots, isolated replicas, overlays, representative datasets, and simulated integrations may all be used where appropriate.
+
+Large production systems do not require naive complete duplication. Use the smallest safe reproduction that preserves the behavior needed to validate the candidate.
+
+### Candidate and promotion boundary
+
+Agents may experiment broadly inside their own permitted branch environment, but they cannot directly mutate the canonical target.
+
+A member explicitly turns branch work into a candidate revision containing the intended change set, evidence, test results, assumptions, limitations, and environment-fidelity record.
+
+Publication exposes the candidate and declared findings, not unrestricted access to another member's live private workspace.
+
+Selection and promotion are separate:
+
+- **selection** is the council/user decision about which candidate to proceed with;
+- **promotion** is the operational process that checks whether the selected candidate can safely be applied to the current canonical environment.
+
+Promotion verifies the canonical version/baseline, required permissions, unresolved environment-fidelity gaps, required tests/validation, and target compatibility. If the canonical environment changed, the candidate must be rebased/revalidated rather than blindly applied.
+
+### Mechanical enforcement
+
+Part 2 requires architecture tests/linting so dependency rules are not documentation-only.
+
+At minimum, CI must reject:
+
+- `domain/` importing FastAPI, LangGraph, providers, persistence, environment adapters, or ORM models;
+- `application/` importing FastAPI, concrete providers, concrete database repositories, or concrete environment adapters;
+- `api/` or `agents/` writing database models directly instead of using application operations;
+- provider-specific conditionals leaking through unrelated modules;
+- tool adapters mutating authoritative Council state directly;
+- agent code accessing canonical-environment write adapters;
+- graph/context code becoming an alternate source of authoritative truth.
 
 ## 3. Database implementation
 
