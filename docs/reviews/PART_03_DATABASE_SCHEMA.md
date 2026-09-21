@@ -105,198 +105,206 @@ Prompts may describe the rules to the model for usability, but the prompt is not
 
 ## 5. What the database is for
 
-The main Council database has two responsibilities.
+The central Council database has two responsibilities only:
+
+1. persistent Council configuration reused across runs;
+2. the minimal active-run manifest needed for recovery and orchestration.
+
+It does not model how agents build inside their sandboxes.
 
 ### 5.1 Persistent Council configuration
 
-Configuration that is reused across runs:
+Persist centrally:
 
-- agent prompt/template definitions;
-- model configuration;
+- Council member GitHub account identities;
+- prompts;
+- provider credential references;
+- model configurations;
 - MCP server definitions;
-- tool/capability configuration;
-- secret references;
-- Council/run presets where useful.
+- Council-visible tools;
+- reusable tool/capability sets;
+- secret bindings/references.
 
-### 5.2 Minimal durable run manifest
+### 5.2 Minimal active-run manifest
 
-A small amount of runtime state is required so an orchestrator crash/restart does not make an active run unknowable.
+The active-run manifest will be reviewed separately in this Part. Its purpose is only to let the orchestrator recover which run exists, which member owns which repo/sandbox, what phase it is in, and what cleanup/promotion work remains.
 
-The manifest records only boundary/control information such as:
+## 6. Persistent configuration schema
 
-- run identity and objective;
-- common baseline reference/fingerprint;
-- which logical members belong to the run;
-- each member's prompt/model/tool configuration;
-- each member's GitHub account reference and repository reference;
-- each member's sandbox/environment instance reference;
-- current high-level lifecycle state;
-- repository visibility/publication phase;
-- selected output/repository when one is chosen;
-- user acceptance/cleanup state.
+### 6.1 `agent_accounts`
 
-The manifest does **not** describe how the agent engineered the solution inside its sandbox.
+Represents the persistent Council-member identities used to provision sandboxes and repositories.
 
-## 6. Proposed minimal Council database
+| Column | Purpose |
+|---|---|
+| `id` | primary key |
+| `name` | Council member identity/label |
+| `github_username` | GitHub account used by this member |
+| `github_auth_secret_ref` | reference to GitHub credential/session material in secret storage |
+| `status` | active/disabled |
+| `created_at` | audit |
 
-### 6.1 `agent_prompts`
+The actual GitHub credential is never stored directly in PostgreSQL.
 
-Stores reusable prompts/instructions.
+### 6.2 `prompts`
+
+Stores exact reusable prompt definitions.
 
 | Column | Purpose |
 |---|---|
 | `id` | primary key |
 | `name` | human-readable identity |
+| `purpose` | intended use |
 | `prompt_text` or `artifact_ref` | exact prompt |
 | `content_hash` | reproducibility |
-| `created_at` | audit |
 | `status` | active/retired |
+| `created_at` | audit |
 
-A run records the exact prompt id/hash it actually used.
+There is no generic prompt-version hierarchy.
 
-Different agents may reference the same prompt.
+A materially changed prompt is a new immutable prompt row. Historical runs keep pointing to the exact prompt row/hash they used.
 
-Agent A and Agent B are not versions of each other.
+Multiple agents may reference the same prompt.
 
-### 6.2 `model_configs`
+### 6.3 `provider_credentials`
+
+Operational credential bindings are separate from model definitions.
 
 | Column | Purpose |
 |---|---|
 | `id` | primary key |
+| `provider` | provider identity |
+| `secret_ref` | external secret-store reference |
+| `status` | active/disabled |
+| `created_at` | audit |
+
+Rotating an API key does not create a new model configuration.
+
+### 6.4 `model_configs`
+
+| Column | Purpose |
+|---|---|
+| `id` | primary key |
+| `name` | human-readable identity |
 | `provider` | provider identifier |
 | `model` | model identifier |
-| `settings_json` | non-secret model settings |
-| `secret_ref` | backend secret-store reference |
-| `created_at` | audit |
+| `settings_json` | non-secret model/runtime settings |
+| `provider_credential_id` | FK to provider credential binding |
 | `status` | active/retired |
+| `created_at` | audit |
 
-### 6.3 `mcp_servers`
+A changed model/settings combination is represented by another immutable configuration row. Agent identities themselves are not versioned.
+
+### 6.5 `mcp_servers`
 
 | Column | Purpose |
 |---|---|
 | `id` | primary key |
 | `name` | server identity |
-| `transport` | stdio/http/etc. as supported |
-| `endpoint_config_json` | non-secret connection config |
-| `secret_ref` | optional secret-store reference |
+| `transport` | supported transport such as stdio/http |
+| `connection_config_json` | non-secret connection information |
+| `credential_binding_id` | nullable secret/credential binding reference |
 | `status` | active/disabled |
 | `created_at` | audit |
 
-MCP is a capability transport. It is not the database.
+MCP is a capability transport, not the persistence layer.
 
-### 6.4 `tool_configs`
+### 6.6 `tools`
 
-Council may expose native tools, MCP-backed tools, APIs, database connectors, or environment capabilities through a common tool gateway.
+Council-facing tool identity.
 
 | Column | Purpose |
 |---|---|
 | `id` | primary key |
 | `name` | stable Council-visible tool name |
 | `backend_kind` | mcp/native/http/database/environment/etc. |
-| `mcp_server_id` | nullable FK when MCP-backed |
-| `tool_key` | remote/native tool identifier |
-| `policy_json` | non-secret capability/scoping config |
+| `mcp_server_id` | nullable FK for MCP-backed tools |
+| `remote_tool_name` | nullable external/MCP tool identifier |
+| `native_tool_key` | nullable native implementation identifier |
 | `status` | active/disabled |
-
-Exact input/output schemas may be discovered from the backend or cached where useful; Part 3 does not require duplicating every remote schema in relational tables.
-
-### 6.5 `council_presets` (optional)
-
-Reusable combinations of:
-
-- number of council members;
-- prompt ids;
-- default model configs;
-- tool sets;
-- budget/resource preset.
-
-This is convenience configuration, not a requirement for agent independence.
-
-### 6.6 `runs`
-
-| Column | Purpose |
-|---|---|
-| `id` | primary key |
-| `objective` | user's requested outcome |
-| `baseline_ref` | common input/environment baseline |
-| `baseline_hash` | immutable fingerprint |
-| `phase` | setup/independent/discussion/selection/awaiting_acceptance/closed |
-| `status` | active/paused/completed/failed |
-| `selected_member_id` | nullable |
-| `created_at` | creation |
-| `accepted_at` | nullable user acceptance |
-| `closed_at` | nullable cleanup completion |
-
-### 6.7 `run_members`
-
-One row per logical council member.
-
-| Column | Purpose |
-|---|---|
-| `id` | primary key |
-| `run_id` | FK |
-| `member_key` | A/B/C/etc. |
-| `agent_prompt_id` | exact prompt used |
-| `model_config_id` | exact model config used |
-| `github_account_ref` | non-secret reference to member's pre-authenticated GitHub identity |
-| `repo_ref` | repository owned by this Council member's GitHub account |
-| `sandbox_ref` | current opaque environment instance reference |
-| `status` | provisioning/active/waiting/finished/failed/destroyed |
 | `created_at` | audit |
-| `destroyed_at` | nullable |
 
-Workers do not need separate independent repositories unless an agent itself chooses to create them inside its environment. Council only needs to know workers separately if runtime/budget orchestration later requires it.
+The agent interacts with the Council tool identity rather than needing to know how the backend is implemented.
 
-### 6.8 `run_member_tools`
+### 6.7 `tool_sets`
 
-Maps a member to the Council tool configurations/capabilities it is allowed to access.
+Reusable capability bundles.
 
-This is authorization metadata, not a description of how the agent uses those tools.
+| Column | Purpose |
+|---|---|
+| `id` | primary key |
+| `name` | e.g. independent_member, discussion_member, promotion |
+| `description` | bounded description |
+| `created_at` | audit |
 
-### 6.9 `repo_visibility`
+### 6.8 `tool_set_members`
 
-Records the cross-agent visibility state of a member repository when the Council protocol requires an independent phase.
+| Column | Purpose |
+|---|---|
+| `tool_set_id` | FK |
+| `tool_id` | FK |
+| `policy_json` | non-secret scope/capability restrictions |
 
-Possible state:
+Unique: `(tool_set_id, tool_id)`.
+
+The same Council member may move from one tool set to another as the run changes phase. Enforcement is performed by the actual gateway/repository/sandbox permissions, not only by this row.
+
+Example:
 
 ```text
-OWNER_ONLY
-COUNCIL_READ
-SELECTED_FOR_PROMOTION
-CLOSED
+INDEPENDENT
+A: own repo read/write
+B/C repos: no access
+
+DISCUSSION
+A: own repo read/write
+B/C repos: read
 ```
 
-The actual permission is enforced by repository credentials/access control, not by trusting this row alone.
+### 6.9 `secret_bindings`
 
-### 6.10 `run_outputs`
-
-Council treats an agent's published result as an opaque output.
+Optional named bindings used where a reusable secret reference needs to be associated with a Council capability.
 
 | Column | Purpose |
 |---|---|
 | `id` | primary key |
-| `run_id` | FK |
-| `run_member_id` | producer |
-| `repo_ref` | repository containing the output |
-| `commit_ref` | exact published state if Git-backed |
-| `artifact_ref` | optional non-repo output |
-| `summary` | bounded human/agent summary |
-| `supersedes_output_id` | nullable prior published output from same member |
-| `published_at` | timestamp |
+| `name` | binding name |
+| `secret_ref` | external secret-store reference |
+| `purpose` | bounded purpose description |
+| `status` | active/disabled |
 
-A, B, C outputs are siblings, not versions.
+The actual secret value never appears in PostgreSQL, prompts, or ordinary logs.
 
-If B publishes a later state, B2 may simply supersede B1.
+### 6.10 `council_presets` (optional)
 
-Council does not model B's internal commits as database entities.
+A convenience layer for reusable combinations such as:
 
-### 6.11 `run_selection`
+- council member count;
+- prompt ids;
+- model config ids;
+- tool set ids;
+- budget/resource preset.
 
-Records which published output/repository was selected for promotion and by whom/what Council decision process.
+This is optional configuration convenience, not a requirement for agent independence.
 
-### 6.12 `run_cleanup`
+### 6.11 Run-member configuration references
 
-Small durable cleanup state so environment/repository destruction can be retried safely after user acceptance.
+For an active run, a member only needs to reference the exact configuration it is using:
+
+```text
+run_member_config
+    run_member_id
+    agent_account_id
+    prompt_id
+    model_config_id
+    tool_set_id
+```
+
+The only expected differences between otherwise identical council members may simply be:
+
+- GitHub identity;
+- repository;
+- sandbox.
 
 ## 7. What is explicitly not in the central database
 
