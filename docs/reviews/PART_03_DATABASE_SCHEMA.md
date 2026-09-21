@@ -20,38 +20,44 @@ Council constrains the boundary around the sandbox through code and infrastructu
 
 The central database stores only durable Council configuration and the minimum control metadata required to recover and operate a run.
 
-## 2. Repository is the durable work surface
+## 2. Per-member GitHub accounts and repositories
 
-Each independent council member has its own repository for the run.
+Each independent Council member has:
+
+1. its own pre-authenticated GitHub account;
+2. its own repository for the current user project;
+3. its own isolated sandbox/environment.
+
+There is no requirement for a separate central live project repository during the Council run.
 
 Conceptually:
 
 ```text
-                 common baseline
-                       |
-             +---------+---------+
-             |         |         |
-          Agent A   Agent B   Agent C
-           repo A     repo B     repo C
-             |         |         |
-          sandbox A sandbox B sandbox C
+optional starting project state
+          |
+     copied into each
+       member repo
+      /     |     \
+     v      v      v
+ GitHub A GitHub B GitHub C
+   repo A   repo B   repo C
+     |       |       |
+ sandbox A sandbox B sandbox C
 ```
 
-The repository is where an agent publishes the work it wants to survive, be inspected, or be discussed by other agents.
+If the user already has a project, that project is used only as the starting state copied into each member repository.
 
-The repository may contain any structure the agent chooses, including:
+If the Solution Registry finds a previous project that is similar or identical, that earlier repository may be used:
 
-- source code;
-- configuration;
-- migrations;
-- tests;
-- documentation;
-- generated files that should persist;
-- implementation notes;
-- experiment records;
-- commits/branches/tags if the agent chooses to use them.
+- as the starting base copied into each member repository;
+- as a reference the agents may inspect;
+- or almost unchanged, with only the small changes required for the new project.
 
-Council does not require a particular internal repository layout beyond whatever minimum bootstrapping is necessary to operate the environment.
+A previous project's live repository is never reused in place for a new user project. The new Council run still creates new member repositories so ownership, experimentation, archive, and cleanup remain isolated.
+
+The agent decides how to organize its own repository and sandbox. Council does not impose an internal Git strategy, commit cadence, local versioning scheme, file layout, database layout, build system, test structure, or implementation process.
+
+Council stores only the repository/account references needed to operate the run; it does not mirror repository contents/history into PostgreSQL.
 
 ## 3. Independence and repository visibility
 
@@ -122,7 +128,7 @@ The manifest records only boundary/control information such as:
 - common baseline reference/fingerprint;
 - which logical members belong to the run;
 - each member's prompt/model/tool configuration;
-- each member's repository reference;
+- each member's GitHub account reference and repository reference;
 - each member's sandbox/environment instance reference;
 - current high-level lifecycle state;
 - repository visibility/publication phase;
@@ -232,7 +238,8 @@ One row per logical council member.
 | `member_key` | A/B/C/etc. |
 | `agent_prompt_id` | exact prompt used |
 | `model_config_id` | exact model config used |
-| `repo_ref` | repository identity/URL/connector reference |
+| `github_account_ref` | non-secret reference to member's pre-authenticated GitHub identity |
+| `repo_ref` | repository owned by this Council member's GitHub account |
 | `sandbox_ref` | current opaque environment instance reference |
 | `status` | provisioning/active/waiting/finished/failed/destroyed |
 | `created_at` | audit |
@@ -386,7 +393,7 @@ The registry points to repositories/artifacts; it does not duplicate them into P
 
 ## 10. Reuse flow
 
-Before creating fresh member repositories:
+Before creating the member repositories:
 
 ```text
 user request
@@ -401,7 +408,7 @@ search Solution Registry
    +--> no useful match -> create fresh common baseline
 ```
 
-All council members then begin from the same chosen baseline.
+Each council member receives the same chosen starting state copied into that member's own repository.
 
 ## 11. Outstanding Part 3 questions
 
