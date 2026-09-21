@@ -1084,179 +1084,176 @@ Before Part 3 can be approved, the remaining database-design decisions must be r
 
 No Part 3 approval is implied until these items are discussed and explicitly accepted.
 
-## 24. Stable identity, immutable versions, and version history
+## 24. Sandbox opacity and control-plane-only persistence
 
-Part 3 distinguishes three different persistence concepts. They must not share ambiguous "version" semantics.
+Part 3 does **not** define how an agent organizes work inside its branch environment.
 
-### 24.1 Stable identities with immutable semantic versions
+The branch environment is intentionally a black box from the Council database's point of view. Within the permissions and resource limits granted to that branch, an agent may choose its own:
 
-The following families use a stable parent identity plus immutable child versions:
+- file layout;
+- Git usage or no Git usage;
+- local commits/revisions;
+- scratch databases;
+- temporary services;
+- build system;
+- test organization;
+- intermediate artifacts;
+- internal notes;
+- implementation strategy;
+- local versioning scheme;
+- worker coordination mechanism.
 
-- agent profiles;
-- model profiles;
-- tool definitions;
-- environment adapters;
-- sources;
-- claims;
-- assumptions;
-- run configuration;
-- solutions;
-- reusable components.
+Council must not require those internal choices to fit a central relational schema.
 
-A semantic `version_number` identifies an exact historical definition. Once created, its semantic content cannot be edited in place.
+### 24.1 Boundary rule
 
-### 24.2 Immutable events/snapshots
+The system constrains and records the **boundary around the sandbox**, not the agent's internal engineering process.
 
-Some records already represent one exact occurrence and therefore do not need a parent/version family:
+Council controls:
 
-- publications;
-- challenges and challenge responses;
-- analysis steps;
-- tool invocations;
-- model invocations;
-- candidate validations;
-- environment-fidelity observations;
-- promotion operations;
-- runtime events.
+- what baseline enters the branch environment;
+- which tools/capabilities/credentials are exposed;
+- which network and external resources are reachable;
+- compute/resource budgets;
+- which other branches or published outputs are visible;
+- what may leave the branch environment;
+- whether canonical writes are permitted;
+- when a selected output may be promoted.
 
-Corrections create a new related record rather than rewriting the original occurrence.
+Council does not prescribe the internal implementation workflow used to produce that output.
 
-### 24.3 Mutable control rows
+### 24.2 What the runtime database actually needs
 
-Operational state holders such as tasks, runs, jobs, branches, sessions, environment instances, and promotions may update over time.
+The production control-plane database should persist only information needed to operate, recover, secure, compare, and promote runs.
 
-Their optimistic concurrency field is named `row_version`, never `version_number`.
+At minimum this includes:
 
-`row_version` is only a concurrency token. It has no semantic or historical meaning.
+- run identity and high-level objective;
+- council-member/worker logical identity and current runtime status;
+- exact run configuration snapshot, including prompts/model/tool settings or immutable artifact/hash references;
+- tool definitions/grants and environment adapter configuration;
+- execution-relevant environment specification and baseline fingerprint;
+- branch/environment instance identity and lifecycle;
+- permissions/capabilities exposed to each branch;
+- resource/budget accounting required for enforcement;
+- explicit publications/messages/challenges that cross branch boundaries, if the Council protocol uses them;
+- opaque output/candidate artifact references and manifests;
+- selection and promotion records;
+- user acceptance and cleanup/archive state;
+- operational events/idempotency/recovery state needed by the control plane.
 
-### 24.4 Version-definition record
+It does **not** need tables describing how an agent internally built the candidate.
 
-Every immutable semantic version must be self-describing enough for a human operator to reconstruct exactly what that version represented without asking an AI model.
+### 24.3 Agent settings are snapshots, not an agent-version hierarchy
 
-Each semantic version family therefore includes, either directly or through a common linked record, at least:
+Agent A and Agent B are separate logical actors, not versions of one another.
 
-- stable parent identity;
-- semantic version number;
-- exact immutable definition/content or artifact reference;
-- normalized content hash;
-- `created_at`;
-- `created_by_actor_id` or authenticated subject;
-- previous semantic version id when applicable;
-- creation reason;
-- change summary;
-- source of the change, such as user instruction, challenge, environment discovery, migration, model/profile update, or manual correction.
+If several council members use the same prompt/model/tool configuration, they reference the same run configuration snapshot.
 
-This is operational/audit metadata, not model memory.
-
-### 24.5 Version outcomes are separate from version definitions
-
-A version must not be mutated later to say "failed" or "worked."
-
-Instead, observations about how a version behaved are append-only records.
-
-Use a generic conceptual family such as:
+The database only needs to preserve the exact configuration that was actually used for reproducibility and audit, for example:
 
 ```text
-version_evaluations
+run_config_snapshot
+    prompt_artifact_ref / prompt_hash
+    model_provider
+    model_identifier
+    model_settings
+    tool_policy
+    environment_policy
+    runtime_build_ref
+```
+
+A later software release or prompt change does not require a generic "agent version" hierarchy inside historical run data. A new run simply records the new exact configuration snapshot.
+
+Reusable platform definitions may still have deployment/release identifiers where operationally useful, but that is configuration management, not agent identity.
+
+### 24.4 Outputs are opaque branch products
+
+Independent branches produce sibling outputs:
+
+```text
+Task
+  -> Output A
+  -> Output B
+  -> Output C
+```
+
+These are not versions of one another.
+
+The control plane records an output using opaque references and boundary metadata such as:
+
+```text
+branch_outputs
     id
-    subject_type
-    subject_version_id
-    evaluation_kind
-    environment_baseline_id
-    branch_environment_instance_id
-    status
+    run_id
+    branch_id
+    output_kind
+    artifact_ref
+    artifact_hash
+    manifest_ref
     summary
-    result_artifact_ref
-    observed_by_actor_id
-    related_task_id
     created_at
 ```
 
-`subject_type` may identify an agent-profile version, model-profile version, tool version, environment-adapter version, candidate revision, solution version, component version, or another explicitly supported immutable version family.
+The artifact may itself contain a Git repository, database, document set, container image, configuration bundle, or another representation chosen by the agent/environment adapter.
 
-Examples:
+Council does not need to understand the artifact's internal history in order to compare or promote it.
 
-```text
-Model profile v2
-  -> evaluation: production-like CRM test
-  -> result: failed
-  -> reason/result artifact: excessive tool-call timeout rate
+### 24.5 Revisions remain agent-owned
 
-Model profile v3
-  -> evaluation: same baseline/test plan
-  -> result: passed
-  -> result artifact: successful run report
-```
-
-The immutable version itself remains unchanged.
-
-### 24.6 Failure and success must be contextual
-
-"Version 2 failed" is incomplete unless Council can answer:
-
-- failed at what;
-- in which environment/baseline;
-- under which test/validation procedure;
-- with which inputs;
-- at what time;
-- compared with which version or expectation.
-
-Therefore evaluations always point to the relevant environment/test/task context where applicable.
-
-A version may pass in one environment and fail in another without contradiction.
-
-### 24.7 Exact historical comparison
-
-To support backtracking such as "why did v2 fail while v3 worked?", the system must preserve:
-
-1. exact immutable definitions for v2 and v3;
-2. an explicit change relation or previous-version link;
-3. human-readable change summary/reason;
-4. comparable evaluation records;
-5. environment/baseline identity;
-6. retained test/result artifacts where needed;
-7. any challenge, user request, or discovered constraint that motivated v3.
-
-This allows deterministic reconstruction without asking an AI to invent a retrospective explanation.
-
-### 24.8 Claims and assumptions preserve proposition identity
-
-Corrections, qualification, narrowing, and refinement preserve the same stable claim/assumption identity and create a new semantic version.
-
-A materially different proposition creates a new stable identity with an explicit derivation relationship rather than pretending an unrelated statement is the next version of the old one.
-
-### 24.9 Publications reference exact versions
-
-Historical publications reference exact immutable versions/snapshots, never only moving stable identities.
-
-A publication that exposed claim C17 version 3 continues to point to C17:v3 even if C17 later reaches version 7.
-
-### 24.10 Source retrievals are distinct from source versions
-
-Retrieval attempts are not source versions.
-
-A source may be retrieved repeatedly with identical content:
+If an agent revises its own output after cross-examination, Council may record a simple relation such as:
 
 ```text
-10:00 -> success -> content hash ABC -> source version 1
-11:00 -> success -> content hash ABC -> source version 1
-12:00 -> retrieval failed -> no source version
-13:00 -> success -> content hash XYZ -> source version 2
+Output B2
+    supersedes_output_id = B1
 ```
 
-Use append-only `source_retrievals` to record each attempt and link successful retrievals to the exact retained `source_version`.
+This relation exists so the control plane knows which published artifact is current and can preserve audit/provenance.
 
-A failed retrieval, an empty result, and unchanged content remain distinct facts.
+It does not require the agent to use Council's revision model internally. Inside the branch the agent may have produced B2 using commits, copied directories, database migrations, generated files, or any other method.
 
-### 24.11 Candidate revisions
+### 24.6 Environment state is captured at the boundary
 
-A candidate revision is itself an immutable implementation snapshot. A branch provides the stable lineage:
+The database does not mirror every file/program on the user's PC or inside the branch.
 
-```text
-Branch B
-  -> Candidate B-1
-  -> Candidate B-2
-  -> Candidate B-3
-```
+It records the execution-relevant environment specification and the adapter/baseline used to reproduce it.
 
-Candidate content freezes when captured. Selection, publication, validation, supersession, and promotion are separate records/state transitions around that immutable candidate rather than edits to its implementation content.
+Sensitive environment variables are not stored as plaintext. Persist only:
+
+- variable names where needed;
+- classifications/relevance;
+- hashes/fingerprints where useful;
+- secret-store references for values that must be made available;
+- non-secret values only when policy permits.
+
+The branch environment receives the effective values at execution time through the controlled environment adapter/secret boundary.
+
+### 24.7 Disposable means disposable
+
+When the user accepts the work as complete, Council may destroy the branch environment.
+
+Before destruction, the control plane retains only the boundary artifacts required by policy:
+
+- selected/final output artifact;
+- output manifest/hash;
+- required published comparisons or review records;
+- selection/promotion history;
+- required validation results;
+- environment baseline/fidelity record;
+- audit/recovery records required by retention policy;
+- optional archive bundle.
+
+Everything else inside the sandbox can disappear.
+
+### 24.8 Consequence for the earlier schema draft
+
+The earlier Part 3 draft intentionally over-specified claims, assumptions, analysis steps, candidate-version families, and generic semantic-version machinery.
+
+Those structures are **not automatically production requirements**.
+
+They remain candidates only where a Council-level feature demonstrably needs durable cross-branch semantics. They must not be used to force agents' private implementation processes into a central schema.
+
+Before Part 3 approval, the schema must be pruned using this rule:
+
+> If a record exists only to describe how an agent chose to work inside its sandbox, it does not belong in the Council control-plane database.
+
