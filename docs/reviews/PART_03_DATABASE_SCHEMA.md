@@ -69,9 +69,20 @@ During the independent phase:
 - workers inherit their parent member's repository/environment;
 - another member cannot read that repository's unpublished work.
 
-At the publication/cross-examination boundary, repository visibility may be opened to the other council members.
+At the publication/cross-examination boundary, peer access is opened only after every member has independently declared its initial implementation complete.
 
-After that point, peers may inspect the published/live repository state as allowed by the Council protocol.
+The opening can be triggered in either of two ways:
+
+1. the orchestrator issues the repository-access command automatically when the completion gate is satisfied; or
+2. an agent requests the same operation through an allowed capability.
+
+In both cases, the trusted control plane performs the actual GitHub permission change. The agent does not gain unrestricted authority to bypass the completion gate.
+
+The normal peer-review mechanism keeps the repositories private and grants the other Council GitHub accounts read access. Literal GitHub `PUBLIC` visibility is reserved for projects the user explicitly intends to publish publicly; it is not required merely so peer agents can inspect one another's work.
+
+Before the completion gate, the sandbox/GitHub credential scope must prevent a member from granting peer access or changing repository visibility on its own. After the gate, that capability may be exposed.
+
+After peer access opens, members may inspect the live repositories, compare implementations, challenge decisions, continue work in their own repositories, and publish further changes.
 
 This gives us both:
 
