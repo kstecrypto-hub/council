@@ -1083,3 +1083,180 @@ Before Part 3 can be approved, the remaining database-design decisions must be r
 - final review of table necessity so the runtime schema does not become over-modeled before implementation evidence exists.
 
 No Part 3 approval is implied until these items are discussed and explicitly accepted.
+
+## 24. Stable identity, immutable versions, and version history
+
+Part 3 distinguishes three different persistence concepts. They must not share ambiguous "version" semantics.
+
+### 24.1 Stable identities with immutable semantic versions
+
+The following families use a stable parent identity plus immutable child versions:
+
+- agent profiles;
+- model profiles;
+- tool definitions;
+- environment adapters;
+- sources;
+- claims;
+- assumptions;
+- run configuration;
+- solutions;
+- reusable components.
+
+A semantic `version_number` identifies an exact historical definition. Once created, its semantic content cannot be edited in place.
+
+### 24.2 Immutable events/snapshots
+
+Some records already represent one exact occurrence and therefore do not need a parent/version family:
+
+- publications;
+- challenges and challenge responses;
+- analysis steps;
+- tool invocations;
+- model invocations;
+- candidate validations;
+- environment-fidelity observations;
+- promotion operations;
+- runtime events.
+
+Corrections create a new related record rather than rewriting the original occurrence.
+
+### 24.3 Mutable control rows
+
+Operational state holders such as tasks, runs, jobs, branches, sessions, environment instances, and promotions may update over time.
+
+Their optimistic concurrency field is named `row_version`, never `version_number`.
+
+`row_version` is only a concurrency token. It has no semantic or historical meaning.
+
+### 24.4 Version-definition record
+
+Every immutable semantic version must be self-describing enough for a human operator to reconstruct exactly what that version represented without asking an AI model.
+
+Each semantic version family therefore includes, either directly or through a common linked record, at least:
+
+- stable parent identity;
+- semantic version number;
+- exact immutable definition/content or artifact reference;
+- normalized content hash;
+- `created_at`;
+- `created_by_actor_id` or authenticated subject;
+- previous semantic version id when applicable;
+- creation reason;
+- change summary;
+- source of the change, such as user instruction, challenge, environment discovery, migration, model/profile update, or manual correction.
+
+This is operational/audit metadata, not model memory.
+
+### 24.5 Version outcomes are separate from version definitions
+
+A version must not be mutated later to say "failed" or "worked."
+
+Instead, observations about how a version behaved are append-only records.
+
+Use a generic conceptual family such as:
+
+```text
+version_evaluations
+    id
+    subject_type
+    subject_version_id
+    evaluation_kind
+    environment_baseline_id
+    branch_environment_instance_id
+    status
+    summary
+    result_artifact_ref
+    observed_by_actor_id
+    related_task_id
+    created_at
+```
+
+`subject_type` may identify an agent-profile version, model-profile version, tool version, environment-adapter version, candidate revision, solution version, component version, or another explicitly supported immutable version family.
+
+Examples:
+
+```text
+Model profile v2
+  -> evaluation: production-like CRM test
+  -> result: failed
+  -> reason/result artifact: excessive tool-call timeout rate
+
+Model profile v3
+  -> evaluation: same baseline/test plan
+  -> result: passed
+  -> result artifact: successful run report
+```
+
+The immutable version itself remains unchanged.
+
+### 24.6 Failure and success must be contextual
+
+"Version 2 failed" is incomplete unless Council can answer:
+
+- failed at what;
+- in which environment/baseline;
+- under which test/validation procedure;
+- with which inputs;
+- at what time;
+- compared with which version or expectation.
+
+Therefore evaluations always point to the relevant environment/test/task context where applicable.
+
+A version may pass in one environment and fail in another without contradiction.
+
+### 24.7 Exact historical comparison
+
+To support backtracking such as "why did v2 fail while v3 worked?", the system must preserve:
+
+1. exact immutable definitions for v2 and v3;
+2. an explicit change relation or previous-version link;
+3. human-readable change summary/reason;
+4. comparable evaluation records;
+5. environment/baseline identity;
+6. retained test/result artifacts where needed;
+7. any challenge, user request, or discovered constraint that motivated v3.
+
+This allows deterministic reconstruction without asking an AI to invent a retrospective explanation.
+
+### 24.8 Claims and assumptions preserve proposition identity
+
+Corrections, qualification, narrowing, and refinement preserve the same stable claim/assumption identity and create a new semantic version.
+
+A materially different proposition creates a new stable identity with an explicit derivation relationship rather than pretending an unrelated statement is the next version of the old one.
+
+### 24.9 Publications reference exact versions
+
+Historical publications reference exact immutable versions/snapshots, never only moving stable identities.
+
+A publication that exposed claim C17 version 3 continues to point to C17:v3 even if C17 later reaches version 7.
+
+### 24.10 Source retrievals are distinct from source versions
+
+Retrieval attempts are not source versions.
+
+A source may be retrieved repeatedly with identical content:
+
+```text
+10:00 -> success -> content hash ABC -> source version 1
+11:00 -> success -> content hash ABC -> source version 1
+12:00 -> retrieval failed -> no source version
+13:00 -> success -> content hash XYZ -> source version 2
+```
+
+Use append-only `source_retrievals` to record each attempt and link successful retrievals to the exact retained `source_version`.
+
+A failed retrieval, an empty result, and unchanged content remain distinct facts.
+
+### 24.11 Candidate revisions
+
+A candidate revision is itself an immutable implementation snapshot. A branch provides the stable lineage:
+
+```text
+Branch B
+  -> Candidate B-1
+  -> Candidate B-2
+  -> Candidate B-3
+```
+
+Candidate content freezes when captured. Selection, publication, validation, supersession, and promotion are separate records/state transitions around that immutable candidate rather than edits to its implementation content.
