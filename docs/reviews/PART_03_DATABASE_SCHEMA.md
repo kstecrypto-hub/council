@@ -1,1259 +1,422 @@
-# Part 3 of 15 — Durable Data Model, Runtime Retention & Solution Registry
+# Part 3 of 15 — Minimal Durable Schema and Repository-Based Agent Work
 
-**Status:** active Part 3 design; schema/storage model drafted, Part 3 not yet approved.  
+**Status:** active Part 3 design; not yet approved.  
 **Branch:** `design/code-level-implementation`.  
-**Authority:** this document refines Part 3 of [CODE_IMPLEMENTATION_PLAN.md](../CODE_IMPLEMENTATION_PLAN.md) using the approved Part 1 runtime model and Part 2 repository/environment boundaries.
+**Authority:** this document replaces the earlier over-specified Part 3 schema draft. Parts 1-2 remain authoritative.
 
-## 1. Storage split
+## 1. Core decision
 
-Council uses three durable storage classes with different lifecycles.
+Council's database is **not** a model of how agents build things.
 
-### 1.1 `council_runtime` PostgreSQL database
+Each council member receives:
 
-Purpose: active and recoverable Council operation.
+1. an isolated execution environment/sandbox;
+2. its own repository for the run;
+3. the tools/capabilities granted to that member.
 
-It stores:
+The agent is free to organize its work inside that environment however it decides.
 
-- platform configuration required to operate agents/tools/models/environment adapters;
-- active/recent runs;
-- agents, sessions, workers, tasks and jobs;
-- branch/candidate/promotion control records;
-- evidence, claims, publications and review records;
-- tool/model/environment operation metadata;
-- events, idempotency and recovery state.
+Council constrains the boundary around the sandbox through code and infrastructure, not through prompt text or a relational schema describing the agent's internal workflow.
 
-It is **not** the permanent catalogue of every product Council has ever built.
+The central database stores only durable Council configuration and the minimum control metadata required to recover and operate a run.
 
-### 1.2 `solution_registry` PostgreSQL database
+## 2. Repository is the durable work surface
 
-Purpose: long-term reusable organizational memory.
+Each independent council member has its own repository for the run.
 
-It stores searchable metadata about:
+Conceptually:
 
-- complete validated solutions;
-- solution versions;
-- reusable components;
-- capabilities;
-- environment requirements;
-- integrations;
-- validation evidence;
-- artifacts/repository references;
-- lineage/reuse relationships;
-- reuse/access scope.
+```text
+                 common baseline
+                       |
+             +---------+---------+
+             |         |         |
+          Agent A   Agent B   Agent C
+           repo A     repo B     repo C
+             |         |         |
+          sandbox A sandbox B sandbox C
+```
 
-Before a new build branches into independent council environments, Council queries this registry for an existing solution or reusable component set.
+The repository is where an agent publishes the work it wants to survive, be inspected, or be discussed by other agents.
 
-Novelty/originality is not a selection criterion. A close validated solution should be reused aggressively unless a concrete requirement or environment incompatibility makes it unsuitable.
+The repository may contain any structure the agent chooses, including:
 
-### 1.3 Artifact/object storage
+- source code;
+- configuration;
+- migrations;
+- tests;
+- documentation;
+- generated files that should persist;
+- implementation notes;
+- experiment records;
+- commits/branches/tags if the agent chooses to use them.
 
-Large or immutable payloads stay outside PostgreSQL:
+Council does not require a particular internal repository layout beyond whatever minimum bootstrapping is necessary to operate the environment.
 
-- source files;
-- retained source snapshots;
-- repository bundles;
-- diffs/patch sets;
-- large tool outputs;
-- model transcripts where retention is required;
-- test logs;
-- environment snapshots/images where retained;
-- run archive bundles;
-- candidate build artifacts.
+## 3. Independence and repository visibility
 
-PostgreSQL stores identity, hashes, metadata, access scope and artifact references.
+The approved independent-start requirement still applies.
 
-### 1.4 Physical deployment
+During the independent phase:
 
-Initially both PostgreSQL databases may live in the same PostgreSQL cluster, but they use separate databases and credentials.
+- each member can read its own repository;
+- workers inherit their parent member's repository/environment;
+- another member cannot read that repository's unpublished work.
 
-This preserves independent retention/security boundaries and prevents accidental cross-database joins from becoming part of application semantics.
+At the publication/cross-examination boundary, repository visibility may be opened to the other council members.
 
-Application ports mediate access to the Solution Registry.
+After that point, peers may inspect the published/live repository state as allowed by the Council protocol.
 
-## 2. Common relational conventions
+This gives us both:
 
-Unless a table has a strong reason not to:
+1. genuine independent initial investigation; and
+2. repository-based collaboration once discussion begins.
 
-- primary keys are UUIDs generated by the application;
-- timestamps use `timestamptz`;
-- immutable version tables never update content in place;
-- status fields use text plus explicit `CHECK` constraints rather than database enums that are difficult to evolve;
-- optimistic concurrency uses integer `version` / expected-version checks where mutable control rows exist;
-- hashes are stored with algorithm identifiers;
-- large payloads use artifact references;
-- secrets are never stored directly: only backend secret-reference identifiers;
-- all user/organization-owned roots carry `workspace_id`;
-- run-scoped tables carry `run_id`;
-- branch-private records carry `branch_id`;
-- foreign keys use explicit `ON DELETE` behavior; accidental unrestricted cascade from workspace roots is forbidden.
+If the product design later intentionally removes the independent-start phase, that is a Council-protocol change, not a database change.
 
-## 3. Persistent platform configuration
+## 4. Sandbox enforcement is structural
 
-These tables survive across projects because they describe Council itself rather than historical project execution.
+Security and isolation cannot depend on instructions such as "do not access production."
 
-### 3.1 `workspaces`
+The sandbox/environment builder enforces the actual boundary.
 
-| Column | Notes |
+Depending on the selected environment mechanism, enforcement can include:
+
+- isolated filesystem/mounts;
+- separate repository credentials scoped to the member repository;
+- network namespace/rules;
+- production-network denial;
+- explicit allowlisted external services;
+- secret injection without exposing secret-store credentials;
+- CPU/RAM/disk/process limits;
+- VM/container/native-host isolation as required by fidelity;
+- no Docker/socket/host-control access unless intentionally granted;
+- canonical environment mounted/readable only when required and writable only through the promotion path;
+- device/driver/hardware constraints where relevant;
+- cleanup/destruction behavior.
+
+Prompts may describe the rules to the model for usability, but the prompt is not the security mechanism.
+
+## 5. What the database is for
+
+The main Council database has two responsibilities.
+
+### 5.1 Persistent Council configuration
+
+Configuration that is reused across runs:
+
+- agent prompt/template definitions;
+- model configuration;
+- MCP server definitions;
+- tool/capability configuration;
+- secret references;
+- Council/run presets where useful.
+
+### 5.2 Minimal durable run manifest
+
+A small amount of runtime state is required so an orchestrator crash/restart does not make an active run unknowable.
+
+The manifest records only boundary/control information such as:
+
+- run identity and objective;
+- common baseline reference/fingerprint;
+- which logical members belong to the run;
+- each member's prompt/model/tool configuration;
+- each member's repository reference;
+- each member's sandbox/environment instance reference;
+- current high-level lifecycle state;
+- repository visibility/publication phase;
+- selected output/repository when one is chosen;
+- user acceptance/cleanup state.
+
+The manifest does **not** describe how the agent engineered the solution inside its sandbox.
+
+## 6. Proposed minimal Council database
+
+### 6.1 `agent_prompts`
+
+Stores reusable prompts/instructions.
+
+| Column | Purpose |
 |---|---|
-| `id` | PK |
-| `name` | display name |
-| `status` | active/suspended |
-| `created_at` | timestamp |
+| `id` | primary key |
+| `name` | human-readable identity |
+| `prompt_text` or `artifact_ref` | exact prompt |
+| `content_hash` | reproducibility |
+| `created_at` | audit |
+| `status` | active/retired |
 
-### 3.2 `workspace_memberships`
+A run records the exact prompt id/hash it actually used.
 
-| Column | Notes |
+Different agents may reference the same prompt.
+
+Agent A and Agent B are not versions of each other.
+
+### 6.2 `model_configs`
+
+| Column | Purpose |
 |---|---|
-| `workspace_id` | FK |
-| `actor_subject` | authenticated external subject id |
-| `role` | workspace role |
-| `created_at` | timestamp |
-
-Unique: `(workspace_id, actor_subject)`.
-
-### 3.3 `agent_profiles`
-
-Reusable seat/worker configuration, not a run-specific logical agent.
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `workspace_id` | nullable for platform default |
-| `name` | profile name |
-| `profile_version` | monotonic version |
-| `default_model_profile_id` | FK |
-| `prompt_bundle_ref` | versioned prompt artifact/reference |
-| `policy_json` | bounded profile configuration |
-| `created_at` | timestamp |
-
-### 3.4 `model_profiles`
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `workspace_id` | nullable for platform default |
-| `provider_key` | e.g. deepseek/openai/scripted |
-| `model_key` | provider model identifier |
-| `settings_json` | non-secret defaults |
+| `id` | primary key |
+| `provider` | provider identifier |
+| `model` | model identifier |
+| `settings_json` | non-secret model settings |
 | `secret_ref` | backend secret-store reference |
+| `created_at` | audit |
+| `status` | active/retired |
+
+### 6.3 `mcp_servers`
+
+| Column | Purpose |
+|---|---|
+| `id` | primary key |
+| `name` | server identity |
+| `transport` | stdio/http/etc. as supported |
+| `endpoint_config_json` | non-secret connection config |
+| `secret_ref` | optional secret-store reference |
 | `status` | active/disabled |
-| `created_at` | timestamp |
+| `created_at` | audit |
 
-### 3.5 `tool_definitions`
+MCP is a capability transport. It is not the database.
 
-Stable Council-visible tool identity.
+### 6.4 `tool_configs`
 
-| Column | Notes |
+Council may expose native tools, MCP-backed tools, APIs, database connectors, or environment capabilities through a common tool gateway.
+
+| Column | Purpose |
 |---|---|
-| `id` | PK |
-| `workspace_id` | nullable for platform tool |
-| `tool_key` | stable unique key |
-| `name` | display name |
+| `id` | primary key |
+| `name` | stable Council-visible tool name |
+| `backend_kind` | mcp/native/http/database/environment/etc. |
+| `mcp_server_id` | nullable FK when MCP-backed |
+| `tool_key` | remote/native tool identifier |
+| `policy_json` | non-secret capability/scoping config |
 | `status` | active/disabled |
-| `created_at` | timestamp |
 
-### 3.6 `tool_versions`
+Exact input/output schemas may be discovered from the backend or cached where useful; Part 3 does not require duplicating every remote schema in relational tables.
 
-| Column | Notes |
+### 6.5 `council_presets` (optional)
+
+Reusable combinations of:
+
+- number of council members;
+- prompt ids;
+- default model configs;
+- tool sets;
+- budget/resource preset.
+
+This is convenience configuration, not a requirement for agent independence.
+
+### 6.6 `runs`
+
+| Column | Purpose |
 |---|---|
-| `id` | PK |
-| `tool_definition_id` | FK |
-| `version_number` | immutable version |
-| `transport_kind` | native/mcp/http/database/environment/other |
-| `input_schema_json` | typed tool schema |
-| `output_schema_json` | typed result schema |
-| `execution_class` | read/branch_write/external_write/etc. |
-| `endpoint_ref` | non-secret endpoint/config reference |
-| `secret_ref` | secret-store reference if required |
-| `created_at` | timestamp |
-
-Unique: `(tool_definition_id, version_number)`.
-
-An MCP server is therefore one possible **transport/implementation** of a tool. It is not the database and does not replace these records.
-
-### 3.7 `tool_capabilities`
-
-| Column | Notes |
-|---|---|
-| `tool_version_id` | FK |
-| `capability_key` | e.g. repository.read |
-| `constraints_json` | bounded static constraints |
-
-Unique: `(tool_version_id, capability_key)`.
-
-### 3.8 `environment_adapter_definitions`
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `adapter_key` | git, postgres-snapshot, windows-vm, document-set, etc. |
-| `version_number` | adapter contract version |
-| `capabilities_json` | inspect/branch/write/test/diff/promote/etc. |
-| `configuration_schema_json` | non-secret config schema |
-| `status` | active/disabled |
-| `created_at` | timestamp |
-
-## 4. Run identity and actors
-
-### 4.1 `runs`
-
-A run is an active investigation/build engagement, not a permanent product catalogue entry.
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `workspace_id` | FK |
-| `objective` | user objective |
-| `status` | created/running/waiting/awaiting_user_acceptance/completed/archived/purging/failed |
-| `current_config_version_id` | FK |
-| `created_by_subject` | authenticated user subject |
-| `created_at` | timestamp |
-| `completed_at` | nullable |
-| `retention_until` | nullable hot-data retention deadline |
-
-### 4.2 `run_config_versions`
-
-Immutable configuration snapshots.
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `run_id` | FK |
-| `version_number` | monotonic |
-| `config_json` | council size, policies, budgets, evidence profile, etc. |
-| `created_by_subject` | creator |
-| `created_at` | timestamp |
-
-Unique: `(run_id, version_number)`.
-
-### 4.3 `actors`
-
-Run-scoped logical identities.
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `run_id` | FK |
-| `branch_id` | nullable for user/system actor |
-| `kind` | council_member/worker/user/system |
-| `parent_actor_id` | worker parent when applicable |
-| `agent_profile_id` | nullable FK |
-| `display_name` | display label |
-| `status` | active/finished/failed |
-| `created_at` | timestamp |
-
-Workers are not independent council branches; their `branch_id` must equal the parent member's branch.
-
-### 4.4 `agent_sessions`
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `actor_id` | FK |
-| `session_number` | monotonic per actor |
-| `model_profile_id` | FK |
-| `provider_session_ref` | opaque continuation reference, never a credential |
-| `status` | active/rolled_over/closed/failed |
-| `started_at` | timestamp |
-| `ended_at` | nullable |
-
-Unique: `(actor_id, session_number)`.
-
-A fresh session is continuation of the same logical actor, not a new independent reviewer.
-
-## 5. Generic record identity and branch privacy
-
-### 5.1 `records`
-
-A small identity registry for graph-addressable/version-addressable objects.
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `workspace_id` | FK |
-| `run_id` | FK |
-| `branch_id` | nullable for shared/canonical records |
-| `record_type` | claim_version/evidence/assumption_version/challenge/candidate/etc. |
-| `created_by_actor_id` | FK |
-| `created_at` | timestamp |
-
-The table stores identity/scope only; it is **not** a second copy of record content.
-
-### Privacy rule
-
-A branch-private record remains branch-private forever. Publication does not flip a visibility bit on the original row.
-
-Instead, an immutable `publication_items` record explicitly exposes a specific version/record to the run.
-
-Therefore other branches can only see:
-
-1. shared baseline/source records they are authorized for;
-2. their own branch-private records;
-3. specific records explicitly included in a publication.
-
-This prevents private workspace leakage through mutable visibility flags.
-
-## 6. Environment and branch schema
-
-### 6.1 `canonical_targets`
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `run_id` | FK |
-| `adapter_definition_id` | FK |
-| `target_kind` | repository/database/document/workflow/system/etc. |
-| `target_ref` | opaque adapter reference |
-| `current_version_ref` | canonical version/fingerprint |
-| `created_at` | timestamp |
-
-### 6.2 `environment_specs`
-
-Versioned execution-relevant environment descriptions.
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `run_id` | FK |
-| `canonical_target_id` | FK |
-| `version_number` | monotonic |
-| `spec_hash` | content fingerprint |
-| `created_by_actor_id` | FK/system |
-| `created_at` | timestamp |
-
-Unique: `(canonical_target_id, version_number)`.
-
-### 6.3 `environment_conditions`
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `environment_spec_id` | FK |
-| `category` | os/runtime/network/security/database/hardware/etc. |
-| `condition_key` | stable key |
-| `observed_value_json` | measured/discovered state |
-| `relevance` | required/possibly_relevant/irrelevant/unknown |
-| `rationale` | why it matters or does not |
-| `created_at` | timestamp |
-
-Unique: `(environment_spec_id, category, condition_key)`.
-
-### 6.4 `environment_baselines`
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `run_id` | FK |
-| `environment_spec_id` | FK |
-| `canonical_target_id` | FK |
-| `canonical_version_ref` | exact starting version |
-| `baseline_artifact_ref` | snapshot/manifest reference if applicable |
+| `id` | primary key |
+| `objective` | user's requested outcome |
+| `baseline_ref` | common input/environment baseline |
 | `baseline_hash` | immutable fingerprint |
-| `created_at` | timestamp |
+| `phase` | setup/independent/discussion/selection/awaiting_acceptance/closed |
+| `status` | active/paused/completed/failed |
+| `selected_member_id` | nullable |
+| `created_at` | creation |
+| `accepted_at` | nullable user acceptance |
+| `closed_at` | nullable cleanup completion |
 
-### 6.5 `branches`
+### 6.7 `run_members`
 
-| Column | Notes |
+One row per logical council member.
+
+| Column | Purpose |
 |---|---|
-| `id` | PK |
+| `id` | primary key |
 | `run_id` | FK |
-| `baseline_id` | FK |
-| `member_actor_id` | FK, unique per independent branch |
-| `status` | private/investigating/published/revising/finished |
-| `created_at` | timestamp |
-
-Each independent council member owns one branch. Workers inherit it.
-
-### 6.6 `branch_environment_instances`
-
-Disposable compute/environment instances.
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `branch_id` | FK |
-| `adapter_definition_id` | FK |
-| `instance_ref` | opaque container/VM/native/snapshot reference |
-| `status` | provisioning/active/stopped/destroying/destroyed/failed |
-| `created_at` | timestamp |
+| `member_key` | A/B/C/etc. |
+| `agent_prompt_id` | exact prompt used |
+| `model_config_id` | exact model config used |
+| `repo_ref` | repository identity/URL/connector reference |
+| `sandbox_ref` | current opaque environment instance reference |
+| `status` | provisioning/active/waiting/finished/failed/destroyed |
+| `created_at` | audit |
 | `destroyed_at` | nullable |
 
-Destroying the external instance does not delete this metadata until runtime retention cleanup.
+Workers do not need separate independent repositories unless an agent itself chooses to create them inside its environment. Council only needs to know workers separately if runtime/budget orchestration later requires it.
 
-### 6.7 `environment_fidelity_records`
+### 6.8 `run_member_tools`
 
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `branch_environment_instance_id` | FK |
-| `environment_condition_id` | FK |
-| `status` | reproduced/simulated/irrelevant/unreproducible/unknown |
-| `details_json` | implementation/limitation details |
-| `validated_at` | timestamp |
+Maps a member to the Council tool configurations/capabilities it is allowed to access.
 
-Unique: `(branch_environment_instance_id, environment_condition_id)`.
+This is authorization metadata, not a description of how the agent uses those tools.
 
-### 6.8 `candidate_revisions`
+### 6.9 `repo_visibility`
 
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `record_id` | unique FK to records |
-| `branch_id` | FK |
-| `baseline_id` | FK |
-| `revision_number` | monotonic per branch |
-| `change_artifact_ref` | patch/bundle/config diff |
-| `summary` | candidate summary |
-| `assumptions_json` | bounded convenience summary; canonical assumptions remain records |
-| `limitations_json` | declared limitations |
-| `status` | draft/frozen/published/superseded/selected/rejected |
-| `created_by_actor_id` | FK |
-| `created_at` | timestamp |
+Records the cross-agent visibility state of a member repository when the Council protocol requires an independent phase.
 
-Unique: `(branch_id, revision_number)`.
-
-### 6.9 `candidate_validations`
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `candidate_revision_id` | FK |
-| `validation_kind` | test/build/security/fidelity/performance/etc. |
-| `status` | passed/failed/partial/not_run/unknown |
-| `result_artifact_ref` | retained result |
-| `summary` | bounded summary |
-| `created_at` | timestamp |
-
-### 6.10 `candidate_selections`
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `run_id` | FK |
-| `candidate_revision_id` | FK |
-| `selected_by_actor_id` | user/council decision actor |
-| `selection_reason` | recorded reason |
-| `created_at` | timestamp |
-
-Only one active selection per selection stage unless the run explicitly allows a multi-candidate result.
-
-### 6.11 `promotions`
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `run_id` | FK |
-| `candidate_selection_id` | FK |
-| `canonical_target_id` | FK |
-| `expected_canonical_version_ref` | stale-target guard |
-| `actual_start_version_ref` | version observed at promotion |
-| `result_version_ref` | resulting canonical version |
-| `status` | pending/validating/rebase_required/applying/succeeded/failed/unknown_outcome |
-| `validation_artifact_ref` | operational validation |
-| `created_at` | timestamp |
-| `completed_at` | nullable |
-
-A promotion may not proceed when the expected canonical version is stale without explicit rebase/revalidation.
-
-### 6.12 `promotion_operations`
-
-Append-only steps for recovery/audit of consequential canonical writes.
-
-## 7. User acceptance and disposable environment lifetime
-
-### 7.1 `run_approvals`
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `run_id` | FK |
-| `approval_kind` | work_accepted/continue_work/reopen |
-| `actor_subject` | authenticated user |
-| `candidate_revision_id` | nullable |
-| `notes` | optional |
-| `created_at` | timestamp |
-
-Branch environment instances are not automatically destroyed merely because a candidate was selected or promoted.
-
-Default lifecycle:
+Possible state:
 
 ```text
-running
-  -> selected/promoted if applicable
-  -> awaiting_user_acceptance
-  -> user records work_accepted
-  -> freeze required artifacts/provenance
-  -> register reusable solution if applicable
-  -> destroy branch environments
-  -> create archive manifest
-  -> expire/purge hot run data under retention policy
+OWNER_ONLY
+COUNCIL_READ
+SELECTED_FOR_PROMOTION
+CLOSED
 ```
 
-This preserves the branch environments for follow-up fixes until the user accepts the work as done.
+The actual permission is enforced by repository credentials/access control, not by trusting this row alone.
 
-## 8. Work, recovery and idempotency
+### 6.10 `run_outputs`
 
-### 8.1 `tasks`
+Council treats an agent's published result as an opaque output.
 
-| Column | Notes |
+| Column | Purpose |
 |---|---|
-| `id` | PK |
+| `id` | primary key |
 | `run_id` | FK |
-| `branch_id` | nullable for shared administrative work |
-| `owner_actor_id` | FK |
-| `parent_task_id` | nullable self FK |
-| `task_kind` | investigation/delegated/review/environment/etc. |
-| `objective` | bounded objective |
-| `status` | ready/running/waiting/paused/finished/failed/unknown_outcome |
-| `version` | optimistic concurrency integer |
-| `created_at` | timestamp |
-| `updated_at` | timestamp |
+| `run_member_id` | producer |
+| `repo_ref` | repository containing the output |
+| `commit_ref` | exact published state if Git-backed |
+| `artifact_ref` | optional non-repo output |
+| `summary` | bounded human/agent summary |
+| `supersedes_output_id` | nullable prior published output from same member |
+| `published_at` | timestamp |
 
-### 8.2 `task_dependencies`
+A, B, C outputs are siblings, not versions.
 
-Unique: `(task_id, depends_on_task_id)`; self-dependency forbidden.
+If B publishes a later state, B2 may simply supersede B1.
 
-Cycle prevention is application-enforced and tested.
+Council does not model B's internal commits as database entities.
 
-### 8.3 `jobs`
+### 6.11 `run_selection`
 
-Executor-level durable work claims. Detailed leases/fencing are finalized in Part 7.
+Records which published output/repository was selected for promotion and by whom/what Council decision process.
 
-### 8.4 `operations`
+### 6.12 `run_cleanup`
 
-Every consequential provider/tool/environment operation gets an operation identity and outcome state.
+Small durable cleanup state so environment/repository destruction can be retried safely after user acceptance.
 
-### 8.5 `command_receipts`
+## 7. What is explicitly not in the central database
 
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `run_id` | FK |
-| `actor_id` | FK |
-| `idempotency_key` | caller-supplied/generated |
-| `command_type` | typed command |
-| `request_hash` | normalized payload hash |
-| `status` | accepted/rejected/in_progress/committed/unknown_outcome |
-| `result_record_id` | nullable |
-| `rejection_code` | nullable structured error code |
-| `rejection_details_json` | nullable |
-| `created_at` | timestamp |
+Unless a later Council-level feature proves it is required, the central DB does not need tables for:
 
-Unique: `(actor_id, idempotency_key)`.
+- agent-local claims;
+- assumptions;
+- analysis steps;
+- internal candidate revisions;
+- local Git commits;
+- internal test cases;
+- intermediate files;
+- agent-local task breakdown;
+- scratch notes;
+- private graph structure;
+- implementation dependencies discovered only inside one sandbox;
+- internal database schemas created by an agent;
+- per-file change history.
 
-The same idempotency key with a different request hash is rejected.
+Those belong to the agent's own repository/sandbox or to an artifact it explicitly publishes.
 
-## 9. Tool and model execution records
+## 8. Repositories versus database responsibilities
 
-### 9.1 `run_tool_bindings`
+```text
+DATABASE
+-------
+Who is running?
+Which prompt/model/tools?
+Which repo belongs to whom?
+Which sandbox belongs to whom?
+What baseline did they start from?
+Who may read which repo?
+Which published output was selected?
+Has the user accepted the work?
+Can cleanup/promotion safely proceed?
 
-Connect a run to an approved tool version and environment-specific configuration.
+REPOSITORY / SANDBOX
+--------------------
+How did the agent solve the problem?
+What files did it create?
+What architecture did it choose?
+How did it organize versions/commits?
+What tests did it invent?
+What local services/DBs did it create?
+What experiments did it run?
+```
 
-No raw secret is stored.
+## 9. Solution Registry remains separate
 
-### 9.2 `tool_grants`
+The previously agreed Solution Registry is still useful, but it should remain much smaller than the old Part 3 draft implied.
 
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `run_id` | FK |
-| `actor_id` | nullable for branch/run-wide grant |
-| `branch_id` | nullable |
-| `tool_version_id` | FK |
-| `capability_key` | allowed capability |
-| `scope_json` | resource limits/scope |
-| `expires_at` | nullable |
+Its purpose is to answer:
 
-### 9.3 `tool_invocations`
+> Have we already built something close enough to reuse?
 
-Append-only invocation metadata:
+A minimal registry can store:
 
-- run/branch/actor/task;
-- tool version;
-- operation id;
-- normalized input hash/artifact;
-- result hash/artifact;
-- status;
-- timestamps;
-- provenance metadata.
-
-### 9.4 `model_invocations`
-
-Append-only model call metadata:
-
-- actor/session/task;
-- model profile/provider/model;
-- operation id;
-- token/cost accounting;
-- request/response artifact refs if retained;
-- provider continuation metadata;
-- outcome/uncertainty state.
-
-## 10. Sources and evidence
-
-### 10.1 `sources`
-
-Stable source identity.
-
-### 10.2 `source_versions`
-
-Immutable retained versions including:
-
-- source id;
-- version number;
-- origin locator;
-- content hash;
-- artifact reference;
-- retrieval timestamp;
-- extraction metadata;
-- access classification.
-
-### 10.3 `run_sources`
-
-Binds authorized source versions to a run and access scope.
-
-### 10.4 `evidence_items`
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `record_id` | unique FK to records |
-| `source_version_id` | FK |
-| `branch_id` | nullable for shared baseline evidence |
-| `locator_kind` | text/page/dataset/tool_result/etc. |
-| `locator_json` | typed locator |
-| `content_artifact_ref` | exact retained extract/result when applicable |
-| `created_by_actor_id` | FK |
-| `created_at` | timestamp |
-
-### 10.5 `origin_links`
-
-Tracks shared underlying studies/datasets/reports between source versions/evidence. Interpretive links remain attributed and reviewable.
-
-## 11. Claims, assumptions and analysis
-
-### 11.1 `claims`
-
-Stable proposition identity:
+### `solutions`
 
 - id;
-- run_id;
-- branch_id;
-- owning_actor_id;
-- current_version_id;
-- created_at.
-
-### 11.2 `claim_versions`
-
-Immutable:
-
-- record_id;
-- claim_id;
-- version_number;
-- previous_version_id;
-- statement;
-- applicability_conditions;
-- claim_kind;
-- author_session_id;
-- created_at.
-
-Unique: `(claim_id, version_number)`.
-
-Previous version must belong to the same claim.
-
-### 11.3 `assumptions` and `assumption_versions`
-
-Same stable-identity/immutable-version pattern.
-
-### 11.4 `analysis_steps`
-
-Records observable analysis methods/outputs/limitations; it does not attempt to store hidden chain-of-thought.
-
-### 11.5 `analysis_inputs`
-
-Typed links from analysis steps to exact source/evidence/assumption/claim versions.
-
-### 11.6 `support_routes`
-
-A support route groups premises required together for one route of support.
-
-### 11.7 `route_premises`
-
-Links a route to exact premise record ids.
-
-Alternative routes remain separate.
-
-## 12. Review and publication
-
-### 12.1 `challenges`
-
-Targets an exact published record/version and records the objection, actor, evidence references and status.
-
-### 12.2 `challenge_responses`
-
-Immutable responses.
-
-### 12.3 `revision_decisions`
-
-Links an old version to a new version with explicit reasons and related challenges/evidence.
-
-Chronological adjacency alone never creates a causal revision relationship.
-
-### 12.4 `publications`
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `run_id` | FK |
-| `branch_id` | FK |
-| `publication_number` | monotonic per branch |
-| `publication_kind` | initial/candidate/revision/final/etc. |
-| `created_by_actor_id` | FK |
-| `created_at` | timestamp |
-
-Unique: `(branch_id, publication_number)`.
-
-### 12.5 `publication_items`
-
-| Column | Notes |
-|---|---|
-| `publication_id` | FK |
-| `record_id` | FK to records |
-| `item_role` | finding/claim/evidence/assumption/candidate/method/gap/etc. |
-
-Unique: `(publication_id, record_id, item_role)`.
-
-This is the explicit privacy crossing point for branch-derived state.
-
-### 12.6 `review_dispositions`
-
-Records accepted/narrowed/unresolved/rejected-for-stated-reason review outcomes without rewriting original claims/challenges.
-
-## 13. Context and checkpoints
-
-### 13.1 `context_packets`
-
-Metadata for a bounded context assembly:
-
-- run/branch/actor/session;
-- packet version;
-- build policy version;
-- token/size estimates;
-- artifact ref for rendered packet if retained;
-- created_at.
-
-### 13.2 `context_packet_items`
-
-Exact record ids and inclusion reasons.
-
-### 13.3 `session_checkpoints`
-
-Durable continuation references/checkpoints. Large checkpoint payloads live in artifact storage.
-
-Context is derived and disposable; authoritative claims/evidence do not live only in context packets.
-
-## 14. Events, outbox and graph projection
-
-### 14.1 `events`
-
-Append-only committed application events with:
-
-- global/run sequence;
-- event type;
-- actor;
-- subject record;
-- payload metadata;
-- timestamp.
-
-### 14.2 `outbox_messages`
-
-Transactional outbox records for asynchronous delivery/wakeup.
-
-### 14.3 `messages` and `message_deliveries`
-
-Explicit council communication/delivery records when message semantics are needed.
-
-### 14.4 `graph_edges_projection`
-
-A rebuildable projection over canonical records.
-
-It may contain:
-
-- source record id;
-- target record id;
-- edge kind;
-- attribution;
-- justification reference;
-- review state;
-- projection position.
-
-It is never the only copy of the underlying authoritative relationship.
-
-## 15. Budgets
-
-### 15.1 `budget_accounts`
-
-Run/branch budget envelopes.
-
-### 15.2 `budget_reservations`
-
-Temporary reservations for parallel model/tool/worker work.
-
-Exact admission/fairness behavior remains Part 7.
-
-## 16. Runtime archival and purge
-
-The hot runtime database is intentionally lifecycle managed.
-
-### 16.1 `run_archives`
-
-Small manifest records:
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `run_id` | original run id |
-| `workspace_id` | owner |
-| `archive_artifact_ref` | immutable archive bundle |
-| `archive_hash` | checksum |
-| `registry_solution_version_id` | nullable opaque UUID; no cross-db FK |
-| `created_at` | timestamp |
-| `purge_eligible_at` | timestamp |
-| `purged_at` | nullable |
-
-The archive bundle contains only what retention/audit policy requires.
-
-### 16.2 Purge behavior
-
-After user acceptance and successful archive/registry publication:
-
-1. external branch environments are destroyed;
-2. disposable context/rendered packets and temporary tool/model artifacts expire according to policy;
-3. run-scoped hot rows become purge eligible;
-4. large append-only operational data is removed from the runtime DB when retention expires;
-5. the Solution Registry entry remains independent of the deleted runtime execution history.
-
-Council therefore does **not** need to keep every completed project's entire operational history in its hot database.
-
-Partitioning of heavy append tables may be introduced when measured volume justifies it; it is not required merely because many table types exist.
-
-## 17. Solution Registry schema
-
-The registry is reuse-first organizational memory.
-
-### 17.1 `solutions`
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `owner_workspace_id` | originating owner |
-| `name` | solution name |
-| `solution_kind` | CRM/automation/platform/etc. |
-| `reuse_scope` | owner_only/workspace/org/template/explicit_grants |
-| `status` | active/deprecated/retired |
-| `current_version_id` | FK |
-| `created_at` | timestamp |
-
-### 17.2 `solution_versions`
-
-Immutable versions:
-
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `solution_id` | FK |
-| `version_number` | monotonic |
-| `derived_from_solution_version_id` | nullable |
-| `summary` | functional/technical summary |
-| `validation_state` | unvalidated/partial/validated/deprecated |
-| `source_run_archive_ref` | nullable provenance pointer |
-| `created_at` | timestamp |
-
-Unique: `(solution_id, version_number)`.
-
-### 17.3 `capabilities`
-
-Reusable capability vocabulary:
-
-- capability key;
-- human description;
-- optional parent capability.
-
-### 17.4 `solution_version_capabilities`
-
-| Column | Notes |
-|---|---|
-| `solution_version_id` | FK |
-| `capability_id` | FK |
-| `support_level` | full/partial/configurable |
-| `notes` | bounded notes |
-
-### 17.5 `components` and `component_versions`
-
-Reusable modules can exist independently of full solutions.
-
-Examples:
-
-- auth module;
-- calendar integration;
-- SQL Server adapter;
-- appointment workflow;
-- reporting UI.
-
-### 17.6 `solution_components`
-
-Links exact component versions into a solution version and records their role.
-
-### 17.7 `solution_environment_requirements`
-
-Structured environment assumptions/constraints:
-
-- OS/runtime;
-- database;
-- network;
-- identity;
-- integrations;
-- hardware;
-- scale;
-- security constraints.
-
-These are critical when deciding whether an old solution is truly reusable in a new user's environment.
-
-### 17.8 `solution_integrations`
-
-Records supported/required external systems and interface expectations.
-
-### 17.9 `solution_artifacts`
-
-References repositories, build artifacts, deployment manifests, documentation and templates.
-
-### 17.10 `solution_validations`
-
-Records what has actually been tested/observed:
-
-- validation type;
-- environment profile/reference;
-- scale/concurrency conditions;
-- status;
-- metrics summary;
-- retained result artifact;
-- tested_at.
-
-A previously deployed solution has evidence; the registry must preserve that advantage rather than treating it like an untested idea.
-
-### 17.11 `solution_lineage`
-
-Exact-version relationships:
-
-- derived_from;
-- reuses;
-- supersedes;
-- forked_from.
-
-### 17.12 `solution_access_grants`
-
-Explicit reuse/read grants when `reuse_scope` alone is insufficient.
-
-### 17.13 `solution_search_documents`
-
-A denormalized searchable text representation generated from:
-
-- description;
-- capabilities;
-- components;
-- integrations;
+- name;
+- summary;
+- solution kind/category;
+- current/recommended repo ref;
+- reuse/access scope;
+- status.
+
+### `solution_releases`
+
+Only when the same reusable product has materially changed over time and we actually need to distinguish releases:
+
+- solution id;
+- release identifier;
+- repo ref + commit/tag;
 - environment requirements;
-- known limitations.
+- validation summary/artifact refs;
+- created_at.
 
-PostgreSQL full-text search is sufficient as a baseline. Semantic embeddings may be added later without changing solution identity; no separate vector database is required by Part 3.
+No universal "version" system is required.
 
-## 18. Reuse before branching
+### `solution_capabilities`
 
-A new run performs a permission-scoped Solution Registry search before independent environment branches are created.
+Searchable capability tags/descriptions.
 
-### 18.1 `reuse_candidates` in `council_runtime`
+### `solution_environment_requirements`
 
-| Column | Notes |
-|---|---|
-| `id` | PK |
-| `run_id` | FK |
-| `registry_solution_version_id` | opaque UUID, no cross-db FK |
-| `match_summary_json` | requirement/capability/environment overlap |
-| `decision` | pending/use_as_base/use_components/reference_only/reject |
-| `decision_reason` | explicit rationale |
-| `created_at` | timestamp |
+Only the environment constraints needed to decide whether reuse is compatible.
 
-The council may:
+### `solution_components` (optional)
 
-- reuse the solution as-is;
-- use an existing solution version as the baseline and implement only the delta;
-- reuse selected component versions;
-- use it only as a known pattern;
-- reject it because of concrete mismatch.
+Reusable component references when component-level reuse proves useful in practice.
 
-Originality is never a rejection reason.
+The registry points to repositories/artifacts; it does not duplicate them into PostgreSQL.
 
-If an existing solution satisfies the request with only configuration/branding/small changes, Council should not rebuild it from scratch.
+## 10. Reuse flow
 
-## 19. Critical constraints
-
-At minimum the eventual migrations must enforce or support deterministic checks for:
-
-1. a version row cannot change its parent identity;
-2. version numbers are unique within stable identities;
-3. branch records belong to the same run as their branch;
-4. workers inherit their parent's branch;
-5. independent branches share the same run baseline unless an explicit rebaseline event is recorded;
-6. candidate revisions belong to their branch baseline;
-7. promotions target the selected candidate and guard the expected canonical version;
-8. private branch records are not surfaced cross-branch except through explicit publication;
-9. publication items reference records from the same run;
-10. command idempotency keys cannot be reused with different payload hashes;
-11. source/evidence references remain version exact;
-12. revision links cannot point between different stable claims/assumptions;
-13. canonical write adapters are not represented as ordinary agent tool grants;
-14. destroyed branch environments can never return to active without a new instance record;
-15. user acceptance is recorded before default cleanup destroys the final working environments;
-16. a Solution Registry version is immutable once published; a change creates a new version.
-
-## 20. Indexing baseline
-
-Initial indexes should prioritize actual access paths rather than indexing every column.
-
-Required families include:
-
-- all FK columns used in joins;
-- `(run_id, status)` on tasks/jobs/operations;
-- `(run_id, branch_id, created_at)` on branch-scoped records/events;
-- `(actor_id, session_number)`;
-- `(claim_id, version_number)`;
-- `(source_id, version_number)`;
-- `(branch_id, publication_number)`;
-- `(branch_id, revision_number)` for candidates;
-- `(run_id, created_at)` for tool/model invocations;
-- `(run_id, sequence)` for events;
-- full-text GIN index on `solution_search_documents`;
-- structured indexes on solution kind/status/reuse scope and capability joins.
-
-HDD deployment remains supported. Index count and write amplification must be measured on the actual machine before adding speculative indexes.
-
-## 21. Migration rules
-
-- Alembic migrations are committed and reviewed.
-- Autogenerated migrations are drafts, not automatically trusted.
-- Destructive changes require explicit migration plans.
-- Immutable version tables are migrated without rewriting historical meaning.
-- Runtime DB and Solution Registry migrations are independent streams.
-- Cross-database references use stable opaque identifiers and application validation rather than unsupported cross-database foreign keys.
-- A migration must never silently discard active run recovery state.
-
-## 22. Schema-subsection acceptance conditions
-
-This schema subsection is sufficiently specified when a future implementation can answer:
-
-1. what Council configuration persists across all projects;
-2. what data belongs only to one active run;
-3. what survives destruction of branch environments;
-4. how private branch work becomes explicitly published;
-5. how immutable claims/sources/assumptions are versioned;
-6. how candidate selection differs from canonical promotion;
-7. how completed runtime data is archived and later purged;
-8. how reusable solutions/components remain searchable after runtime cleanup;
-9. how Council can reuse an existing product before spawning expensive independent branches;
-10. where MCP/tool metadata lives and why MCP is not a database;
-11. which constraints must be enforced transactionally;
-12. how the schema remains recoverable on the supported HDD-backed deployment.
-
-Detailed typed command payloads and command handler semantics now move to Part 4.
-
-## 23. Part 3 still open
-
-This document currently captures the proposed storage/schema model only. It does **not** by itself complete Part 3.
-
-Before Part 3 can be approved, the remaining database-design decisions must be reviewed explicitly with the owner, including at minimum:
-
-- stable identity versus immutable-version semantics for every versioned record family;
-- exact branch/private/published visibility enforcement at the database and query layers;
-- which invariants are hard database constraints versus application-level transactional checks;
-- deletion, archival, purge, retention, and legal/audit behavior after user acceptance;
-- exact indexing/query patterns and HDD-specific performance strategy;
-- migration discipline, backfills, compatibility, rollback/forward-fix rules, and recovery from failed migrations;
-- concurrency behavior that belongs to schema design rather than later transaction/queue parts;
-- Solution Registry lifecycle, reuse metadata quality, and how stale/deprecated solutions are represented;
-- final review of table necessity so the runtime schema does not become over-modeled before implementation evidence exists.
-
-No Part 3 approval is implied until these items are discussed and explicitly accepted.
-
-## 24. Sandbox opacity and control-plane-only persistence
-
-Part 3 does **not** define how an agent organizes work inside its branch environment.
-
-The branch environment is intentionally a black box from the Council database's point of view. Within the permissions and resource limits granted to that branch, an agent may choose its own:
-
-- file layout;
-- Git usage or no Git usage;
-- local commits/revisions;
-- scratch databases;
-- temporary services;
-- build system;
-- test organization;
-- intermediate artifacts;
-- internal notes;
-- implementation strategy;
-- local versioning scheme;
-- worker coordination mechanism.
-
-Council must not require those internal choices to fit a central relational schema.
-
-### 24.1 Boundary rule
-
-The system constrains and records the **boundary around the sandbox**, not the agent's internal engineering process.
-
-Council controls:
-
-- what baseline enters the branch environment;
-- which tools/capabilities/credentials are exposed;
-- which network and external resources are reachable;
-- compute/resource budgets;
-- which other branches or published outputs are visible;
-- what may leave the branch environment;
-- whether canonical writes are permitted;
-- when a selected output may be promoted.
-
-Council does not prescribe the internal implementation workflow used to produce that output.
-
-### 24.2 What the runtime database actually needs
-
-The production control-plane database should persist only information needed to operate, recover, secure, compare, and promote runs.
-
-At minimum this includes:
-
-- run identity and high-level objective;
-- council-member/worker logical identity and current runtime status;
-- exact run configuration snapshot, including prompts/model/tool settings or immutable artifact/hash references;
-- tool definitions/grants and environment adapter configuration;
-- execution-relevant environment specification and baseline fingerprint;
-- branch/environment instance identity and lifecycle;
-- permissions/capabilities exposed to each branch;
-- resource/budget accounting required for enforcement;
-- explicit publications/messages/challenges that cross branch boundaries, if the Council protocol uses them;
-- opaque output/candidate artifact references and manifests;
-- selection and promotion records;
-- user acceptance and cleanup/archive state;
-- operational events/idempotency/recovery state needed by the control plane.
-
-It does **not** need tables describing how an agent internally built the candidate.
-
-### 24.3 Agent settings are snapshots, not an agent-version hierarchy
-
-Agent A and Agent B are separate logical actors, not versions of one another.
-
-If several council members use the same prompt/model/tool configuration, they reference the same run configuration snapshot.
-
-The database only needs to preserve the exact configuration that was actually used for reproducibility and audit, for example:
+Before creating fresh member repositories:
 
 ```text
-run_config_snapshot
-    prompt_artifact_ref / prompt_hash
-    model_provider
-    model_identifier
-    model_settings
-    tool_policy
-    environment_policy
-    runtime_build_ref
+user request
+   |
+   v
+search Solution Registry
+   |
+   +--> direct match -> use existing product/repo, modify only if needed
+   |
+   +--> partial match -> use existing repo/components as common baseline
+   |
+   +--> no useful match -> create fresh common baseline
 ```
 
-A later software release or prompt change does not require a generic "agent version" hierarchy inside historical run data. A new run simply records the new exact configuration snapshot.
+All council members then begin from the same chosen baseline.
 
-Reusable platform definitions may still have deployment/release identifiers where operationally useful, but that is configuration management, not agent identity.
+## 11. Outstanding Part 3 questions
 
-### 24.4 Outputs are opaque branch products
+Part 3 is still active.
 
-Independent branches produce sibling outputs:
+The next design questions are:
 
-```text
-Task
-  -> Output A
-  -> Output B
-  -> Output C
-```
+1. exact repository lifecycle: creation, initial visibility, peer-read opening, retention, deletion/archive;
+2. whether the minimal run manifest lives entirely in PostgreSQL or partly in durable orchestrator files;
+3. exact prompt/MCP/tool configuration schema and secret-reference handling;
+4. sandbox lifecycle records needed for crash recovery without modeling internals;
+5. Solution Registry minimum searchable fields and reuse decision flow;
+6. retention of unselected member repositories after user acceptance;
+7. whether cross-agent discussion itself needs a dedicated durable message channel or can be repo/publication based;
+8. what minimal audit trail is required for promotion/canonical writes;
+9. indexing/migration strategy after the minimal schema is agreed.
 
-These are not versions of one another.
-
-The control plane records an output using opaque references and boundary metadata such as:
-
-```text
-branch_outputs
-    id
-    run_id
-    branch_id
-    output_kind
-    artifact_ref
-    artifact_hash
-    manifest_ref
-    summary
-    created_at
-```
-
-The artifact may itself contain a Git repository, database, document set, container image, configuration bundle, or another representation chosen by the agent/environment adapter.
-
-Council does not need to understand the artifact's internal history in order to compare or promote it.
-
-### 24.5 Revisions remain agent-owned
-
-If an agent revises its own output after cross-examination, Council may record a simple relation such as:
-
-```text
-Output B2
-    supersedes_output_id = B1
-```
-
-This relation exists so the control plane knows which published artifact is current and can preserve audit/provenance.
-
-It does not require the agent to use Council's revision model internally. Inside the branch the agent may have produced B2 using commits, copied directories, database migrations, generated files, or any other method.
-
-### 24.6 Environment state is captured at the boundary
-
-The database does not mirror every file/program on the user's PC or inside the branch.
-
-It records the execution-relevant environment specification and the adapter/baseline used to reproduce it.
-
-Sensitive environment variables are not stored as plaintext. Persist only:
-
-- variable names where needed;
-- classifications/relevance;
-- hashes/fingerprints where useful;
-- secret-store references for values that must be made available;
-- non-secret values only when policy permits.
-
-The branch environment receives the effective values at execution time through the controlled environment adapter/secret boundary.
-
-### 24.7 Disposable means disposable
-
-When the user accepts the work as complete, Council may destroy the branch environment.
-
-Before destruction, the control plane retains only the boundary artifacts required by policy:
-
-- selected/final output artifact;
-- output manifest/hash;
-- required published comparisons or review records;
-- selection/promotion history;
-- required validation results;
-- environment baseline/fidelity record;
-- audit/recovery records required by retention policy;
-- optional archive bundle.
-
-Everything else inside the sandbox can disappear.
-
-### 24.8 Consequence for the earlier schema draft
-
-The earlier Part 3 draft intentionally over-specified claims, assumptions, analysis steps, candidate-version families, and generic semantic-version machinery.
-
-Those structures are **not automatically production requirements**.
-
-They remain candidates only where a Council-level feature demonstrably needs durable cross-branch semantics. They must not be used to force agents' private implementation processes into a central schema.
-
-Before Part 3 approval, the schema must be pruned using this rule:
-
-> If a record exists only to describe how an agent chose to work inside its sandbox, it does not belong in the Council control-plane database.
-
+Part 3 is not approved until these are reviewed explicitly.
