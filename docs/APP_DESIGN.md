@@ -381,6 +381,22 @@ Agents have separate sessions and workspaces. Executable workloads run in restri
 
 For the controlled initial deployment, Docker is the proposed execution boundary. Its security depends on configuration and daemon access, so it must not be represented as absolute isolation against hostile workloads. See [references](REFERENCES.md).
 
+### Environment fidelity without host cloning
+
+Executable agent sandboxes reproduce the parts of the user's target environment that are relevant to the assigned task; they do not clone the user's whole computer.
+
+Before executable work begins, the runtime builds or receives an approved environment-capability profile. Relevant facts can include operating system and architecture, runtime and toolchain versions, package/dependency versions, required local services, filesystem-layout assumptions, network assumptions, and hardware, driver, GPU, or device capabilities. Secrets and unrelated host data are not part of this profile.
+
+Each executable task has an environment manifest declaring which capabilities it actually requires. The runtime creates the smallest compatible sandbox containing the assigned repository/worktree, approved inputs, required dependencies, configuration, fixtures, and services. Personal files, browser sessions, unrelated applications, credentials, caches, and other projects remain outside the sandbox unless the user explicitly grants a task access to a specific item.
+
+The target is **behavioral equivalence for the task**, not byte-for-byte replication of the host. Fidelity is recorded rather than assumed. A required capability is classified as reproduced exactly, supplied through an explicitly accepted compatible substitute/emulation, or unavailable.
+
+If a task depends on a host-specific property that the current sandbox cannot reproduce -- for example a particular Windows behavior, kernel/driver interaction, GPU, USB device, proprietary local application, or other hardware -- the agent must not silently treat the Docker environment as equivalent. An approved alternate execution backend may be used, such as a VM, restricted host execution, Windows container, or explicit device/GPU passthrough. Otherwise the task is marked blocked or only partially verified.
+
+Sandboxes are disposable execution environments. Durable results leave them only through explicit outputs such as commits, retained artifacts, test/evaluation records, or evidence. Residual sandbox state is not project memory.
+
+The number of logical council agents is independent from the number of concurrently executing local sandboxes. A machine may coordinate many agents while allowing only the locally affordable subset of executable tasks to run at once; the rest remain queued without changing the council protocol.
+
 Credentials stay in backend-managed secret storage. Raw keys do not reach browser state, generated scripts, source documents, or ordinary logs.
 
 Retrieved material is treated as evidence, not executable authority. A document cannot grant tools, change the objective, or override access rules.
@@ -573,6 +589,16 @@ The runtime is ordinary software enforcing an agreed process. It does not decide
 
 Use a durable task queue with leases, heartbeats, retries, cancellation, and deduplication. PostgreSQL locking behavior is the starting mechanism for multiple consumers of a queue-like table; lease and recovery rules require explicit application implementation. See [references](REFERENCES.md).
 
+### Host-aware execution scheduling
+
+Local execution capacity is a schedulable resource, not a limit on council membership. The runtime discovers or accepts configured host limits for CPU, memory, disk, GPU/device access, and sandbox concurrency, then applies per-operation reservations and caps.
+
+A low-spec machine may run only one or two heavy sandboxes while additional council members continue model-side investigation or wait for execution. A stronger workstation may execute more sandboxes concurrently. The investigation protocol and logical agent count do not change merely because local parallelism changes.
+
+Waiting tasks do not occupy scarce execution slots. The scheduler must avoid starvation, throttle or pause new local work under host pressure, and prefer queuing over uncontrolled oversubscription. Remote model calls and local executable slots are accounted for separately because inference may occur on provider infrastructure while builds, tests, tools, and containers consume the user's machine.
+
+The scheduler must not claim capacity or environmental fidelity that the host does not possess. Tasks requiring unavailable hardware or host behavior remain blocked, use an explicitly approved alternate backend, or proceed with a recorded limitation.
+
 Every operation distinguishes requested, started, completed, failed, cancelled, and outcome unknown.
 
 After interruption, completed work is reused. An operation with an uncertain external outcome is reconciled before replay. Do not promise exactly-once behavior from an external service that does not provide it.
@@ -635,6 +661,9 @@ Before live-source integrations, the platform must pass a controlled suite using
 | Context rollover | Retain objections, current versions, permissions, and unfinished work. |
 | Missing graph edge | Allow recovery through underlying source/history search. |
 | Worker interruption | Resume without silently duplicating completed actions. |
+| Environment minimization | Give an executable sandbox only the approved repository/worktree, inputs, dependencies, configuration, fixtures, and services required by its task; unrelated host data stays unavailable. |
+| Environment fidelity | Record required host capabilities as exact, compatible/emulated, or unavailable; never silently treat an incompatible sandbox as equivalent to the user's machine. |
+| Resource scheduling | Allow more logical agents than executable sandbox slots; queue and resume local work without starvation or uncontrolled host oversubscription. |
 | Model change | Preserve attribution and recheck provider permissions. |
 | Hostile source content | Prevent source text from granting authority or changing instructions. |
 | Premortem | Keep imagined failures separate from observed evidence. |
