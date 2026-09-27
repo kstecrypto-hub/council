@@ -1,0 +1,619 @@
+COUNCIL - MVP SCOPE BY DESIGN STEP
+==================================
+
+Purpose
+-------
+
+This file separates the COMPLETE PRODUCT architecture from the MVP that should
+actually be implemented first.
+
+The complete design is allowed to stay ambitious. The MVP is deliberately much
+smaller: it exists to test the core Council hypothesis before we spend months
+hardening advanced subsystems.
+
+Core MVP hypothesis
+-------------------
+
+A small council of strong peer agents, ideally using different reasoning-model
+families, can outperform a single strong coding/reasoning agent on sufficiently
+difficult tasks when the peers:
+
+1. begin independently;
+2. cannot read one another's unpublished work;
+3. publish at controlled checkpoints;
+4. challenge/review one another's work;
+5. retain logical identity across bounded sessions;
+6. can execute and test candidate solutions in isolated environments; and
+7. are evaluated fairly against a strong single-agent baseline.
+
+The MVP is complete only when we can run that experiment repeatedly and measure
+quality, correctness, failures, cost, latency, and resource use.
+
+Important rule
+--------------
+
+Design the full interfaces now where doing so avoids a future rewrite, but only
+IMPLEMENT the minimum capability needed for the MVP unless a harder feature is
+required by an observed failure.
+
+"Designed" below means the product-level decision is already substantially
+specified in the repository. It does NOT mean application code exists. This
+repository is still specification-only.
+
+
+STEP 1 - RUNTIME ARCHITECTURE
+Status: DESIGNED
+
+Complete product
+~~~~~~~~~~~~~~~~
+- Event-driven runtime with durable state.
+- Separate remote model-call capacity from local executable-sandbox capacity.
+- Dependency waiting without occupying scarce execution slots.
+- PostgreSQL-backed coordination, event notifications, SSE-facing activity.
+- Trusted runtime/executors kept distinct from restricted agent sandboxes.
+- Host-aware scheduling across CPU, memory, disk, GPU/devices, and sandbox slots.
+- Support many logical agents even when only a few local workloads can run.
+
+MVP must implement
+~~~~~~~~~~~~~~~~~~
+- One backend runtime capable of coordinating 3-4 peer council members.
+- Parallel model calls subject to a simple configurable concurrency limit.
+- Separate local sandbox concurrency limit.
+- Tasks can wait for dependencies without blocking all worker capacity.
+- Basic pause/stop/cancel behavior.
+- Durable enough state that a process restart does not erase the whole run.
+- One simple event stream for UI/status updates.
+
+Defer until after MVP evidence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Sophisticated host-pressure heuristics.
+- Multiple execution backends beyond the one needed by the MVP.
+- Advanced distributed deployment.
+- Complex fairness/starvation policies beyond simple queue aging/priority.
+
+
+STEP 2 - REPOSITORY LAYOUT, DEPENDENCIES, AND IMPORT RULES
+Status: DESIGNED
+
+Complete product
+~~~~~~~~~~~~~~~~
+- Each council member has a distinct repository/account/workspace boundary.
+- Private independent work until checkpoint policy allows publication.
+- Repositories can later become mutually readable at the appropriate checkpoint.
+- Prior accepted projects may be copied/reused as bases or references.
+- Accepted output is migrated/retained; disposable run state is removed.
+- Clear backend/frontend/runtime/domain boundaries and dependency direction.
+
+MVP must implement
+~~~~~~~~~~~~~~~~~~
+- One repository/worktree per council member candidate.
+- Strong branch/repository separation before publication checkpoints.
+- A deterministic location for backend, runtime, UI, tests, migrations, and
+  shared schemas/contracts.
+- No circular dependency architecture.
+- A simple mechanism for publishing a frozen commit/snapshot at a checkpoint.
+- Archive/finalize the accepted candidate and delete disposable sandbox state.
+
+Defer until after MVP evidence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Full cross-project reuse automation.
+- Advanced repository archival policy.
+- Multi-provider source-control abstraction.
+- Elaborate monorepo/package governance if the MVP does not require it.
+
+
+STEP 3 - POSTGRESQL SCHEMA AND VERSIONING
+Status: DESIGNED
+Primary specification: docs/POSTGRES_DATA_MODEL.md
+
+Complete product
+~~~~~~~~~~~~~~~~
+- council_core, council_runtime, and solution_registry logical schemas.
+- Versioned Project Contracts, approvals, instruction packages, deliveries.
+- Checkpoint policy versions, publications, deliveries, visibility enforcement.
+- Persistent logical agents, sessions, candidates, repositories, snapshots.
+- Host Profiles, Environment Contracts, privileged grants, drift tracking.
+- Canonical evidence/provenance/claims/reviews/graph records.
+- Continuation packets/context manifests.
+- Solution registry, reuse relationships, retention/archive rules.
+- Artifact-store boundary, migrations, backup/recovery, HDD-aware indexes.
+
+MVP must implement
+~~~~~~~~~~~~~~~~~~
+- Projects.
+- Immutable Project Contract revisions + explicit approval.
+- Runs pinned to the exact approved contract revision.
+- Council seats, branches, logical agents, sessions.
+- Checkpoint definitions/instances.
+- Publications + explicit recipient deliveries.
+- Branch-private visibility enforcement in backend and PostgreSQL/RLS where
+  practical for the canonical private tables.
+- Candidate solution + repository revision/snapshot identity.
+- Basic environment-definition/version identity.
+- Tasks, leases, operations, events, model calls.
+- Context manifests + continuation packets.
+- Artifact metadata/pointers instead of storing large artifacts in PostgreSQL.
+- Version-controlled migrations from day one.
+
+MVP can simplify
+~~~~~~~~~~~~~~~~
+- One PostgreSQL instance.
+- No separate physical databases.
+- No vector database.
+- No graph database.
+- Minimal solution registry sufficient to retain accepted candidate metadata.
+- Match My PC persistence tables may exist but do not need to be exercised by
+  the MVP if Match My PC itself is deferred.
+
+
+STEP 4 - TYPED COMMANDS AND CONTRACTS
+Status: TO DESIGN / IMPLEMENT
+
+Complete product
+~~~~~~~~~~~~~~~~
+- Typed commands/events/DTOs for Project Orchestrator, council runtime,
+  checkpoints, evidence, graph, environments, privileged broker, model gateway,
+  review, reporting, retention, and solution reuse.
+- Versioned external/internal schemas with validation and compatibility rules.
+
+MVP must implement
+~~~~~~~~~~~~~~~~~~
+- Strict typed contracts for:
+  * create/revise/approve Project Contract;
+  * start/pause/resume/stop run;
+  * create/complete/fail task;
+  * create worker;
+  * publish checkpoint artifact/claim/candidate snapshot;
+  * deliver publication to allowed peers;
+  * submit challenge/review response;
+  * request requirement clarification/checkpoint;
+  * model call request/result;
+  * sandbox create/execute/destroy;
+  * continuation packet creation;
+  * candidate completion/finalization.
+- Reject unknown/invalid state transitions.
+- Schema validation at every API/runtime boundary.
+
+Defer until after MVP evidence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Every advanced Match My PC/broker command.
+- Rich connector/source contracts not needed for initial coding evaluations.
+- Backward compatibility across many released schema versions.
+
+
+STEP 5 - TRANSACTIONS, IDEMPOTENCY, AND CONFLICT HANDLING
+Status: TO DESIGN / IMPLEMENT
+
+Complete product
+~~~~~~~~~~~~~~~~
+- Atomic canonical updates + audit events.
+- Idempotency keys for all retryable operations.
+- Expected-version/row-version conflict handling.
+- Reconciliation for unknown external outcomes.
+- Transactional outbox/projection consistency.
+- Safe handling of concurrent contract/checkpoint/claim revisions.
+
+MVP must implement
+~~~~~~~~~~~~~~~~~~
+- No silent overwrite of immutable/versioned records.
+- Idempotency for task creation, model requests where feasible, checkpoint
+  publication, and sandbox/tool operations.
+- Task/lease updates protected from concurrent double ownership.
+- Contract revision activation + agent deliveries committed coherently.
+- Checkpoint publication + recipient delivery committed coherently.
+- Unknown external outcomes become UNKNOWN/PENDING_RECONCILIATION, never
+  automatically treated as success.
+- Transactional outbox or equivalent reliable event delivery.
+
+Defer until after MVP evidence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Highly generalized saga/orchestration machinery.
+- Cross-region transaction behavior.
+- Exotic conflict-resolution policies not observed in the MVP.
+
+
+STEP 6 - EVIDENCE, PROVENANCE, AND KNOWLEDGE GRAPH
+Status: TO DESIGN / IMPLEMENT IN DETAIL
+High-level behavior already exists in APP_DESIGN.md.
+
+Complete product
+~~~~~~~~~~~~~~~~
+- Full provenance/evidence graph.
+- Sources/source versions/evidence items/assumptions/analysis steps.
+- Claim versions, support groups, challenges, revisions, shared-source lineage.
+- Impact tracing and explanation of why claims changed.
+- Graph-assisted context retrieval.
+- Evidence profiles for many investigation domains.
+
+MVP must implement
+~~~~~~~~~~~~~~~~~~
+- Runtime provenance for:
+  * who/what produced an artifact or claim;
+  * which model/session/task produced it;
+  * which repo commit/environment snapshot it belongs to;
+  * which checkpoint published it;
+  * which peer challenge caused a revision.
+- Basic claim/challenge/revision representation.
+- Basic dependency edges sufficient to answer:
+  * what supports this result?
+  * what challenged it?
+  * what changed after review?
+- Searchable history even if graph links are incomplete.
+- Do not require a dedicated graph database.
+
+Defer until after MVP evidence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Universal evidence ontology.
+- Advanced source-lineage research tooling if initial evals are coding-focused.
+- Complex visual graph analytics.
+- Full domain-general evidence policy library.
+
+
+STEP 7 - TASK QUEUE, LEASING, RECOVERY, AND RESOURCE CONTROLS
+Status: TO DESIGN / IMPLEMENT IN DETAIL
+High-level rules already exist.
+
+Complete product
+~~~~~~~~~~~~~~~~
+- Durable queue, leases, heartbeats, retries, cancellation, reconciliation.
+- CPU/RAM/disk/GPU/device reservations.
+- Budget reservations, protected review allowance, retry accounting.
+- Starvation avoidance and resource-aware scheduling.
+- Recovery across crashes and uncertain side effects.
+
+MVP must implement
+~~~~~~~~~~~~~~~~~~
+- PostgreSQL-backed durable task queue.
+- FOR UPDATE SKIP LOCKED or equivalent safe consumer leasing.
+- Lease expiry + heartbeat + retry attempt number.
+- Waiting parents release worker capacity.
+- Configurable max concurrent model calls.
+- Configurable max concurrent local sandboxes.
+- Per-run token/cost tracking.
+- Simple per-agent/run budget ceiling.
+- Restart recovery for unfinished tasks.
+- Safe cancellation/pause.
+
+Defer until after MVP evidence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Fine-grained CPU/RAM reservation optimizer.
+- GPU/device scheduler unless required by an MVP task.
+- Advanced budget rebalancing.
+- Multi-host distributed scheduling.
+
+
+STEP 8 - AGENT LOOP, COUNCIL PHASES, AND DELEGATION
+Status: TO DESIGN / IMPLEMENT IN DETAIL
+Core governance is already designed.
+
+Complete product
+~~~~~~~~~~~~~~~~
+- Project Orchestrator produces the approved contract/instruction package and
+  project-specific checkpoint policy.
+- Equal peer council.
+- Dynamic workers.
+- Independent beginnings, scoped checkpoints, cross-examination, revisions,
+  coverage review, synthesis, premortem, finalization.
+- Adaptive checkpoints.
+- Minority-investigation allowance and rich delegation policies.
+
+MVP must implement
+~~~~~~~~~~~~~~~~~~
+- Project Orchestrator conversation -> approved Project Contract.
+- 3-4 configurable peer council members.
+- Prefer support for different strong reasoning-model families per seat.
+- Independent start with no peer unpublished context leakage.
+- At least:
+  * one early/mid scoped publication checkpoint; and
+  * one mature-candidate full peer-review checkpoint.
+- Peer challenge and revision cycle.
+- Bounded worker delegation (one simple depth/worker cap is enough).
+- Structured escalation back to Project Orchestrator for requirement ambiguity.
+- No direct user-to-agent natural-language guidance.
+- Final candidate(s) preserved for evaluation.
+
+Defer until after MVP evidence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Sophisticated adaptive-checkpoint planning.
+- Complex voting/agenda machinery.
+- Deep worker hierarchies.
+- Every planned review phase if it does not affect the core experiment.
+
+
+STEP 9 - PROVIDER ADAPTERS AND MODEL SWITCHING
+Status: TO DESIGN / IMPLEMENT
+
+Complete product
+~~~~~~~~~~~~~~~~
+- Multiple providers and per-seat/per-worker overrides.
+- Mid-run safe model switching at checkpoints.
+- Provider-specific context/tool/reasoning handling.
+- Capability registry, pricing, compatibility tests, fallback policy.
+- Provider-specific data-sharing restrictions.
+
+MVP must implement
+~~~~~~~~~~~~~~~~~~
+- A common model adapter interface.
+- At least enough adapters to run a genuinely model-diverse council if accounts
+  and APIs are available.
+- Per-seat provider/model selection at run start.
+- Preserve provider/model attribution for every call/result.
+- Record tokens, cached tokens when reported, latency, and cost when known.
+- Capability check before assigning a task requiring tools/context features.
+- No silent provider fallback.
+
+Defer until after MVP evidence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Mid-run model migration if not needed for the first experiments.
+- Automatic fallback.
+- Huge provider catalog.
+- Fine-grained worker-level switching UI.
+
+
+STEP 10 - TOOLS, PERMISSIONS, AND EXECUTION ENVIRONMENTS
+Status: PARTLY DESIGNED
+
+Complete product
+~~~~~~~~~~~~~~~~
+- Typed capability gateway.
+- Council-managed reproducible environments.
+- Optional Match My PC with Host Profile + Environment Contract.
+- Local privileged broker with on-demand elevation.
+- Custom environment mode.
+- GPU/device/VM/restricted host backends.
+- Clean final delivery with agent/control credentials removed.
+
+MVP must implement
+~~~~~~~~~~~~~~~~~~
+- Council-managed Docker/container environment only.
+- Separate candidate environment per branch.
+- Agents may install/add dependencies inside their authorized environment.
+- Durable environment definition (Dockerfile/lockfiles/compose/config) updated so
+  the candidate is reproducible.
+- Clean rebuild test before treating an executable candidate as valid.
+- No provider/API credentials inside candidate containers.
+- No raw Docker socket exposed to agents.
+- Simple typed tool permissions.
+- Read/write access only to the branch's approved repo/workspace.
+
+Architecture hooks should exist, but MVP does NOT need
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Match My PC runtime.
+- Privileged broker implementation.
+- Host Profile capture.
+- Kernel/device passthrough.
+- Custom VM execution.
+
+Those remain complete-product features unless an experiment proves them necessary.
+
+
+STEP 11 - CONTEXT RETRIEVAL, GRAPH RETRIEVAL, AGENT MEMORY, AND ROLLOVER
+Status: HIGH-LEVEL DESIGN EXISTS; MEMORY POLICY STILL TO DESIGN
+
+Complete product
+~~~~~~~~~~~~~~~~
+- Persistent logical agent identity.
+- Bounded sessions.
+- Context manifests.
+- Continuation packets.
+- Graph-assisted retrieval + ordinary search.
+- Long-term memory-selection/ranking/compaction policy.
+- Contradiction handling and durable abstractions.
+- Worker/parent memory rules.
+- Potential cross-project memory where explicitly allowed.
+
+MVP must implement
+~~~~~~~~~~~~~~~~~~
+- Persistent logical agent ID across sessions.
+- Session rollover before context exhaustion.
+- Continuation packet containing:
+  * current objective/constraints;
+  * current Project Contract revision;
+  * current task state;
+  * unresolved challenges;
+  * important decisions/assumptions;
+  * relevant candidate/repo state;
+  * pending operations;
+  * next intended action.
+- Context manifest recording exactly what was loaded.
+- Search over prior run history/publications/evidence.
+- Basic graph neighborhood retrieval where available.
+- No generic opaque "memory blob" that can contradict canonical state.
+
+Defer until after MVP evidence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Sophisticated memory decay.
+- Learned memory importance.
+- Cross-project autobiographical agent memory.
+- Complex summarization hierarchies.
+- Autonomous durable abstractions not linked back to source records.
+
+
+STEP 12 - API, SSE, AND FRONTEND WIRING
+Status: TO DESIGN / IMPLEMENT IN DETAIL
+
+Complete product
+~~~~~~~~~~~~~~~~
+- Full desktop-first UI described in APP_DESIGN.md.
+- Project setup/orchestrator conversation.
+- Council monitoring.
+- Work/task inspection.
+- Evidence graph.
+- Review, report, activity, models/settings.
+- Fine-grained environment/permission/budget controls.
+
+MVP must implement
+~~~~~~~~~~~~~~~~~~
+- Project Orchestrator setup screen/conversation.
+- Project Contract review + explicit approval.
+- Run start/pause/resume/stop.
+- Council member cards/status.
+- Current tasks/workers.
+- Checkpoint status and published items.
+- Peer challenges/revisions.
+- Basic candidate/repo/test status.
+- Usage/cost display.
+- Activity stream via SSE.
+- A minimal final/evaluation view.
+
+Defer until after MVP evidence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Polished graph visualization.
+- Advanced accessibility alternatives beyond normal competent MVP quality.
+- Full Match My PC UI.
+- Rich settings/admin surface.
+- Production-grade theming/customization.
+
+
+STEP 13 - REVIEW, PREMORTEM, AND FINAL REPORTING
+Status: HIGH-LEVEL DESIGN EXISTS
+
+Complete product
+~~~~~~~~~~~~~~~~
+- Coverage review.
+- Provisional synthesis.
+- Mandatory six-month-plus premortem.
+- Reopened checks from substantive objections.
+- Versioned final report with unresolved disagreements preserved.
+- Editorial-only report assembler.
+
+MVP must implement
+~~~~~~~~~~~~~~~~~~
+- Structured peer review of mature candidate implementations.
+- Each peer can identify bugs, unsupported assumptions, regressions, security
+  issues, or architecture problems.
+- Candidate owner can accept/reject/respond and revise.
+- Final state preserves unresolved objections.
+- Produce a concise run report containing:
+  * candidate(s);
+  * key review findings;
+  * tests/results;
+  * unresolved issues;
+  * cost/time;
+  * provenance links.
+- The six-month premortem may be implemented late in the MVP if it does not
+  block testing the central multi-agent hypothesis, but the architecture must
+  preserve a review hook for it.
+
+Defer until after MVP evidence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Highly polished narrative report generation.
+- Complex report export formats.
+- Domain-specific review templates.
+
+
+STEP 14 - TESTING AND EVALUATIONS
+Status: TO DESIGN / IMPLEMENT
+This is CRITICAL to the MVP.
+
+Complete product
+~~~~~~~~~~~~~~~~
+- Deterministic invariant tests.
+- Repeated model-dependent evaluations.
+- Security, recovery, provider, graph, memory, environment, and UI tests.
+- Evaluation across research, coding, document analysis, and other domains.
+
+MVP must implement
+~~~~~~~~~~~~~~~~~~
+- Deterministic tests for:
+  * branch isolation;
+  * contract version pinning;
+  * checkpoint visibility;
+  * task leasing/recovery;
+  * session rollover;
+  * candidate environment clean rebuild;
+  * basic permission enforcement.
+- Fair benchmark harness with at least:
+  A. one strong frontier agent;
+  B. multiple same-model peers where useful;
+  C. multiple different-model peers where available.
+- Keep total budget/time/tool access measurable and comparable.
+- Use the same task/repository/acceptance tests across compared conditions.
+- Measure:
+  * task correctness;
+  * acceptance-test pass rate;
+  * regressions/bugs;
+  * unique failures caught during review;
+  * security issues where applicable;
+  * cost;
+  * wall-clock latency;
+  * model/tool usage;
+  * human intervention required.
+- Preserve failed runs, not only successful demos.
+- Do not claim Council superiority from anecdotes.
+
+MVP success criterion
+~~~~~~~~~~~~~~~~~~~~~
+The project has evidence that the Council protocol produces a meaningful
+advantage on at least some difficult task classes, and we understand the cost
+and failure trade-offs well enough to decide what to build next.
+
+
+STEP 15 - END-TO-END BUILD SEQUENCE
+Status: TO FINALIZE AFTER STEPS 4-14 ARE DESIGNED
+
+Complete product
+~~~~~~~~~~~~~~~~
+- Full production sequence from project intake through retained accepted solution,
+  advanced environments, memory, review, archival, and reuse.
+
+MVP implementation order
+~~~~~~~~~~~~~~~~~~~~~~~~
+Recommended first implementation sequence:
+
+1. Core repository/package skeleton.
+2. PostgreSQL migrations for the MVP subset of Part 3.
+3. Typed commands/contracts.
+4. Project Orchestrator + Project Contract approval.
+5. Provider adapter abstraction + 3-4 council seats.
+6. Durable queue/leases/events.
+7. Branch isolation + repo/worktree management.
+8. Council-managed Docker execution.
+9. Basic agent loop + bounded workers.
+10. Checkpoint publication/delivery.
+11. Peer challenge/revision.
+12. Session rollover + continuation packets/search.
+13. Minimal UI/SSE observability.
+14. Candidate clean rebuild/testing.
+15. Evaluation harness and single-agent baselines.
+16. Run repeated experiments.
+17. Only then promote observed needs into the next implementation layer.
+
+Evidence gate after MVP
+~~~~~~~~~~~~~~~~~~~~~~~
+Do NOT automatically proceed to every complete-product feature.
+
+After repeated MVP evaluations:
+- keep features that clearly contribute;
+- simplify features whose complexity does not pay for itself;
+- implement deferred capabilities only when a real use case/failure requires them;
+- revisit assumptions that the data disproves.
+
+Examples:
+- If fixed checkpoints are sufficient, delay advanced adaptive checkpointing.
+- If Council-managed containers cover almost every task, delay Match My PC.
+- If simple continuation packets work, delay advanced memory ranking.
+- If provenance detail does not improve debugging/evaluation enough, simplify it.
+- If model diversity is the major gain, invest there first.
+
+
+MVP DEFINITION OF DONE
+======================
+
+The Council MVP is done when a user can:
+
+1. discuss a project with the Project Orchestrator;
+2. approve a canonical Project Contract;
+3. launch 3-4 peer agents with configurable reasoning models;
+4. have those agents begin independently in private branches;
+5. let them execute/test work in isolated Council-managed environments;
+6. preserve each agent across session rollovers;
+7. publish only scoped information at controlled checkpoints;
+8. perform peer review/challenge/revision;
+9. produce runnable candidate snapshots with reproducible environments;
+10. inspect basic provenance, costs, tasks, reviews, and outcomes;
+11. compare the Council fairly against a strong single-agent baseline; and
+12. retain enough data to explain why the Council did or did not perform better.
+
+Everything beyond this can remain in the complete-product specification until
+evidence shows it deserves implementation.
