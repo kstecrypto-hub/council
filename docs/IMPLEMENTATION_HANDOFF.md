@@ -40,13 +40,19 @@ Implement budget reservations, branch limits, delegation limits, progress checks
 
 For executable projects, default to Council-managed isolated project environments rather than host cloning. Branches may add authorized packages, runtimes, services, and configuration as part of their candidate. Capture those changes in reproducible environment definitions and require a clean rebuild plus applicable acceptance checks before a candidate is treated as reproducible.
 
-Host matching is optional and only used when the Project Contract explicitly requires host-specific behavior. Support custom user-supplied environment definitions as another optional path. Keep unrelated host files, credentials, browser state, caches, applications, and projects unavailable by default.
+Host matching is optional and only used when the Project Contract explicitly requires host-specific behavior. Implement it as Project-Contract-scoped profiling -> sanitized versioned Host Profile -> proposed Environment Contract -> explicit user approval -> common host baseline for all branches plus candidate-specific overlays. Record required capabilities as exact, compatible, bridged, or unavailable.
+
+Keep the main Council application unprivileged. Implement a separate local privileged broker that requests elevation only when a specific Match My PC capability requires it. On Windows, use on-demand UAC/admin approval for the broker rather than requiring the whole app to run as Administrator. The broker must expose typed allowlisted operations and must not provide agents with a generic admin shell, unrestricted filesystem access, raw Docker-daemon access, or kernel control.
+
+Treat host matching and host mutation as separate permissions. Installing or changing software, services, drivers, system configuration, or non-project files on the real host requires explicit additional authorization, audit records, and cleanup/rollback behavior where practical. Detect material drift in Project-Contract-relevant host capabilities and invalidate affected exact-match verification until revalidated.
+
+Support custom user-supplied environment definitions as another optional path. Keep unrelated host files, credentials, browser state, caches, applications, and projects unavailable by default.
 
 Keep host-aware executable scheduling separate from logical council membership. Queue local builds/tests/tools according to CPU, memory, disk, GPU/device, and sandbox limits instead of oversubscribing the user's computer.
 
 The accepted project environment is part of the deliverable. Remove Council agents, provider credentials, agent GitHub credentials, hidden Council control mechanisms, and orchestration-only tooling from the delivered runtime. Persist the reproducible project/environment definition and required data; disposable development-container residue is not project memory.
 
-Exit condition: a non-coding investigation completes without a terminal, valid minority objections survive, administrative voting cannot promote evidential status, checkpoint visibility follows policy, more logical agents than local execution slots can make progress safely, and an executable candidate can be rebuilt cleanly from retained definitions.
+Exit condition: a non-coding investigation completes without a terminal, valid minority objections survive, administrative voting cannot promote evidential status, checkpoint visibility follows policy, more logical agents than local execution slots can make progress safely, and an executable candidate can be rebuilt cleanly from retained definitions. In Match My PC mode, the approved Environment Contract is reproducible/auditable, privileged operations remain broker-mediated, host mutation cannot occur implicitly, and material host drift invalidates stale exact-match claims.
 
 ### C. Continuity and review
 
