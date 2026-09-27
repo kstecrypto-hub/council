@@ -25,9 +25,9 @@ The graph answers these from recorded actions, source lineage, claim versions, a
 
 ## Architectural commitments
 
-Peer council, not a single intellectual leader. Domain-agnostic investigators, not coding-only agents. Independent initial investigations followed by targeted cross-examination. Evidence support recorded separately from agreement. Persistent logical agents with replaceable bounded sessions. A runtime-recorded, agent-annotated provenance graph alongside checkpoints, search, and compaction. A mandatory simulated six-month-plus premortem before fully reviewed finalization.
+Peer council, not a single intellectual leader. A separate Project Orchestrator converts user conversation into an approved versioned Project Contract, neutral council instructions, and a project-specific communication-checkpoint policy without becoming a solution supervisor. The user does not directly guide individual council members. Domain-agnostic investigators remain private between scoped checkpoints, then cross-examine published work when policy allows it. Evidence support is recorded separately from agreement. Persistent logical agents use replaceable bounded sessions, a runtime-recorded provenance graph, search, compaction, and a mandatory simulated six-month-plus premortem before fully reviewed finalization.
 
-The proposed stack is React/TypeScript/React Flow, Python/FastAPI/Pydantic, LangGraph, PostgreSQL, versioned artifact storage, and optional restricted Docker execution. This repository contains no implementation or dependency pins yet.
+For executable projects, the default is a Council-managed reproducible container environment that agents may evolve as needed; matching the user's existing machine is optional rather than the default. The proposed stack is React/TypeScript/React Flow, Python/FastAPI/Pydantic, LangGraph, PostgreSQL, versioned artifact storage, and restricted container execution when enabled. This repository contains no implementation or dependency pins yet.
 
 ## Current contents and verification boundary
 
