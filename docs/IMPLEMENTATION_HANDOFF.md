@@ -34,7 +34,11 @@ Implement equal council seats, independent private investigation branches, expli
 
 Implement budget reservations, branch limits, delegation limits, progress checks, and a protected review allowance. Scheduling must release capacity while parents wait for workers.
 
-Exit condition: a non-coding investigation completes without a terminal, valid minority objections survive, and administrative voting cannot promote evidential status.
+Implement host-aware executable scheduling separately from logical council membership. Build an approved environment-capability profile and per-task environment manifest, then construct the smallest sandbox that reproduces the task-relevant host behavior. Do not mirror the user's whole machine. Exclude unrelated files, credentials, browser state, caches, applications, and projects by default. Record sandbox fidelity as exact, compatible/emulated, or unavailable, and require an explicitly approved alternate backend or a recorded limitation when Docker cannot reproduce a required host property.
+
+Allow more logical agents than concurrently executable sandboxes. Queue local builds/tests/tools according to CPU, memory, disk, GPU/device, and sandbox limits instead of oversubscribing the user's computer. Persist only explicit outputs such as commits, artifacts, test/evaluation records, and evidence; disposable sandbox residue is not project memory.
+
+Exit condition: a non-coding investigation completes without a terminal, valid minority objections survive, and administrative voting cannot promote evidential status. More logical agents than local execution slots can make progress safely, and a host-specific task cannot be reported as verified from an incompatible sandbox.
 
 ### C. Continuity and review
 
