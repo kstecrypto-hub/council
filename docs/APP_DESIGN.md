@@ -616,19 +616,24 @@ No separate vector database, graph database, or distributed orchestration cluste
 
 ### Main record groups
 
+The exact Part 3 persistence model is defined in [POSTGRES_DATA_MODEL.md](POSTGRES_DATA_MODEL.md). It uses one PostgreSQL instance initially with separate logical schemas for canonical durable state, runtime operations, and the accepted-solution registry.
+
+At a high level, the canonical model includes:
+
 | Group | Records |
 |---|---|
-| Organization | Workspaces, projects, users, memberships, access grants |
-| Configuration | Run versions, provider profiles, model profiles, evidence policies |
-| Execution | Agents, sessions, tasks, task dependencies, operations, usage |
-| Communication | Messages, publications, deliveries, review assignments |
-| Sources | Sources, source versions, evidence items, artifacts, origin relationships |
-| Analysis | Claims, claim versions, assumptions, analysis steps, support groups |
-| Review | Challenges, responses, revisions, coverage items, premortem scenarios |
-| Continuity | Checkpoints, continuation packets, context manifests |
-| Audit | Events, graph relationships, projection progress, report snapshots |
+| Project intent | Projects, Project Contracts, immutable contract revisions, approvals, instruction packages |
+| Council execution | Runs, seats, branches, logical agents, sessions |
+| Checkpoints and visibility | Checkpoint policies/versions, checkpoint instances, publications, publication deliveries, structured escalations |
+| Candidates | Candidate solutions, repositories, repository revisions, candidate snapshots, acceptance decisions |
+| Environments | Environment definitions, Host Profiles, Environment Contracts, broker grants, host-mutation authorizations, drift events, rebuild verifications |
+| Sources and analysis | Sources, source versions, evidence items, assumptions, analysis steps, claims, support groups, challenges, revisions, coverage |
+| Continuity | Context manifests, continuation packets, non-authoritative agent-state snapshots |
+| Audit and graph | Append-only events, typed graph relationships, projection offsets |
+| Runtime | Tasks, leases, operations/attempts, scheduler reservations, sandbox instances, broker requests, model calls, outbox |
+| Reuse registry | Accepted solution versions, capabilities, stack metadata, reuse relationships |
 
-Every relevant record carries project/run scope, attribution, version information, timestamps, and access classification.
+Every relevant record carries project/run scope, attribution, version information, timestamps, and access classification. Branch-private canonical rows are enforced through backend authorization plus PostgreSQL row-level security tied to explicit publication/delivery records rather than prompt convention.
 
 ### PostgreSQL graph representation
 
