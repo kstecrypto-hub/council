@@ -26,6 +26,9 @@ The initial authorization was to create a repository and publish the approved de
 - Require scoped permissions for tools and provider changes. Keep credentials outside model prompts, browser state, generated code, and ordinary logs.
 - Account for retries, failures, child agents, and parallel reservations in budgets. Preserve review allowance. Exhaustion yields a partial outcome, not forced consensus.
 - For executable projects, default to Council-managed isolated project environments rather than host replication. Agents may evolve their authorized candidate environment, but all durable environment changes must be captured reproducibly and pass a clean rebuild. Host matching is opt-in.
+- In Match My PC mode, treat the approved Environment Contract as the boundary. Do not collect unrelated host data, infer permission from mere device/software presence, or silently upgrade compatible/bridged behavior to exact verification.
+- Never give an agent or ordinary Council process unrestricted administrator, Docker-daemon, or kernel access. Elevated host operations go through the typed local privileged broker and only within approved capability scope.
+- Match My PC does not authorize modifying the real host. Host software/configuration/driver/service changes require separate explicit permission and must be auditable and cleaned up or rolled back where practical.
 - Treat the accepted reproducible project environment as part of the deliverable. Do not leave Council agents, provider credentials, agent GitHub credentials, hidden Council control mechanisms, or orchestration-only tooling in the user's final runtime.
 
 ## Implementation discipline when implementation is authorized
