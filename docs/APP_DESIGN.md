@@ -60,7 +60,8 @@ The platform supports research, document analysis, operational investigation, sy
 
 | Component | Responsibility |
 |---|---|
-| Council protocol | Independent investigation, cross-examination, revision, coverage review, and synthesis. |
+| Project orchestrator | Elicit and version the user's intent, produce the canonical Project Contract, generate neutral council instructions, plan communication checkpoints, and broker later clarifications without becoming an intellectual supervisor. |
+| Council protocol | Independent investigation, checkpoint-scoped publication, cross-examination, revision, coverage review, and synthesis. |
 | Worker runtime | Execute assignments, manage delegation, and maintain agent sessions. |
 | Model gateway | Route each agent to its selected provider and model. |
 | Capability gateway | Enforce access to sources, retrieval, calculations, and other tools. |
@@ -87,15 +88,37 @@ The shared instruction is:
 
 Members own investigations, not conclusions they must defend.
 
+### Project Orchestrator and user communication boundary
+
+The user communicates with the Project Orchestrator, not directly with council members or their workers.
+
+Before a council run exists, the Project Orchestrator discusses the project with the user until the requested outcome is sufficiently specified. It records objective, required behavior, constraints, non-goals, permissions, desired deliverables, acceptance criteria, definition of done, relevant environment choices, and any user priorities that materially affect execution.
+
+The result is a versioned **Project Contract**. The user must approve the contract before council execution begins.
+
+From the approved Project Contract, the Project Orchestrator generates the council instruction package. It communicates what must be achieved, the constraints, available tools, permissions, required outputs, acceptance criteria, definition of done, and communication rules. It must not prescribe an implementation approach unless the user explicitly made that approach a requirement.
+
+The Project Orchestrator is an intent and information-flow authority, not an intellectual leader. It cannot decide which council member is correct, select the winning architecture, suppress a minority branch, or micromanage investigative reasoning.
+
+If execution reveals a requirement ambiguity or external constraint that genuinely requires user input, an agent emits a structured escalation such as requirement clarification, external constraint discovered, interface decision required, blocked, or checkpoint request. The Project Orchestrator decides whether user input is required, presents the issue to the user, and records any answer as a new Project Contract revision. Every affected branch receives the same canonical revision.
+
+Direct informal user-to-agent guidance is prohibited because it would cause branches to operate from different versions or interpretations of the objective.
+
 ### Independent beginnings
 
 Before seeing their peers' analyses, each member produces an initial investigation plan and preliminary findings.
 
 During this stage, its workers cannot read other branches' unpublished work. Members may access the same authorized source material; the generic architecture does not impose the earlier sensor-based partitioning experiment.
 
-At the publication checkpoint, each branch releases its initial findings, assumptions, methods, and gaps. Investigation and communication then continue concurrently.
+Before execution, the Project Orchestrator derives a versioned checkpoint policy from the approved Project Contract. The number and timing of normal checkpoints are project-specific rather than globally fixed. A checkpoint defines its trigger, participating branches, publication scope, allowed communication scope, required outputs, completion condition, and the isolation state that follows.
 
-The checkpoint records which information each branch received. This makes it possible to distinguish independently developed findings from conclusions adopted after discussion.
+Publication scope is explicit. An early checkpoint may expose only architecture boundaries, assumptions, interfaces, or discovered external constraints while keeping implementation code private. A later checkpoint may expose complete repositories, tests, environment definitions, benchmarks, and failed approaches.
+
+After a scoped checkpoint, branches may return to isolation while retaining only information legitimately published at that checkpoint. The final implementation checkpoint opens the mature candidate implementations for full peer inspection, challenge, comparative testing, and revision.
+
+The checkpoint policy may be amended adaptively when structured branch signals reveal an unanticipated shared dependency, blocking interface decision, or other situation where communication has become necessary. The Project Orchestrator does not need unrestricted access to private repositories to make this decision; it relies on the Project Contract and explicit execution-state signals.
+
+Every checkpoint records exactly what each branch published and received. This makes it possible to distinguish independently developed findings from conclusions adopted after communication.
 
 ### Collective direction without constant voting
 
@@ -111,9 +134,9 @@ Only the user can authorize a broader objective, increased spending ceiling, or 
 
 | Stage | Required outcome |
 |---|---|
-| Define | Record the objective, scope, evidence standard, tools, council configuration, and limits. |
-| Investigate independently | Each member develops its initial approach through its own workers. |
-| Publish | Freeze and share initial analyses and their supporting records. |
+| Define | Project Orchestrator and user agree on and approve a versioned Project Contract; derive the neutral council instruction package, council configuration, permissions, limits, and project-specific checkpoint policy. |
+| Investigate independently | Each member develops its initial approach through its own workers while unpublished branch material remains private. |
+| Publish | At a planned or approved adaptive checkpoint, freeze and expose only the checkpoint's declared publication scope. |
 | Cross-examine | Challenge claims, methods, assumptions, and missing investigation areas. |
 | Revise | Update claims and commission checks that could resolve disagreements. |
 | Review coverage | Identify overlooked areas, interactions, and unsupported generalizations. |
@@ -381,21 +404,29 @@ Agents have separate sessions and workspaces. Executable workloads run in restri
 
 For the controlled initial deployment, Docker is the proposed execution boundary. Its security depends on configuration and daemon access, so it must not be represented as absolute isolation against hostile workloads. See [references](REFERENCES.md).
 
-### Environment fidelity without host cloning
+### Council-managed project environments
 
-Executable agent sandboxes reproduce the parts of the user's target environment that are relevant to the assigned task; they do not clone the user's whole computer.
+For executable projects, the default is a **Council-managed project environment**, not host replication.
 
-Before executable work begins, the runtime builds or receives an approved environment-capability profile. Relevant facts can include operating system and architecture, runtime and toolchain versions, package/dependency versions, required local services, filesystem-layout assumptions, network assumptions, and hardware, driver, GPU, or device capabilities. Secrets and unrelated host data are not part of this profile.
+Each candidate branch receives an isolated sandbox that starts from an approved base and can evolve as the solution requires. Within its granted permissions, an agent may install packages, add runtimes, configure databases or supporting services, change project-local configuration, and add other dependencies necessary to make its candidate work.
 
-Each executable task has an environment manifest declaring which capabilities it actually requires. The runtime creates the smallest compatible sandbox containing the assigned repository/worktree, approved inputs, required dependencies, configuration, fixtures, and services. Personal files, browser sessions, unrelated applications, credentials, caches, and other projects remain outside the sandbox unless the user explicitly grants a task access to a specific item.
+Different branches may choose different stacks and supporting services. Those environment choices are part of the candidate architecture and become reviewable alongside the code.
 
-The target is **behavioral equivalence for the task**, not byte-for-byte replication of the host. Fidelity is recorded rather than assumed. A required capability is classified as reproduced exactly, supplied through an explicitly accepted compatible substitute/emulation, or unavailable.
+The user's existing software environment is therefore not a prerequisite for ordinary execution. The host primarily needs to provide the container/runtime capabilities and physical resources required to run the candidate environments.
 
-If a task depends on a host-specific property that the current sandbox cannot reproduce -- for example a particular Windows behavior, kernel/driver interaction, GPU, USB device, proprietary local application, or other hardware -- the agent must not silently treat the Docker environment as equivalent. An approved alternate execution backend may be used, such as a VM, restricted host execution, Windows container, or explicit device/GPU passthrough. Otherwise the task is marked blocked or only partially verified.
+Environment state must not become an undocumented snowflake. Changes made interactively during development must be captured in reproducible project definitions such as Dockerfiles or image definitions, dependency lock files, Compose/service definitions, migrations, configuration templates, persistent-volume declarations, and an environment manifest.
 
-Sandboxes are disposable execution environments. Durable results leave them only through explicit outputs such as commits, retained artifacts, test/evaluation records, or evidence. Residual sandbox state is not project memory.
+Before a candidate can be accepted as reproducible, the runtime must be able to destroy its disposable development container, rebuild the project environment from the retained definitions, launch it cleanly, and run the applicable acceptance checks.
 
-The number of logical council agents is independent from the number of concurrently executing local sandboxes. A machine may coordinate many agents while allowing only the locally affordable subset of executable tasks to run at once; the rest remain queued without changing the council protocol.
+The accepted environment is part of the deliverable. The user may retain the built image/container for convenience, but the durable source of truth is the reproducible environment definition plus the project and required persistent data.
+
+Council-only construction machinery does not remain in the delivered runtime. Finalization removes agent processes, provider credentials, agent GitHub credentials, hidden Council control mechanisms, and other orchestration-only tooling unless the Project Contract explicitly requires a related runtime feature.
+
+Host matching remains an **optional execution mode**, not the default. When the Project Contract requires behavior tied to the user's actual machine, the user may choose a host-matching mode that reproduces selected host properties. A custom user-supplied image or environment specification may also be used.
+
+Host-specific needs such as a particular operating-system API, kernel or driver interaction, GPU, USB/serial device, camera, proprietary installed application, or desktop integration must be declared explicitly. They may require passthrough, a VM, Windows container, controlled host execution, or another approved backend. The runtime must never silently treat a non-equivalent container as exact verification.
+
+The number of logical council agents remains independent from the number of concurrently executing local sandboxes. Resource scheduling controls local parallelism; it does not change council membership or the reasoning protocol.
 
 Credentials stay in backend-managed secret storage. Raw keys do not reach browser state, generated scripts, source documents, or ordinary logs.
 
@@ -433,13 +464,13 @@ The central workspace is not an endless chat feed.
 
 ### Run setup
 
-The setup screen captures the objective, background, desired deliverable, exclusions, evidence profile, permitted sources and tools, council composition, resource limits, and premortem horizon.
+Run setup is a conversation between the user and the Project Orchestrator. The orchestrator elicits the objective, background, desired deliverable, exclusions, evidence profile, permitted sources and tools, council composition, resource limits, environment mode, premortem horizon, acceptance criteria, and definition of done.
 
-Each council seat has provider and model dropdowns, supported reasoning controls, and a worker-default selector.
+When enough information is available, the orchestrator produces the proposed Project Contract, neutral council instruction package, and checkpoint policy. The user can correct or refine them before launch.
 
-Advanced settings are collapsed. Before launch, the user sees a plain-language execution summary: what the agents can access, what they can do, and what would require further approval.
+The council is not created until the user approves the Project Contract. Once approved, the contract, generated instruction package, checkpoint policy, and configuration are versioned.
 
-Configuration is versioned once execution begins.
+Each council seat has provider and model dropdowns, supported reasoning controls, and a worker-default selector. Advanced settings are collapsed. Before launch, the user sees a plain-language execution summary: what the agents can access, what they can do, how and when branches can communicate, which execution-environment mode will be used, and what would require further approval.
 
 ### Overview
 
@@ -455,9 +486,9 @@ Council seats appear as peer cards, each showing its current investigation, mode
 
 Selecting a member opens its task history, accessible evidence, received messages, published findings, and session changes.
 
-Controls allow scoped guidance, branch pause, worker inspection, and a queued model change.
+Controls allow branch pause, worker inspection, and a queued model change. The UI does not provide a direct natural-language guidance channel to an individual council member.
 
-User guidance becomes an attributed instruction with a timestamp and scope. It is not inserted retroactively into earlier history.
+User clarifications or requested scope changes go through the Project Orchestrator. If accepted, they become attributed, versioned Project Contract revisions and are distributed consistently to every affected branch rather than inserted retroactively into earlier history.
 
 ### Work view
 
@@ -597,7 +628,7 @@ A low-spec machine may run only one or two heavy sandboxes while additional coun
 
 Waiting tasks do not occupy scarce execution slots. The scheduler must avoid starvation, throttle or pause new local work under host pressure, and prefer queuing over uncontrolled oversubscription. Remote model calls and local executable slots are accounted for separately because inference may occur on provider infrastructure while builds, tests, tools, and containers consume the user's machine.
 
-The scheduler must not claim capacity or environmental fidelity that the host does not possess. Tasks requiring unavailable hardware or host behavior remain blocked, use an explicitly approved alternate backend, or proceed with a recorded limitation.
+The scheduler must not claim capacity or required host capabilities that the machine does not possess. Ordinary Council-managed environments do not attempt to mirror the host. Tasks that explicitly require unavailable host hardware or behavior remain blocked, use an approved alternate backend, or proceed only with a recorded limitation.
 
 Every operation distinguishes requested, started, completed, failed, cancelled, and outcome unknown.
 
@@ -635,8 +666,9 @@ Backups include the database, referenced artifacts, configuration versions, and 
 
 The backend exposes typed operations for:
 
-- Run management: create, validate configuration, start, pause, resume, stop, fork, and finalize.
-- Agent management: inspect state, assign work, send scoped guidance, request model changes, and view session history.
+- Project orchestration: converse with the user, draft and revise the Project Contract, request approval, generate the neutral council instruction package, create and amend checkpoint policies, receive structured escalations, and publish canonical clarifications.
+- Run management: create from an approved Project Contract, validate configuration, start, pause, resume, stop, fork, and finalize.
+- Agent management: inspect state, assign work through the runtime, receive structured status/escalation signals, request model changes, and view session history. There is no direct user-to-agent free-form guidance operation.
 - Evidence operations: register sources, retrieve permitted passages, publish findings, create challenges, revise claims, and record checks.
 - Graph operations: retrieve a bounded neighborhood, trace dependencies, explain revisions, inspect shared origins, and compare snapshots.
 - System operations: configure models and connectors, inspect usage, approve scoped actions, and export results.
@@ -651,8 +683,13 @@ Before live-source integrations, the platform must pass a controlled suite using
 
 | Test | Required behavior |
 |---|---|
+| Project Contract approval | Do not create/start the council until the user approves a versioned Project Contract. |
+| No direct user-agent chat | User clarifications and scope changes pass through the Project Orchestrator and become canonical revisions; individual branches cannot receive informal private guidance from the user. |
+| Neutral prompt generation | Generated council instructions state requirements, permissions, acceptance criteria, and communication rules without prescribing an implementation unless the Project Contract requires it. |
 | Non-coding investigation | Complete the workflow with no terminal tool. |
 | Independent start | No branch reads another branch's unpublished analysis. |
+| Scoped checkpoint visibility | At each checkpoint expose only the declared publication scope, record what each branch received, and restore isolation when the policy says to do so. |
+| Adaptive checkpoint | Insert an additional scoped checkpoint from structured execution-state signals without requiring unrestricted inspection of private branch repositories. |
 | Source dependency | Trace affected conclusions when a source changes. |
 | Assumption dependency | Preserve alternative support paths while flagging affected findings. |
 | Claim narrowing | Recover the old claim, challenge, evidence, and revision reason. |
@@ -661,8 +698,10 @@ Before live-source integrations, the platform must pass a controlled suite using
 | Context rollover | Retain objections, current versions, permissions, and unfinished work. |
 | Missing graph edge | Allow recovery through underlying source/history search. |
 | Worker interruption | Resume without silently duplicating completed actions. |
-| Environment minimization | Give an executable sandbox only the approved repository/worktree, inputs, dependencies, configuration, fixtures, and services required by its task; unrelated host data stays unavailable. |
-| Environment fidelity | Record required host capabilities as exact, compatible/emulated, or unavailable; never silently treat an incompatible sandbox as equivalent to the user's machine. |
+| Council-managed environment | By default, create an isolated project environment without attempting to reproduce the user's installed software environment; allow the branch to add authorized runtimes, packages, services, and configuration. |
+| Reproducible environment | Capture interactive environment changes declaratively, destroy the development container, rebuild from retained definitions, and pass applicable acceptance checks. |
+| Clean delivery boundary | Retain the accepted reproducible project environment while removing Council/agent credentials, processes, and orchestration-only control mechanisms from the delivered runtime. |
+| Optional host matching | When explicitly selected, record required host-specific capabilities and never claim exact verification when those capabilities were not reproduced. |
 | Resource scheduling | Allow more logical agents than executable sandbox slots; queue and resume local work without starvation or uncontrolled host oversubscription. |
 | Model change | Preserve attribution and recheck provider permissions. |
 | Hostile source content | Prevent source text from granting authority or changing instructions. |
@@ -698,9 +737,11 @@ Start with three council members, all using the selected DeepSeek model, and a s
 
 Workers are created dynamically, with two worker-delegation levels beneath each council member as an initial cap. Read-only evidence tools are enabled; executable tools are opt-in.
 
-One independent publication checkpoint and one mandatory six-month-plus premortem are required for a fully reviewed run. Investigation and challenge cycles continue within the configured allowance.
+The Project Orchestrator generates project-specific communication checkpoints from the approved Project Contract; there is no globally fixed checkpoint count. At minimum, the policy must preserve an independent beginning and provide a mature-candidate peer-review stage before final acceptance. Adaptive checkpoints may be inserted from structured escalation signals.
 
-These numbers are editable starting defaults, not claims about an optimal configuration.
+One mandatory six-month-plus premortem remains required for a fully reviewed run. Investigation and challenge cycles continue within the configured allowance.
+
+These numbers and policies are editable starting defaults, not claims about an optimal configuration.
 
 ---
 
