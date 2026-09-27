@@ -65,6 +65,7 @@ The platform supports research, document analysis, operational investigation, sy
 | Worker runtime | Execute assignments, manage delegation, and maintain agent sessions. |
 | Model gateway | Route each agent to its selected provider and model. |
 | Capability gateway | Enforce access to sources, retrieval, calculations, and other tools. |
+| Local privileged broker | Perform narrowly approved elevated host operations for Match My PC and device/VM/container setup without elevating the main Council runtime or exposing raw administrator, Docker-daemon, or kernel control to agents. |
 | Investigation ledger | Preserve actions, evidence, claims, assumptions, challenges, and decisions. |
 | Graph service | Maintain and query relationships between those records. |
 | Context manager | Build bounded working contexts and continue investigations across sessions. |
@@ -422,9 +423,40 @@ The accepted environment is part of the deliverable. The user may retain the bui
 
 Council-only construction machinery does not remain in the delivered runtime. Finalization removes agent processes, provider credentials, agent GitHub credentials, hidden Council control mechanisms, and other orchestration-only tooling unless the Project Contract explicitly requires a related runtime feature.
 
-Host matching remains an **optional execution mode**, not the default. When the Project Contract requires behavior tied to the user's actual machine, the user may choose a host-matching mode that reproduces selected host properties. A custom user-supplied image or environment specification may also be used.
+### Match My PC mode
 
-Host-specific needs such as a particular operating-system API, kernel or driver interaction, GPU, USB/serial device, camera, proprietary installed application, or desktop integration must be declared explicitly. They may require passthrough, a VM, Windows container, controlled host execution, or another approved backend. The runtime must never silently treat a non-equivalent container as exact verification.
+**Match My PC** is optional and is selected only when the Project Contract requires behavior tied to the user's actual machine. It means reproducing the project-relevant behavior of the host in a controlled environment; it does **not** mean giving council agents unrestricted access to the user's computer.
+
+The Project Orchestrator scopes environment capture from the approved Project Contract. A local profiler collects only relevant capabilities such as operating system/version/architecture, runtime and toolchain versions, selected services, package-manager information, required ports/network assumptions, relevant filesystem locations, GPU/driver/CUDA capability, approved devices, and other explicitly relevant host properties. Personal files, browser state, credentials, unrelated repositories, and unrelated application data are excluded by default.
+
+The profiler produces a sanitized, versioned **Host Profile**. From it, the system proposes an **Environment Contract** describing what will be reproduced, what will be bridged to the real host, what remains unavailable, and what data or devices would be exposed. The user approves this Environment Contract before executable council work begins.
+
+All candidate branches start from the same approved host baseline. Each branch may then add its own candidate-specific overlay. Baseline state and candidate-added state remain distinguishable so the system can answer what came from the user's machine versus what an agent introduced.
+
+Each required capability is recorded as one of:
+
+- **Exact** - the relevant host behavior/version is reproduced.
+- **Compatible** - a different implementation or version is expected to satisfy the requirement.
+- **Bridged** - the candidate uses an explicitly approved real host resource through a controlled bridge.
+- **Unavailable** - the capability cannot currently be reproduced or exposed.
+
+A candidate must not claim verification against the user's environment when a required capability is only compatible or unavailable.
+
+The runtime chooses the least-privileged execution backend that can satisfy the Environment Contract. Ordinary cases use containers; host-specific cases may use GPU/device passthrough, Windows containers, a VM, or narrowly controlled host execution. A custom user-supplied image or environment specification remains a third execution mode alongside Council-managed and Match My PC.
+
+The main Council application remains unprivileged. When Match My PC requires elevated setup or inspection, the app requests elevation only for the **local privileged broker**. On Windows this is an on-demand UAC/admin approval for the broker, not a requirement to run the entire Council application as Administrator.
+
+The broker exposes typed, allowlisted capabilities such as inspecting an approved driver/runtime, configuring a VM, mounting an approved path, attaching an approved device, or launching an approved host-side build. It does not expose a generic administrator shell, unrestricted filesystem access, the raw Docker daemon socket, or kernel control to agents.
+
+Kernel-level access is not part of normal Match My PC operation. If a project genuinely requires kernel development, tracing, or another kernel-level capability, that requirement must be explicit in the Project Contract and separately approved. Prefer an isolated VM or equivalent boundary before real-host kernel access.
+
+**Match My PC does not imply Modify My PC.** Reproducing or bridging host capabilities and mutating the user's real operating environment are separate permissions. Installing software on the host, changing system configuration, enabling services, modifying drivers, or writing outside approved project locations requires an explicit additional authorization.
+
+Any approved host mutation performed through the broker is recorded with before/after state where practical and a cleanup or rollback action when the operation is reversible. Temporary mounts, device bridges, VM resources, and elevated helper state are torn down at the end of the run unless the user explicitly keeps them.
+
+The runtime fingerprints the approved host capabilities relevant to the project. If those capabilities materially change during a run -- for example a driver, runtime, SDK, or service version changes -- the Environment Contract is marked stale for affected work and exact-match claims require revalidation.
+
+The number of logical council agents remains independent from the number of concurrently executing local sandboxes. Resource scheduling controls local parallelism; it does not change council membership or the reasoning protocol.
 
 The number of logical council agents remains independent from the number of concurrently executing local sandboxes. Resource scheduling controls local parallelism; it does not change council membership or the reasoning protocol.
 
@@ -701,7 +733,12 @@ Before live-source integrations, the platform must pass a controlled suite using
 | Council-managed environment | By default, create an isolated project environment without attempting to reproduce the user's installed software environment; allow the branch to add authorized runtimes, packages, services, and configuration. |
 | Reproducible environment | Capture interactive environment changes declaratively, destroy the development container, rebuild from retained definitions, and pass applicable acceptance checks. |
 | Clean delivery boundary | Retain the accepted reproducible project environment while removing Council/agent credentials, processes, and orchestration-only control mechanisms from the delivered runtime. |
-| Optional host matching | When explicitly selected, record required host-specific capabilities and never claim exact verification when those capabilities were not reproduced. |
+| Match My PC scoping | Build the Host Profile only from Project-Contract-relevant capabilities; exclude unrelated user data and secrets by default. |
+| Environment Contract approval | Show reproduced, bridged, compatible, and unavailable capabilities and require user approval before Match My PC execution begins. |
+| Privilege separation | Elevate only the local privileged broker when required; agents and the main Council runtime never receive unrestricted administrator, Docker-daemon, or kernel access. |
+| No implicit host mutation | Match My PC may inspect/reproduce/bridge approved capabilities without changing the real host; host mutations require separate explicit authorization and are auditable. |
+| Host drift | Detect material changes to relevant host capabilities and invalidate affected exact-match verification until revalidated. |
+| Optional host matching | Never claim exact verification when required host capabilities were only compatible, bridged without equivalent behavior, or unavailable. |
 | Resource scheduling | Allow more logical agents than executable sandbox slots; queue and resume local work without starvation or uncontrolled host oversubscription. |
 | Model change | Preserve attribution and recheck provider permissions. |
 | Hostile source content | Prevent source text from granting authority or changing instructions. |
