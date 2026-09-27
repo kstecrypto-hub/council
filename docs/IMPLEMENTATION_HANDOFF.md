@@ -24,21 +24,29 @@ Use ordinary searchable records, evidence, checkpoints, and short handovers alon
 
 Establish canonical versioned records, scope/authorization checks, immutable source versions, observable execution events, and typed graph relationships. Keep assumptions, grouped premises, and alternative support paths explicit.
 
+Implement the Project Orchestrator boundary first: user conversation -> versioned Project Contract -> explicit user approval -> neutral council instruction package -> versioned checkpoint policy. Do not expose a direct user-to-council-member free-form guidance path. Later clarifications must become canonical Project Contract revisions distributed consistently to affected branches.
+
 Implement the PostgreSQL-backed task queue with leases and reconciliation. Add provider adapters and a configurable capability registry. Use synthetic/prepared evidence before connecting live sources.
 
-Exit condition: the three graph questions work against deterministic fixtures; authorization also applies to traversal, source snippets, search, context assembly, and exports. Recorded tool failure cannot be mistaken for a successful check.
+Exit condition: the three graph questions work against deterministic fixtures; authorization also applies to traversal, source snippets, search, context assembly, and exports. A council cannot start without an approved Project Contract, and recorded tool failure cannot be mistaken for a successful check.
 
 ### B. Working council
 
-Implement equal council seats, independent private investigation branches, explicit publication, dynamically commissioned workers, targeted cross-examination, revisions, coverage records, and bounded minority investigation.
+Implement equal council seats, independent private investigation branches, dynamically commissioned workers, targeted cross-examination, revisions, coverage records, and bounded minority investigation.
+
+Implement project-specific checkpoint execution from the versioned policy produced by the Project Orchestrator. Each checkpoint must have an explicit trigger, participants, publication scope, allowed communication scope, required outputs, completion condition, and post-checkpoint isolation state. Support adaptive checkpoints from structured branch signals without giving the Project Orchestrator unrestricted access to private repositories.
 
 Implement budget reservations, branch limits, delegation limits, progress checks, and a protected review allowance. Scheduling must release capacity while parents wait for workers.
 
-Implement host-aware executable scheduling separately from logical council membership. Build an approved environment-capability profile and per-task environment manifest, then construct the smallest sandbox that reproduces the task-relevant host behavior. Do not mirror the user's whole machine. Exclude unrelated files, credentials, browser state, caches, applications, and projects by default. Record sandbox fidelity as exact, compatible/emulated, or unavailable, and require an explicitly approved alternate backend or a recorded limitation when Docker cannot reproduce a required host property.
+For executable projects, default to Council-managed isolated project environments rather than host cloning. Branches may add authorized packages, runtimes, services, and configuration as part of their candidate. Capture those changes in reproducible environment definitions and require a clean rebuild plus applicable acceptance checks before a candidate is treated as reproducible.
 
-Allow more logical agents than concurrently executable sandboxes. Queue local builds/tests/tools according to CPU, memory, disk, GPU/device, and sandbox limits instead of oversubscribing the user's computer. Persist only explicit outputs such as commits, artifacts, test/evaluation records, and evidence; disposable sandbox residue is not project memory.
+Host matching is optional and only used when the Project Contract explicitly requires host-specific behavior. Support custom user-supplied environment definitions as another optional path. Keep unrelated host files, credentials, browser state, caches, applications, and projects unavailable by default.
 
-Exit condition: a non-coding investigation completes without a terminal, valid minority objections survive, and administrative voting cannot promote evidential status. More logical agents than local execution slots can make progress safely, and a host-specific task cannot be reported as verified from an incompatible sandbox.
+Keep host-aware executable scheduling separate from logical council membership. Queue local builds/tests/tools according to CPU, memory, disk, GPU/device, and sandbox limits instead of oversubscribing the user's computer.
+
+The accepted project environment is part of the deliverable. Remove Council agents, provider credentials, agent GitHub credentials, hidden Council control mechanisms, and orchestration-only tooling from the delivered runtime. Persist the reproducible project/environment definition and required data; disposable development-container residue is not project memory.
+
+Exit condition: a non-coding investigation completes without a terminal, valid minority objections survive, administrative voting cannot promote evidential status, checkpoint visibility follows policy, more logical agents than local execution slots can make progress safely, and an executable candidate can be rebuilt cleanly from retained definitions.
 
 ### C. Continuity and review
 
