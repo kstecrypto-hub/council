@@ -9,11 +9,13 @@ The initial authorization was to create a repository and publish the approved de
 ## Preserve these design commitments
 
 - Peer investigators govern the council. Do not introduce a single lead/supervisor/judge with unilateral intellectual authority above it.
+- The Project Orchestrator may own user-intent clarification, Project Contract versioning, neutral prompt generation, checkpoint scheduling, and clarification brokerage, but it must not become an intellectual supervisor, solution designer, winner selector, or hidden judge.
+- The user does not communicate directly with individual council members or workers. User clarifications and scope changes go through the Project Orchestrator and become canonical versioned Project Contract revisions distributed consistently to affected branches.
 - Every member investigates, delegates, challenges, and revises. Members own investigations, not conclusions they must defend.
 - The core is domain-agnostic and must support a complete non-coding investigation with no terminal tool.
 - DeepSeek is the initial default, not a globally hard-wired provider. Support per-seat and per-worker model overrides, safe session migration, and provider-specific data permissions.
 - The same-model council must be labeled honestly. A new session is not a new independent reviewer.
-- Keep independent unpublished branches private across retrieval, graph queries, context packets, caches, and exports.
+- Keep independent unpublished branches private across retrieval, graph queries, context packets, caches, and exports. Communication occurs only through the versioned checkpoint policy or an approved adaptive checkpoint, with explicit publication scope.
 - Runtime events are authoritative for observed execution. Agent-submitted semantic relationships remain attributed, reviewable interpretations.
 - Keep evidence support separate from council agreement. Preserve contrary evidence, minority positions, uncertainties, and source lineage.
 - Treat assumptions as first-class records. Preserve joint premises and alternative supporting routes. Do not equate citations with proof, chronology with causation, or different documents with independent evidence.
@@ -23,6 +25,8 @@ The initial authorization was to create a repository and publish the approved de
 - A final report assembler has editorial authority only. It may not erase unresolved objections or silently pick the winner of a factual dispute.
 - Require scoped permissions for tools and provider changes. Keep credentials outside model prompts, browser state, generated code, and ordinary logs.
 - Account for retries, failures, child agents, and parallel reservations in budgets. Preserve review allowance. Exhaustion yields a partial outcome, not forced consensus.
+- For executable projects, default to Council-managed isolated project environments rather than host replication. Agents may evolve their authorized candidate environment, but all durable environment changes must be captured reproducibly and pass a clean rebuild. Host matching is opt-in.
+- Treat the accepted reproducible project environment as part of the deliverable. Do not leave Council agents, provider credentials, agent GitHub credentials, hidden Council control mechanisms, or orchestration-only tooling in the user's final runtime.
 
 ## Implementation discipline when implementation is authorized
 
