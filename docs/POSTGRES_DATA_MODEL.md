@@ -51,15 +51,59 @@ Immutable.
 - UNIQUE(`contract_id`, `revision_no`)
 
 ### council_core.project_contract_approvals
-Immutable approval/decline record.
+Immutable user decision for one exact contract revision.
 - `id` PK
 - `contract_revision_id` FK
 - `user_id`
-- `decision` = APPROVED | DECLINED
+- `decision` = APPROVED | CHANGES_REQUESTED | CURRENT_APPROACH_REJECTED | PROJECT_CANCELLED
+- `interaction_request_id` FK
 - `decided_at`
 - `note`
 
-A run cannot start from a revision without an APPROVED record.
+A run cannot start from a revision without an APPROVED record. Requested changes and rejected approaches never mutate the old revision; they causally produce a later immutable revision when the project continues.
+
+### council_core.interaction_requests
+Durable user-decision/clarification request. A blocking UI prompt is a projection of this record, not a side effect of an activity label.
+- `id` PK
+- `project_id` FK
+- `run_id` nullable FK
+- `branch_id` nullable FK
+- `type`
+- `schema_version`
+- `target_type`
+- `target_id`
+- `target_version` nullable
+- `target_hash` nullable
+- `title`
+- `summary`
+- `payload_json`
+- `allowed_action_codes_json`
+- `blocking_scope`
+- `priority`
+- `status` = OPEN | PRESENTED | ANSWERED | STALE | CANCELLED
+- `created_event_id` FK
+- `presented_at` nullable
+- `resolved_event_id` nullable FK
+- `resolved_at` nullable
+- `stale_reason` nullable
+- `created_at`
+
+At most one active interaction request may represent the same semantic gate/target revision. Replayed delivery must not create another request.
+
+### council_core.interaction_responses
+Immutable user response to one durable interaction request.
+- `id` PK
+- `interaction_request_id` FK
+- `actor_id`
+- `action_code`
+- `payload_json`
+- `expected_target_version` nullable
+- `expected_target_hash` nullable
+- `idempotency_key`
+- `submitted_at`
+- UNIQUE(`interaction_request_id`, `idempotency_key`)
+
+Interaction responses do not replace domain-specific canonical records. The response plus the domain decision it authorizes must be committed coherently.
 
 ### council_core.instruction_packages
 Immutable prompt/instruction package generated from an approved contract revision.
@@ -522,6 +566,23 @@ Mutable.
 A transaction that changes canonical state also writes the essential audit event and relationship changes required to explain that state.
 
 ## 10. Runtime schema
+
+### council_runtime.entity_activity
+Mutable/rebuildable projection used by UI and scheduler observability. Durable events remain the history/source for reconstruction.
+- `entity_type`
+- `entity_id`
+- `project_id` FK
+- `run_id` nullable FK
+- `lifecycle_state`
+- `activity_code`
+- `detail_schema_version`
+- `detail_json`
+- `source_event_id` FK
+- `updated_at`
+- PK(`entity_type`, `entity_id`)
+
+Activity labels never grant permissions or expose unpublished data. The Part 4 State Contract registry defines legal activity codes/transitions and any associated interaction type.
+
 
 The runtime schema is disposable operational machinery. It must be reconstructable or safely reconciled from canonical state plus external-system truth.
 
