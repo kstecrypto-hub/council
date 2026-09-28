@@ -4,7 +4,7 @@
 
 This is a handoff for a later explicitly authorized implementation. The current delivery is a documentation repository, not an application. The owner approved the design and requested that it be placed in a new repository.
 
-Read [the complete design](APP_DESIGN.md) first and [AGENTS.md](../AGENTS.md) second. The complete design remains authoritative over this operational summary. Later owner instructions may change the scope; record such changes rather than silently interpreting this handoff as permission for unrelated work.
+Read [the complete design](APP_DESIGN.md) first, then the [PostgreSQL data model](POSTGRES_DATA_MODEL.md) and [Part 4 typed interaction/state contracts](TYPED_INTERACTION_CONTRACTS.md), and [AGENTS.md](../AGENTS.md) next. The complete design remains authoritative over this operational summary. Later owner instructions may change the scope; record such changes rather than silently interpreting this handoff as permission for unrelated work.
 
 The older single-lead swarm starter is not a valid implementation baseline. Do not import its fixed managerial structure, coding-first assumptions, dashboard, or runtime as if they implement the approved council.
 
@@ -22,9 +22,9 @@ Use ordinary searchable records, evidence, checkpoints, and short handovers alon
 
 ### A. Foundation
 
-Establish canonical versioned records, scope/authorization checks, immutable source versions, observable execution events, and typed graph relationships. Keep assumptions, grouped premises, and alternative support paths explicit.
+Establish canonical versioned records, scope/authorization checks, immutable source versions, observable execution events, and typed graph relationships. Implement the Part 4 command/event envelopes, State Contract registry, scoped lifecycle/activity projections, durable interaction requests, and stale/idempotent user-action guards as foundation primitives rather than UI-only features. Keep assumptions, grouped premises, and alternative support paths explicit.
 
-Implement the Project Orchestrator boundary first: user conversation -> versioned Project Contract -> explicit user approval -> neutral council instruction package -> versioned checkpoint policy. Do not expose a direct user-to-council-member free-form guidance path. Later clarifications must become canonical Project Contract revisions distributed consistently to affected branches.
+Implement the Project Orchestrator boundary first: user conversation -> versioned Project Contract -> durable PROJECT_CONTRACT_APPROVAL interaction -> explicit user decision -> neutral council instruction package -> versioned checkpoint policy. The approval interaction must expose Approve & launch, Request changes, Reject current approach, and Cancel project with the exact transition semantics in TYPED_INTERACTION_CONTRACTS.md. Do not expose a direct user-to-council-member free-form guidance path. Later clarifications must become canonical Project Contract revisions distributed consistently to affected branches.
 
 Implement the PostgreSQL-backed task queue with leases and reconciliation. Add provider adapters and a configurable capability registry. Use synthetic/prepared evidence before connecting live sources.
 
