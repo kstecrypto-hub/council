@@ -3,7 +3,9 @@
 **Design baseline:** approved in the project conversation on September 10, 2026.  
 **Repository status:** specification only; application implementation has not started.  
 **Authority:** this document preserves the approved complete design. Supporting handoff documents organize its execution and must not silently change its requirements.  
-**References:** [upstream design references](REFERENCES.md). References describe source concepts, not verified behavior of this unimplemented application.
+**References:** [upstream design references](REFERENCES.md). References describe source concepts, not verified behavior of this unimplemented application.  
+**Part 3 persistence model:** [POSTGRES_DATA_MODEL.md](POSTGRES_DATA_MODEL.md).  
+**Part 4 state/action/UI contracts:** [TYPED_INTERACTION_CONTRACTS.md](TYPED_INTERACTION_CONTRACTS.md).
 
 The app is a general-purpose investigation platform governed by a council of agents. Each council member develops its own analysis using sub-agents, challenges the others' work, revises its position when justified, and contributes to a shared, evidence-backed result.
 
@@ -132,6 +134,14 @@ A bounded minority-investigation allowance prevents the majority from suppressin
 Only the user can authorize a broader objective, increased spending ceiling, or expanded permissions.
 
 ## 3. Investigation lifecycle
+
+### Action-linked state and interaction contract
+
+Lifecycle state, descriptive activity, operation status, and user interaction are separate concepts. A status must never be implemented as a passive label when it implies behavior. Every externally meaningful state/activity has an explicit entry trigger, runtime behavior, observable effect, allowed commands, emitted events, transitions, and failure/recovery path. A user-facing gate additionally defines the exact decision surface and the consequence of every action.
+
+Blocking pop-ups are created from durable interaction requests, not from seeing an activity code such as AWAITING_PROJECT_APPROVAL. This makes decisions resumable across reconnects and prevents replayed events from opening duplicate prompts. Closing a visual prompt without choosing an action does not approve, reject, or otherwise resolve it.
+
+The complete typed command/event taxonomy, scoped activity codes, State Contract schema, Project Contract approval behavior, clarification flow, permission/budget gates, final candidate review, idempotency rules, frontend/SSE behavior, and deterministic acceptance tests are authoritative in [TYPED_INTERACTION_CONTRACTS.md](TYPED_INTERACTION_CONTRACTS.md).
 
 | Stage | Required outcome |
 |---|---|
