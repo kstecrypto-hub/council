@@ -2,7 +2,7 @@
 
 ## Authority and current stage
 
-This is an approved-design repository, not an implemented application. Read `docs/APP_DESIGN.md` in full before proposing or implementing changes. Read `docs/IMPLEMENTATION_HANDOFF.md` next. The latest explicit owner instruction is authoritative; supporting handoff notes do not silently override the complete design.
+This is an approved-design repository, not an implemented application. Read `docs/APP_DESIGN.md` in full before proposing or implementing changes. Then read `docs/POSTGRES_DATA_MODEL.md` and `docs/TYPED_INTERACTION_CONTRACTS.md`; read `docs/IMPLEMENTATION_HANDOFF.md` next. The latest explicit owner instruction is authoritative; supporting handoff notes do not silently override the complete design.
 
 The initial authorization was to create a repository and publish the approved design. It was not an instruction to build the application. Do not start application implementation solely because this file exists. A later explicit implementation request authorizes work within its stated scope; do not then ask for redundant confirmation.
 
@@ -17,6 +17,7 @@ The initial authorization was to create a repository and publish the approved de
 - The same-model council must be labeled honestly. A new session is not a new independent reviewer.
 - Keep independent unpublished branches private across retrieval, graph queries, context packets, caches, and exports. Communication occurs only through the versioned checkpoint policy or an approved adaptive checkpoint, with explicit publication scope.
 - Runtime events are authoritative for observed execution. Agent-submitted semantic relationships remain attributed, reviewable interpretations.
+- Preserve the Part 4 action-linked state invariant: no externally meaningful state/activity may be implemented as a label only. Follow the registered trigger -> behavior -> interaction/UI -> command -> event -> transition/recovery contract. Durable interaction requests, not activity labels, cause blocking user decision surfaces.
 - Keep evidence support separate from council agreement. Preserve contrary evidence, minority positions, uncertainties, and source lineage.
 - Treat assumptions as first-class records. Preserve joint premises and alternative supporting routes. Do not equate citations with proof, chronology with causation, or different documents with independent evidence.
 - Keep claim revisions append-only. Upstream changes trigger reassessment, not automatic declarations that all dependent claims are false.
