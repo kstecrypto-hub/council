@@ -146,8 +146,9 @@ MVP can simplify
   the MVP if Match My PC itself is deferred.
 
 
-STEP 4 - TYPED COMMANDS AND CONTRACTS
-Status: TO DESIGN / IMPLEMENT
+STEP 4 - TYPED COMMANDS, EVENTS, STATE MACHINES, AND INTERACTION CONTRACTS
+Status: DESIGNED
+Primary specification: docs/TYPED_INTERACTION_CONTRACTS.md
 
 Complete product
 ~~~~~~~~~~~~~~~~
@@ -158,8 +159,10 @@ Complete product
 
 MVP must implement
 ~~~~~~~~~~~~~~~~~~
+- Implement the approved Part 4 State Contract registry and the separation between lifecycle state, scoped activity code, operation status, and durable user interaction.
+- Blocking user prompts must come from persisted interaction requests, never from labels alone.
 - Strict typed contracts for:
-  * create/revise/approve Project Contract;
+  * create/revise/approve/request changes/reject current approach/cancel Project Contract setup;
   * start/pause/resume/stop run;
   * create/complete/fail task;
   * create worker;
@@ -172,6 +175,8 @@ MVP must implement
   * continuation packet creation;
   * candidate completion/finalization.
 - Reject unknown/invalid state transitions.
+- Implement exact Project Contract approval UI semantics, including Approve & launch, Request changes, Reject current approach, and Cancel project.
+- Implement idempotent/stale-safe interaction responses and reconnect-safe Interaction Center behavior.
 - Schema validation at every API/runtime boundary.
 
 Defer until after MVP evidence
