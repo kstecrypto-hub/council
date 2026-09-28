@@ -9,6 +9,8 @@ DeepSeek is the initial default for every agent. Per-agent provider/model select
 ## Start here
 
 - [Complete app design](docs/APP_DESIGN.md) - the authoritative approved product and architecture specification, including the complete UI, graph, context lifecycle, execution boundaries, and acceptance criteria.
+- [PostgreSQL data model](docs/POSTGRES_DATA_MODEL.md) - the authoritative Part 3 persistence model and invariants.
+- [Typed interaction/state contracts](docs/TYPED_INTERACTION_CONTRACTS.md) - the approved Part 4 design linking every meaningful state to runtime behavior, user surfaces, commands, events, transitions, and recovery.
 - [Implementation handoff](docs/IMPLEMENTATION_HANDOFF.md) - scope boundaries, build sequence, invariants, and instructions for a later authorized implementation.
 - [Agent instructions](AGENTS.md) - repository-level requirements for future development agents.
 - [Design references](docs/REFERENCES.md) - upstream concepts and documentation referenced in the design.
