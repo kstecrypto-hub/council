@@ -9,8 +9,8 @@ The initial authorization was to create a repository and publish the approved de
 ## Preserve these design commitments
 
 - Peer investigators govern the council. Do not introduce a single lead/supervisor/judge with unilateral intellectual authority above it.
-- The Project Orchestrator may own user-intent clarification, Project Contract versioning, neutral prompt generation, checkpoint scheduling, and clarification brokerage, but it must not become an intellectual supervisor, solution designer, winner selector, or hidden judge.
-- The user does not communicate directly with individual council members or workers. User clarifications and scope changes go through the Project Orchestrator and become canonical versioned Project Contract revisions distributed consistently to affected branches.
+- The Project Orchestrator is deliberately narrow: it owns canonical prompt generation, small prompt/clarification memory, and transformation of raw user replies into stable agent-ready instructions. It must not become an intellectual supervisor, solution designer, winner selector, hidden judge, or default checkpoint-policy owner.
+- Council members and workers may originate questions to the user. The raw user reply must never flow directly back to the requesting agent: it passes through the Project Orchestrator, which may improve form but not substance, then returns a processed answer. Local clarifications remain local where appropriate; project-wide requirement changes propagate consistently to affected branches.
 - Every member investigates, delegates, challenges, and revises. Members own investigations, not conclusions they must defend.
 - The core is domain-agnostic and must support a complete non-coding investigation with no terminal tool.
 - DeepSeek is the initial default, not a globally hard-wired provider. Support per-seat and per-worker model overrides, safe session migration, and provider-specific data permissions.
@@ -26,7 +26,7 @@ The initial authorization was to create a repository and publish the approved de
 - A final report assembler has editorial authority only. It may not erase unresolved objections or silently pick the winner of a factual dispute.
 - Require scoped permissions for tools and provider changes. Keep credentials outside model prompts, browser state, generated code, and ordinary logs.
 - Account for retries, failures, child agents, and parallel reservations in budgets. Preserve review allowance. Exhaustion yields a partial outcome, not forced consensus.
-- For executable projects, default to Council-managed isolated project environments rather than host replication. Agents may evolve their authorized candidate environment, but all durable environment changes must be captured reproducibly and pass a clean rebuild. Host matching is opt-in.
+- For executable projects, execution isolation is transparent to the agent. The agent acts as though it owns a normal machine and controls everything visible inside its environment, including destructive changes. The runtime owns only the invisible isolation/lifecycle boundary and must prevent escape, cross-branch access, protected credential access, or direct canonical-state mutation. Host matching is opt-in.
 - In Match My PC mode, treat the approved Environment Contract as the boundary. Do not collect unrelated host data, infer permission from mere device/software presence, or silently upgrade compatible/bridged behavior to exact verification.
 - Never give an agent or ordinary Council process unrestricted administrator, Docker-daemon, or kernel access. Elevated host operations go through the typed local privileged broker and only within approved capability scope.
 - Match My PC does not authorize modifying the real host. Host software/configuration/driver/service changes require separate explicit permission and must be auditable and cleaned up or rolled back where practical.
