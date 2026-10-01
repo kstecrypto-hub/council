@@ -62,7 +62,7 @@ The platform supports research, document analysis, operational investigation, sy
 
 | Component | Responsibility |
 |---|---|
-| Project orchestrator | Elicit and version the user's intent, produce the canonical Project Contract, generate neutral council instructions, plan communication checkpoints, and broker later clarifications without becoming an intellectual supervisor. |
+| Project orchestrator | Produce one stable canonical project prompt, retain small prompt/clarification memory, and transform raw user replies into consistent agent-ready instructions without changing their substance. |
 | Council protocol | Independent investigation, checkpoint-scoped publication, cross-examination, revision, coverage review, and synthesis. |
 | Worker runtime | Execute assignments, manage delegation, and maintain agent sessions. |
 | Model gateway | Route each agent to its selected provider and model. |
@@ -93,19 +93,17 @@ Members own investigations, not conclusions they must defend.
 
 ### Project Orchestrator and user communication boundary
 
-The user communicates with the Project Orchestrator, not directly with council members or their workers.
+Before a Council run exists, the Project Orchestrator discusses the project with the user until it can produce one stable, versioned canonical project prompt. Every Council member receives the same logical project requirements; only operational metadata such as member identity, model, branch, or environment may differ.
 
-Before a council run exists, the Project Orchestrator discusses the project with the user until the requested outcome is sufficiently specified. It records objective, required behavior, constraints, non-goals, permissions, desired deliverables, acceptance criteria, definition of done, relevant environment choices, and any user priorities that materially affect execution.
+The Orchestrator is deliberately narrow. It is a prompt and clarification layer with small persistent memory for the current canonical prompt, user-approved constraints, established terminology, and prior clarifications. It must not become a central investigation memory, Council lead, solution designer, winner selector, checkpoint-policy owner by default, or hidden judge.
 
-The result is a versioned **Project Contract**. The user must approve the contract before council execution begins.
+Any Council member or worker may originate RequestUserInput when it believes user input is needed. The Orchestrator does not decide whether the question is intellectually worthwhile enough to reach the user. The runtime may intervene only for structural reasons such as malformed requests, duplicate open requests, rate/loop protection, invalid actors, or security violations.
 
-From the approved Project Contract, the Project Orchestrator generates the council instruction package. It communicates what must be achieved, the constraints, available tools, permissions, required outputs, acceptance criteria, definition of done, and communication rules. It must not prescribe an implementation approach unless the user explicitly made that approach a requirement.
+The user's raw reply never flows directly to the requesting Council agent or worker. The raw answer is retained, then the Orchestrator transforms it into a clear agent-ready response using its small project memory. It may improve form, resolve obvious references, compress repetition, and make already-clear requirements explicit, but it must not invent, strengthen, weaken, or silently authorize user intent. If material ambiguity remains, it asks the user again.
 
-The Project Orchestrator is an intent and information-flow authority, not an intellectual leader. It cannot decide which council member is correct, select the winning architecture, suppress a minority branch, or micromanage investigative reasoning.
+Processed answers return to the requesting agent or worker. A local clarification need not be exposed to unrelated branches. If the answer changes a project-wide requirement, the change becomes a canonical project-level revision and is delivered consistently to every affected branch.
 
-If execution reveals a requirement ambiguity or external constraint that genuinely requires user input, an agent emits a structured escalation such as requirement clarification, external constraint discovered, interface decision required, blocked, or checkpoint request. The Project Orchestrator decides whether user input is required, presents the issue to the user, and records any answer as a new Project Contract revision. Every affected branch receives the same canonical revision.
-
-Direct informal user-to-agent guidance is prohibited because it would cause branches to operate from different versions or interpretations of the objective.
+The authority and routing invariants are specified in [PART_4A_AUTHORITY_BOUNDARIES.md](PART_4A_AUTHORITY_BOUNDARIES.md).
 
 ### Independent beginnings
 
@@ -113,13 +111,13 @@ Before seeing their peers' analyses, each member produces an initial investigati
 
 During this stage, its workers cannot read other branches' unpublished work. Members may access the same authorized source material; the generic architecture does not impose the earlier sensor-based partitioning experiment.
 
-Before execution, the Project Orchestrator derives a versioned checkpoint policy from the approved Project Contract. The number and timing of normal checkpoints are project-specific rather than globally fixed. A checkpoint defines its trigger, participating branches, publication scope, allowed communication scope, required outputs, completion condition, and the isolation state that follows.
+Before execution, a versioned checkpoint policy is established under the checkpoint-authority contract defined later in Part 4. The Project Orchestrator does not own checkpoint policy merely by being the prompt broker. The number and timing of normal checkpoints are project-specific rather than globally fixed. A checkpoint defines its trigger, participating branches, publication scope, allowed communication scope, required outputs, completion condition, and the isolation state that follows.
 
 Publication scope is explicit. An early checkpoint may expose only architecture boundaries, assumptions, interfaces, or discovered external constraints while keeping implementation code private. A later checkpoint may expose complete repositories, tests, environment definitions, benchmarks, and failed approaches.
 
 After a scoped checkpoint, branches may return to isolation while retaining only information legitimately published at that checkpoint. The final implementation checkpoint opens the mature candidate implementations for full peer inspection, challenge, comparative testing, and revision.
 
-The checkpoint policy may be amended adaptively when structured branch signals reveal an unanticipated shared dependency, blocking interface decision, or other situation where communication has become necessary. The Project Orchestrator does not need unrestricted access to private repositories to make this decision; it relies on the Project Contract and explicit execution-state signals.
+The checkpoint policy may be amended adaptively when structured branch signals reveal an unanticipated shared dependency, blocking interface decision, or other situation where communication has become necessary. Exact authority for proposing and approving checkpoint-policy changes remains to be specified; it is not implicitly assigned to the Project Orchestrator.
 
 Every checkpoint records exactly what each branch published and received. This makes it possible to distinguish independently developed findings from conclusions adopted after communication.
 
@@ -419,7 +417,7 @@ For the controlled initial deployment, Docker is the proposed execution boundary
 
 For executable projects, the default is a **Council-managed project environment**, not host replication.
 
-Each candidate branch receives an isolated sandbox that starts from an approved base and can evolve as the solution requires. Within its granted permissions, an agent may install packages, add runtimes, configure databases or supporting services, change project-local configuration, and add other dependencies necessary to make its candidate work.
+Each candidate branch receives an isolated execution environment that starts from an approved base and can evolve as the solution requires. Isolation is transparent to the agent: it should experience the environment as a normal machine/workspace that it owns. Everything visible inside that environment is under the branch's operational authority, including destructive changes. The runtime controls only the invisible containment/lifecycle boundary and must prevent escape, cross-branch access, protected credential access, or direct mutation of canonical Council state.
 
 Different branches may choose different stacks and supporting services. Those environment choices are part of the candidate architecture and become reviewable alongside the code.
 
