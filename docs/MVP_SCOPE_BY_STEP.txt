@@ -147,8 +147,8 @@ MVP can simplify
 
 
 STEP 4 - TYPED COMMANDS, EVENTS, STATE MACHINES, AND INTERACTION CONTRACTS
-Status: DESIGNED
-Primary specification: docs/TYPED_INTERACTION_CONTRACTS.md
+Status: PARTIALLY DESIGNED
+Primary specifications: docs/TYPED_INTERACTION_CONTRACTS.md and docs/PART_4A_AUTHORITY_BOUNDARIES.md
 
 Complete product
 ~~~~~~~~~~~~~~~~
