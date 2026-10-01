@@ -1,6 +1,6 @@
 # Part 4 - typed interaction, command, event, state, and action contracts
 
-**Status:** approved final architecture for Part 4.  
+**Status:** partial architecture for Part 4; Part 4A authority boundaries are approved, but the complete Part 4 contract set is not yet designed.  
 **Authority:** this document refines the state/action, user-interaction, command, event, and UI-wiring requirements in APP_DESIGN.md and the persistence model in POSTGRES_DATA_MODEL.md. If a supporting document conflicts with the latest explicit owner instruction or APP_DESIGN.md, the latest owner instruction and APP_DESIGN.md remain authoritative.  
 **Implementation status:** specification only. No application code is implied by this document.
 
@@ -515,20 +515,20 @@ Approval can never float from one revision to another.
 
 ## 9. Runtime clarification flow
 
-When an agent encounters a genuine requirement ambiguity:
-1. the agent creates a structured escalation;
-2. the Project Orchestrator determines whether existing canonical material already resolves it;
-3. if not, it identifies the exact affected scope;
-4. affected tasks transition to WAITING_ON_USER_INPUT;
-5. unaffected branches/tasks continue where safe;
-6. the Orchestrator creates a USER_CLARIFICATION interaction request;
-7. the UI opens the clarification surface and shows the question, why Council needs the answer, what work is blocked, relevant current contract text, and the consequences of available choices where known.
+When a Council member or worker needs user input:
+1. the originating agent creates RequestUserInput;
+2. the runtime validates the request structurally and creates a durable USER_CLARIFICATION interaction request without an Orchestrator intellectual veto;
+3. only work that actually depends on the answer transitions to WAITING_ON_USER_INPUT; unaffected work continues where safe;
+4. the UI identifies the originating Council actor and presents the question to the user;
+5. the user's raw answer is recorded immutably as RAW_USER_RESPONSE;
+6. the Project Orchestrator receives the raw answer and its small prompt/clarification memory;
+7. the Orchestrator produces a processed, agent-ready answer that may improve form but must not change substance;
+8. the processed answer is recorded as PROCESSED_USER_RESPONSE and delivered to the requesting agent or worker;
+9. if the answer changes a project-wide requirement, the appropriate canonical project revision is created and distributed consistently to every affected branch.
 
-The user's answer is recorded immutably.
+A raw user answer never flows directly to a Council agent or worker. The Orchestrator may structure, compress, resolve obvious references, and make already-clear requirements explicit, but it may not invent, strengthen, weaken, or silently authorize user intent. If material meaning remains unresolved, the Orchestrator asks the user again.
 
-The Project Orchestrator then produces the exact new Project Contract revision that incorporates the answer. Before affected work resumes, the user sees the generated diff and confirms that the revision faithfully represents the answer. Confirmation activates the revision for the run, distributes the same canonical revision to every affected branch, and resumes the affected work.
-
-The system must never ask one council member privately and allow branches to continue with different interpretations of the user's answer.
+See PART_4A_AUTHORITY_BOUNDARIES.md for the authoritative authority and routing invariants.
 
 ## 10. Other user-gated interactions
 
