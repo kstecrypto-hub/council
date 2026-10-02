@@ -24,7 +24,7 @@ Use ordinary searchable records, evidence, checkpoints, and short handovers alon
 
 Establish canonical versioned records, scope/authorization checks, immutable source versions, observable execution events, and typed graph relationships. Implement the Part 4 command/event envelopes, State Contract registry, scoped lifecycle/activity projections, durable interaction requests, and stale/idempotent user-action guards as foundation primitives rather than UI-only features. Keep assumptions, grouped premises, and alternative support paths explicit.
 
-Implement the Project Orchestrator boundary first: user conversation -> versioned Project Contract -> durable PROJECT_CONTRACT_APPROVAL interaction -> explicit user decision -> neutral council instruction package -> versioned checkpoint policy. The approval interaction must expose Approve & launch, Request changes, Reject current approach, and Cancel project with the exact transition semantics in TYPED_INTERACTION_CONTRACTS.md. Do not expose a direct user-to-council-member free-form guidance path. Later clarifications must become canonical Project Contract revisions distributed consistently to affected branches.
+Implement the Project Orchestrator boundary first: user conversation -> versioned canonical project prompt -> durable PROJECT_CONTRACT_APPROVAL interaction -> explicit user decision -> stable prompt delivered consistently to Council members. The approval interaction must expose Approve & launch, Request changes, Reject current approach, and Cancel project with the exact transition semantics in TYPED_INTERACTION_CONTRACTS.md. Council members/workers may originate questions to the user, but raw user replies must return through the Orchestrator before the processed answer reaches the requesting agent. The Orchestrator does not own checkpoint policy.
 
 Implement the PostgreSQL-backed task queue with leases and reconciliation. Add provider adapters and a configurable capability registry. Use synthetic/prepared evidence before connecting live sources.
 
@@ -34,7 +34,7 @@ Exit condition: the three graph questions work against deterministic fixtures; a
 
 Implement equal council seats, independent private investigation branches, dynamically commissioned workers, targeted cross-examination, revisions, coverage records, and bounded minority investigation.
 
-Implement project-specific checkpoint execution from the versioned policy produced by the Project Orchestrator. Each checkpoint must have an explicit trigger, participants, publication scope, allowed communication scope, required outputs, completion condition, and post-checkpoint isolation state. Support adaptive checkpoints from structured branch signals without giving the Project Orchestrator unrestricted access to private repositories.
+Implement checkpoint execution around each Council member's own repository. Between checkpoints, peer repos are private. At checkpoint entry, temporarily grant participating peers read access, record each repo's exact opening commit, and allow peers to inspect/clone/test the visible repositories without write access. Record review-period commits and the closing commit. At checkpoint close, revoke reciprocal access and return branches to private development while preserving what they legitimately learned. Exact checkpoint trigger/close authority is defined separately from the Orchestrator.
 
 Implement budget reservations, branch limits, delegation limits, progress checks, and a protected review allowance. Scheduling must release capacity while parents wait for workers.
 
