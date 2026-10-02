@@ -166,8 +166,8 @@ MVP must implement
   * start/pause/resume/stop run;
   * create/complete/fail task;
   * create worker;
-  * publish checkpoint artifact/claim/candidate snapshot;
-  * deliver publication to allowed peers;
+  * open checkpoint repository access for allowed peers;
+  * record opening/closing repository commits and revoke peer access;
   * submit challenge/review response;
   * request requirement clarification/checkpoint;
   * model call request/result;
@@ -293,8 +293,8 @@ Core governance is already designed.
 
 Complete product
 ~~~~~~~~~~~~~~~~
-- Project Orchestrator produces the approved contract/instruction package and
-  project-specific checkpoint policy.
+- Project Orchestrator produces the stable canonical project prompt and handles
+  prompt-consistent user clarification; it does not own checkpoint policy.
 - Equal peer council.
 - Dynamic workers.
 - Independent beginnings, scoped checkpoints, cross-examination, revisions,
@@ -308,9 +308,16 @@ MVP must implement
 - 3-4 configurable peer council members.
 - Prefer support for different strong reasoning-model families per seat.
 - Independent start with no peer unpublished context leakage.
+- Each Council member owns its own repository under its own GitHub identity.
+- Between checkpoints, peer repositories are private.
 - At least:
-  * one early/mid scoped publication checkpoint; and
-  * one mature-candidate full peer-review checkpoint.
+  * one early/mid checkpoint with temporary reciprocal peer read access to the
+    participating repositories; and
+  * one mature-candidate full peer-review checkpoint using the same mechanism.
+- Record exact opening/closing commit SHAs and the peer-access window for every
+  checkpoint.
+- Peers may clone/test another member's repo but never receive write access to it.
+- Revoke reciprocal repo access when the checkpoint closes.
 - Peer challenge and revision cycle.
 - Bounded worker delegation (one simple depth/worker cap is enough).
 - Structured escalation back to Project Orchestrator for requirement ambiguity.
