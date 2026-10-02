@@ -293,8 +293,9 @@ Core governance is already designed.
 
 Complete product
 ~~~~~~~~~~~~~~~~
-- Project Orchestrator produces the stable canonical project prompt and handles
-  prompt-consistent user clarification; it does not own checkpoint policy.
+- Project Orchestrator produces the stable canonical project prompt, derives the
+  project-specific semantic checkpoint plan, and handles prompt-consistent user
+  clarification. It does not control Council reasoning or choose solutions.
 - Equal peer council.
 - Dynamic workers.
 - Independent beginnings, scoped checkpoints, cross-examination, revisions,
@@ -326,7 +327,7 @@ MVP must implement
 
 Defer until after MVP evidence
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- Sophisticated adaptive-checkpoint planning.
+- Sophisticated adaptive-checkpoint replanning beyond the initial project-specific milestone plan.
 - Complex voting/agenda machinery.
 - Deep worker hierarchies.
 - Every planned review phase if it does not affect the core experiment.
