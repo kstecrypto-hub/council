@@ -27,10 +27,11 @@ Its primary responsibilities are:
 
 1. converse with the user before a run sufficiently to produce one canonical project prompt;
 2. send the same logical project prompt to every Council member;
-3. retain a small prompt/clarification memory so later explanations remain consistent;
-4. receive raw user answers to questions originated by Council agents or workers;
-5. transform those raw answers into clear, agent-ready instructions without changing their substance;
-6. route the processed answer to the requesting agent and, when the answer changes a project-wide requirement, to every affected branch through the appropriate canonical revision mechanism.
+3. derive a versioned, project-specific checkpoint plan made of semantic project milestones;
+4. retain a small prompt/clarification memory so later explanations remain consistent;
+5. receive raw user answers to questions originated by Council agents or workers;
+6. transform those raw answers into clear, agent-ready instructions without changing their substance;
+7. route the processed answer to the requesting agent and, when the answer changes a project-wide requirement, to every affected branch through the appropriate canonical revision mechanism.
 
 The Orchestrator is not:
 
@@ -40,16 +41,16 @@ The Orchestrator is not:
 - a winner selector;
 - a reviewer of whether an agent's question is intellectually worthwhile;
 - a gatekeeper that may suppress a structurally valid user question;
-- a checkpoint-policy owner merely by virtue of being the Orchestrator;
 - an owner of Council reasoning, evidence, candidate repositories, or private branch state.
 
-Checkpoint-policy authority is a separate Part 4 design question. Existing documents must not assign it to the Orchestrator by default.
+Checkpoint planning is a legitimate Orchestrator responsibility because checkpoints are project-specific semantic milestones. The Orchestrator decomposes the project into review stages from the canonical project prompt, but this does not give it authority over Council reasoning, solution choice, or branch implementation.
 
 ### 2.1 Small Orchestrator memory
 
 The Orchestrator retains only the context required to keep prompting and clarification consistent, for example:
 
 - current canonical project prompt and version;
+- current project-specific checkpoint plan and milestone sequence;
 - user-approved requirements and constraints;
 - established terminology;
 - prior user clarifications relevant to future interpretation;
@@ -352,7 +353,6 @@ The rest of Part 4 must preserve these rules:
 
 Part 4A intentionally does not decide:
 
-- who authors and changes normal/adaptive checkpoint policy;
 - the exact typed checkpoint open/review/close contract and repository-access transitions;
 - exact sandbox implementation/rebuild technology;
 - resource ceilings and how agents request increases;
