@@ -184,7 +184,28 @@ Each Council member controls:
 
 Workers operate within the authority delegated by their parent branch and may themselves originate RequestUserInput interactions.
 
-No Council member or worker may directly mutate another branch's unpublished work or bypass publication rules to inspect it.
+No Council member or worker may directly mutate another branch's unpublished work or bypass checkpoint visibility rules to inspect it.
+
+### 6.1 Repository ownership and checkpoint visibility
+
+Each Council member owns and continuously develops its own repository under its own GitHub identity.
+
+Between checkpoints, peer repositories remain private to their owning branches. At an authorized checkpoint, the runtime temporarily grants reciprocal **read** access among the participating Council members. The repository itself is the primary publication surface; there is no requirement for a separate synthetic publication artifact to stand in for the branch's real committed work.
+
+For each participating branch, checkpoint entry records:
+- repository identity;
+- repository owner/Council member;
+- exact opening commit SHA;
+- access-grant time;
+- peer recipients.
+
+Peers may inspect, clone, run, and test another member's checkpoint-visible repository inside their own execution environment. They may not push to, rewrite, or otherwise mutate the other member's authoritative repository.
+
+The owner may continue committing to its own repository during the discussion/review window. Those commits remain attributable and the checkpoint records both the opening commit and the final closing commit.
+
+When the checkpoint closes, reciprocal peer access is revoked. Each repository returns to branch-private visibility until the next authorized checkpoint. Agents retain what they legitimately learned during the checkpoint; privacy after closure prevents continued live leakage, not memory of already shared information.
+
+For proprietary work, "visible" means visible to authorized Council peers. Internet-wide public visibility is not an architectural requirement. Temporary collaborator/read access to otherwise private repositories is the preferred default.
 
 ## 7. Transparent execution isolation
 
@@ -332,7 +353,7 @@ The rest of Part 4 must preserve these rules:
 Part 4A intentionally does not decide:
 
 - who authors and changes normal/adaptive checkpoint policy;
-- the exact typed publication contract and publication scope transitions;
+- the exact typed checkpoint open/review/close contract and repository-access transitions;
 - exact sandbox implementation/rebuild technology;
 - resource ceilings and how agents request increases;
 - the complete Auditor sampling/escalation policy;
