@@ -102,7 +102,6 @@ Initial authoritative set:
 - BUILDING_PROJECT_CONTRACT
 - VALIDATING_PROJECT_CONTRACT
 - GENERATING_COUNCIL_INSTRUCTIONS
-- GENERATING_CHECKPOINT_POLICY
 - AWAITING_PROJECT_APPROVAL
 - REWORKING_PROJECT_CONTRACT
 - VALIDATING_REVISED_PROJECT_CONTRACT
@@ -123,8 +122,7 @@ Initial authoritative set:
 - DISTRIBUTING_PROJECT_CONTRACT
 - STARTING_INDEPENDENT_INVESTIGATION
 - INDEPENDENT_INVESTIGATION
-- PREPARING_CHECKPOINT_PUBLICATION
-- DISTRIBUTING_CHECKPOINT_PUBLICATIONS
+- OPENING_CHECKPOINT_REPOSITORIES
 - CROSS_EXAMINING_PEER_WORK
 - REVISING_AFTER_PEER_REVIEW
 - REVIEWING_COVERAGE
@@ -151,7 +149,7 @@ Initial authoritative set:
 - INTEGRATING_WORKER_RESULTS
 - EXECUTING_CANDIDATE_WORK
 - RUNNING_TESTS
-- PREPARING_PUBLICATION
+- PREPARING_CHECKPOINT_REPO
 - WAITING_FOR_CHECKPOINT
 - REVIEWING_PEER_WORK
 - FORMULATING_CHALLENGE
@@ -183,16 +181,17 @@ Initial authoritative set:
 Checkpoint states:
 - SCHEDULED
 - TRIGGERED
-- COLLECTING_PUBLICATIONS
-- FREEZING_PUBLICATIONS
-- DISTRIBUTING
+- OPENING_REPOSITORY_ACCESS
 - REVIEWING
+- CLOSING_REPOSITORY_ACCESS
 - REVISION_WINDOW
 - CLOSED
 - CANCELLED
 - FAILED
 
-A checkpoint does not expose branch-private information merely by becoming TRIGGERED or REVIEWING. Exposure requires an explicit publication plus recipient delivery.
+A checkpoint does not expose branch-private information merely by becoming TRIGGERED. Exposure begins only after the runtime has granted the authorized peer read access and recorded the exact opening commit for each participating repository.
+
+The repository is the primary checkpoint publication surface. Each Council member continues to own and write only its own repository. During REVIEWING, peers may read/clone/test the other participating repositories but receive no write authority over them. The runtime records opening commit, access window, review-period commits, and closing commit. When CLOSING_REPOSITORY_ACCESS completes, reciprocal peer access is revoked and the branches return to private operation while retaining knowledge legitimately learned during review.
 
 ### 3.6 Candidate lifecycle
 
