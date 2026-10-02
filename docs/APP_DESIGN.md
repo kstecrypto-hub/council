@@ -113,13 +113,15 @@ During this stage, its workers cannot read other branches' unpublished work. Mem
 
 Before execution, a versioned checkpoint policy is established under the checkpoint-authority contract defined later in Part 4. The Project Orchestrator does not own checkpoint policy merely by being the prompt broker. The number and timing of normal checkpoints are project-specific rather than globally fixed. A checkpoint defines its trigger, participating branches, publication scope, allowed communication scope, required outputs, completion condition, and the isolation state that follows.
 
-Publication scope is explicit. An early checkpoint may expose only architecture boundaries, assumptions, interfaces, or discovered external constraints while keeping implementation code private. A later checkpoint may expose complete repositories, tests, environment definitions, benchmarks, and failed approaches.
+Each Council member owns and continuously develops its own repository under its own GitHub identity. Between checkpoints, peer repositories are private to their owning Council member and its branch. At an authorized checkpoint, the runtime temporarily grants the participating Council members read access to one another's repositories. The repository is the primary publication surface: peers inspect the actual committed code, architecture, documentation, experiments, findings, tests, commit history, and other retained branch work rather than receiving a separate synthetic publication object.
 
-After a scoped checkpoint, branches may return to isolation while retaining only information legitimately published at that checkpoint. The final implementation checkpoint opens the mature candidate implementations for full peer inspection, challenge, comparative testing, and revision.
+Checkpoint entry records the exact repository and opening commit for every participant. Peers may clone and test another member's repository inside their own execution environment, but they never receive write access to another member's authoritative repository. During the review window, the owner may continue committing to its own repository; opening commit, review-period commits, and closing commit remain attributable for provenance.
+
+When the checkpoint closes, reciprocal peer access is revoked and each repository becomes private to its branch again. Agents retain knowledge legitimately learned during the checkpoint, then continue private development until the next checkpoint. The final mature-candidate checkpoint follows the same mechanism but exposes the full candidate repositories for peer inspection, challenge, comparative testing, and revision.
 
 The checkpoint policy may be amended adaptively when structured branch signals reveal an unanticipated shared dependency, blocking interface decision, or other situation where communication has become necessary. Exact authority for proposing and approving checkpoint-policy changes remains to be specified; it is not implicitly assigned to the Project Orchestrator.
 
-Every checkpoint records exactly what each branch published and received. This makes it possible to distinguish independently developed findings from conclusions adopted after communication.
+Every checkpoint records the participating repositories, exact opening and closing commits, the period during which reciprocal read access existed, and the discussion/review records produced during that window. This makes it possible to distinguish independently developed work from changes made after peer visibility.
 
 ### Collective direction without constant voting
 
