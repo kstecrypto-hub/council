@@ -336,6 +336,9 @@ MVP must implement
 - /work uses a frozen or disposable checkpoint snapshot and is limited to verification activities.
 - The authoritative candidate stays read-only during /work.
 - Candidate implementation resumes only after the checkpoint closes.
+- At checkpoint close, each member writes its own closeout and receives a deterministic return packet containing relevant actions, evidence, frozen peer snapshot references, unresolved items, and transcript references.
+- Full transcripts remain retrievable but are not automatically stuffed into every later model context.
+- Checkpoint knowledge is revision input, not an automatic task list or peer authority.
 - Peer challenge and revision cycle.
 - Bounded worker delegation (one simple depth/worker cap is enough).
 - Structured escalation back to Project Orchestrator for requirement ambiguity.
