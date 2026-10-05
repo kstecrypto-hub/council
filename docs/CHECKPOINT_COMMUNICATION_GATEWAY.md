@@ -255,6 +255,68 @@ A normal /done request succeeds only when:
 
 A new message/action that explicitly requires a DONE member's attention may return that member to ACTIVE before checkpoint closure.
 
+### 6.1 Communication and work are mutually exclusive per member
+
+Checkpoint discussion does not globally freeze all agents. Instead, each Council member may alternate between communication and a bounded work excursion.
+
+Initial member activity states:
+
+- AVAILABLE — participating in checkpoint communication;
+- WORKING — temporarily executing bounded work and unable to communicate live;
+- DONE — no current communication obligations;
+- DISCONNECTED — unexpectedly unavailable from the communication stream.
+
+A member may enter bounded work explicitly, for example:
+
+```text
+/work TR-18
+```
+
+where the argument references the QUESTION, CHALLENGE, TEST_REQUEST, or other peer action that motivated the work. A member may also initiate bounded work for an independently identified verification need, provided the reason is recorded.
+
+When a member enters WORKING:
+
+- it cannot send checkpoint chat messages;
+- it does not receive live conversational interruptions;
+- its normal execution/tool surface required for the bounded work becomes available;
+- other Council members continue communicating normally;
+- all new messages/actions addressed to the working member are accepted, durably ordered, and queued;
+- peer repo visibility remains limited to the checkpoint-authorized snapshots/access policy;
+- the working member's activity is visible only as a coarse runtime state, not as a live terminal/tool stream.
+
+When bounded work completes, fails, or reaches its runtime ceiling, the member returns to AVAILABLE and receives:
+- every complete queued logical message in order;
+- every newly created structured action relevant to it;
+- its refreshed open-obligation queue;
+- the recorded outcome/status of the work excursion.
+
+The member may then publish a TEST_RESULT/FINDING/reply or continue discussion.
+
+The invariant is:
+
+> Communication and execution are mutually exclusive per Council member, not globally per checkpoint.
+
+This permits A and C to continue discussion while B is running a requested test, without interrupting B or losing anything addressed to B.
+
+### 6.2 Bounded work excursions
+
+/work does not reopen unlimited private development. It creates a checkpoint-scoped, bounded work excursion with durable provenance.
+
+A work excursion records at minimum:
+- work_excursion_id;
+- member_id;
+- checkpoint_id;
+- triggering action/message, if any;
+- stated reason;
+- start/end timestamps;
+- completion/failure/ceiling outcome;
+- artifacts/results the member later chooses to cite;
+- any repo commit(s) created during the excursion, if mutation was necessary.
+
+Runtime resource/time ceilings prevent an agent from using /work to abandon checkpoint discussion indefinitely.
+
+A TEST_REQUEST remains advisory. The target member decides whether to enter /work, answer from existing evidence, dispute the request, or defer it. The requesting member may independently test the peer's checkpoint-visible repository in its own environment.
+
 ## 7. Network and capability implications
 
 The invariant "Council members cannot communicate between checkpoints" cannot depend on prompt obedience.
