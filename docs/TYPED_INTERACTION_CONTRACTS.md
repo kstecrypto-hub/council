@@ -1,6 +1,6 @@
 # Part 4 - typed interaction, command, event, state, and action contracts
 
-**Status:** partial architecture for Part 4; Part 4A authority boundaries are approved, but the complete Part 4 contract set is not yet designed.  
+**Status:** DESIGNED. Part 4 defines the approved command/event/state/interaction contract boundary; implementation details belong to later parts.  
 **Authority:** this document refines the state/action, user-interaction, command, event, and UI-wiring requirements in APP_DESIGN.md and the persistence model in POSTGRES_DATA_MODEL.md. If a supporting document conflicts with the latest explicit owner instruction or APP_DESIGN.md, the latest owner instruction and APP_DESIGN.md remain authoritative.  
 **Implementation status:** specification only. No application code is implied by this document.
 
@@ -102,7 +102,7 @@ Initial authoritative set:
 - BUILDING_PROJECT_CONTRACT
 - VALIDATING_PROJECT_CONTRACT
 - GENERATING_COUNCIL_INSTRUCTIONS
-- GENERATING_CHECKPOINT_POLICY
+- GENERATING_PROJECT_CHECKPOINT_PLAN
 - AWAITING_PROJECT_APPROVAL
 - REWORKING_PROJECT_CONTRACT
 - VALIDATING_REVISED_PROJECT_CONTRACT
@@ -182,17 +182,20 @@ Initial authoritative set:
 Checkpoint states:
 - SCHEDULED
 - TRIGGERED
-- OPENING_REPOSITORY_ACCESS
+- OPENING
 - REVIEWING
-- CLOSING_REPOSITORY_ACCESS
-- REVISION_WINDOW
+- CLOSING
 - CLOSED
 - CANCELLED
 - FAILED
 
-A checkpoint does not expose branch-private information merely by becoming TRIGGERED. Exposure begins only after the runtime has granted the authorized peer read access and recorded the exact opening commit for each participating repository. Peer discussion is available only while the checkpoint's runtime-controlled communication session is active.
+A checkpoint does not expose branch-private information merely by becoming TRIGGERED. OPENING records each participant's frozen repository SHA, grants only the authorized reciprocal read access, and creates the runtime-controlled communication session.
 
-The repository is the primary checkpoint publication surface. Each Council member continues to own and write only its own repository. During REVIEWING, peers may read/clone/test the other participating repositories but receive no write authority over them. The runtime records opening commit, access window, review-period commits, and closing commit. When CLOSING_REPOSITORY_ACCESS completes, reciprocal peer access is revoked and the branches return to private operation while retaining knowledge legitimately learned during review. Checkpoint communication credentials/routes/session are also revoked/destroyed; the persistent gateway service remaining alive does not preserve communication authority. See CHECKPOINT_COMMUNICATION_GATEWAY.md.
+During REVIEWING, authoritative candidate repositories remain frozen/read-only for checkpoint purposes. Peers may inspect, clone, and run verification against the frozen snapshots or disposable copies, but no member may implement fixes, commit, or push as part of checkpoint review. Verification-only /work excursions are allowed under the communication contract.
+
+REVIEWING enters CLOSING only when all required participants are DONE, no required peer obligation is unanswered, no accepted message remains pending, and no participant remains WORKING, unless a configured ceiling forces closure and records the reason.
+
+CLOSING persists the transcript and member closeouts, destroys checkpoint communication routes/session, revokes reciprocal peer access, creates deterministic Checkpoint Return Packets, verifies revocation, and then emits CheckpointClosed. Private implementation/revision happens after CLOSED under the normal run/member activity model. See CHECKPOINT_COMMUNICATION_GATEWAY.md.
 
 ### 3.6 Candidate lifecycle
 
@@ -318,8 +321,8 @@ Commands and events use different names deliberately.
 Examples:
 - ApproveProjectContract is a command.
 - ProjectContractApproved is an event.
-- PublishCheckpoint is a command.
-- CheckpointPublicationCreated is an event.
+- OpenCheckpointRepositoryAccess is a command.
+- CheckpointRepositoryAccessOpened is an event.
 - ExecuteSandboxOperation is a command.
 - SandboxOperationSucceeded, SandboxOperationFailed, and SandboxOperationOutcomeUnknown are mutually distinct event outcomes.
 
@@ -636,8 +639,8 @@ Checkpoint/review:
 - ReopenCheckpointCommunicationMember
 - CloseCheckpointCommunicationSession
 - RevokeCheckpointRepositoryAccess
-- SubmitChallenge
-- SubmitChallengeResponse
+- SubmitCheckpointCloseout
+- CreateCheckpointReturnPacket
 - RecordClaimRevision
 - CloseCheckpoint
 
@@ -723,8 +726,8 @@ Checkpoint/review:
 - CheckpointCommunicationQuiescing
 - CheckpointCommunicationSessionClosed
 - CheckpointRepositoryAccessRevoked
-- ChallengeSubmitted
-- ChallengeResponseSubmitted
+- CheckpointCloseoutRecorded
+- CheckpointReturnPacketCreated
 - ClaimRevisionRecorded
 - CheckpointClosed
 
@@ -788,9 +791,11 @@ No terminal state may return to ACTIVE.
 
 Member activity changes do not change logical identity. Session rollover preserves the member and branch.
 
-A member cannot enter REVIEWING_PEER_WORK before it has received an explicit publication delivery for the reviewed material.
+A member cannot enter REVIEWING_PEER_WORK before the checkpoint runtime has granted authorized read access to the peer snapshot being reviewed.
 
 A member cannot enter RESPONDING_TO_CHALLENGE for a challenge it is not authorized to see.
+
+Checkpoint communication member states are AVAILABLE, WORKING, DONE, and DISCONNECTED. AVAILABLE may enter WORKING only through a bounded verification-only /work excursion. AVAILABLE may enter DONE only when no required peer obligation remains unanswered and no accepted outbound message remains pending. A new required peer action moves DONE back to AVAILABLE. Unexpected connection loss moves the member to DISCONNECTED, never to DONE.
 
 ### 13.3 Task
 
@@ -956,7 +961,7 @@ Part 4 is architecturally complete when implementation can derive typed domain D
 Part 5 may refine transactional implementation patterns, but it must not weaken these action/state/UI invariants.
 
 
-## 17. Checkpoint communication and peer-action contract
+## 22. Checkpoint communication and peer-action contract
 
 The authoritative communication architecture is defined in CHECKPOINT_COMMUNICATION_GATEWAY.md.
 
@@ -1032,7 +1037,7 @@ Initial checkpoint member activity states:
 A new required action can move DONE -> AVAILABLE. Unexpected connection loss moves a member to DISCONNECTED, not DONE.
 
 
-## 18. Checkpoint return packet contract
+## 23. Checkpoint return packet contract
 
 After checkpoint communication closes, each Council member receives a deterministic Checkpoint Return Packet for its next private phase.
 
@@ -1055,3 +1060,179 @@ Peer snapshots legitimately seen at a checkpoint may remain available as frozen 
 The full checkpoint transcript remains durably retrievable. Default next-phase context should contain relevant actions, evidence, exact snapshot references, closeout, and transcript/message IDs; the full verbatim transcript is retrieved only when needed.
 
 Structured peer actions retain their checkpoint history across later checkpoints without reopening the old communication session.
+
+
+## 24. Final Part 4 closure registry
+
+This section closes the remaining implementation-level ambiguity in Part 4 without specifying transaction-engine, queue, provider, container, retrieval, or frontend implementation internals that belong to later parts.
+
+### 24.1 Actor/authority matrix
+
+| Actor | May issue/perform | May not do |
+| --- | --- | --- |
+| User | approve/change/cancel project setup; answer interactions; pause/resume/stop runs; approve budget/permission expansion; accept/reject candidates | directly guide an individual Council branch during execution |
+| Project Orchestrator | create/revise the canonical project contract; generate the project-specific checkpoint plan; process user clarifications | select winners, rank members, supervise solution reasoning |
+| Council member | operate its own branch; delegate authorized workers; originate user questions; use checkpoint communication/peer actions; run verification-only checkpoint work; propose candidates | mutate another member's authoritative repo; bypass checkpoint boundaries |
+| Worker | execute delegated work; return results; originate a user clarification when necessary | govern peers or canonical shared state |
+| Runtime | enforce lifecycle/state/authorization; leases; checkpoint access; communication sessions; persistence; return packets | make intellectual judgments about solution quality |
+| Auditor | verify protocol, authorization, isolation, and semantic fidelity | choose solutions or direct Council reasoning |
+
+### 24.2 Schema/version rule
+
+All command/event/interaction schemas carry `schema_version`. MVP begins at version `1`.
+
+Unknown command types, missing required fields, invalid enum values, illegal transitions, stale target versions, and unauthorized actors are rejected before canonical mutation. A partially valid command never partially mutates canonical state.
+
+### 24.3 Standard command result and error shape
+
+Successful command result:
+
+```text
+CommandResult {
+  command_id
+  accepted = true
+  target_id
+  target_version?
+  event_ids[]
+  operation_id?
+  data?
+}
+```
+
+Rejected command result:
+
+```text
+CommandError {
+  command_id
+  accepted = false
+  code
+  message
+  retryable
+  current_target_version?
+}
+```
+
+Canonical Part 4 error codes:
+
+- AUTH_REQUIRED
+- FORBIDDEN
+- VALIDATION_FAILED
+- UNKNOWN_COMMAND
+- NOT_FOUND
+- STALE_TARGET
+- INVALID_TRANSITION
+- IDEMPOTENCY_CONFLICT
+- INTERACTION_CLOSED
+- CHECKPOINT_NOT_ACTIVE
+- MEMBER_NOT_AVAILABLE
+- REQUIRED_ACTIONS_OPEN
+- WORK_NOT_ALLOWED
+- RESOURCE_LIMIT
+- EXTERNAL_OUTCOME_UNKNOWN
+
+Later parts may refine storage/retry implementation but must preserve these semantic distinctions.
+
+### 24.4 Peer action semantics
+
+The originating Council member explicitly chooses the semantic action type. Runtime does not use another model to classify ordinary conversation.
+
+Required-response actions by default:
+- QUESTION
+- CHALLENGE
+- TEST_REQUEST
+
+Informational actions by default:
+- FINDING
+- TEST_RESULT
+- PROPOSAL
+
+A TEST_REQUEST is a request, not an automatically created task in another branch.
+
+Action state and response obligation are separate. A target may fulfill its response obligation while the underlying action remains DISPUTED or otherwise intellectually unresolved. Consensus is never required merely to close a checkpoint.
+
+### 24.5 Minimal peer command surface
+
+The approved conceptual agent-visible commands are:
+
+```text
+/question
+/challenge
+/finding
+/test-request
+/test-result
+/proposal
+/reply
+/dispute
+/defer
+/withdraw
+/work
+/done
+/closeout
+```
+
+Exact local wire framing belongs to implementation. The semantic behavior above is authoritative.
+
+### 24.6 Command -> event -> state/UI matrix
+
+| Command / trigger | Durable event(s) | Canonical effect | Special UI effect |
+| --- | --- | --- | --- |
+| ApproveProjectContract | ProjectContractApproved; RunProvisioningStarted when immediate | approved revision becomes launch revision | approval interaction closes; provisioning visible |
+| RequestProjectContractChanges | ProjectContractChangesRequested | Orchestrator returns to revision work | new revision later returns to approval |
+| RejectProjectContractApproach | ProjectContractApproachRejected | current approach rejected, objective preserved | revision workflow |
+| CancelProjectSetup | ProjectSetupCancelled | project CANCELLED | setup interactions close |
+| PauseRun | RunPaused | run PAUSED | paused state/banner |
+| ResumeRun | RunResumed | run ACTIVE | normal activity resumes |
+| StopRun | RunStopRequested | run STOPPING | stop/cleanup status |
+| TriggerCheckpoint | CheckpointTriggered | checkpoint TRIGGERED | checkpoint opening becomes visible |
+| OpenCheckpointRepositoryAccess | CheckpointRepositoryAccessOpened | frozen peer snapshots become readable | review UI available |
+| CreateCheckpointCommunicationSession | CheckpointCommunicationSessionCreated | checkpoint REVIEWING communication active | communication controls active |
+| SendCheckpointMessage | CheckpointMessageAccepted/Delivered | durable ordered transcript advances | message appears |
+| CreatePeerAction | PeerActionCreated | peer action/obligation created | open-action queue updates |
+| SetPeerActionDisposition | PeerActionDispositionChanged | obligation/action state changes | action state updates |
+| StartCheckpointWorkExcursion | CheckpointWorkExcursionStarted | member AVAILABLE -> WORKING | member shown WORKING; messages queue |
+| Complete/FailCheckpointWorkExcursion | CheckpointWorkExcursionCompleted/Failed | member WORKING -> AVAILABLE | queued messages/actions replay |
+| MarkCheckpointCommunicationDone | CheckpointMemberMarkedDone | member AVAILABLE -> DONE | member shown DONE |
+| new required action to DONE member | CheckpointMemberReactivated | DONE -> AVAILABLE | member active again |
+| SubmitCheckpointCloseout | CheckpointCloseoutRecorded | immutable member closeout retained | closeout status visible |
+| CloseCheckpointCommunicationSession | CheckpointCommunicationSessionClosed | no new live checkpoint communication | communication controls disappear |
+| RevokeCheckpointRepositoryAccess | CheckpointRepositoryAccessRevoked | peer live access removed | peer repo live access disappears |
+| CreateCheckpointReturnPacket | CheckpointReturnPacketCreated | deterministic next-phase context created | no blocking UI |
+| CloseCheckpoint | CheckpointClosed | checkpoint CLOSED; private revision resumes | checkpoint history finalized |
+| CreateInteractionRequest | InteractionRequested | durable user gate/question created | Interaction Center + blocking surface when configured |
+| RespondToInteraction | InteractionAnswered | interaction resolves and domain action proceeds | decision surface closes |
+| MarkCandidateReadyForReview | CandidateReadyForReview | candidate enters configured review gate | final-review surface when applicable |
+| AcceptCandidate | CandidateAccepted | user accepts candidate | finalization begins |
+| RequestCandidateRevisions | CandidateRevisionRequested | candidate returns to revision | revision state |
+| RejectCandidate | CandidateRejected | candidate rejected | review state updates |
+
+All other commands/events use normal lifecycle/activity/history projection without requiring bespoke UI behavior.
+
+### 24.7 State Contract simplification
+
+Part 4 does not require a manually duplicated prose document for every ordinary activity code.
+
+Implementation uses:
+1. common State Contract defaults;
+2. the transition rules and matrices in this document;
+3. explicit overrides only for states that block the user, expose peer information, perform external side effects, or require special recovery.
+
+Ordinary activities inherit:
+- no blocking UI unless an interaction request exists;
+- runtime-owned canonical state;
+- explicit failure recording;
+- parent-scope pause/cancel behavior where safe;
+- resumability according to the operation safety contract.
+
+### 24.8 Part 4 completion boundary
+
+Part 4 is DESIGNED because implementation no longer needs a new product decision to determine:
+- who may issue an action;
+- whether it is legal in the current state;
+- what durable event follows;
+- what canonical state change follows;
+- whether a user interaction is required;
+- how stale/idempotent requests are treated;
+- how uncertain external outcomes are represented;
+- how checkpoint communication, verification work, closeout, and return behave.
+
+Transaction mechanics, conflict algorithms, queue internals, provider behavior, environment technology, graph implementation, retrieval, and API/frontend implementation details remain intentionally delegated to Parts 5+.
