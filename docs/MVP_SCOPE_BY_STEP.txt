@@ -209,6 +209,8 @@ MVP must implement
 - Unknown external outcomes become UNKNOWN/PENDING_RECONCILIATION, never
   automatically treated as success.
 - Transactional outbox or equivalent reliable event delivery.
+- Treat PostgreSQL as isolated project-lifetime Council state inside each deployment sandbox; do not require a host-global shared Council database.
+- After acceptance, verify Git export of the accepted project/reusable learning package before deleting the Council control database and runtime state.
 
 Defer until after MVP evidence
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
