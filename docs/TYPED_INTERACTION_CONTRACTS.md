@@ -621,9 +621,18 @@ Council/task:
 
 Checkpoint/review:
 - TriggerCheckpoint
-- PublishCheckpoint
-- DeliverPublication
-- AcknowledgePublication
+- OpenCheckpointRepositoryAccess
+- CreateCheckpointCommunicationSession
+- SendCheckpointMessage
+- PromoteMessageToPeerAction
+- CreatePeerAction
+- AddPeerActionAddendum
+- AcknowledgePeerAction
+- SetPeerActionDisposition
+- MarkCheckpointCommunicationDone
+- ReopenCheckpointCommunicationMember
+- CloseCheckpointCommunicationSession
+- RevokeCheckpointRepositoryAccess
 - SubmitChallenge
 - SubmitChallengeResponse
 - RecordClaimRevision
@@ -695,8 +704,19 @@ Council/task:
 
 Checkpoint/review:
 - CheckpointTriggered
-- CheckpointPublicationCreated
-- PublicationDelivered
+- CheckpointRepositoryAccessOpened
+- CheckpointCommunicationSessionCreated
+- CheckpointMessageAccepted
+- CheckpointMessageDelivered
+- PeerActionCreated
+- PeerActionAcknowledged
+- PeerActionDispositionChanged
+- PeerActionAddendumAdded
+- CheckpointMemberMarkedDone
+- CheckpointMemberReactivated
+- CheckpointCommunicationQuiescing
+- CheckpointCommunicationSessionClosed
+- CheckpointRepositoryAccessRevoked
 - ChallengeSubmitted
 - ChallengeResponseSubmitted
 - ClaimRevisionRecorded
@@ -928,3 +948,59 @@ Part 4 is architecturally complete when implementation can derive typed domain D
 - how activity/status is displayed without inventing progress.
 
 Part 5 may refine transactional implementation patterns, but it must not weaken these action/state/UI invariants.
+
+
+## 17. Checkpoint communication and peer-action contract
+
+The authoritative communication architecture is defined in CHECKPOINT_COMMUNICATION_GATEWAY.md.
+
+Agents do not receive a raw IRC channel/socket. They interact through a minimal Council-controlled local stream/client whose runtime-side bridge lives outside the agent-controlled execution environment.
+
+Every accepted checkpoint message has:
+- immutable server-assigned message_id;
+- checkpoint_id;
+- sender member identity;
+- server timestamp;
+- monotonically ordered checkpoint sequence;
+- complete retained body;
+- optional parent/reply message ID;
+- delivery state.
+
+Important communication may additionally be represented as a structured peer action. The structured representation is never a substitute for the original message body.
+
+Initial peer-action types:
+- QUESTION
+- CHALLENGE
+- FINDING
+- TEST_REQUEST
+- TEST_RESULT
+- PROPOSAL
+
+Every structured peer action retains or references:
+- complete immutable full text;
+- originating message_id;
+- target member(s), if any;
+- exact repo/commit/path/test/evidence references when supplied;
+- response_required;
+- current disposition;
+- append-only addenda;
+- reply/action relationships.
+
+Initial dispositions:
+- OPEN
+- ACKNOWLEDGED
+- RESOLVED
+- DISPUTED
+- DEFERRED
+- WITHDRAWN
+- NOT_APPLICABLE
+
+Silence is never treated as resolution. Consensus is not required.
+
+Ordinary messages may later be promoted into structured actions by immutable message ID. This lets agents converse naturally first and structure an important item afterward without losing any detail.
+
+A /done request is not sufficient to hide an outstanding required action. The gateway must reject or warn on /done while required actions addressed to that member are OPEN or unacknowledged until the member explicitly responds/dispositions them. Informational actions need not block /done unless explicitly marked as requiring acknowledgement.
+
+Reconnect/replay must restore both missed full messages and the member's current open-action queue.
+
+Summaries, labels, embeddings, or model-generated descriptions are projections only. They are not authoritative replacements for original communication.
