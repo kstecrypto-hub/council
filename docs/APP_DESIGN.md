@@ -616,8 +616,9 @@ Later evidence creates a new revision or follow-up run. It does not rewrite what
 | Backend | Python and FastAPI |
 | Structured contracts | Pydantic |
 | Stateful agent execution | LangGraph |
-| Persistent application data | PostgreSQL |
+| Project-lifetime Council state | Isolated PostgreSQL inside each Council deployment sandbox |
 | Artifact storage | Versioned local storage behind a replaceable storage interface |
+| Long-term accepted-project learning | Git-backed archive/index |
 | Optional executable tools | Restricted Docker environments |
 | Live updates | Server-sent events, with ordinary API requests for commands |
 
@@ -627,7 +628,7 @@ No separate vector database, graph database, or distributed orchestration cluste
 
 ### Main record groups
 
-The exact Part 3 persistence model is defined in [POSTGRES_DATA_MODEL.md](POSTGRES_DATA_MODEL.md). It uses one PostgreSQL instance initially with separate logical schemas for canonical durable state, runtime operations, and the accepted-solution registry.
+The exact Part 3 persistence model is defined in [POSTGRES_DATA_MODEL.md](POSTGRES_DATA_MODEL.md). Each active Council deployment owns an isolated PostgreSQL instance inside its trusted deployment sandbox, with logical schemas for canonical project state and runtime operations. This database exists for the lifetime of the active Council project; accepted reusable knowledge is exported to Git rather than preserved as a permanent SQL registry.
 
 At a high level, the canonical model includes:
 
@@ -642,7 +643,7 @@ At a high level, the canonical model includes:
 | Continuity | Context manifests, continuation packets, non-authoritative agent-state snapshots |
 | Audit and graph | Append-only events, typed graph relationships, projection offsets |
 | Runtime | Tasks, leases, operations/attempts, scheduler reservations, sandbox instances, broker requests, model calls, outbox |
-| Reuse registry | Accepted solution versions, capabilities, stack metadata, reuse relationships |
+| Reuse archive | Git-backed accepted project/repository references, capabilities, stack metadata, lessons, tests, and reuse relationships |
 
 Every relevant record carries project/run scope, attribution, version information, timestamps, and access classification. Branch-private canonical rows are enforced through backend authorization plus PostgreSQL row-level security tied to explicit publication/delivery records rather than prompt convention.
 
@@ -706,9 +707,15 @@ Private-stage publications cannot leak through search previews, graph neighborho
 
 Provider changes respect source-specific data-sharing restrictions. Connection credentials are never inherited by sub-agents.
 
-Retention is explicit. Important findings and their cited evidence can be retained longer than verbose operational logs. Deletion or redaction leaves an appropriate audit marker, and the app warns when an export or old result can no longer be fully reproduced.
+Retention is phase-specific. During an active project, the isolated Council PostgreSQL database and referenced artifacts persist strongly enough to survive crashes/restarts.
 
-Backups include the database, referenced artifacts, configuration versions, and restoration checks. A graph without its evidence files is not an adequate backup.
+After the user accepts the result, Council first exports/verifies the accepted project and the curated reusable learning package in Git. It then deletes the Council control database, agent/runtime state, checkpoint machinery, temporary peer copies, caches, credentials, and disposable sandbox residue.
+
+The long-term exception is intentional: the accepted project plus useful distilled knowledge about what worked, what failed, important conclusions, tests, reusable components, and reuse relationships may remain in Git for the owner's future Council runs. Raw operational state is not kept merely for historical completeness.
+
+If the accepted product itself legitimately contains a database, that project database is part of the delivered project and is separate from Council's temporary control PostgreSQL.
+
+Backups of an active run include the temporary Council database plus referenced artifacts/configuration needed for crash recovery. Long-term archival after acceptance is Git/project oriented rather than a permanent Council database backup.
 
 ## 16. Application interfaces
 
