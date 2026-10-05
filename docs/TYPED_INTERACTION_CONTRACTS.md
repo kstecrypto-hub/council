@@ -190,9 +190,9 @@ Checkpoint states:
 - CANCELLED
 - FAILED
 
-A checkpoint does not expose branch-private information merely by becoming TRIGGERED. Exposure begins only after the runtime has granted the authorized peer read access and recorded the exact opening commit for each participating repository.
+A checkpoint does not expose branch-private information merely by becoming TRIGGERED. Exposure begins only after the runtime has granted the authorized peer read access and recorded the exact opening commit for each participating repository. Peer discussion is available only while the checkpoint's runtime-controlled communication session is active.
 
-The repository is the primary checkpoint publication surface. Each Council member continues to own and write only its own repository. During REVIEWING, peers may read/clone/test the other participating repositories but receive no write authority over them. The runtime records opening commit, access window, review-period commits, and closing commit. When CLOSING_REPOSITORY_ACCESS completes, reciprocal peer access is revoked and the branches return to private operation while retaining knowledge legitimately learned during review.
+The repository is the primary checkpoint publication surface. Each Council member continues to own and write only its own repository. During REVIEWING, peers may read/clone/test the other participating repositories but receive no write authority over them. The runtime records opening commit, access window, review-period commits, and closing commit. When CLOSING_REPOSITORY_ACCESS completes, reciprocal peer access is revoked and the branches return to private operation while retaining knowledge legitimately learned during review. Checkpoint communication credentials/routes/session are also revoked/destroyed; the persistent gateway service remaining alive does not preserve communication authority. See CHECKPOINT_COMMUNICATION_GATEWAY.md.
 
 ### 3.6 Candidate lifecycle
 
