@@ -377,7 +377,69 @@ For each checkpoint Council retains, at minimum:
 
 Agents may retain information they legitimately learned during the checkpoint. Closing communication prevents access to **new** peer information; it does not attempt to erase already shared knowledge.
 
-## 10. Future distributed deployment
+## 10. Checkpoint return to private development
+
+When checkpoint communication closes, each Council member receives a deterministic **Checkpoint Return Packet**. The packet is evidence and context for the next private phase, not an instruction set from the runtime.
+
+For each member, the packet includes at minimum:
+- checkpoint identity and semantic milestone;
+- that member's frozen opening snapshot/commit;
+- exact peer snapshots/commits that were legitimately visible during the checkpoint;
+- a reference/index to the complete durable checkpoint transcript;
+- structured peer actions relevant to the member and their final checkpoint dispositions;
+- test results, findings, and other evidence produced during checkpoint verification;
+- unresolved/disputed items that remain relevant;
+- the member's own checkpoint closeout statement.
+
+### 10.1 Agent-authored closeout
+
+Before the checkpoint fully closes, each participating member provides a short agent-authored closeout describing what it intends to carry back into private development: issues to revisit, evidence it accepts or disputes, comparisons it wants to make, and other conclusions it considers relevant.
+
+The runtime does not generate or rewrite this intellectual closeout. It stores and returns it alongside the objective checkpoint record.
+
+### 10.2 Evidence, not orders
+
+Unresolved challenges, questions, and test results become revision inputs. They do not automatically become implementation tasks and do not give one Council member authority over another member's branch.
+
+A member may respond in its next private phase by changing its approach, investigating further, proving a peer concern wrong, or leaving the branch unchanged with its own reasoning.
+
+### 10.3 Frozen peer knowledge
+
+A member may retain a frozen local copy/reference of peer repository snapshots it was legitimately authorized to inspect during the checkpoint. Those snapshots never update after the checkpoint closes.
+
+This preserves a precise information boundary: knowledge legitimately shared through the checkpoint remains available, but later peer development remains private until the next authorized checkpoint.
+
+### 10.4 Transcript availability versus prompt injection
+
+The full transcript remains durably retrievable, but it is not automatically injected in full into every subsequent model context.
+
+The default return context contains the member's closeout, relevant structured actions, evidence/test results, exact snapshot references, and transcript/message identifiers. Full verbatim discussion can be retrieved when needed.
+
+### 10.5 Cross-checkpoint action history
+
+Structured actions survive checkpoint closure as historical provenance. Their checkpoint disposition remains recorded. A later checkpoint may reference or supersede an earlier action without reopening the old communication session.
+
+This gives the overall project loop:
+
+```text
+private independent work
+-> semantic checkpoint reached
+-> freeze snapshots
+-> peer inspection and discussion
+-> verification-only /work as needed
+-> all members done
+-> agent-authored closeouts
+-> close communication and peer access
+-> deterministic return packets
+-> private revision
+-> next semantic checkpoint
+```
+
+The core rule is:
+
+> A checkpoint gives each Council member evidence, criticism, and peer knowledge; the member itself decides how that information changes its next private branch.
+
+## 11. Future distributed deployment
 
 If Council members later execute across different physical hosts, the same logical interface may use a remotely hosted relay.
 
@@ -400,7 +462,7 @@ A remote relay must not change:
 
 Multi-tenant hosting, if ever implemented, is an infrastructure optimization rather than the security model. The protocol must behave as though each Council deployment owns an isolated communication authority.
 
-## 11. Still to decide
+## 12. Still to decide
 
 The next design pass must decide:
 - exact local stream framing/transport;
