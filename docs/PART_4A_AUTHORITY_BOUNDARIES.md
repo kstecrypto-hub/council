@@ -206,6 +206,8 @@ The owner may continue committing to its own repository during the discussion/re
 
 When the checkpoint closes, reciprocal peer access is revoked. Each repository returns to branch-private visibility until the next authorized checkpoint. Agents retain what they legitimately learned during the checkpoint; privacy after closure prevents continued live leakage, not memory of already shared information.
 
+Checkpoint discussion is carried by the per-deployment Checkpoint Communication Gateway. The client may exist inside the agent-controlled environment, but the communication session, membership, credentials, and network route are runtime-controlled and ephemeral. There is no direct sandbox-to-sandbox communication route. See [CHECKPOINT_COMMUNICATION_GATEWAY.md](CHECKPOINT_COMMUNICATION_GATEWAY.md).
+
 For proprietary work, "visible" means visible to authorized Council peers. Internet-wide public visibility is not an architectural requirement. Temporary collaborator/read access to otherwise private repositories is the preferred default.
 
 ## 7. Transparent execution isolation
