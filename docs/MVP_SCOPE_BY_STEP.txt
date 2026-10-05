@@ -324,8 +324,10 @@ MVP must implement
 - No direct sandbox-to-sandbox communication path.
 - Persist checkpoint transcripts even though the live communication session is destroyed.
 - Expose a minimal Council-controlled local message stream rather than a raw IRC socket/channel.
-- Preserve immutable full message bodies with server timestamps/message IDs.
-- Support structured peer actions (question/challenge/finding/test request/test result/proposal) that reference the full original communication rather than replacing it.
+- Preserve immutable full logical message bodies with server timestamps/message IDs.
+- Transparently fragment large logical messages into transport frames and reassemble/verify them before delivery; agents never manage chunks.
+- Support agent-declared structured peer actions (question/challenge/finding/test request/test result/proposal) that reference the full original communication rather than replacing it.
+- TEST_REQUEST is a communication request only and must not automatically create work inside another branch.
 - Maintain an open-action queue so required unanswered actions cannot be silently skipped by /done.
 - Support a minimal completion signal such as /done; exact local framing/transport remains to design.
 - Peer challenge and revision cycle.
