@@ -1021,7 +1021,7 @@ Checkpoint communication and execution are mutually exclusive **per Council memb
 
 On work completion/failure/ceiling, the member returns to AVAILABLE and receives the complete queued logical messages plus its refreshed open-action queue before resuming discussion.
 
-A work excursion is checkpoint-scoped and bounded, not a return to unlimited private development. It records the triggering action/reason, timestamps, outcome, and relevant artifacts/commits. The runtime may enforce resource/time ceilings but does not decide whether the requested test is intellectually correct.
+A work excursion is checkpoint-scoped, bounded, and verification-only. It runs against a frozen or disposable checkpoint snapshot and records the trigger, snapshot identity, timestamps, outcome, and temporary evidence. The authoritative candidate remains read-only during the excursion. Tests, reproduction, benchmarks, log inspection, existing-code execution, repository inspection, and output comparison are allowed. Candidate implementation resumes only after checkpoint communication closes. This prevents checkpoint discussion from turning into an endless live fix/review cycle. The runtime may enforce resource/time ceilings but does not decide whether the requested test is intellectually correct.
 
 Initial checkpoint member activity states:
 - AVAILABLE
