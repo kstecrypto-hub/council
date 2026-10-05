@@ -323,7 +323,11 @@ MVP must implement
   rooms/sessions, identities, credentials, and sandbox routes.
 - No direct sandbox-to-sandbox communication path.
 - Persist checkpoint transcripts even though the live communication session is destroyed.
-- Support a minimal completion signal such as /done; exact wire protocol remains to design.
+- Expose a minimal Council-controlled local message stream rather than a raw IRC socket/channel.
+- Preserve immutable full message bodies with server timestamps/message IDs.
+- Support structured peer actions (question/challenge/finding/test request/test result/proposal) that reference the full original communication rather than replacing it.
+- Maintain an open-action queue so required unanswered actions cannot be silently skipped by /done.
+- Support a minimal completion signal such as /done; exact local framing/transport remains to design.
 - Peer challenge and revision cycle.
 - Bounded worker delegation (one simple depth/worker cap is enough).
 - Structured escalation back to Project Orchestrator for requirement ambiguity.
