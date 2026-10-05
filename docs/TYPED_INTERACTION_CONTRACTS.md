@@ -629,6 +629,9 @@ Checkpoint/review:
 - AddPeerActionAddendum
 - AcknowledgePeerAction
 - SetPeerActionDisposition
+- StartCheckpointWorkExcursion
+- CompleteCheckpointWorkExcursion
+- FailCheckpointWorkExcursion
 - MarkCheckpointCommunicationDone
 - ReopenCheckpointCommunicationMember
 - CloseCheckpointCommunicationSession
@@ -712,6 +715,9 @@ Checkpoint/review:
 - PeerActionAcknowledged
 - PeerActionDispositionChanged
 - PeerActionAddendumAdded
+- CheckpointWorkExcursionStarted
+- CheckpointWorkExcursionCompleted
+- CheckpointWorkExcursionFailed
 - CheckpointMemberMarkedDone
 - CheckpointMemberReactivated
 - CheckpointCommunicationQuiescing
@@ -1010,3 +1016,17 @@ A /done request is not sufficient to hide an outstanding required action. The ga
 Reconnect/replay must restore both missed full messages and the member's current open-action queue.
 
 Summaries, labels, embeddings, or model-generated descriptions are projections only. They are not authoritative replacements for original communication.
+
+Checkpoint communication and execution are mutually exclusive **per Council member**, not globally. A member may leave AVAILABLE communication state for a bounded WORKING excursion using a command such as /work <action_id|reason>. While WORKING, that member cannot communicate live and does not receive interruptions. Other members may continue discussion; all messages/actions addressed to the working member are durably queued in sequence.
+
+On work completion/failure/ceiling, the member returns to AVAILABLE and receives the complete queued logical messages plus its refreshed open-action queue before resuming discussion.
+
+A work excursion is checkpoint-scoped and bounded, not a return to unlimited private development. It records the triggering action/reason, timestamps, outcome, and relevant artifacts/commits. The runtime may enforce resource/time ceilings but does not decide whether the requested test is intellectually correct.
+
+Initial checkpoint member activity states:
+- AVAILABLE
+- WORKING
+- DONE
+- DISCONNECTED
+
+A new required action can move DONE -> AVAILABLE. Unexpected connection loss moves a member to DISCONNECTED, not DONE.
