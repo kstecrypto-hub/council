@@ -202,7 +202,7 @@ For each participating branch, checkpoint entry records:
 
 Peers may inspect, clone, run, and test another member's checkpoint-visible repository inside their own execution environment. They may not push to, rewrite, or otherwise mutate the other member's authoritative repository.
 
-The owner may continue committing to its own repository during the discussion/review window. Those commits remain attributable and the checkpoint records both the opening commit and the final closing commit.
+During checkpoint review the authoritative candidate is frozen. Verification may run against that frozen snapshot or a disposable copy, but implementation changes, commits, and pushes wait until the checkpoint closes and private development resumes.
 
 When the checkpoint closes, reciprocal peer access is revoked. Each repository returns to branch-private visibility until the next authorized checkpoint. Agents retain what they legitimately learned during the checkpoint; privacy after closure prevents continued live leakage, not memory of already shared information.
 
@@ -351,14 +351,13 @@ The rest of Part 4 must preserve these rules:
 14. The Auditor verifies protocol; it does not govern Council reasoning.
 15. User intent and final acceptance remain user authority.
 
-## 11. Still unresolved after Part 4A
+## 11. Items intentionally delegated beyond Part 4A
 
-Part 4A intentionally does not decide:
+Part 4A remains the authority-boundary specification. Part 4 now defines the checkpoint open/review/close contract and the command/event/error semantics.
 
-- the exact typed checkpoint open/review/close contract and repository-access transitions;
+The following remain intentionally delegated to later parts:
 - exact sandbox implementation/rebuild technology;
-- resource ceilings and how agents request increases;
-- the complete Auditor sampling/escalation policy;
-- all command/event schemas and error codes.
+- concrete resource ceiling values and reservation algorithms;
+- detailed Auditor sampling/escalation implementation policy.
 
-Those belong to the next Part 4 design passes and must not be filled in by implication.
+These later implementation choices must preserve the Part 4A authority invariants.
