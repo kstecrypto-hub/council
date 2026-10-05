@@ -5,7 +5,8 @@
 **Authority:** this document preserves the approved complete design. Supporting handoff documents organize its execution and must not silently change its requirements.  
 **References:** [upstream design references](REFERENCES.md). References describe source concepts, not verified behavior of this unimplemented application.  
 **Part 3 persistence model:** [POSTGRES_DATA_MODEL.md](POSTGRES_DATA_MODEL.md).  
-**Part 4 state/action/UI contracts:** [TYPED_INTERACTION_CONTRACTS.md](TYPED_INTERACTION_CONTRACTS.md).
+**Part 4 state/action/UI contracts:** [TYPED_INTERACTION_CONTRACTS.md](TYPED_INTERACTION_CONTRACTS.md).  
+**Checkpoint communication architecture:** [CHECKPOINT_COMMUNICATION_GATEWAY.md](CHECKPOINT_COMMUNICATION_GATEWAY.md).
 
 The app is a general-purpose investigation platform governed by a council of agents. Each council member develops its own analysis using sub-agents, challenges the others' work, revises its position when justified, and contributes to a shared, evidence-backed result.
 
@@ -117,7 +118,7 @@ Each Council member owns and continuously develops its own repository under its 
 
 Checkpoint entry records the exact repository and opening commit for every participant. Peers may clone and test another member's repository inside their own execution environment, but they never receive write access to another member's authoritative repository. During the review window, the owner may continue committing to its own repository; opening commit, review-period commits, and closing commit remain attributable for provenance.
 
-When the checkpoint closes, reciprocal peer access is revoked and each repository becomes private to its branch again. Agents retain knowledge legitimately learned during the checkpoint, then continue private development until the next checkpoint. The final mature-candidate checkpoint follows the same mechanism but exposes the full candidate repositories for peer inspection, challenge, comparative testing, and revision.
+When the checkpoint closes, reciprocal peer access is revoked and each repository becomes private to its branch again. Agents retain knowledge legitimately learned during the checkpoint, then continue private development until the next checkpoint. Peer discussion during the open checkpoint runs through the per-deployment, runtime-controlled Checkpoint Communication Gateway defined in [CHECKPOINT_COMMUNICATION_GATEWAY.md](CHECKPOINT_COMMUNICATION_GATEWAY.md); there is no direct sandbox-to-sandbox communication route. The final mature-candidate checkpoint follows the same mechanism but exposes the full candidate repositories for peer inspection, challenge, comparative testing, and revision.
 
 The Project Orchestrator may revise the project-specific checkpoint plan when the project structure materially changes or a new milestone is needed, but it does not judge which Council solution is correct or instruct branches how to solve the milestone. Agents determine their own implementations and signal when their branch has reached the defined checkpoint maturity; the runtime then enforces repository visibility and access transitions.
 
