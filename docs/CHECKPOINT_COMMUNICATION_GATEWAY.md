@@ -72,19 +72,136 @@ The persistent gateway process may remain alive. An existing gateway process doe
 
 ## 4. Communication model
 
-The interaction model is IRC-like:
-- one shared checkpoint room;
+IRC/IRCv3 is the design reference, not the exposed protocol.
+
+Agents do **not** receive a raw IRC socket or direct access to a general-purpose IRC server. Instead, each agent uses a minimal Council-controlled local message stream. A runtime-side bridge outside the sandbox forwards only authorized checkpoint traffic to the Checkpoint Communication Gateway.
+
+Conceptually:
+
+```text
+Agent
+  -> local Council chat stream/client
+  == sandbox boundary ==
+  -> runtime communication bridge
+  -> Checkpoint Communication Gateway
+```
+
+The agent-visible surface is intentionally small. It supports:
+- sending a checkpoint message;
+- receiving ordered checkpoint messages;
 - fixed Council-member identities;
-- asynchronous text messages;
-- presence/member listing;
-- keepalive;
-- a small completion/status command set.
+- checkpoint presence/status;
+- keepalive/connection health;
+- structured peer actions;
+- completion signaling such as /done.
 
-The room is shared by all participating Council members. Targeting a message at a specific member does not create a secret direct-message channel; the checkpoint participants retain a common view of the discussion unless a future explicitly approved protocol revision says otherwise.
+There is no agent-visible concept of arbitrary channels, IRC operators, direct client connections, private IRC messaging, CTCP/DCC, invites, modes, channel creation, or federation.
 
-Full general-purpose IRC behavior is not required. The exact protocol/command subset remains to be finalized.
+The room is shared by all participating Council members. A message may target another member for attention, but it remains visible to the checkpoint participants unless a future explicitly approved protocol revision says otherwise.
 
-## 5. Completion signaling
+The protocol reuses the useful semantics learned from IRC/IRCv3—server-mediated identity, shared-room conversation, ordering, message IDs, server timestamps, replies, presence, and keepalive—without inheriting IRC's unnecessary command surface or legacy message-size constraints.
+
+The local agent-facing stream may be backed by a local socket/pipe or another narrow transport. The agent should not need to know the gateway's network topology, long-lived credentials, or host address. The runtime bridge owns external connectivity and can remove that route completely when the checkpoint closes.
+
+## 5. Structured peer actions without losing detail
+
+Checkpoint communication has two layers:
+
+1. **complete natural-language conversation**, preserved verbatim; and
+2. **structured peer actions**, used to index important communication and track obligations.
+
+Structured actions never replace the underlying text.
+
+The authoritative detail source for a peer action is always its retained full body plus the exact referenced artifacts/messages. A short structured summary is metadata only.
+
+Initial structured action types:
+
+- QUESTION
+- CHALLENGE
+- FINDING
+- TEST_REQUEST
+- TEST_RESULT
+- PROPOSAL
+
+A structured action contains, at minimum:
+
+- action_id;
+- action_type;
+- originating member;
+- target member(s), when applicable;
+- checkpoint_id;
+- server-assigned message_id;
+- full immutable text body;
+- optional short label/summary;
+- reply_to_message_id or parent_action_id when applicable;
+- repository reference(s);
+- exact commit SHA(s) when code/artifacts are discussed;
+- optional path/line/test/evidence reference(s);
+- whether a response is required;
+- current disposition;
+- created/server timestamp.
+
+The structured fields are pointers and workflow metadata, not a lossy rewrite of the action.
+
+### 5.1 Detail-preservation rules
+
+The system must preserve all of the following:
+
+- the exact original message body;
+- every follow-up/addendum linked to the action;
+- exact repository commit/path/test references supplied by the agent;
+- every response linked by message/action ID;
+- the action's state/disposition history.
+
+An agent may append an **ADDENDUM** to an existing action rather than editing history in place.
+
+Automatic summaries, UI labels, embeddings, or model-generated descriptions may help retrieval but are never authoritative substitutes for the retained original text.
+
+### 5.2 Promoting ordinary conversation
+
+Agents do not have to predict perfectly whether something will become important.
+
+An ordinary message may later be promoted into a structured action by referencing its immutable message ID. Promotion does not rewrite or duplicate the original message; it attaches action metadata to the existing retained communication.
+
+This prevents the protocol from forcing agents to choose between natural discussion and rigid forms.
+
+### 5.3 Action dispositions
+
+Actions that require follow-up are tracked until they receive an explicit disposition.
+
+Initial dispositions:
+
+- OPEN
+- ACKNOWLEDGED
+- RESOLVED
+- DISPUTED
+- DEFERRED
+- WITHDRAWN
+- NOT_APPLICABLE
+
+A checkpoint does not require consensus. A CHALLENGE may close as DISPUTED and remain visible as an unresolved disagreement. A TEST_REQUEST may close as DEFERRED with a reason if it cannot be completed within the checkpoint.
+
+The runtime must never turn silence into RESOLVED.
+
+### 5.4 Preventing important actions from being missed
+
+Each member receives an **open-action queue** in addition to the chronological transcript.
+
+On reconnect, the gateway replays:
+- missed full messages; and
+- all open structured actions relevant to that member.
+
+A member's /done cannot silently bypass required peer obligations. If required actions addressed to that member remain OPEN or merely unacknowledged, the gateway rejects /done or returns a structured warning requiring an explicit disposition first.
+
+This does not force agreement. The member may respond and mark the item RESOLVED, DISPUTED, DEFERRED, or another valid terminal disposition.
+
+Informational FINDING/TEST_RESULT actions need not block /done unless explicitly marked as requiring acknowledgement.
+
+The core invariant is:
+
+> Structure ensures important items are findable and dispositioned; the complete verbatim communication ensures technical detail is never compressed away.
+
+## 6. Completion signaling
 
 Council members receive a small explicit command surface. At minimum the design includes a completion command exposed to the agent as:
 
@@ -100,7 +217,14 @@ Normal checkpoint communication closure occurs when all required participants ar
 
 The exact DONE/ACTIVE/quiescing state contract will be specified in Part 4.
 
-## 6. Network and capability implications
+A normal /done request succeeds only when:
+- the member has no required OPEN/unacknowledged peer actions;
+- any required items have an explicit disposition;
+- the member has no accepted outbound message still pending delivery.
+
+A new message/action that explicitly requires a DONE member's attention may return that member to ACTIVE before checkpoint closure.
+
+## 7. Network and capability implications
 
 The invariant "Council members cannot communicate between checkpoints" cannot depend on prompt obedience.
 
@@ -120,7 +244,7 @@ Between checkpoints:
 
 The exact broader outbound-network policy is a later environment/capability design decision, but it must preserve the no-out-of-band-peer-communication invariant.
 
-## 7. GitHub/repository administration
+## 8. GitHub/repository administration
 
 Council members own and develop their own repositories, but an agent sandbox must not require unrestricted GitHub-account administration authority in order to push its work.
 
@@ -130,7 +254,7 @@ The trusted runtime is responsible for checkpoint-related peer access grants/rev
 
 Exact Git credential and administration mechanics remain implementation details for a later contract.
 
-## 8. Persistence and provenance
+## 9. Persistence and provenance
 
 The live communication session is ephemeral. Its transcript is durable.
 
@@ -150,7 +274,7 @@ For each checkpoint Council retains, at minimum:
 
 Agents may retain information they legitimately learned during the checkpoint. Closing communication prevents access to **new** peer information; it does not attempt to erase already shared knowledge.
 
-## 9. Future distributed deployment
+## 10. Future distributed deployment
 
 If Council members later execute across different physical hosts, the same logical interface may use a remotely hosted relay.
 
@@ -173,16 +297,16 @@ A remote relay must not change:
 
 Multi-tenant hosting, if ever implemented, is an infrastructure optimization rather than the security model. The protocol must behave as though each Council deployment owns an isolated communication authority.
 
-## 10. Still to decide
+## 11. Still to decide
 
 The next design pass must decide:
-- whether to implement a tiny IRC/IRCv3-compatible server or a fully custom protocol;
-- exact supported registration/authentication messages;
-- exact allowed and rejected IRC commands/features;
-- long-message framing/chunking;
-- server timestamps and message IDs;
-- reply/thread semantics, if any;
-- exact /done wire representation;
-- reconnect behavior inside an active checkpoint;
+- exact local stream framing/transport;
+- runtime-bridge authentication and checkpoint-scoped authorization;
+- maximum logical message/action sizes;
+- exact message/action schemas and protocol versioning;
+- reply/thread semantics beyond parent message/action references;
+- exact /done wire representation and ACTIVE/DONE/DISCONNECTED state transitions;
+- reconnect/replay behavior inside an active checkpoint;
 - bounded communication ceilings;
-- transcript/event schemas.
+- transcript/event schemas;
+- which structured peer actions, if any, become first-class investigation-graph nodes automatically.
