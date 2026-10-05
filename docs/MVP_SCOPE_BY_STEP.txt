@@ -319,6 +319,11 @@ MVP must implement
   checkpoint.
 - Peers may clone/test another member's repo but never receive write access to it.
 - Revoke reciprocal repo access when the checkpoint closes.
+- Use a per-deployment Checkpoint Communication Gateway with ephemeral checkpoint
+  rooms/sessions, identities, credentials, and sandbox routes.
+- No direct sandbox-to-sandbox communication path.
+- Persist checkpoint transcripts even though the live communication session is destroyed.
+- Support a minimal completion signal such as /done; exact wire protocol remains to design.
 - Peer challenge and revision cycle.
 - Bounded worker delegation (one simple depth/worker cap is enough).
 - Structured escalation back to Project Orchestrator for requirement ambiguity.
