@@ -333,6 +333,9 @@ MVP must implement
 - Allow a member to enter bounded /work excursions during a checkpoint; while WORKING it cannot communicate live, and incoming messages/actions are durably queued and replayed on return.
 - Communication/execution exclusivity is per member, not global: other peers may continue discussion while one member works.
 - Record bounded-work provenance and enforce a ceiling so /work cannot become unlimited checkpoint escape.
+- /work uses a frozen or disposable checkpoint snapshot and is limited to verification activities.
+- The authoritative candidate stays read-only during /work.
+- Candidate implementation resumes only after the checkpoint closes.
 - Peer challenge and revision cycle.
 - Bounded worker delegation (one simple depth/worker cap is enough).
 - Structured escalation back to Project Orchestrator for requirement ambiguity.
