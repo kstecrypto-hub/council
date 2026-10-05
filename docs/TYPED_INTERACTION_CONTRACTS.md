@@ -968,6 +968,10 @@ Every accepted checkpoint message has:
 
 Important communication may additionally be represented as a structured peer action. The structured representation is never a substitute for the original message body.
 
+The originating Council member declares the action type explicitly through the Council communication command surface. The runtime tracks that declaration but does not intellectually classify ordinary messages using another model.
+
+Large logical messages are transparently fragmented by the transport/runtime bridge and reassembled before acceptance. Fragmentation is not visible to the agent and does not create multiple Council messages. Partial/corrupt logical messages are not exposed as accepted communication.
+
 Initial peer-action types:
 - QUESTION
 - CHALLENGE
@@ -975,6 +979,8 @@ Initial peer-action types:
 - TEST_REQUEST
 - TEST_RESULT
 - PROPOSAL
+
+A TEST_REQUEST asks the target peer to perform/consider a test but does not automatically create a task in that peer's branch. The peer may execute it, dispute it, defer it, or otherwise disposition it. The requester may independently test the target's checkpoint-visible repository in its own environment.
 
 Every structured peer action retains or references:
 - complete immutable full text;
