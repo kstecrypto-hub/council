@@ -101,6 +101,18 @@ The room is shared by all participating Council members. A message may target an
 
 The protocol reuses the useful semantics learned from IRC/IRCv3—server-mediated identity, shared-room conversation, ordering, message IDs, server timestamps, replies, presence, and keepalive—without inheriting IRC's unnecessary command surface or legacy message-size constraints.
 
+Logical messages may be arbitrarily larger than one transport frame, subject to a configurable resource ceiling. The local stream/runtime bridge transparently fragments a logical message into smaller frames, and the gateway reassembles and verifies it before exposing it as one accepted message. Agents do not reason about chunks.
+
+A logical message records at least:
+- client request/message correlation ID;
+- server-assigned immutable message_id;
+- total logical length;
+- frame/chunk count;
+- content hash/checksum;
+- complete reconstructed body.
+
+Partial messages are never exposed as valid Council communication. Missing/corrupt fragments cause retry/reconciliation or explicit message failure.
+
 The local agent-facing stream may be backed by a local socket/pipe or another narrow transport. The agent should not need to know the gateway's network topology, long-lived credentials, or host address. The runtime bridge owns external connectivity and can remove that route completely when the checkpoint closes.
 
 ## 5. Structured peer actions without losing detail
@@ -122,6 +134,23 @@ Initial structured action types:
 - TEST_REQUEST
 - TEST_RESULT
 - PROPOSAL
+
+The originating Council member explicitly declares the semantic action type through the agent-visible command surface. The runtime does not use another model to infer whether a message is a question, challenge, finding, test request, test result, or proposal.
+
+Examples of the intended agent surface include:
+
+```text
+/question @Council-B <full logical message>
+/challenge @Council-A <full logical message>
+/finding <full logical message>
+/test-request @Council-C <full logical message>
+/test-result <action_id> <full logical message>
+/proposal <full logical message>
+/reply <action_id> <full logical message>
+/done
+```
+
+Exact syntax remains versionable, but semantic classification belongs to the originating agent.
 
 A structured action contains, at minimum:
 
@@ -180,6 +209,8 @@ Initial dispositions:
 - NOT_APPLICABLE
 
 A checkpoint does not require consensus. A CHALLENGE may close as DISPUTED and remain visible as an unresolved disagreement. A TEST_REQUEST may close as DEFERRED with a reason if it cannot be completed within the checkpoint.
+
+A TEST_REQUEST is a peer communication request, not an automatic task assignment. The target Council member remains intellectually and operationally autonomous: it may run the requested test, reject/dispute the premise, defer it, or answer from its own inspection. Because participating members have read access to peer repositories during the checkpoint, the requesting member may also clone/run/test the peer candidate independently in its own environment. The communication protocol must not silently create work inside another branch merely because one peer requested it.
 
 The runtime must never turn silence into RESOLVED.
 
