@@ -147,7 +147,7 @@ MVP can simplify
 
 
 STEP 4 - TYPED COMMANDS, EVENTS, STATE MACHINES, AND INTERACTION CONTRACTS
-Status: PARTIALLY DESIGNED
+Status: DESIGNED
 Primary specifications: docs/TYPED_INTERACTION_CONTRACTS.md and docs/PART_4A_AUTHORITY_BOUNDARIES.md
 
 Complete product
@@ -168,7 +168,7 @@ MVP must implement
   * create worker;
   * open checkpoint repository access for allowed peers;
   * record opening/closing repository commits and revoke peer access;
-  * submit challenge/review response;
+  * create/disposition structured peer actions;
   * request requirement clarification/checkpoint;
   * model call request/result;
   * sandbox create/execute/destroy;
