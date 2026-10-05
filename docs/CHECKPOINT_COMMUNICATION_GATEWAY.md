@@ -278,11 +278,17 @@ When a member enters WORKING:
 
 - it cannot send checkpoint chat messages;
 - it does not receive live conversational interruptions;
-- its normal execution/tool surface required for the bounded work becomes available;
+- only the verification/testing tool surface required for the bounded work becomes available;
 - other Council members continue communicating normally;
 - all new messages/actions addressed to the working member are accepted, durably ordered, and queued;
 - peer repo visibility remains limited to the checkpoint-authorized snapshots/access policy;
 - the working member's activity is visible only as a coarse runtime state, not as a live terminal/tool stream.
+
+WORKING is verification-only. It may run tests, reproduce failures, benchmark, inspect logs, execute existing code, compare outputs, inspect checkpoint-visible repositories, and generate temporary test evidence.
+
+WORKING may not modify the authoritative candidate. It may not edit source code, refactor, add features, alter architecture, commit, or push.
+
+Verification must run against the frozen checkpoint snapshot or a disposable copy of that snapshot. Temporary test-side mutations, generated files, or harness changes remain disposable and cannot become authoritative candidate changes during the checkpoint.
 
 When bounded work completes, fails, or reaches its runtime ceiling, the member returns to AVAILABLE and receives:
 - every complete queued logical message in order;
@@ -308,12 +314,16 @@ A work excursion records at minimum:
 - checkpoint_id;
 - triggering action/message, if any;
 - stated reason;
+- exact frozen/disposable snapshot identity used;
 - start/end timestamps;
 - completion/failure/ceiling outcome;
-- artifacts/results the member later chooses to cite;
-- any repo commit(s) created during the excursion, if mutation was necessary.
+- temporary artifacts/results the member later chooses to cite.
 
 Runtime resource/time ceilings prevent an agent from using /work to abandon checkpoint discussion indefinitely.
+
+A checkpoint work excursion must never create authoritative repository commits. Any implementation implied by a test result happens only after checkpoint communication closes and the member returns to private development.
+
+This prevents an infinite checkpoint loop in which discussion causes a fix, the fix creates new review surface, and the checkpoint repeatedly reopens implementation work.
 
 A TEST_REQUEST remains advisory. The target member decides whether to enter /work, answer from existing evidence, dispute the request, or defer it. The requesting member may independently test the peer's checkpoint-visible repository in its own environment.
 
