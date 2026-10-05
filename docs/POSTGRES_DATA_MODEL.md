@@ -5,13 +5,16 @@
 
 ## 1. Database layout
 
-Start with **one PostgreSQL instance** and three logical schemas:
+Each active Council deployment gets its own isolated PostgreSQL instance **inside that deployment's trusted sandbox boundary**. It is not a host-global database shared by unrelated Council deployments, and individual agent sandboxes never receive direct database authority.
 
-- `council_core` - canonical durable project/run state, contracts, agents, checkpoints, evidence/provenance, candidates, environments, approvals, continuity records, and audit events.
+Use two logical schemas:
+
+- `council_core` - canonical project/run state, contracts, agents, checkpoints, evidence/provenance, candidates, environments, approvals, continuity records, and audit events for the lifetime of that Council project.
 - `council_runtime` - mutable operational state such as queues, leases, attempts, scheduler reservations, live sandbox instances, broker requests, and transient execution state.
-- `solution_registry` - durable accepted-solution index used to find and reuse prior projects after user acceptance.
 
-Do not split these into separate database servers until measured requirements justify it. Schema boundaries are architectural boundaries; they are not a claim that separate physical databases are needed.
+The PostgreSQL instance is **project-lifetime control infrastructure**, not the long-term learning store. It may use a persistent volume so crashes/restarts do not destroy an active project, but after user acceptance and successful export of the retained project/learning artifacts, the Council PostgreSQL volume is deleted with the rest of the Council runtime.
+
+Long-term reuse of accepted work is Git-backed and is described in section 13.
 
 Use application-generated UUIDs for canonical identities, `timestamptz` for timestamps, explicit version numbers for versioned aggregates, and a monotonically increasing `bigint` event position for ordered audit/projection processing.
 
@@ -762,59 +765,31 @@ Every externally stored artifact has a `council_core.artifacts` metadata row:
 
 Artifact references are content-hashed where practical. A database backup without referenced artifacts is not a complete backup.
 
-## 13. Solution registry
+## 13. Git-backed accepted-project archive
 
-The solution registry receives only user-accepted solutions.
+The long-term reuse layer is **not** a permanent PostgreSQL schema.
 
-### solution_registry.solutions
-- `id` PK
-- `source_project_id` FK
-- `name`
-- `summary`
-- `created_at`
+After the user accepts a project, Council writes a compact reusable archive to Git before destroying the temporary Council runtime database. Git is the durable source for personal reuse and for improving future Council runs.
 
-### solution_registry.solution_versions
-- `id` PK
-- `solution_id` FK
-- `version_no`
-- `accepted_candidate_snapshot_id` FK
-- `accepted_at`
-- `repo_archive_ref`
-- `environment_artifact_ref`
-- `search_document`
-- UNIQUE(`solution_id`, `version_no`)
+Retain, at minimum, when available and useful:
+- the accepted project/repository or an immutable reference to it;
+- final architecture/design notes;
+- accepted environment/rebuild definition needed by the project;
+- concise capability and stack metadata;
+- important approaches that worked;
+- important approaches that failed and why;
+- material checkpoint conclusions and unresolved caveats worth preserving;
+- final acceptance/test results;
+- reusable components/patterns;
+- relationships to prior accepted projects when one was reused as a base/reference/technique.
 
-### solution_registry.capabilities
-- `id` PK
-- `capability_key` UNIQUE
-- `description`
+Do **not** retain the PostgreSQL control database merely to preserve this information. Raw leases, queue state, runtime sessions, transient checkpoint machinery, caches, and other operational residue are deleted with the Council deployment unless they were deliberately distilled into useful retained project knowledge.
 
-### solution_registry.solution_capabilities
-- `solution_version_id` FK
-- `capability_id` FK
-- `evidence_ref`
-- PK(`solution_version_id`, `capability_id`)
+A future Council run may search the Git-backed archive to recognize similar prior projects and use an accepted prior project as a base, reference, technique source, or near-copy where appropriate. Originality is not a requirement.
 
-### solution_registry.stack_components
-- `id` PK
-- `component_key` UNIQUE
+The exact Git index/file layout is an implementation detail for the later reuse design. The architectural rule is:
 
-### solution_registry.solution_stack_components
-- `solution_version_id` FK
-- `stack_component_id` FK
-- `version_text`
-- PK(`solution_version_id`, `stack_component_id`)
-
-### solution_registry.reuse_relationships
-Records when a prior accepted solution is used as a base/reference for a later project.
-- `id` PK
-- `source_solution_version_id` FK
-- `target_project_id` FK
-- `reuse_type` = BASE | REFERENCE | TECHNIQUE | NEAR_COPY
-- `note`
-- `created_at`
-
-Initial reuse search uses structured capabilities, stack metadata, tags, and PostgreSQL full-text search. Do not add a separate vector database or embedding store until evaluation shows it materially improves project retrieval.
+> PostgreSQL remembers the active Council run; Git remembers accepted work worth learning from.
 
 ## 14. Acceptance, archival, and deletion
 
