@@ -50,7 +50,11 @@ Support custom user-supplied environment definitions as another optional path. K
 
 Keep host-aware executable scheduling separate from logical council membership. Queue local builds/tests/tools according to CPU, memory, disk, GPU/device, and sandbox limits instead of oversubscribing the user's computer.
 
-The accepted project environment is part of the deliverable. Remove Council agents, provider credentials, agent GitHub credentials, hidden Council control mechanisms, and orchestration-only tooling from the delivered runtime. Persist the reproducible project/environment definition and required data; disposable development-container residue is not project memory.
+The accepted project environment is part of the deliverable. Remove Council agents, provider credentials, agent GitHub credentials, hidden Council control mechanisms, and orchestration-only tooling from the delivered runtime. Persist the reproducible project/environment definition and required project data.
+
+Before destroying the Council deployment, export the accepted project plus a compact reusable learning package to Git for the owner's future Council runs. Preserve useful final architecture, capabilities/stack metadata, important successful and failed approaches, acceptance/test results, reusable patterns, and prior-project reuse links where relevant. Do not preserve the Council PostgreSQL database merely as history.
+
+After the accepted project and Git learning archive are verified, delete the Council control PostgreSQL volume, runtime/session state, checkpoint machinery, temporary peer copies, caches, credentials, and disposable sandbox residue. A database that belongs to the accepted product itself is project data and is not the Council control database.
 
 Exit condition: a non-coding investigation completes without a terminal, valid minority objections survive, administrative voting cannot promote evidential status, checkpoint visibility follows policy, more logical agents than local execution slots can make progress safely, and an executable candidate can be rebuilt cleanly from retained definitions. In Match My PC mode, the approved Environment Contract is reproducible/auditable, privileged operations remain broker-mediated, host mutation cannot occur implicitly, and material host drift invalidates stale exact-match claims.
 
