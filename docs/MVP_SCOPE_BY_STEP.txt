@@ -187,7 +187,8 @@ Defer until after MVP evidence
 
 
 STEP 5 - TRANSACTIONS, IDEMPOTENCY, AND CONFLICT HANDLING
-Status: TO DESIGN / IMPLEMENT
+Status: DESIGNED
+Primary specification: docs/PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md
 
 Complete product
 ~~~~~~~~~~~~~~~~
