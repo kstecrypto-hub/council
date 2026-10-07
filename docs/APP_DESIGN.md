@@ -661,7 +661,7 @@ A claim update, its audit event, and its essential relationship changes are comm
 
 Expensive indexes and visual projections can update asynchronously, but expose a processed-event position. A context packet must not claim to include a just-published objection while using an older graph view.
 
-Concurrent revisions use expected-version checks. Conflicting edits create a reviewable conflict rather than silently overwriting another member's work.
+Concurrent revisions use expected-version checks. Conflicting edits create a reviewable conflict rather than silently overwriting another member's work. The full atomicity, idempotency, external-operation reconciliation, task-lease, outbox, and projection-consistency contract is defined in [PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md](PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md).
 
 ## 14. Runtime reliability and resource control
 
