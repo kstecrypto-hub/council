@@ -810,14 +810,15 @@ The exact time delay before purging eligible runtime rows is a configurable work
 
 ## 15. Concurrency and transaction rules
 
-- Version append: immutable version rows use UNIQUE(parent_id, version_no). Concurrent append conflicts are retried after re-reading the current version.
-- Mutable control rows: update with expected `row_version`; a mismatch produces a reviewable conflict/retry, never silent overwrite.
-- Task leasing: use `FOR UPDATE SKIP LOCKED`, explicit lease expiry, heartbeats, and attempt numbers.
-- External actions: use idempotency keys and operation-attempt history. Never claim exactly-once behavior for an external system that does not provide it.
-- Contract revision activation: effective revision record, audit event, and intended delivery records are committed atomically.
-- Checkpoint publication: publication, publication items, audit event, and initial delivery records are committed atomically.
-- Claim revision: new claim version, revision reason, essential graph relationships, and audit event are committed atomically.
-- Accepted candidate promotion: acceptance record and registry promotion metadata are transactional; large artifact/archive operations are reconciled through durable operations/outbox state.
+The authoritative transaction/retry contract is [PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md](PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md).
+
+- Immutable version rows use `UNIQUE(parent_id, version_no)`; concurrent append conflicts re-read current state before a safe retry.
+- Mutable control rows update with expected `row_version`; mismatch returns STALE_TARGET, never silent overwrite.
+- Retryable commands use scoped idempotency keys plus canonical request hashes.
+- Task leasing uses `FOR UPDATE SKIP LOCKED`, explicit expiry/heartbeat, attempt numbers, and lease tokens required for completion.
+- External actions use durable logical operations plus append-only attempts. Unknown outcomes remain UNKNOWN_PENDING_RECONCILIATION until reconciled.
+- Contract revision activation, checkpoint opening/closing, interaction decisions, claim revisions, and candidate acceptance commit their canonical rows + events + outbox coherently.
+- Accepted-project Git archival and Council teardown are external/recoverable operations after acceptance; the temporary control database is not the long-term archive.
 
 ## 16. Indexing and HDD-aware defaults
 
