@@ -425,6 +425,22 @@ Those remain complete-product features unless an experiment proves them necessar
 STEP 11 - CONTEXT RETRIEVAL, GRAPH RETRIEVAL, AGENT MEMORY, AND ROLLOVER
 Status: HIGH-LEVEL DESIGN EXISTS; MEMORY POLICY STILL TO DESIGN
 
+Pre-design consideration
+~~~~~~~~~~~~~~~~~~~~~~~~
+Before designing Step 11, explicitly evaluate a shared Council-memory architecture where:
+- accepted-project learning is retained durably in Git, not in the temporary Council PostgreSQL control database;
+- a RAG/indexing layer provides selective retrieval over that Git-backed memory;
+- every retrieved memory item remains traceable/citable to the exact Git file, commit, accepted project, and supporting evidence/test where available;
+- all fixed Council members begin a project from the same pinned memory snapshot/index version, while their retrieval queries and interpretations remain independent;
+- the memory snapshot stays frozen during an active project so newly discovered branch knowledge cannot bypass checkpoint isolation;
+- new long-term memory is written/re-indexed only after user acceptance and archival;
+- memory records should preserve context and evidence strength rather than universal prescriptions, with candidate labels such as PROVEN, OBSERVED, FAILED, and INCONCLUSIVE;
+- both successful and failed approaches may be retained when they provide reusable evidence;
+- agents can inspect the original Git-backed source behind a RAG result rather than trusting a generated summary;
+- model diversity should remain a source of independent interpretation even when historical factual/empirical memory is shared.
+
+Treat this as a design direction to assess when Step 11 begins, not as a finalized Step 11 contract.
+
 Complete product
 ~~~~~~~~~~~~~~~~
 - Persistent logical agent identity.
