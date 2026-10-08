@@ -45,6 +45,8 @@ Checkpoint closure invalidates/removes these conditions.
 
 ## 3. Checkpoint lifecycle integration
 
+Before checkpoint opening, the checkpoint acts as an all-required-member arrival barrier. Members may reach the Orchestrator-defined semantic milestone at different wall-clock times because only a subset of member work sandboxes may execute concurrently. An early member records its checkpoint-ready repository SHA/state, stops private development beyond the barrier, and may release its scarce work-execution slot. Runtime does not open the checkpoint communication/review session until every required member has independently reached the same checkpoint milestone.
+
 At checkpoint opening, runtime:
 
 1. records each participating repository and exact opening commit;
