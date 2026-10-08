@@ -99,12 +99,50 @@ Those runtime records must not be misinterpreted as a central scheduler for the 
 
 Agent-internal development remains controlled by the agent inside its sandbox.
 
-## 6. Still to design in Part 7
+## 6. Second locked rule: checkpoint participation may be time-sliced
+
+All required members must reach the checkpoint barrier before review opens, but all member sandboxes do **not** need to execute simultaneously during the review.
+
+If host capacity allows fewer than five active member sandboxes, runtime may time-slice checkpoint participation across the same logical members and their existing sandboxes.
+
+Example with two active sandbox slots:
+
+```text
+checkpoint K is OPEN
+
+active:   A, B
+waiting:  C, D, E
+```
+
+A and B participate from their existing member environments in checkpoint mode. They may inspect the frozen peer snapshots they are authorized to see, receive/send checkpoint messages and structured actions, and use the already-approved verification-only `/work` path.
+
+They may not continue private implementation/revision beyond the frozen checkpoint state.
+
+When a member currently has no communication obligations and satisfies the existing `/done` rules, its sandbox may release the active slot. Another checkpoint member can then resume and receive the complete ordered checkpoint transcript/messages and current structured-action obligations that accumulated while it was inactive.
+
+```text
+A + B active
+A -> /done
+A slot released
+C resumes
+C receives accumulated checkpoint traffic
+```
+
+Checkpoint communication is therefore durable and asynchronous-capable even though members may also communicate live when multiple slots are available.
+
+If an inactive/DONE member receives a new required QUESTION, CHALLENGE, or TEST_REQUEST, its checkpoint status returns to AVAILABLE and the scheduler must give it another participation turn before normal checkpoint closure can succeed.
+
+The runtime does not replace a suspended member with a lightweight substitute or a new logical agent. It resumes the **same logical Council member and same sandbox state**. Hardware capacity changes checkpoint latency, not Council membership, identity, access rules, or review semantics.
+
+A deployment with one active sandbox slot can therefore execute a five-member checkpoint by rotating A -> B -> C -> D -> E and revisiting members when new required obligations appear. A deployment with five slots may allow all five to participate concurrently.
+
+The durable Checkpoint Communication Gateway is the synchronization layer: messages/actions remain ordered and available while a member is not executing. No direct sandbox-to-sandbox communication is introduced.
+
+## 7. Still to design in Part 7
 
 The following remain open and must be decided before Part 7 is marked DESIGNED:
 
-- exact distinction between a heavy private-work sandbox slot and checkpoint-participation capacity;
-- what state is preserved/suspended when an early member waits at a checkpoint;
+- exact sandbox suspension/resume mechanism and crash recovery while a member waits or rotates during a checkpoint;
 - fairness/order for activating members when fewer than five work slots exist;
 - model-call concurrency separate from local sandbox concurrency;
 - crash/restart recovery of member environments;
