@@ -257,13 +257,15 @@ Defer until after MVP evidence
 - Full domain-general evidence policy library.
 
 
-STEP 7 - TASK QUEUE, LEASING, RECOVERY, AND RESOURCE CONTROLS
-Status: TO DESIGN / IMPLEMENT IN DETAIL
-High-level rules already exist.
+STEP 7 - MEMBER EXECUTION SCHEDULING, RECOVERY, AND RESOURCE CONTROLS
+Status: IN DESIGN
+Primary working specification: docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md
 
 Complete product
 ~~~~~~~~~~~~~~~~
-- Durable queue, leases, heartbeats, retries, cancellation, reconciliation.
+- Scheduling of whole Council-member work environments under host capacity limits.
+- All-member semantic checkpoint barriers under staggered member execution.
+- Durable runtime operations, leases, heartbeats, retries, cancellation, reconciliation for Council-controlled work.
 - CPU/RAM/disk/GPU/device reservations.
 - Budget reservations, protected review allowance, retry accounting.
 - Starvation avoidance and resource-aware scheduling.
@@ -271,10 +273,12 @@ Complete product
 
 MVP must implement
 ~~~~~~~~~~~~~~~~~~
-- PostgreSQL-backed durable task queue.
-- FOR UPDATE SKIP LOCKED or equivalent safe consumer leasing.
-- Lease expiry + heartbeat + retry attempt number.
-- Waiting parents release worker capacity.
+- Configurable active Council-member work-sandbox slots independent of the fixed logical member count.
+- A member that reaches the current checkpoint releases scarce private-work execution capacity and cannot proceed beyond the barrier.
+- Checkpoint review opens only after every required Council member reaches the same semantic checkpoint.
+- PostgreSQL-backed durable queue/leasing for trusted Council-runtime operations, not central scheduling of an agent's private internal work.
+- FOR UPDATE SKIP LOCKED or equivalent safe consumer leasing for those runtime operations.
+- Lease expiry + heartbeat + retry attempt number for Council-controlled operations.
 - Configurable max concurrent model calls.
 - Configurable max concurrent local sandboxes.
 - Per-run token/cost tracking.
