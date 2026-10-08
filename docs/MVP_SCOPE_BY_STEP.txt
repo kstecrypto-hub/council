@@ -221,8 +221,8 @@ Defer until after MVP evidence
 
 
 STEP 6 - EVIDENCE, PROVENANCE, AND KNOWLEDGE GRAPH
-Status: TO DESIGN / IMPLEMENT IN DETAIL
-High-level behavior already exists in APP_DESIGN.md.
+Status: DESIGNED
+Primary specification: docs/PART_6_EVIDENCE_PROVENANCE_GRAPH.md
 
 Complete product
 ~~~~~~~~~~~~~~~~
