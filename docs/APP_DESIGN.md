@@ -667,15 +667,15 @@ Concurrent revisions use expected-version checks. Conflicting edits create a rev
 
 The runtime is ordinary software enforcing an agreed process. It does not decide which interpretation is correct.
 
-Use a durable task queue with leases, heartbeats, retries, cancellation, and deduplication. PostgreSQL locking behavior is the starting mechanism for multiple consumers of a queue-like table; lease and recovery rules require explicit application implementation. See [references](REFERENCES.md).
+Use durable runtime operations/queues with leases, heartbeats, retries, cancellation, and deduplication for Council-controlled work such as provisioning and external effects. These runtime queues do not centrally schedule the private internal tasks of a Council member. Each member controls its own work inside its private sandbox. PostgreSQL locking behavior remains the starting mechanism for trusted runtime consumers. See [PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md](PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md).
 
 ### Host-aware execution scheduling
 
 Local execution capacity is a schedulable resource, not a limit on council membership. The runtime discovers or accepts configured host limits for CPU, memory, disk, GPU/device access, and sandbox concurrency, then applies per-operation reservations and caps.
 
-A low-spec machine may run only one or two heavy sandboxes while additional council members continue model-side investigation or wait for execution. A stronger workstation may execute more sandboxes concurrently. The investigation protocol and logical agent count do not change merely because local parallelism changes.
+A low-spec machine may run only one or two Council-member work sandboxes at once while the remaining logical members wait to start/resume. A stronger workstation may execute more member sandboxes concurrently. The investigation protocol and fixed logical Council membership do not change merely because local parallelism changes.
 
-Waiting tasks do not occupy scarce execution slots. The scheduler must avoid starvation, throttle or pause new local work under host pressure, and prefer queuing over uncontrolled oversubscription. Remote model calls and local executable slots are accounted for separately because inference may occur on provider infrastructure while builds, tests, tools, and containers consume the user's machine.
+When a member reaches the current semantic checkpoint, it stops private development beyond that barrier and releases scarce private-work execution capacity while other members continue toward the same checkpoint. Checkpoint review opens only after all required members have reached that barrier. The scheduler must avoid starvation, throttle or pause new local work under host pressure, and prefer waiting over uncontrolled oversubscription. Remote model calls and local executable slots are accounted for separately because inference may occur on provider infrastructure while builds, tests, tools, and containers consume the user's machine.
 
 The scheduler must not claim capacity or required host capabilities that the machine does not possess. Ordinary Council-managed environments do not attempt to mirror the host. Tasks that explicitly require unavailable host hardware or behavior remain blocked, use an approved alternate backend, or proceed only with a recorded limitation.
 
