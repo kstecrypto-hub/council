@@ -138,11 +138,60 @@ A deployment with one active sandbox slot can therefore execute a five-member ch
 
 The durable Checkpoint Communication Gateway is the synchronization layer: messages/actions remain ordered and available while a member is not executing. No direct sandbox-to-sandbox communication is introduced.
 
-## 7. Still to design in Part 7
+## 7. Third locked rule: durable suspend by persistence + container stop
+
+When a member releases an execution slot, Council does not rely on a long-lived paused container or preserved process memory.
+
+The trusted runtime first **quiesces** the member sandbox, persists the durable project/environment state required to reconstruct it, records the suspension point, and then stops the execution container so CPU, RAM, GPU/device reservations, and process capacity can be released.
+
+A normal suspension sequence is:
+
+```text
+member running
+  -> stop accepting new private work
+  -> finish/abort to a safe boundary
+  -> flush persistent filesystem/database state
+  -> record current repo SHA + sandbox/environment version
+  -> persist logical-agent continuation state
+  -> mark member SUSPENDED / CHECKPOINT_READY as appropriate
+  -> stop execution container
+  -> release compute slot/resources
+```
+
+Durable sandbox state includes, where applicable:
+
+- private workspace/files;
+- authoritative member repository and Git metadata;
+- project-local databases/data;
+- installed project dependencies and reproducible environment definition;
+- configuration created by the member;
+- agent-created tools/scripts;
+- build/test artifacts intentionally retained;
+- logical-agent continuation/recovery state.
+
+The **logical sandbox identity persists**, but the underlying container process/ID does not need to. On resume, runtime may recreate a fresh execution container around the same preserved sandbox state:
+
+```text
+slot available
+  -> reconstruct/start member container
+  -> attach same private persistent state
+  -> validate expected environment/repo state
+  -> reissue currently authorized ephemeral capabilities
+  -> load continuation/checkpoint obligations
+  -> resume same logical Council member
+```
+
+Council does not require process-memory checkpoint/restore for MVP. Open sockets, in-memory Python processes, GPU state, and similar ephemeral execution details are not treated as durable agent memory. Logical continuity comes from preserved files/state plus continuation records.
+
+Ephemeral authority must **not** be made durable merely because the sandbox filesystem persists. Provider tokens, checkpoint credentials, temporary peer-repo grants, gateway session credentials/routes, privileged broker grants, and similar capabilities are runtime-controlled and reissued only if the resumed member is currently authorized to have them.
+
+Thus suspension frees active compute while preserving the member's project state and identity, without allowing stale credentials or capabilities to survive across lifecycle transitions.
+
+## 8. Still to design in Part 7
 
 The following remain open and must be decided before Part 7 is marked DESIGNED:
 
-- exact sandbox suspension/resume mechanism and crash recovery while a member waits or rotates during a checkpoint;
+- crash/restart recovery when suspension or reconstruction is interrupted mid-transition;
 - fairness/order for activating members when fewer than five work slots exist;
 - model-call concurrency separate from local sandbox concurrency;
 - crash/restart recovery of member environments;
