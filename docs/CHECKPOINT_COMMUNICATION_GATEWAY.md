@@ -53,9 +53,13 @@ At checkpoint opening, runtime:
 2. grants participating peers reciprocal read access to the authorized repositories;
 3. creates the checkpoint communication session;
 4. creates checkpoint-scoped member credentials;
-5. enables the temporary environment-to-gateway routes;
-6. verifies membership/connectivity;
+5. enables checkpoint participation routes for member environments as they are scheduled;
+6. verifies membership/connectivity for each resumed participant;
 7. enters the communication/review period.
+
+All participating members need not be executing simultaneously. When sandbox capacity is lower than Council membership, checkpoint participation is time-sliced across the same member sandboxes. The gateway durably retains ordered messages and structured actions while a member is inactive and delivers the accumulated checkpoint traffic plus current obligations when that member resumes. A member that had reached `/done` becomes AVAILABLE again if a new required action targets it. Checkpoint closure still requires the existing all-obligations/all-DONE conditions; time-slicing does not weaken them.
+
+Checkpoint-mode resumption does not authorize private implementation work. The member remains bound to the frozen checkpoint snapshot and the existing verification-only `/work` rules.
 
 At checkpoint closure, runtime:
 
