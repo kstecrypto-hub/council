@@ -467,6 +467,8 @@ An executable candidate cannot be marked reproducible without a successful clean
 
 ## 7. Evidence, analysis, and graph records
 
+The authoritative product behavior for evidence/provenance is [PART_6_EVIDENCE_PROVENANCE_GRAPH.md](PART_6_EVIDENCE_PROVENANCE_GRAPH.md).
+
 The canonical investigation ledger remains normalized rather than storing the whole graph as one JSON document.
 
 Required canonical tables include:
