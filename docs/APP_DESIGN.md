@@ -194,7 +194,7 @@ Workers release execution capacity while waiting for dependencies. The runtime m
 
 ## 5. The investigation graph
 
-**This is the product's core, not an optional visualization.**
+**This is the product's core, not an optional visualization.** The detailed Step 6 contract is defined in [PART_6_EVIDENCE_PROVENANCE_GRAPH.md](PART_6_EVIDENCE_PROVENANCE_GRAPH.md).
 
 The graph represents the investigation's provenance and argument structure. Reuse relevant W3C PROV concepts for entities, activities, attribution, usage, and derivation without adopting a large ontology or requiring implementation of the entire standard. See [references](REFERENCES.md).
 
