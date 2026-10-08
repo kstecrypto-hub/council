@@ -276,6 +276,8 @@ MVP must implement
 - Configurable active Council-member work-sandbox slots independent of the fixed logical member count.
 - A member that reaches the current checkpoint releases scarce private-work execution capacity and cannot proceed beyond the barrier.
 - Checkpoint review opens only after every required Council member reaches the same semantic checkpoint.
+- Checkpoint participation may be time-sliced across available sandbox slots; inactive members receive durable queued messages/actions when the same sandbox resumes.
+- A member targeted by a new required checkpoint action must be rescheduled even if it had previously reached /done.
 - PostgreSQL-backed durable queue/leasing for trusted Council-runtime operations, not central scheduling of an agent's private internal work.
 - FOR UPDATE SKIP LOCKED or equivalent safe consumer leasing for those runtime operations.
 - Lease expiry + heartbeat + retry attempt number for Council-controlled operations.
