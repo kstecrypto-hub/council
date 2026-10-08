@@ -187,13 +187,49 @@ Ephemeral authority must **not** be made durable merely because the sandbox file
 
 Thus suspension frees active compute while preserving the member's project state and identity, without allowing stale credentials or capabilities to survive across lifecycle transitions.
 
-## 8. Still to design in Part 7
+## 8. Fourth locked rule: deterministic seat-order scheduling
+
+When fewer than five Council-member sandboxes can execute at once, the runtime schedules eligible members in fixed ascending seat order:
+
+```text
+Member 1 -> Member 2 -> Member 3 -> Member 4 -> Member 5 -> wrap
+```
+
+The runtime skips a member that currently requires no execution and returns to it on a later rotation if it becomes eligible again.
+
+Examples:
+
+- private development: if slots 1 and 2 are occupied by Members 1 and 2, the next released slot goes to Member 3, then Member 4, then Member 5;
+- checkpoint review: a member already at `/done` with no new obligations is skipped; if a later required QUESTION, CHALLENGE, or TEST_REQUEST makes it AVAILABLE again, it re-enters the normal seat-order rotation.
+
+Seat number is a stable identity only. It is **not** rank, seniority, intellectual authority, model quality, or scheduling priority derived from the member's approach.
+
+Council therefore does not need a fairness scorer or branch-importance scheduler.
+
+## 9. Step 7 / Step 8 execution boundary
+
+Step 7 controls whether a Council member is allowed to execute and what resources it may consume.
+
+It may enforce:
+
+- active sandbox-slot ceilings;
+- remote model-call concurrency/rate ceilings;
+- local-model CPU/GPU/RAM ceilings;
+- run/member budget ceilings;
+- pause/stop/resource-pressure controls.
+
+Step 7 does **not** decide the member's intellectual loop, how many reasoning iterations are enough, whether an approach is promising, or when the work is substantively complete.
+
+The member's repeated observe/reason/act/delegate/evaluate loop and its decision to emit `CHECKPOINT_READY`, `BLOCKED`, or final-candidate readiness belong to Step 8.
+
+Remote and local inference use the same logical agent loop. The difference is resource accounting: remote inference consumes provider calls/tokens/cost/rate limits; local inference consumes host compute such as GPU/VRAM/RAM/CPU.
+
+## 10. Still to design in Part 7
 
 The following remain open and must be decided before Part 7 is marked DESIGNED:
 
 - crash/restart recovery when suspension or reconstruction is interrupted mid-transition;
-- fairness/order for activating members when fewer than five work slots exist;
-- model-call concurrency separate from local sandbox concurrency;
+- exact remote model-call concurrency/rate ceilings and local-model resource ceilings;
 - crash/restart recovery of member environments;
 - pause and stop semantics;
 - run/member budget allocation and protected checkpoint/review allowance;
