@@ -280,6 +280,8 @@ MVP must implement
 - Quiesce and persist a member sandbox before stopping its execution container to free compute; later reconstruct the same logical sandbox from durable private state.
 - Ephemeral credentials/capabilities are reissued on resume and are not retained merely because sandbox storage persists.
 - A member targeted by a new required checkpoint action must be rescheduled even if it had previously reached /done.
+- Eligible members are scheduled in fixed seat order 1 -> 2 -> 3 -> 4 -> 5, wrapping and skipping members that currently require no execution; seat number conveys no authority.
+- Step 7 may cap remote/local inference resources but does not control the member's intellectual reasoning loop or decide substantive completion.
 - PostgreSQL-backed durable queue/leasing for trusted Council-runtime operations, not central scheduling of an agent's private internal work.
 - FOR UPDATE SKIP LOCKED or equivalent safe consumer leasing for those runtime operations.
 - Lease expiry + heartbeat + retry attempt number for Council-controlled operations.
@@ -302,6 +304,26 @@ STEP 8 - AGENT LOOP, COUNCIL PHASES, AND DELEGATION
 Status: TO DESIGN / IMPLEMENT IN DETAIL
 Core governance is already designed.
 
+Pre-design consideration
+~~~~~~~~~~~~~~~~~~~~~~~~
+Start Step 8 by defining the Council-member agentic execution loop itself.
+
+The loop should evaluate a member's current objective/state, reason, act/use tools, inspect results, record durable progress, delegate where useful, and repeat until the member itself emits a bounded control outcome. At minimum, distinguish:
+- `CHECKPOINT_READY`: private work has reached the current Orchestrator-defined semantic checkpoint milestone; this triggers Step 7 suspension/barrier behavior.
+- checkpoint `/done`: used only inside an open checkpoint and means the member currently has no outstanding communication obligations; it does not mean the project/candidate is finished.
+- final-candidate readiness: the member believes its candidate is ready for the final peer-review/user-evaluation stage.
+- `BLOCKED`: progress requires a missing permission, user clarification, unavailable dependency/hardware, or another external condition.
+
+Consider a minimal member control surface such as `ACT`, `DELEGATE`, `ASK_USER`, `CHECKPOINT_READY`, and `BLOCKED`. The exact protocol is still to design.
+
+The runtime may mechanically validate that required checkpoint artifacts/metadata exist, but it must not intellectually judge whether the member's approach is good enough or force additional reasoning. The member decides substantive readiness.
+
+A member may require an unknown number of reasoning/tool cycles before readiness. Do not design the loop around a fixed number of model calls. Termination/transition instead comes from readiness, blocking, budget/resource ceilings, pause/stop, fatal failure, or Step 11 session rollover.
+
+This loop must work identically whether inference is remote through a provider adapter or local; Step 7 handles resource ceilings and Step 9 handles provider/model-specific calling semantics.
+
+Treat this as a design direction to resolve at the start of Step 8, not as a finalized Step 8 contract.
+
 Complete product
 ~~~~~~~~~~~~~~~~
 - Project Orchestrator produces the stable canonical project prompt, derives the
@@ -317,7 +339,7 @@ Complete product
 MVP must implement
 ~~~~~~~~~~~~~~~~~~
 - Project Orchestrator conversation -> approved Project Contract.
-- 3-4 configurable peer council members.
+- 5 fixed equal peer Council members; seat number is identity only, not rank or authority.
 - Prefer support for different strong reasoning-model families per seat.
 - Independent start with no peer unpublished context leakage.
 - Each Council member owns its own repository under its own GitHub identity.
