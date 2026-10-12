@@ -224,13 +224,72 @@ The member's repeated observe/reason/act/delegate/evaluate loop and its decision
 
 Remote and local inference use the same logical agent loop. The difference is resource accounting: remote inference consumes provider calls/tokens/cost/rate limits; local inference consumes host compute such as GPU/VRAM/RAM/CPU.
 
-## 10. Still to design in Part 7
+## 10. Fifth locked rule: crash recovery revokes the old execution bridge first
+
+Docker/container restart may recover the execution process, but Council owns logical-agent and external-call recovery.
+
+Each running member execution has a runtime-controlled execution identity such as:
+
+```text
+member_id
+execution_epoch
+bridge_session_id
+```
+
+The bridge between the member sandbox and external capabilities is ephemeral to that execution epoch.
+
+On an unexpected container/process crash or runtime-detected loss of the member execution:
+
+```text
+detect old execution is dead/untrusted
+  -> revoke old bridge session/epoch
+  -> invalidate old temporary credentials/routes/capabilities
+  -> request cancellation of known in-flight external calls where supported
+  -> mark uncertain external outcomes UNKNOWN_PENDING_RECONCILIATION
+  -> restart/reconstruct member container
+  -> run sandbox boundary/lifecycle checks
+  -> reconcile uncertain external operations
+  -> create a fresh execution epoch + bridge session
+  -> reissue only currently authorized capabilities
+  -> restore continuation/checkpoint state
+  -> resume the same logical Council member
+```
+
+The old execution epoch remains permanently invalid. Delayed or orphaned requests/results from that epoch are rejected unless they are being processed through explicit Part 5 reconciliation.
+
+This prevents "forgotten" model/tool/API calls from silently surviving a member restart.
+
+Docker restart policy may restart the process/container automatically, but the restarted member is not allowed to resume external activity until the Council runtime completes the above recovery gate.
+
+Intentional Council suspension is different from a crash: an intentionally stopped member remains stopped until its seat is scheduled again and therefore must not be immediately revived by an unconditional restart policy.
+
+## 11. Sandbox checker boundary
+
+Sandbox validation is performed by a trusted runtime component **outside** the agent-controlled sandbox.
+
+The checker validates mechanical isolation/lifecycle invariants such as:
+
+- expected logical member/sandbox identity;
+- expected private workspace/persistent-volume attachment;
+- absence of raw Docker-daemon/socket access;
+- absence of unexpected host or peer-member mounts;
+- current network/capability routes;
+- resource limits;
+- current execution mode (private work, checkpoint, suspended);
+- expected checkpoint SHA/frozen state where relevant;
+- stale credentials/routes removed before resume.
+
+It does not decide whether the member's code or architecture is intellectually correct, and it does not reject ordinary private file/code changes merely because the agent changed its own sandbox.
+
+Run full checks at least on create/reconstruct, crash restart, checkpoint-mode transition, and other security-sensitive lifecycle transitions. A failed check blocks model-loop resumption, revokes temporary authority, records an audit event, and requires repair/reconstruction plus re-check.
+
+The detailed sandbox/security implementation belongs to Step 10, but Step 7 relies on this recovery gate before a restarted member becomes executable again.
+
+## 12. Still to design in Part 7
 
 The following remain open and must be decided before Part 7 is marked DESIGNED:
 
-- crash/restart recovery when suspension or reconstruction is interrupted mid-transition;
 - exact remote model-call concurrency/rate ceilings and local-model resource ceilings;
-- crash/restart recovery of member environments;
 - pause and stop semantics;
 - run/member budget allocation and protected checkpoint/review allowance;
 - host pressure handling and resource ceilings.
