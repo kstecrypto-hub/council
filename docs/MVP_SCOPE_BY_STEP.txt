@@ -282,6 +282,9 @@ MVP must implement
 - A member targeted by a new required checkpoint action must be rescheduled even if it had previously reached /done.
 - Eligible members are scheduled in fixed seat order 1 -> 2 -> 3 -> 4 -> 5, wrapping and skipping members that currently require no execution; seat number conveys no authority.
 - Step 7 may cap remote/local inference resources but does not control the member's intellectual reasoning loop or decide substantive completion.
+- Each member execution has a revocable execution epoch/bridge session; crash recovery invalidates the old epoch before any restarted member can make new external calls.
+- Known in-flight external calls are cancelled where supported; uncertain outcomes use Part 5 UNKNOWN_PENDING_RECONCILIATION and are reconciled before replay.
+- A trusted sandbox checker outside the agent container validates isolation/lifecycle state before restart/resume.
 - PostgreSQL-backed durable queue/leasing for trusted Council-runtime operations, not central scheduling of an agent's private internal work.
 - FOR UPDATE SKIP LOCKED or equivalent safe consumer leasing for those runtime operations.
 - Lease expiry + heartbeat + retry attempt number for Council-controlled operations.
@@ -418,6 +421,10 @@ Defer until after MVP evidence
 
 STEP 10 - TOOLS, PERMISSIONS, AND EXECUTION ENVIRONMENTS
 Status: PARTLY DESIGNED
+
+Pre-design consideration
+~~~~~~~~~~~~~~~~~~~~~~~~
+Carry forward the Step 7 sandbox-checker requirement. The checker must live outside agent-controlled containers and mechanically verify sandbox identity, mounts, network/capability routes, resource limits, execution mode, stale credential removal, and checkpoint-frozen state where applicable. It must not inspect normal private code changes as violations or judge solution quality. A failed check blocks agent resumption until repair/reconstruction and re-check.
 
 Complete product
 ~~~~~~~~~~~~~~~~
