@@ -681,7 +681,7 @@ The scheduler must not claim capacity or required host capabilities that the mac
 
 Every operation distinguishes requested, started, completed, failed, cancelled, and outcome unknown.
 
-After interruption, completed work is reused. An operation with an uncertain external outcome is reconciled before replay. Do not promise exactly-once behavior from an external service that does not provide it.
+After interruption, completed work is reused. An operation with an uncertain external outcome is reconciled before replay. Do not promise exactly-once behavior from an external service that does not provide it. Each live member execution also has a revocable runtime bridge epoch. On crash/restart, the old epoch and its temporary routes/capabilities are invalidated before the restarted member can make new external calls; known in-flight calls are cancelled where supported and uncertain outcomes enter Part 5 reconciliation. A trusted sandbox checker outside the member container validates isolation/lifecycle state before a fresh bridge epoch is issued.
 
 Pause prevents new scheduling and lets the runtime reach a safe state. Stop cancels controllable work but cannot undo an already completed external action.
 
