@@ -16,12 +16,16 @@ jobs:
           fetch-depth: 0
       - name: Apply documentation-only corrections
         run: |
-          python3 -m py_compile .maintenance/apply_review.py
+          python3 -m py_compile .maintenance/apply_review.py .maintenance/refine_review.py
           python3 .maintenance/apply_review.py
+          python3 .maintenance/refine_review.py
       - name: Check specification consistency
         run: |
           python3 tools/check_specs.py
           git diff --check
+      - name: Inspect remaining protocol references
+        run: |
+          grep -nEi 'reciprocal|collaborator|own environment|three seats|DESIGNED because|/done|grant.*read|read.*grant|permanent.*registry' docs/*.md docs/*.txt || true
       - name: Record checked documentation on temporary branch
         run: |
           git config user.name 'Council documentation maintenance'
