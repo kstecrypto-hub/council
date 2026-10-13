@@ -14,22 +14,18 @@ jobs:
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
-      - name: Apply documentation-only corrections
+      - name: Reconcile documentation
         run: |
-          python3 -m py_compile .maintenance/apply_review.py .maintenance/refine_review.py
-          python3 .maintenance/apply_review.py
+          python3 -m py_compile .maintenance/refine_review.py
           python3 .maintenance/refine_review.py
       - name: Check specification consistency
         run: |
           python3 tools/check_specs.py
-          git diff --check
-      - name: Inspect remaining protocol references
-        run: |
-          grep -nEi 'reciprocal|collaborator|own environment|three seats|DESIGNED because|/done|grant.*read|read.*grant|permanent.*registry' docs/*.md docs/*.txt || true
+          git diff --check e7cb20248059b7ad87c647b4f298e877c5545f0b -- README.md AGENTS.md VERIFICATION.md docs tools/check_specs.py
       - name: Record checked documentation on temporary branch
         run: |
           git config user.name 'Council documentation maintenance'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -- README.md AGENTS.md VERIFICATION.md docs tools/check_specs.py
-          git commit -m 'Apply approved Council architecture corrections [applied]'
+          git commit -m 'Finish checkpoint and completion consistency review [applied]'
           git push origin HEAD:refs/heads/council-architecture-20261013
