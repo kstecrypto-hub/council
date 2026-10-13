@@ -140,6 +140,7 @@ Initial authoritative set:
 - FINALIZING_ACCEPTED_CANDIDATE
 - CLEANING_DISPOSABLE_ENVIRONMENTS
 - RECOVERING_RUNTIME_STATE
+- QUIESCING_FOR_PAUSE
 
 ### 3.3 Council-member activity codes
 
@@ -685,6 +686,7 @@ Project/contract:
 Run:
 - RunProvisioningStarted
 - RunStarted
+- RunPauseRequested
 - RunPaused
 - RunResumed
 - RunStopRequested
@@ -771,7 +773,7 @@ CREATED -> PROVISIONING only after an approved launch revision exists.
 
 PROVISIONING -> ACTIVE only after required seats/workspaces/environments are ready or explicitly recorded as not required.
 
-ACTIVE -> PAUSED through PauseRun or a system safety condition.
+PauseRun or a system safety condition stops new ordinary admissions and enters QUIESCING_FOR_PAUSE. ACTIVE -> PAUSED occurs only when the required durable pause boundary is confirmed. In-flight unknown external operations remain separately recorded and are not implicitly cancelled.
 
 PAUSED -> ACTIVE through ResumeRun after guards pass.
 
@@ -793,7 +795,7 @@ A member cannot enter REVIEWING_PEER_WORK before the checkpoint runtime has veri
 
 A member cannot enter RESPONDING_TO_CHALLENGE for a challenge it is not authorized to see.
 
-Checkpoint communication member states are AVAILABLE, WORKING, DONE, and DISCONNECTED. AVAILABLE may enter WORKING only through a bounded verification-only /work excursion. AVAILABLE may enter DONE only when no required peer obligation remains unanswered and no accepted outbound message remains pending. A new required peer action moves DONE back to AVAILABLE. Unexpected connection loss moves the member to DISCONNECTED, never to DONE.
+Checkpoint communication member states are AVAILABLE, WORKING, DONE, and DISCONNECTED. AVAILABLE may enter WORKING only through a bounded verification-only /work excursion. AVAILABLE may enter DONE only when required response obligations are satisfied, required messages are processed, accepted outbound delivery is settled, no verification work remains active, and the checkpoint generation/message frontier/obligation version in its completion certificate match current canonical state. A new required peer action moves DONE back to AVAILABLE. Unexpected connection loss moves the member to DISCONNECTED, never to DONE.
 
 ### 13.3 Task
 
@@ -1178,7 +1180,8 @@ Exact local wire framing belongs to implementation. The semantic behavior above 
 | RequestProjectContractChanges | ProjectContractChangesRequested | Orchestrator returns to revision work | new revision later returns to approval |
 | RejectProjectContractApproach | ProjectContractApproachRejected | current approach rejected, objective preserved | revision workflow |
 | CancelProjectSetup | ProjectSetupCancelled | project CANCELLED | setup interactions close |
-| PauseRun | RunPaused | run PAUSED | paused state/banner |
+| PauseRun | RunPauseRequested | admissions stop; runtime quiesces controllable work | pausing state/banner, not yet PAUSED |
+| confirmed durable pause boundary | RunPaused | run PAUSED | paused state/banner |
 | ResumeRun | RunResumed | run ACTIVE | normal activity resumes |
 | StopRun | RunStopRequested | run STOPPING | stop/cleanup status |
 | TriggerCheckpoint | CheckpointTriggered | checkpoint TRIGGERED | checkpoint opening becomes visible |
@@ -1260,3 +1263,7 @@ Additional contract payloads:
 - PauseRun first stops new ordinary admissions and quiesces; RunPaused is emitted only once the required pause boundary is actually reached. Unknown external requests remain separately recorded. StopRun does not claim external cancellation merely from local revocation.
 
 Command/result schemas, registry wiring, UI mappings, and deterministic tests for these additions remain pending implementation. No new completion status is asserted by this amendment.
+
+### Pause-request contract refinement
+
+QUIESCING_FOR_PAUSE is runtime-owned activity entered by an authorized PauseRun or recorded safety trigger. It immediately closes ordinary work admission; fencing, safe persistence, reconciliation, and cleanup remain allowed. The UI shows pausing with affected members/operations and StopRun available, without a new blocking dialog. Repeated pause requests deduplicate. RunPaused is emitted only after the required controllable execution boundaries have quiesced and durable state is recorded; unknown provider outcomes remain visible independently. StopRun supersedes pending pause with STOPPING. Quiescence failure/ceiling records a blocked or failed pause operation rather than falsely declaring PAUSED; scope-specific recovery is governed by Part 7. ResumeRun is available only after PAUSED and current safety/authority/budget guards pass. No runtime implementation or test completion is implied.

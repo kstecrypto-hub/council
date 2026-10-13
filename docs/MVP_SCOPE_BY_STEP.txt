@@ -348,13 +348,13 @@ MVP must implement
 - Each Council member owns its own repository under its own GitHub identity.
 - Between checkpoints, peer repositories are private.
 - At least:
-  * one early/mid checkpoint with temporary reciprocal peer read access to the
-    participating repositories; and
+  * one early/mid checkpoint that makes approved member repositories public,
+    collects all five sealed reviews, then opens shared discussion; and
   * one mature-candidate full peer-review checkpoint using the same mechanism.
-- Record exact opening/closing commit SHAs and the peer-access window for every
+- Record exact opening/closing commit SHAs and the observed public-visibility window for every
   checkpoint.
-- Peers may clone/test another member's repo but never receive write access to it.
-- Revoke reciprocal repo access when the checkpoint closes.
+- Peers may inspect pinned snapshots and test them in separate disposable verifiers; they receive no peer write/admin credentials or writable persistent reviewer mounts.
+- Make member repositories private and verify visibility/isolation before private work resumes; public copies already taken cannot be recalled.
 - Use a per-deployment Checkpoint Communication Gateway with ephemeral checkpoint
   rooms/sessions, identities, credentials, and sandbox routes.
 - No direct sandbox-to-sandbox communication path.
@@ -369,7 +369,7 @@ MVP must implement
 - Allow a member to enter bounded /work excursions during a checkpoint; while WORKING it cannot communicate live, and incoming messages/actions are durably queued and replayed on return.
 - Communication/execution exclusivity is per member, not global: other peers may continue discussion while one member works.
 - Record bounded-work provenance and enforce a ceiling so /work cannot become unlimited checkpoint escape.
-- /work uses a frozen or disposable checkpoint snapshot and is limited to verification activities.
+- /work uses a separate disposable verification environment with pinned checkpoint inputs; it is limited to verification activities.
 - The authoritative candidate stays read-only during /work.
 - Candidate implementation resumes only after the checkpoint closes.
 - At checkpoint close, each member writes its own closeout and receives a deterministic return packet containing relevant actions, evidence, frozen peer snapshot references, unresolved items, and transcript references.

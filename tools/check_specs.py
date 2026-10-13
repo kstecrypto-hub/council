@@ -29,6 +29,8 @@ for path in files:
     text = path.read_text(encoding='utf-8')
     for pattern in (r'three configurable council seats', r'three council members', r'3[-\u2013]4', r'solution_registry', r'solution_versions\(solution_id', r'Internet-wide public visibility is not an architectural requirement', r'Temporary collaborator/read access.*preferred default'):
         assert not re.search(pattern, text, re.I), (path.name, pattern)
+    for obsolete in ('temporary reciprocal peer read access', 'Revoke reciprocal repo access', 'checkpoint-related peer access grants/revocations', 'checkpoint-visible repository in its own environment'):
+        assert obsolete not in text, (path.name, obsolete)
     for link in re.findall(r'\]\(([^)\s]+)(?:\s+[^)]*)?\)', text):
         if '://' in link or link.startswith(('#', 'mailto:')):
             continue
@@ -39,3 +41,11 @@ assert 'SEALED_REVIEW' in (root / 'docs/TYPED_INTERACTION_CONTRACTS.md').read_te
 assert 'NOT STARTED' in (root / 'README.md').read_text()
 print(f'Static specification checks passed: {len(files)} documents and 12 tracked requirements.')
 print('Scope: documentation/contract consistency only. Runtime tests and comparative evaluations NOT RUN.')
+
+if contract['scope'] == 'specification_only':
+    assert contract['runtime_implementation_status'] == 'NOT_STARTED'
+    assert contract['runtime_test_status'] == 'NOT_RUN'
+    for item in contract['requirements']:
+        assert item['implementation_status'] == 'NOT_STARTED'
+        assert item['test_status'] == 'NOT_RUN'
+    print('Amendment status checks passed: no runtime requirement marked completed.')

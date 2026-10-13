@@ -1,8 +1,8 @@
 # Part 7 - member execution scheduling, recovery, and resource controls
 
-**Status:** IN DESIGN; amended October 13, 2026.  
+**Status:** IN DESIGN; amended October 13, 2026.
 **Scope:** runtime scheduling of Council-member execution environments, checkpoint barriers, resource limits, recovery, pause/stop, and budget controls.  
-**Implementation status:** NOT STARTED. **Runtime acceptance tests:** NOT RUN.  
+**Implementation status:** NOT STARTED. **Runtime acceptance tests:** NOT RUN.
 **Decision record:** [ARCHITECTURE_DECISIONS.md](ARCHITECTURE_DECISIONS.md). Accepted requirements below do not mark Part 7 complete.
 
 ## 1. Schedule member environments, not their internal work
