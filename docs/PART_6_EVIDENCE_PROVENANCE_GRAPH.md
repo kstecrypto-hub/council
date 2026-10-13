@@ -1,5 +1,7 @@
 # Part 6 - evidence, provenance, and investigation graph
 
+**October 13, 2026 amendment:** [decision/status index](ARCHITECTURE_DECISIONS.md). Requirements below are specifications; application implementation is NOT STARTED and runtime tests are NOT RUN.
+
 **Status:** DESIGNED.  
 **Scope:** how an active Council project records evidence, claims, assumptions, challenges, revisions, and their provenance.  
 **Implementation status:** specification only.
@@ -268,3 +270,13 @@ Part 6 is DESIGNED because the product-level behavior is fixed for:
 - shared-source lineage;
 - graph integrity;
 - searchable fallback when graph coverage is incomplete.
+
+## October 13 verification provenance and retained learning
+
+Executable peer tests use a separate disposable verification environment, never a reviewer's persistent branch environment. It has pinned read-only inputs and isolated scratch storage; it cannot write member repositories, continuation files, protected acceptance definitions, or control-plane state. Provider/admin credentials and unrestricted network access are absent. The requester still chooses and interprets the test. A trusted runner records actual snapshot/environment/harness hashes, command, execution outcome, and exported output hashes. Candidate-supplied tests remain distinguishable from protected acceptance checks. Recorded execution is evidence of what ran, not automatic proof of methodological adequacy.
+
+A user-accepted candidate is eligible for retention, not automatically a validated general rule. Every reusable lesson retains applicable task/environment/version conditions, source and test evidence, limitations, failures/counterexamples, uncertainty, and reassessment triggers. Do not label empirical lessons unconditionally PROVEN. Keep the memory snapshot fixed during a run; independent retrieval must not become live cross-branch communication.
+
+Before deleting the temporary control database, export the accepted project and selected learning/evidence to a durable Git-backed archive. Validate the transitive reference closure from a fresh archive checkout or retained artifact store, with hashes and permissions checked and no dependency on the live Council database, temporary sandbox paths, expiring URLs, or credentials. Essential missing/restricted evidence blocks teardown or requires an explicitly approved archive/retention change that honestly downgrades the unsupported lesson. Do not silently retain forbidden source data or silently delete the only evidence.
+
+Export acceptance/contract history and relevant provenance needed by retained lessons/reports; transient sessions, leases, and caches need not be retained. Archived failed approaches remain distinguishable from accepted candidates. Temporary restore validation and cleanup must be safe to retry. Final archive visibility follows explicit authorization and is not inferred from earlier public checkpoints.

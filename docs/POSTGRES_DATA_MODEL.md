@@ -1,5 +1,7 @@
 # PostgreSQL data model
 
+**October 13, 2026 amendment:** [decision/status index](ARCHITECTURE_DECISIONS.md). Requirements below are specifications; application implementation is NOT STARTED and runtime tests are NOT RUN.
+
 **Status:** approved design model for Part 3; this document defines persistence boundaries and invariants, not executable migrations.  
 **Authority:** this document refines section 13 of [APP_DESIGN.md](APP_DESIGN.md). If they conflict, the latest explicit owner instruction and APP_DESIGN remain authoritative.
 
@@ -341,7 +343,7 @@ Immutable user decision.
 - `decided_at`
 - `note`
 
-Only an ACCEPTED candidate snapshot can be promoted to the solution registry.
+Only an ACCEPTED candidate snapshot is retained as an accepted deliverable in the Git-backed archive. Failed approaches may be retained as attributed lessons; acceptance is not evidence of general validity.
 
 ## 6. Environment model
 
@@ -552,7 +554,7 @@ Do **not** create a generic free-form `agent_memory_blob` as an alternate source
 
 ### council_core.events
 Append-only.
-- `event_position` BIGINT PK, monotonically increasing
+- `event_position` BIGINT PK, deployment-local committed order allocated by the transactional event clock, not a PostgreSQL sequence
 - `event_id` UUID UNIQUE
 - `run_id` nullable FK
 - `project_id` FK
@@ -795,20 +797,21 @@ The exact Git index/file layout is an implementation detail for the later reuse 
 
 ## 14. Acceptance, archival, and deletion
 
-After user acceptance:
+1. Freeze the accepted candidate and record the exact user decision.
+2. Preserve actual clean-rebuild/acceptance results; do not claim reproducibility without the required successful checks.
+3. Export the accepted project, reproducible environment, authorized learning package, and essential provenance/evidence to Git and durable referenced artifact storage.
+4. Validate reference closure and restoreability from the retained archive without the temporary control database.
+5. Reconcile consequential external effects and unresolved spending/authority operations, retaining the records needed to resolve any still-open obligations.
+6. Apply the explicitly authorized repository archival/visibility policy.
+7. Only after validation, delete Council's control database/volume, temporary sandboxes, sessions, checkpoint machinery, caches, and credentials. Product-owned databases remain product data.
 
-1. Freeze the accepted candidate snapshot.
-2. Require successful clean rebuild verification for executable deliverables.
-3. Record the acceptance decision.
-4. Promote the accepted snapshot into `solution_registry`.
-5. Archive the council-member repositories according to the repository lifecycle policy.
-6. Retain canonical provenance needed to explain the accepted result, including the Project Contract history, delivered revisions, checkpoint publications used in review, acceptance record, accepted candidate/environment definitions, and cited evidence.
-7. Retain minimal metadata and archive references for rejected candidates; full rejected runtime state is not required for normal reuse.
-8. Destroy temporary sandboxes and unapproved temporary volumes.
-9. Mark `council_runtime` rows eligible for purge after successful archive/backup/reconciliation.
-10. Do not purge canonical records that are still referenced by the accepted solution, final report, audit history, or solution registry.
+A user-accepted candidate is eligible for retention, not automatically a validated general rule. Every reusable lesson retains applicable task/environment/version conditions, source and test evidence, limitations, failures/counterexamples, uncertainty, and reassessment triggers. Do not label empirical lessons unconditionally PROVEN. Keep the memory snapshot fixed during a run; independent retrieval must not become live cross-branch communication.
 
-The exact time delay before purging eligible runtime rows is a configurable workspace retention policy, not a hard-coded architectural constant.
+Before deleting the temporary control database, export the accepted project and selected learning/evidence to a durable Git-backed archive. Validate the transitive reference closure from a fresh archive checkout or retained artifact store, with hashes and permissions checked and no dependency on the live Council database, temporary sandbox paths, expiring URLs, or credentials. Essential missing/restricted evidence blocks teardown or requires an explicitly approved archive/retention change that honestly downgrades the unsupported lesson. Do not silently retain forbidden source data or silently delete the only evidence.
+
+Export acceptance/contract history and relevant provenance needed by retained lessons/reports; transient sessions, leases, and caches need not be retained. Archived failed approaches remain distinguishable from accepted candidates. Temporary restore validation and cleanup must be safe to retry. Final archive visibility follows explicit authorization and is not inferred from earlier public checkpoints.
+
+Retention delays remain policy. They do not waive evidence, external-operation reconciliation, or source-access obligations.
 
 ## 15. Concurrency and transaction rules
 
@@ -839,8 +842,6 @@ Required initial indexes:
 - `task_leases(expires_at)`
 - `operations(run_id, idempotency_key)` UNIQUE
 - `sandbox_instances(candidate_solution_id, status)`
-- `solution_versions(solution_id, version_no DESC)`
-- GIN full-text index on the registry `search_document`
 
 Avoid:
 - GIN indexes on arbitrary JSONB payloads by default
@@ -877,3 +878,26 @@ Part 3 is complete when implementation can derive migrations and typed persisten
 - indexing/recovery
 
 Part 4 may refine field types and command DTOs, but it must not silently change these invariants.
+
+## 19. October 13 schema refinements (not migrations)
+
+Use one deployment-local transactional event-clock row for the initial single-PostgreSQL deployment. Every event-producing canonical transaction obtains that row lock before aggregate/budget locks, allocates its event positions by updating the row, and holds the lock through commit/rollback. Allocate all events of the transaction together. Do not use an ordinary sequence, SERIAL, or IDENTITY allocation as a committed-delivery watermark. This deliberately simple serialization trades throughput for clear ordering; measure before replacing it with a different recorded ordering design.
+
+The clock, canonical mutation, events, idempotent result, and outbox entries commit together. No external call runs while holding that transaction. Rollback publishes nothing. Snapshot data and its committed event watermark come from one consistent database snapshot. Replay filters authorization and orders committed canonical events; visibility filtering must not turn hidden events into a spurious missing-data error.
+
+Outbox workers claim unpublished rows, not just IDs greater than the last observed ID. A retry cannot skip an older unpublished row. Consumers deduplicate by event identity and advance projection offsets atomically with effects only across processed committed events. Out-of-order notification delivery triggers ordered canonical replay/buffering rather than falsely advancing a watermark. The snapshot/SSE race and the lower-number-transaction-commits-later scenario require integration tests.
+
+LangGraph checkpoints are continuation projections, not a second authority over effects, permission, or completion. Bind continuation to logical member, execution epoch, contract/permission versions, and source event position. On restore, reconcile against canonical operations and obligations before executing a step. Replayed framework nodes must reuse logical operation identities and may not redispatch uncertain consequential effects. Runtime side-effect and accounting records prevail over an old checkpoint.
+
+Required additional record groups:
+
+- council_core.event_clock: singleton per deployment with last_position; locked through each event-producing canonical transaction.
+- checkpoint repository publications: checkpoint/generation, repository, approved refs/history manifest and hashes, user authorization, desired/observed visibility, external operation IDs, first observed exposure, private confirmation, errors. This does not make private database rows public.
+- independent checkpoint reviews: immutable checkpoint/generation/reviewer/candidate-bound assessment and evidence hashes; private until an atomic all-five reveal/delivery record.
+- checkpoint review frontiers: message sequence, obligation version, review generation, member processed watermark, and version-bound DONE certificate. Communication state is separate from verification/check status and candidate readiness.
+- clarification lineage: raw response reference, processed response, source statement locators, scope/strength, branch-local context manifest, confirmation, and effective contract revision.
+- budget accounts/reservations/settlements: fixed-precision units, pricing version, run/branch/parent scope, operation/attempt, pre-dispatch bound, protected review allocation, dispatch state, actual usage, and unresolved liability. Expiry cannot refund a dispatched/unknown operation.
+- member execution slices and blocked records: stable seat cursor, execution epoch, resource vector, slice/grace policy, durable suspension point, block reason/dependency, retry ceiling, and confirmed release state.
+- archive manifests/validation: retained hashes and reference closure, authorization, validation outcome, missing evidence, and teardown eligibility.
+
+These are accepted data requirements. Concrete field types, constraints, migration code, lock ordering beyond the stated event-clock rule, adapters, and integration tests remain open. There is no permanent SQL learning schema.

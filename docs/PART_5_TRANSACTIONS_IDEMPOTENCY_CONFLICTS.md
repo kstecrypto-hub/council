@@ -1,6 +1,8 @@
 # Part 5 - transactions, idempotency, and conflict handling
 
-**Status:** DESIGNED.  
+**October 13, 2026 amendment:** [decision/status index](ARCHITECTURE_DECISIONS.md). Requirements below are specifications; application implementation is NOT STARTED and runtime tests are NOT RUN.
+
+**Status:** DESIGN AMENDED; transaction integration and runtime verification remain pending.
 **Scope:** consistency and retry semantics for active Council deployments.  
 **Implementation status:** specification only.
 
@@ -105,7 +107,7 @@ Any action outside PostgreSQL is represented by a durable operation before execu
 
 Examples include:
 
-- GitHub access/grants/revocation;
+- GitHub repository public/private visibility changes and scoped content operations;
 - model-provider requests;
 - sandbox/container operations;
 - privileged broker actions;
@@ -147,7 +149,7 @@ A timeout or lost connection after an external request does not prove failure.
 Example:
 
 ```text
-Council -> GitHub: grant peer access
+Council -> GitHub: make an approved member repository public
 GitHub may complete it
 connection fails before response
 ```
@@ -252,7 +254,7 @@ These may be reconsidered only if measured requirements justify them.
 
 ## 12. Completion boundary
 
-Part 5 is DESIGNED because implementation no longer needs a product-level decision to determine:
+The baseline establishes the following design boundaries; the October 13 ordering, accounting, and recovery refinements must be integrated and tested before any implementation-complete claim:
 
 - what must commit atomically;
 - how retryable commands deduplicate;
@@ -264,3 +266,21 @@ Part 5 is DESIGNED because implementation no longer needs a product-level decisi
 - how committed events survive publication failure;
 - how lagging projections expose their consistency position;
 - when the temporary Council database is destroyed.
+
+## 13. Commit ordering and framework recovery
+
+Use one deployment-local transactional event-clock row for the initial single-PostgreSQL deployment. Every event-producing canonical transaction obtains that row lock before aggregate/budget locks, allocates its event positions by updating the row, and holds the lock through commit/rollback. Allocate all events of the transaction together. Do not use an ordinary sequence, SERIAL, or IDENTITY allocation as a committed-delivery watermark. This deliberately simple serialization trades throughput for clear ordering; measure before replacing it with a different recorded ordering design.
+
+The clock, canonical mutation, events, idempotent result, and outbox entries commit together. No external call runs while holding that transaction. Rollback publishes nothing. Snapshot data and its committed event watermark come from one consistent database snapshot. Replay filters authorization and orders committed canonical events; visibility filtering must not turn hidden events into a spurious missing-data error.
+
+Outbox workers claim unpublished rows, not just IDs greater than the last observed ID. A retry cannot skip an older unpublished row. Consumers deduplicate by event identity and advance projection offsets atomically with effects only across processed committed events. Out-of-order notification delivery triggers ordered canonical replay/buffering rather than falsely advancing a watermark. The snapshot/SSE race and the lower-number-transaction-commits-later scenario require integration tests.
+
+LangGraph checkpoints are continuation projections, not a second authority over effects, permission, or completion. Bind continuation to logical member, execution epoch, contract/permission versions, and source event position. On restore, reconcile against canonical operations and obligations before executing a step. Replayed framework nodes must reuse logical operation identities and may not redispatch uncertain consequential effects. Runtime side-effect and accounting records prevail over an old checkpoint.
+
+## 14. Uncertain effects and reservation transactions
+
+Unknown outcomes have operation-specific dependency gates. Read-only retrieval/inference may allow safe independent progress after fencing and isolation checks, while stale results remain quarantined and uncertain usage remains reserved. Consequential writes must be reconciled before replay and block work dependent on their outcome. Authority, public/private visibility, and isolation mutations fail closed for the affected boundary until safe state is verified. Unknown does not mean successful, failed, cancelled, free, or that the entire run must stay blocked forever.
+
+Reserve spending transactionally before dispatch across run, branch, parent/worker, and protected review/finalization allowances. Include member, worker, retry, Orchestrator, verifier, and finalization use. Reserve a conservative bound using explicit pricing/units and input/output limits; unknown pricing cannot pass a cost ceiling as zero. Pre-dispatch expiry may release a reservation; dispatched/unknown requests retain it until reconciliation or conservative settlement. A retry needs independently authorized allowance unless the provider contract proves reuse of the same charged operation. Protected review funds are not ordinary development balance. Fixed-precision accounting and consistent lock ordering are required; concrete provider adapters and tests remain pending.
+
+Repository visibility remains an external operation: requested/public/private state and verified publication/closure are separate commits. A SQL transaction must never pretend to atomically toggle GitHub visibility. All listed runtime acceptance tests remain NOT RUN.

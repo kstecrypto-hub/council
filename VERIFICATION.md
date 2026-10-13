@@ -26,3 +26,11 @@ No model API calls, agent execution, application implementation, database or san
 The retained PowerShell new-repository helper was not executed or used to publish this repository. It is not needed to use the already published documentation.
 
 No project license was selected, and no third-party implementation was copied.
+
+## October 13 architecture correction verification scope
+
+`python3 tools/check_specs.py` checks the machine-readable contract, explicit pending runtime statuses, removal of selected contradictory defaults, and local documentation links. `git diff --check` checks patch whitespace. These are documentation checks, not application tests.
+
+The required runtime scenarios in docs/ARCHITECTURE_DECISIONS.md remain NOT RUN: single-slot fairness, all-five barriers, visibility failures, sealed review isolation, hostile peer-test containment, unknown external effects, reservation races, committed event replay, stale /done races, clarification isolation, and archive reference closure. Provider integration, sandbox integration, database migrations, live experiments, and deployment have not been verified by this update.
+
+Do not mark implementation or runtime verification complete from a passed documentation check or a pushed commit.

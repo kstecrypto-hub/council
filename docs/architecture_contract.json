@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "decision_date": "2026-10-13",
+  "scope": "specification_only",
+  "logical_member_count": 5,
+  "member_count_changes_require_explicit_revision": true,
+  "repository_visibility_cycle": [
+    "private",
+    "public",
+    "private"
+  ],
+  "changes_council_source_repository_visibility": false,
+  "public_exposure_reversible": false,
+  "checkpoint_phases": [
+    "arrival_barrier",
+    "opening",
+    "sealed_review",
+    "reviewing",
+    "closing",
+    "closed"
+  ],
+  "peer_verification_environment": "separate_disposable",
+  "private_work_requires_finite_slices": true,
+  "done_requires": [
+    "checkpoint_generation",
+    "processed_message_sequence",
+    "expected_obligation_version"
+  ],
+  "separate_outcomes": [
+    "communication_closure",
+    "verification_coverage",
+    "candidate_readiness",
+    "user_acceptance"
+  ],
+  "event_ordering": "deployment_transactional_event_clock",
+  "long_term_learning_store": "git_backed_archive",
+  "runtime_implementation_status": "NOT_STARTED",
+  "runtime_test_status": "NOT_RUN",
+  "requirements": [
+    {
+      "id": "ADR-01",
+      "design_status": "SPECIFIED",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-02",
+      "design_status": "IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-03",
+      "design_status": "SPECIFIED",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-04",
+      "design_status": "SPECIFIED",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-05",
+      "design_status": "IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-06",
+      "design_status": "SPECIFIED",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-07",
+      "design_status": "SPECIFIED",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-08",
+      "design_status": "SPECIFIED",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-09",
+      "design_status": "IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-10",
+      "design_status": "SPECIFIED",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-11",
+      "design_status": "SPECIFIED",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-12",
+      "design_status": "SPECIFIED",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    }
+  ]
+}

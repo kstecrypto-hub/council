@@ -49,3 +49,9 @@ Do not report a feature as implemented, a test as passed, a repository as pushed
 Do not commit secrets, environment files, private research inputs, generated runtime records, credentials, caches, or production exports. Use synthetic or explicitly authorized fixtures for tests. Do not add an open-source license on the owner's behalf without authorization.
 
 Keep documentation aligned with implemented behavior and record substantive deviations. Avoid unrelated refactors and dependencies that turn the investigation product into a generic coding-agent shell.
+
+## October 13, 2026 architecture amendment
+
+Read docs/ARCHITECTURE_DECISIONS.md and docs/architecture_contract.json alongside the amended specifications. The owner's public-checkpoint policy applies to generated member repositories, not this source repository. Preserve five fixed members, sealed independent reviews, externally isolated peer verification, bounded private-work slices, conservative reservation accounting, commit-safe event replay, and the separate communication/verification/acceptance records.
+
+A documentation edit can be SPECIFIED without being IMPLEMENTED or VERIFIED. Do not close a runtime step from prose, a generated schema, static checks, mocks, or a successful push. Implementation completion requires code and scoped evidence; verification requires executed tests with recorded environment and results. Existing accepted design sections do not imply that later amendments or application work are complete. No application implementation is authorized merely by this maintenance update.

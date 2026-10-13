@@ -1,5 +1,7 @@
 # Part 4A - authority, ownership, communication, and execution boundaries
 
+**October 13, 2026 amendment:** [decision/status index](ARCHITECTURE_DECISIONS.md). Requirements below are specifications; application implementation is NOT STARTED and runtime tests are NOT RUN.
+
 **Status:** approved design for Part 4A as of October 1, 2026.  
 **Scope:** authority boundaries only. This document does not mark Part 4 as complete.  
 **Implementation status:** specification only.
@@ -189,26 +191,21 @@ No Council member or worker may directly mutate another branch's unpublished wor
 
 ### 6.1 Repository ownership and checkpoint visibility
 
-Each Council member owns and continuously develops its own repository under its own GitHub identity.
+Each of five fixed logical Council members owns its candidate repository under its own GitHub identity. Between checkpoints it is private. At an approved checkpoint the trusted runtime makes the member repositories **public on GitHub**, records exact frozen commits and observed visibility, and later makes them private again before private development resumes. Peer collaborator grants are not the publication mechanism. Reviewers never receive another member's write or administration credentials.
 
-Between checkpoints, peer repositories remain private to their owning branches. At an authorized checkpoint, the runtime temporarily grants reciprocal **read** access among the participating Council members. The repository itself is the primary publication surface; there is no requirement for a separate synthetic publication artifact to stand in for the branch's real committed work.
+Public means internet-wide publication, not merely access for Council peers. Approval must cover all repository content/history and other surfaces made public, including logs, releases, and artifacts where applicable. Secrets, personal/private inputs, unapproved intellectual property, and sealed reviews must stay outside the published repository. A publication manifest records approved refs/history, content hashes, scope, and authorization; checking only the latest checkout is insufficient. A failed safety check blocks publication. A confidential project that cannot authorize this exposure cannot use this publication mode; do not silently publish it or silently substitute a different protocol.
 
-For each participating branch, checkpoint entry records:
-- repository identity;
-- repository owner/Council member;
-- exact opening commit SHA;
-- access-grant time;
-- peer recipients.
+Once published, copies and public forks cannot be recalled by making the original private. The private transition protects later unpublished work, not already disclosed information. Runtime-controlled outbound access, repository writes, comments/issues, caches, and retrieval must not provide hidden inter-member communication outside the checkpoint protocol. Public read access is not write access, and visibility is not a frozen-snapshot guarantee: record/pin approved SHAs and enforce the write freeze outside member control.
 
-Peers may inspect, clone, run, and test another member's checkpoint-visible repository inside their own execution environment. They may not push to, rewrite, or otherwise mutate the other member's authoritative repository.
+Visibility changes are durable external operations. OPENING cannot declare publication successful until observed state is verified. Partial/unknown publication blocks review and is reconciled; any real exposure is recorded even after rollback. On closing, terminate communication authority, make repositories private, verify visibility and required isolation controls, and only then permit new private commits. A failed private transition keeps affected work blocked. This policy applies to generated member repositories, not to the Council source repository itself.
 
-During checkpoint review the authoritative candidate is frozen. Verification may run against that frozen snapshot or a disposable copy, but implementation changes, commits, and pushes wait until the checkpoint closes and private development resumes.
+Checkpoint sequence: all-five arrival barrier -> freeze and publication safety checks -> public repositories -> SEALED_REVIEW -> shared REVIEWING -> CLOSING -> confirmed private visibility -> CLOSED/private revision.
 
-When the checkpoint closes, reciprocal peer access is revoked. Each repository returns to branch-private visibility until the next authorized checkpoint. Agents retain what they legitimately learned during the checkpoint; privacy after closure prevents continued live leakage, not memory of already shared information.
+During SEALED_REVIEW each member independently submits an immutable assessment bound to the checkpoint, candidate SHAs, reviewer identity, evidence, objections, and proposed tests. The gateway withholds peer assessments and shared debate until every required member has submitted. Reviews remain in scoped canonical storage, never in a public repository or shared retrieval cache before reveal. Finite slices/budgets apply; a missing reviewer blocks the reveal barrier or produces an explicitly incomplete/aborted review, never a fabricated fifth assessment. No fixed skeptical personas or forced disagreement are required.
 
-Checkpoint discussion is carried by the per-deployment Checkpoint Communication Gateway. The agent sees only a minimal Council-controlled local message stream/client; it does not receive a raw IRC socket or general-purpose chat protocol surface. The runtime-side bridge, communication session, membership, credentials, and external route remain outside the agent-controlled environment and are ephemeral. There is no direct sandbox-to-sandbox communication route. Important peer actions are structured for tracking while their complete original text remains retained. See [CHECKPOINT_COMMUNICATION_GATEWAY.md](CHECKPOINT_COMMUNICATION_GATEWAY.md).
+Executable peer tests use a separate disposable verification environment, never a reviewer's persistent branch environment. It has pinned read-only inputs and isolated scratch storage; it cannot write member repositories, continuation files, protected acceptance definitions, or control-plane state. Provider/admin credentials and unrestricted network access are absent. The requester still chooses and interprets the test. A trusted runner records actual snapshot/environment/harness hashes, command, execution outcome, and exported output hashes. Candidate-supplied tests remain distinguishable from protected acceptance checks. Recorded execution is evidence of what ran, not automatic proof of methodological adequacy.
 
-For proprietary work, "visible" means visible to authorized Council peers. Internet-wide public visibility is not an architectural requirement. Temporary collaborator/read access to otherwise private repositories is the preferred default.
+Checkpoint discussion remains runtime-gateway mediated. Peer executable verification is an isolated capability, not authority over the reviewer's persistent branch. Private implementation waits for confirmed checkpoint closure.
 
 ## 7. Transparent execution isolation
 
@@ -361,3 +358,11 @@ The following remain intentionally delegated to later parts:
 - detailed Auditor sampling/escalation implementation policy.
 
 These later implementation choices must preserve the Part 4A authority invariants.
+
+## October 13 clarification and checkpoint neutrality refinement
+
+Checkpoint milestones specify outcomes/evidence to review, not a preferred sequence of solution components unless the user required those components. For example, require a reproducible baseline and measured failure modes rather than requiring every retrieval design to add reranking and fusion.
+
+Processed clarifications retain links to source user statements, scope, semantic strength (preference, requirement, permission, prohibition, or unresolved ambiguity), and the exact contract revision. Raw answers remain retained for authorized audit/user confirmation, not delivered directly to agents. Material ambiguity and consequential changes to permissions, spending, publication, or requirements require the appropriate explicit confirmation. Ordinary faithful rewording does not add an Auditor bottleneck.
+
+Branch-local clarification context stays branch-local in the Orchestrator's memory, retrieval, caches, and later normalization, not just in outgoing messages. Only approved project-wide revisions enter shared clarification context. The Orchestrator still has no solution-selection or intellectual supervisory authority.
