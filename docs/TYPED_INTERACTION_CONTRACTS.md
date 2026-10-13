@@ -1,6 +1,8 @@
 # Part 4 - typed interaction, command, event, state, and action contracts
 
-**Status:** DESIGNED. Part 4 defines the approved command/event/state/interaction contract boundary; implementation details belong to later parts.  
+**October 13, 2026 amendment:** [decision/status index](ARCHITECTURE_DECISIONS.md). Requirements below are specifications; application implementation is NOT STARTED and runtime tests are NOT RUN.
+
+**Status:** DESIGN AMENDED; extended state/command integration remains open. The approved baseline and October 13 requirements are specifications, not implemented behavior.
 **Authority:** this document refines the state/action, user-interaction, command, event, and UI-wiring requirements in APP_DESIGN.md and the persistence model in POSTGRES_DATA_MODEL.md. If a supporting document conflicts with the latest explicit owner instruction or APP_DESIGN.md, the latest owner instruction and APP_DESIGN.md remain authoritative.  
 **Implementation status:** specification only. No application code is implied by this document.
 
@@ -138,6 +140,7 @@ Initial authoritative set:
 - FINALIZING_ACCEPTED_CANDIDATE
 - CLEANING_DISPOSABLE_ENVIRONMENTS
 - RECOVERING_RUNTIME_STATE
+- QUIESCING_FOR_PAUSE
 
 ### 3.3 Council-member activity codes
 
@@ -179,23 +182,15 @@ Initial authoritative set:
 
 ### 3.5 Checkpoint lifecycle
 
-Checkpoint states:
-- SCHEDULED
-- TRIGGERED
-- OPENING
-- REVIEWING
-- CLOSING
-- CLOSED
-- CANCELLED
-- FAILED
+Checkpoint states: SCHEDULED, TRIGGERED, OPENING, SEALED_REVIEW, REVIEWING, CLOSING, CLOSED, CANCELLED, FAILED.
 
-A checkpoint does not expose branch-private information merely by becoming TRIGGERED. OPENING records each participant's frozen repository SHA, grants only the authorized reciprocal read access, and creates the runtime-controlled communication session.
+TRIGGERED does not publish anything. OPENING pins all five candidates, validates internet-publication approval/history/safety, creates recoverable visibility operations, and verifies actual public state. Only successful opening enters SEALED_REVIEW. Partial/unknown publication remains guarded and reconciled.
 
-During REVIEWING, authoritative candidate repositories remain frozen/read-only for checkpoint purposes. Peers may inspect, clone, and run verification against the frozen snapshots or disposable copies, but no member may implement fixes, commit, or push as part of checkpoint review. Verification-only /work excursions are allowed under the communication contract.
+SEALED_REVIEW permits independent repository inspection and isolated verification but not shared discussion or access to peer assessments. Each member submits an immutable review bound to the frozen candidates. RevealCheckpointReviews atomically publishes all required submissions and enters REVIEWING. Missing reviewers remain explicit blockers; ceiling-forced abort is incomplete, not successful review.
 
-REVIEWING enters CLOSING only when all required participants are DONE, no required peer obligation is unanswered, no accepted message remains pending, and no participant remains WORKING, unless a configured ceiling forces closure and records the reason.
+During REVIEWING candidates stay frozen. /work uses separate disposable verifiers; no implementation commits or pushes. Normal CLOSING requires current versioned DONE certificates, processed message/obligation frontiers, and no active work excursion. CLOSING fences the gateway, persists closeouts/transcript, removes temporary authority, makes repositories private, verifies the safe boundary, and creates return packets before CLOSED permits private revision. Failures remain observable/blocked rather than emitting a premature successful closure.
 
-CLOSING persists the transcript and member closeouts, destroys checkpoint communication routes/session, revokes reciprocal peer access, creates deterministic Checkpoint Return Packets, verifies revocation, and then emits CheckpointClosed. Private implementation/revision happens after CLOSED under the normal run/member activity model. See CHECKPOINT_COMMUNICATION_GATEWAY.md.
+Communication completion, verification coverage, candidate readiness, and acceptance remain independent. See section 25 and CHECKPOINT_COMMUNICATION_GATEWAY.md.
 
 ### 3.6 Candidate lifecycle
 
@@ -321,8 +316,8 @@ Commands and events use different names deliberately.
 Examples:
 - ApproveProjectContract is a command.
 - ProjectContractApproved is an event.
-- OpenCheckpointRepositoryAccess is a command.
-- CheckpointRepositoryAccessOpened is an event.
+- PublishCheckpointRepositories is a command.
+- CheckpointRepositoriesPublished is an event.
 - ExecuteSandboxOperation is a command.
 - SandboxOperationSucceeded, SandboxOperationFailed, and SandboxOperationOutcomeUnknown are mutually distinct event outcomes.
 
@@ -524,7 +519,7 @@ When a Council member or worker needs user input:
 3. only work that actually depends on the answer transitions to WAITING_ON_USER_INPUT; unaffected work continues where safe;
 4. the UI identifies the originating Council actor and presents the question to the user;
 5. the user's raw answer is recorded immutably as RAW_USER_RESPONSE;
-6. the Project Orchestrator receives the raw answer and its small prompt/clarification memory;
+6. the Project Orchestrator receives the raw answer and only its authorized project-wide plus requesting-branch prompt/clarification memory;
 7. the Orchestrator produces a processed, agent-ready answer that may improve form but must not change substance;
 8. the processed answer is recorded as PROCESSED_USER_RESPONSE and delivered to the requesting agent or worker;
 9. if the answer changes a project-wide requirement, the appropriate canonical project revision is created and distributed consistently to every affected branch.
@@ -585,7 +580,7 @@ Available actions:
 
 The system does not silently choose the user's accepted candidate. Acceptance is a user action. If only one candidate exists, the same rule applies.
 
-ACCEPT_CANDIDATE begins FINALIZING_ACCEPTED_CANDIDATE, promotes accepted metadata to the solution registry, performs delivery cleanup, removes Council-only credentials/control mechanisms, and then archives/disposes run state according to policy.
+ACCEPT_CANDIDATE begins FINALIZING_ACCEPTED_CANDIDATE, promotes accepted metadata to the Git-backed accepted-project archive, performs delivery cleanup, removes Council-only credentials/control mechanisms, and then archives/disposes run state according to policy.
 
 REQUEST_CANDIDATE_REVISIONS reopens the necessary review/remediation scope and records the user's requested changes.
 
@@ -624,8 +619,10 @@ Council/task:
 
 Checkpoint/review:
 - TriggerCheckpoint
-- OpenCheckpointRepositoryAccess
+- PublishCheckpointRepositories
 - CreateCheckpointCommunicationSession
+- SubmitIndependentCheckpointReview
+- RevealCheckpointReviews
 - SendCheckpointMessage
 - PromoteMessageToPeerAction
 - CreatePeerAction
@@ -638,7 +635,7 @@ Checkpoint/review:
 - MarkCheckpointCommunicationDone
 - ReopenCheckpointCommunicationMember
 - CloseCheckpointCommunicationSession
-- RevokeCheckpointRepositoryAccess
+- MakeCheckpointRepositoriesPrivate
 - SubmitCheckpointCloseout
 - CreateCheckpointReturnPacket
 - RecordClaimRevision
@@ -689,6 +686,7 @@ Project/contract:
 Run:
 - RunProvisioningStarted
 - RunStarted
+- RunPauseRequested
 - RunPaused
 - RunResumed
 - RunStopRequested
@@ -710,8 +708,10 @@ Council/task:
 
 Checkpoint/review:
 - CheckpointTriggered
-- CheckpointRepositoryAccessOpened
+- CheckpointRepositoriesPublished
 - CheckpointCommunicationSessionCreated
+- IndependentCheckpointReviewSubmitted
+- CheckpointPeerReviewsRevealed
 - CheckpointMessageAccepted
 - CheckpointMessageDelivered
 - PeerActionCreated
@@ -725,7 +725,7 @@ Checkpoint/review:
 - CheckpointMemberReactivated
 - CheckpointCommunicationQuiescing
 - CheckpointCommunicationSessionClosed
-- CheckpointRepositoryAccessRevoked
+- CheckpointRepositoriesMadePrivate
 - CheckpointCloseoutRecorded
 - CheckpointReturnPacketCreated
 - ClaimRevisionRecorded
@@ -773,7 +773,7 @@ CREATED -> PROVISIONING only after an approved launch revision exists.
 
 PROVISIONING -> ACTIVE only after required seats/workspaces/environments are ready or explicitly recorded as not required.
 
-ACTIVE -> PAUSED through PauseRun or a system safety condition.
+PauseRun or a system safety condition stops new ordinary admissions and enters QUIESCING_FOR_PAUSE. ACTIVE -> PAUSED occurs only when the required durable pause boundary is confirmed. In-flight unknown external operations remain separately recorded and are not implicitly cancelled.
 
 PAUSED -> ACTIVE through ResumeRun after guards pass.
 
@@ -791,11 +791,11 @@ No terminal state may return to ACTIVE.
 
 Member activity changes do not change logical identity. Session rollover preserves the member and branch.
 
-A member cannot enter REVIEWING_PEER_WORK before the checkpoint runtime has granted authorized read access to the peer snapshot being reviewed.
+A member cannot enter REVIEWING_PEER_WORK before the checkpoint runtime has verified authorized public publication of the frozen peer snapshot being reviewed.
 
 A member cannot enter RESPONDING_TO_CHALLENGE for a challenge it is not authorized to see.
 
-Checkpoint communication member states are AVAILABLE, WORKING, DONE, and DISCONNECTED. AVAILABLE may enter WORKING only through a bounded verification-only /work excursion. AVAILABLE may enter DONE only when no required peer obligation remains unanswered and no accepted outbound message remains pending. A new required peer action moves DONE back to AVAILABLE. Unexpected connection loss moves the member to DISCONNECTED, never to DONE.
+Checkpoint communication member states are AVAILABLE, WORKING, DONE, and DISCONNECTED. AVAILABLE may enter WORKING only through a bounded verification-only /work excursion. AVAILABLE may enter DONE only when required response obligations are satisfied, required messages are processed, accepted outbound delivery is settled, no verification work remains active, and the checkpoint generation/message frontier/obligation version in its completion certificate match current canonical state. A new required peer action moves DONE back to AVAILABLE. Unexpected connection loss moves the member to DISCONNECTED, never to DONE.
 
 ### 13.3 Task
 
@@ -991,7 +991,7 @@ Initial peer-action types:
 - TEST_RESULT
 - PROPOSAL
 
-A TEST_REQUEST asks the target peer to perform/consider a test but does not automatically create a task in that peer's branch. The peer may execute it, dispute it, defer it, or otherwise disposition it. The requester may independently test the target's checkpoint-visible repository in its own environment.
+A TEST_REQUEST asks the target peer to perform/consider a test but does not automatically create a task in that peer's branch. The peer may execute it, dispute it, defer it, or otherwise disposition it. The requester may independently test the target's checkpoint-visible repository in a separate disposable verification environment.
 
 Every structured peer action retains or references:
 - complete immutable full text;
@@ -1180,12 +1180,15 @@ Exact local wire framing belongs to implementation. The semantic behavior above 
 | RequestProjectContractChanges | ProjectContractChangesRequested | Orchestrator returns to revision work | new revision later returns to approval |
 | RejectProjectContractApproach | ProjectContractApproachRejected | current approach rejected, objective preserved | revision workflow |
 | CancelProjectSetup | ProjectSetupCancelled | project CANCELLED | setup interactions close |
-| PauseRun | RunPaused | run PAUSED | paused state/banner |
+| PauseRun | RunPauseRequested | admissions stop; runtime quiesces controllable work | pausing state/banner, not yet PAUSED |
+| confirmed durable pause boundary | RunPaused | run PAUSED | paused state/banner |
 | ResumeRun | RunResumed | run ACTIVE | normal activity resumes |
 | StopRun | RunStopRequested | run STOPPING | stop/cleanup status |
 | TriggerCheckpoint | CheckpointTriggered | checkpoint TRIGGERED | checkpoint opening becomes visible |
-| OpenCheckpointRepositoryAccess | CheckpointRepositoryAccessOpened | frozen peer snapshots become readable | review UI available |
-| CreateCheckpointCommunicationSession | CheckpointCommunicationSessionCreated | checkpoint REVIEWING communication active | communication controls active |
+| PublishCheckpointRepositories | CheckpointRepositoriesPublished | approved repositories confirmed internet-public; frozen SHAs pinned | sealed-review UI available after opening guards |
+| CreateCheckpointCommunicationSession | CheckpointCommunicationSessionCreated | checkpoint session initialized; shared communication remains gated during SEALED_REVIEW | independent-review controls only |
+| SubmitIndependentCheckpointReview | IndependentCheckpointReviewSubmitted | immutable reviewer assessment recorded privately | own submission status |
+| RevealCheckpointReviews | CheckpointPeerReviewsRevealed | all-five submissions revealed; SEALED_REVIEW -> REVIEWING | shared review controls active |
 | SendCheckpointMessage | CheckpointMessageAccepted/Delivered | durable ordered transcript advances | message appears |
 | CreatePeerAction | PeerActionCreated | peer action/obligation created | open-action queue updates |
 | SetPeerActionDisposition | PeerActionDispositionChanged | obligation/action state changes | action state updates |
@@ -1195,7 +1198,7 @@ Exact local wire framing belongs to implementation. The semantic behavior above 
 | new required action to DONE member | CheckpointMemberReactivated | DONE -> AVAILABLE | member active again |
 | SubmitCheckpointCloseout | CheckpointCloseoutRecorded | immutable member closeout retained | closeout status visible |
 | CloseCheckpointCommunicationSession | CheckpointCommunicationSessionClosed | no new live checkpoint communication | communication controls disappear |
-| RevokeCheckpointRepositoryAccess | CheckpointRepositoryAccessRevoked | peer live access removed | peer repo live access disappears |
+| MakeCheckpointRepositoriesPrivate | CheckpointRepositoriesMadePrivate | repositories confirmed private; prior public copies not recalled | visibility status updated; new private work still waits for CLOSED |
 | CreateCheckpointReturnPacket | CheckpointReturnPacketCreated | deterministic next-phase context created | no blocking UI |
 | CloseCheckpoint | CheckpointClosed | checkpoint CLOSED; private revision resumes | checkpoint history finalized |
 | CreateInteractionRequest | InteractionRequested | durable user gate/question created | Interaction Center + blocking surface when configured |
@@ -1225,7 +1228,7 @@ Ordinary activities inherit:
 
 ### 24.8 Part 4 completion boundary
 
-Part 4 is DESIGNED because implementation no longer needs a new product decision to determine:
+The original Part 4 baseline specified the following boundaries. The October 13 state/command refinements reopen integration work; the revised part must not be marked complete until the extended registry and guards are reconciled:
 - who may issue an action;
 - whether it is legal in the current state;
 - what durable event follows;
@@ -1236,3 +1239,31 @@ Part 4 is DESIGNED because implementation no longer needs a new product decision
 - how checkpoint communication, verification work, closeout, and return behave.
 
 Transaction mechanics, conflict algorithms, queue internals, provider behavior, environment technology, graph implementation, retrieval, and API/frontend implementation details remain intentionally delegated to Parts 5+.
+
+## 25. October 13 required state-contract refinements
+
+Communication completion, verification coverage, candidate readiness, and user acceptance are separate records. DISPUTED or DEFERRED can satisfy a response obligation without resolving the underlying risk or passing an acceptance criterion. Required checks remain NOT_RUN, BLOCKED, FAILED, or PASSED with evidence; an explicit policy waiver is recorded separately and is never a test pass. Forced closure records incomplete review and outstanding obligations.
+
+MarkCheckpointCommunicationDone carries checkpoint_generation, processed_message_sequence, and expected_obligation_version. Under the same checkpoint lock/version guard used to accept messages/actions and close the checkpoint, reject stale declarations, unanswered required obligations, unprocessed required messages, or active verification work. A relevant accepted message or new required action invalidates the affected DONE certificate and reactivates that member. Delivery to a socket is not evidence of processing. Internal bookkeeping alone must not endlessly invalidate completion. Close atomically only after current certificates cover the current review/obligation frontier; record ceiling-forced closure distinctly.
+
+The UI and final review expose communication_closed, verification_coverage, candidate_readiness, and acceptance_decision independently. An incomplete candidate may be presented for an informed user decision where the existing contract allows it; presentation or acceptance does not alter failed/unperformed verification.
+
+Checkpoint milestones specify outcomes/evidence to review, not a preferred sequence of solution components unless the user required those components. For example, require a reproducible baseline and measured failure modes rather than requiring every retrieval design to add reranking and fusion.
+
+Processed clarifications retain links to source user statements, scope, semantic strength (preference, requirement, permission, prohibition, or unresolved ambiguity), and the exact contract revision. Raw answers remain retained for authorized audit/user confirmation, not delivered directly to agents. Material ambiguity and consequential changes to permissions, spending, publication, or requirements require the appropriate explicit confirmation. Ordinary faithful rewording does not add an Auditor bottleneck.
+
+Branch-local clarification context stays branch-local in the Orchestrator's memory, retrieval, caches, and later normalization, not just in outgoing messages. Only approved project-wide revisions enter shared clarification context. The Orchestrator still has no solution-selection or intellectual supervisory authority.
+
+Additional contract payloads:
+
+- SubmitIndependentCheckpointReview: checkpoint_id/generation, reviewer identity, frozen candidate references, immutable assessment/evidence, idempotency key. Legal only in SEALED_REVIEW for the submitting member; it emits IndependentCheckpointReviewSubmitted without peer delivery.
+- RevealCheckpointReviews: expected checkpoint generation and required submission IDs/hashes. Runtime-only, all-five guard, atomic visibility/delivery activation plus CheckpointPeerReviewsRevealed. No model selects which reviews to reveal.
+- MarkCheckpointCommunicationDone: processed_message_sequence and expected_obligation_version as well as checkpoint generation. A stale frontier returns STALE_TARGET or REQUIRED_ACTIONS_OPEN, never successful DONE.
+- PublishCheckpointRepositories / MakeCheckpointRepositoriesPrivate: publication authorization, repository set, pinned refs, desired visibility, external-operation identities, and verified observed state. A requested transition is not its completion event.
+- PauseRun first stops new ordinary admissions and quiesces; RunPaused is emitted only once the required pause boundary is actually reached. Unknown external requests remain separately recorded. StopRun does not claim external cancellation merely from local revocation.
+
+Command/result schemas, registry wiring, UI mappings, and deterministic tests for these additions remain pending implementation. No new completion status is asserted by this amendment.
+
+### Pause-request contract refinement
+
+QUIESCING_FOR_PAUSE is runtime-owned activity entered by an authorized PauseRun or recorded safety trigger. It immediately closes ordinary work admission; fencing, safe persistence, reconciliation, and cleanup remain allowed. The UI shows pausing with affected members/operations and StopRun available, without a new blocking dialog. Repeated pause requests deduplicate. RunPaused is emitted only after the required controllable execution boundaries have quiesced and durable state is recorded; unknown provider outcomes remain visible independently. StopRun supersedes pending pause with STOPPING. Quiescence failure/ceiling records a blocked or failed pause operation rather than falsely declaring PAUSED; scope-specific recovery is governed by Part 7. ResumeRun is available only after PAUSED and current safety/authority/budget guards pass. No runtime implementation or test completion is implied.

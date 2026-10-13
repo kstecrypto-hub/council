@@ -1,5 +1,7 @@
 # Council - complete app design
 
+**October 13, 2026 amendment:** [decision/status index](ARCHITECTURE_DECISIONS.md). Requirements below are specifications; application implementation is NOT STARTED and runtime tests are NOT RUN.
+
 **Design baseline:** approved in the project conversation on September 10, 2026.  
 **Repository status:** specification only; application implementation has not started.  
 **Authority:** this document preserves the approved complete design. Supporting handoff documents organize its execution and must not silently change its requirements.  
@@ -80,7 +82,7 @@ These are modules, not eight separately deployed services. Begin with one backen
 
 ### Equal investigative authority
 
-Start with three configurable council seats.
+Start with five fixed logical council seats.
 
 Every member has the same responsibilities: investigate the overall question, commission workers, develop an analysis, challenge other analyses, examine objections, and revise conclusions.
 
@@ -108,21 +110,41 @@ The authority and routing invariants are specified in [PART_4A_AUTHORITY_BOUNDAR
 
 ### Independent beginnings
 
-Before seeing their peers' analyses, each member produces an initial investigation plan and preliminary findings.
+Before seeing peers' analyses, each member produces its own investigation plan and preliminary findings. Workers, retrieval, graphs, caches, and exports cannot expose another branch's unpublished interpretations. Authorized original sources may be shared.
 
-During this stage, its workers cannot read other branches' unpublished work. Members may access the same authorized source material; the generic architecture does not impose the earlier sensor-based partitioning experiment.
+Checkpoint milestones specify outcomes/evidence to review, not a preferred sequence of solution components unless the user required those components. For example, require a reproducible baseline and measured failure modes rather than requiring every retrieval design to add reranking and fusion.
 
-Before execution, the Project Orchestrator derives a versioned, project-specific checkpoint plan from the canonical project prompt. Checkpoints are semantic project milestones, not generic time slices. Their subjects depend on the work itself—for example, a RAG project may review initial retrieval architecture first, reranking next, then fusion, while a web system may review architecture, data/API contracts, backend workflows, frontend integration, and security in a different sequence. Each checkpoint defines its milestone purpose, participating branches, expected maturity/artifacts, peer-review focus, access rules, completion condition, and the next private phase.
+Processed clarifications retain links to source user statements, scope, semantic strength (preference, requirement, permission, prohibition, or unresolved ambiguity), and the exact contract revision. Raw answers remain retained for authorized audit/user confirmation, not delivered directly to agents. Material ambiguity and consequential changes to permissions, spending, publication, or requirements require the appropriate explicit confirmation. Ordinary faithful rewording does not add an Auditor bottleneck.
 
-Each Council member owns and continuously develops its own repository under its own GitHub identity. Between checkpoints, peer repositories are private to their owning Council member and its branch. At an authorized checkpoint, the runtime temporarily grants the participating Council members read access to one another's repositories. The repository is the primary publication surface: peers inspect the actual committed code, architecture, documentation, experiments, findings, tests, commit history, and other retained branch work rather than receiving a separate synthetic publication object.
+Branch-local clarification context stays branch-local in the Orchestrator's memory, retrieval, caches, and later normalization, not just in outgoing messages. Only approved project-wide revisions enter shared clarification context. The Orchestrator still has no solution-selection or intellectual supervisory authority.
 
-Checkpoint entry records the exact repository and opening commit for every participant. Peers may clone and test another member's repository inside their own execution environment, but they never receive write access to another member's authoritative repository. During checkpoint review, the authoritative candidate remains frozen. Verification runs against the frozen snapshot or a disposable copy; implementation commits resume only after checkpoint closure.
+Each of five fixed logical Council members owns its candidate repository under its own GitHub identity. Between checkpoints it is private. At an approved checkpoint the trusted runtime makes the member repositories **public on GitHub**, records exact frozen commits and observed visibility, and later makes them private again before private development resumes. Peer collaborator grants are not the publication mechanism. Reviewers never receive another member's write or administration credentials.
 
-When the checkpoint closes, reciprocal peer access is revoked and each repository becomes private to its branch again. Before leaving the checkpoint, each Council member writes a short closeout stating what it intends to carry forward. Runtime then creates a deterministic Checkpoint Return Packet containing the member's closeout, relevant structured actions, test/findings evidence, exact frozen peer snapshot references, unresolved/disputed items, and a reference to the durable full transcript. These are revision inputs rather than instructions; each member independently decides how to change its next private branch. Agents retain frozen peer snapshots they were authorized to inspect, but those snapshots never update after access closes. Peer discussion during the open checkpoint runs through the per-deployment, runtime-controlled Checkpoint Communication Gateway defined in [CHECKPOINT_COMMUNICATION_GATEWAY.md](CHECKPOINT_COMMUNICATION_GATEWAY.md); there is no direct sandbox-to-sandbox communication route. Agents see a minimal Council-controlled message stream, not a raw IRC channel. Important discussion can be promoted to structured peer actions while the complete original text remains preserved and authoritative. The final mature-candidate checkpoint follows the same mechanism but exposes the full candidate repositories for peer inspection, challenge, comparative testing, and revision.
+Public means internet-wide publication, not merely access for Council peers. Approval must cover all repository content/history and other surfaces made public, including logs, releases, and artifacts where applicable. Secrets, personal/private inputs, unapproved intellectual property, and sealed reviews must stay outside the published repository. A publication manifest records approved refs/history, content hashes, scope, and authorization; checking only the latest checkout is insufficient. A failed safety check blocks publication. A confidential project that cannot authorize this exposure cannot use this publication mode; do not silently publish it or silently substitute a different protocol.
 
-The Project Orchestrator may revise the project-specific checkpoint plan when the project structure materially changes or a new milestone is needed, but it does not judge which Council solution is correct or instruct branches how to solve the milestone. Agents determine their own implementations and signal when their branch has reached the defined checkpoint maturity; the runtime then enforces repository visibility and access transitions. During checkpoint discussion, communication and execution are mutually exclusive per member: an agent may temporarily enter a bounded /work excursion to run a test or verification, during which it cannot communicate live and incoming peer messages/actions are queued for replay when it returns. Other Council members continue discussing normally. /work is verification-only against the frozen checkpoint snapshot or a disposable copy; it cannot change the authoritative candidate or implement fixes. Any implementation happens only after checkpoint closure in private development, preventing a live fix/review loop.
+Once published, copies and public forks cannot be recalled by making the original private. The private transition protects later unpublished work, not already disclosed information. Runtime-controlled outbound access, repository writes, comments/issues, caches, and retrieval must not provide hidden inter-member communication outside the checkpoint protocol. Public read access is not write access, and visibility is not a frozen-snapshot guarantee: record/pin approved SHAs and enforce the write freeze outside member control.
 
-Every checkpoint records the participating repositories, exact opening and closing commits, the period during which reciprocal read access existed, and the discussion/review records produced during that window. This makes it possible to distinguish independently developed work from changes made after peer visibility.
+Visibility changes are durable external operations. OPENING cannot declare publication successful until observed state is verified. Partial/unknown publication blocks review and is reconciled; any real exposure is recorded even after rollback. On closing, terminate communication authority, make repositories private, verify visibility and required isolation controls, and only then permit new private commits. A failed private transition keeps affected work blocked. This policy applies to generated member repositories, not to the Council source repository itself.
+
+Checkpoint sequence: all-five arrival barrier -> freeze and publication safety checks -> public repositories -> SEALED_REVIEW -> shared REVIEWING -> CLOSING -> confirmed private visibility -> CLOSED/private revision.
+
+During SEALED_REVIEW each member independently submits an immutable assessment bound to the checkpoint, candidate SHAs, reviewer identity, evidence, objections, and proposed tests. The gateway withholds peer assessments and shared debate until every required member has submitted. Reviews remain in scoped canonical storage, never in a public repository or shared retrieval cache before reveal. Finite slices/budgets apply; a missing reviewer blocks the reveal barrier or produces an explicitly incomplete/aborted review, never a fabricated fifth assessment. No fixed skeptical personas or forced disagreement are required.
+
+Executable peer tests use a separate disposable verification environment, never a reviewer's persistent branch environment. It has pinned read-only inputs and isolated scratch storage; it cannot write member repositories, continuation files, protected acceptance definitions, or control-plane state. Provider/admin credentials and unrestricted network access are absent. The requester still chooses and interprets the test. A trusted runner records actual snapshot/environment/harness hashes, command, execution outcome, and exported output hashes. Candidate-supplied tests remain distinguishable from protected acceptance checks. Recorded execution is evidence of what ran, not automatic proof of methodological adequacy.
+
+Members choose their own methods and signal semantic milestone readiness. Runtime capacity slices do not imply readiness. All five must reach a checkpoint before publication/review begins; a failed reviewer never counts as ready or agreeing. Checkpoint plans remain versioned and can be revised for approved project changes without an Orchestrator solution judgment.
+
+During shared review, communication and verification-only /work remain mutually exclusive per member. Incoming messages/actions queue while that member works or is suspended. Peers continue discussion. Candidate implementation, commits, and pushes resume only after checkpoint closure and confirmed privacy. Frozen authorized peer snapshots may be retained but never silently refreshed with later private work.
+
+Each member authors a closeout. The runtime builds a deterministic Checkpoint Return Packet with that closeout, relevant original messages/actions, exact frozen snapshot references, verification evidence, unresolved/disputed items, and the full transcript reference. It supplies revision inputs, not instructions or automatically imposed peer tasks.
+
+Communication completion, verification coverage, candidate readiness, and user acceptance are separate records. DISPUTED or DEFERRED can satisfy a response obligation without resolving the underlying risk or passing an acceptance criterion. Required checks remain NOT_RUN, BLOCKED, FAILED, or PASSED with evidence; an explicit policy waiver is recorded separately and is never a test pass. Forced closure records incomplete review and outstanding obligations.
+
+MarkCheckpointCommunicationDone carries checkpoint_generation, processed_message_sequence, and expected_obligation_version. Under the same checkpoint lock/version guard used to accept messages/actions and close the checkpoint, reject stale declarations, unanswered required obligations, unprocessed required messages, or active verification work. A relevant accepted message or new required action invalidates the affected DONE certificate and reactivates that member. Delivery to a socket is not evidence of processing. Internal bookkeeping alone must not endlessly invalidate completion. Close atomically only after current certificates cover the current review/obligation frontier; record ceiling-forced closure distinctly.
+
+The UI and final review expose communication_closed, verification_coverage, candidate_readiness, and acceptance_decision independently. An incomplete candidate may be presented for an informed user decision where the existing contract allows it; presentation or acceptance does not alter failed/unperformed verification.
+
+The detailed transport, publication, and completion contract is in [CHECKPOINT_COMMUNICATION_GATEWAY.md](CHECKPOINT_COMMUNICATION_GATEWAY.md); the final mature-candidate checkpoint uses the same mechanism.
 
 ### Collective direction without constant voting
 
@@ -469,8 +491,6 @@ The runtime fingerprints the approved host capabilities relevant to the project.
 
 The number of logical council agents remains independent from the number of concurrently executing local sandboxes. Resource scheduling controls local parallelism; it does not change council membership or the reasoning protocol.
 
-The number of logical council agents remains independent from the number of concurrently executing local sandboxes. Resource scheduling controls local parallelism; it does not change council membership or the reasoning protocol.
-
 Credentials stay in backend-managed secret storage. Raw keys do not reach browser state, generated scripts, source documents, or ordinary logs.
 
 Retrieved material is treated as evidence, not executable authority. A document cannot grant tools, change the objective, or override access rules.
@@ -675,7 +695,7 @@ Local execution capacity is a schedulable resource, not a limit on council membe
 
 A low-spec machine may run only one or two Council-member work sandboxes at once while the remaining logical members wait to start/resume. A stronger workstation may execute more member sandboxes concurrently. The investigation protocol and fixed logical Council membership do not change merely because local parallelism changes.
 
-When a member reaches the current semantic checkpoint, it stops private development beyond that barrier and releases scarce private-work execution capacity while other members continue toward the same checkpoint. Releasing that capacity means the runtime quiesces and persists the member sandbox, records its repo/environment/continuation state, and stops the execution container rather than relying on a RAM-holding pause. Later it reconstructs the same logical sandbox from preserved private state and reissues only currently authorized ephemeral credentials/capabilities. Checkpoint review opens only after all required members have reached that barrier. Once open, the same member sandboxes may participate concurrently or be time-sliced through the available sandbox slots. The durable checkpoint gateway queues ordered messages/actions for inactive members; resuming a member delivers accumulated traffic and outstanding obligations. A DONE member targeted by a new required action becomes AVAILABLE again. Checkpoint mode never permits private implementation beyond the frozen snapshot. The scheduler must avoid starvation, throttle or pause new local work under host pressure, and prefer waiting over uncontrolled oversubscription. Remote model calls and local executable slots are accounted for separately because inference may occur on provider infrastructure while builds, tests, tools, and containers consume the user's machine.
+Private work has finite execution slices with durable yield and stable seat rotation even before semantic readiness; withholding readiness cannot monopolize a slot. Yield resumes the same unfinished phase and never advances the all-five barrier. When a member reaches the current semantic checkpoint, it stops private development beyond that barrier and releases scarce private-work execution capacity while other members continue toward the same checkpoint. Releasing that capacity means the runtime quiesces and persists the member sandbox, records its repo/environment/continuation state, and stops the execution container rather than relying on a RAM-holding pause. Later it reconstructs the same logical sandbox from preserved private state and reissues only currently authorized ephemeral credentials/capabilities. Checkpoint review opens only after all required members have reached that barrier. Once open, the same member sandboxes may participate concurrently or be time-sliced through the available sandbox slots. The durable checkpoint gateway queues ordered messages/actions for inactive members; resuming a member delivers accumulated traffic and outstanding obligations. A DONE member targeted by a new required action becomes AVAILABLE again. Checkpoint mode never permits private implementation beyond the frozen snapshot. The scheduler must avoid starvation, throttle or pause new local work under host pressure, and prefer waiting over uncontrolled oversubscription. Remote model calls and local executable slots are accounted for separately because inference may occur on provider infrastructure while builds, tests, tools, and containers consume the user's machine.
 
 The scheduler must not claim capacity or required host capabilities that the machine does not possess. Ordinary Council-managed environments do not attempt to mirror the host. Tasks that explicitly require unavailable host hardware or behavior remain blocked, use an approved alternate backend, or proceed only with a recorded limitation.
 
@@ -793,7 +813,7 @@ This ordering avoids creating an impressive dashboard before the underlying reco
 
 ### Initial configuration
 
-Start with three council members, all using the selected DeepSeek model, and a shared limit of four concurrent model calls.
+Start with five fixed logical council members, all using the selected DeepSeek model, and a shared limit of four concurrent model calls.
 
 Workers are created dynamically, with two worker-delegation levels beneath each council member as an initial cap. Read-only evidence tools are enabled; executable tools are opt-in.
 
@@ -801,7 +821,7 @@ The Project Orchestrator generates project-specific communication checkpoints fr
 
 One mandatory six-month-plus premortem remains required for a fully reviewed run. Investigation and challenge cycles continue within the configured allowance.
 
-These numbers and policies are editable starting defaults, not claims about an optimal configuration.
+Resource limits and provider settings are provisional configurable defaults, not claims about an optimum. The five logical Council seats are fixed for this protocol; changing membership requires an explicit versioned design/run decision.
 
 ---
 
@@ -814,3 +834,29 @@ A user should be able to open any important conclusion and ask:
 The app must answer those questions from retained records and evidence, not generate a plausible retrospective story.
 
 **The complete product is a configurable agent council, a durable investigation process, and a graph that makes its conclusions accountable.**
+
+## October 13 architecture integration requirements
+
+Use one deployment-local transactional event-clock row for the initial single-PostgreSQL deployment. Every event-producing canonical transaction obtains that row lock before aggregate/budget locks, allocates its event positions by updating the row, and holds the lock through commit/rollback. Allocate all events of the transaction together. Do not use an ordinary sequence, SERIAL, or IDENTITY allocation as a committed-delivery watermark. This deliberately simple serialization trades throughput for clear ordering; measure before replacing it with a different recorded ordering design.
+
+The clock, canonical mutation, events, idempotent result, and outbox entries commit together. No external call runs while holding that transaction. Rollback publishes nothing. Snapshot data and its committed event watermark come from one consistent database snapshot. Replay filters authorization and orders committed canonical events; visibility filtering must not turn hidden events into a spurious missing-data error.
+
+Outbox workers claim unpublished rows, not just IDs greater than the last observed ID. A retry cannot skip an older unpublished row. Consumers deduplicate by event identity and advance projection offsets atomically with effects only across processed committed events. Out-of-order notification delivery triggers ordered canonical replay/buffering rather than falsely advancing a watermark. The snapshot/SSE race and the lower-number-transaction-commits-later scenario require integration tests.
+
+LangGraph checkpoints are continuation projections, not a second authority over effects, permission, or completion. Bind continuation to logical member, execution epoch, contract/permission versions, and source event position. On restore, reconcile against canonical operations and obligations before executing a step. Replayed framework nodes must reuse logical operation identities and may not redispatch uncertain consequential effects. Runtime side-effect and accounting records prevail over an old checkpoint.
+
+Unknown outcomes have operation-specific dependency gates. Read-only retrieval/inference may allow safe independent progress after fencing and isolation checks, while stale results remain quarantined and uncertain usage remains reserved. Consequential writes must be reconciled before replay and block work dependent on their outcome. Authority, public/private visibility, and isolation mutations fail closed for the affected boundary until safe state is verified. Unknown does not mean successful, failed, cancelled, free, or that the entire run must stay blocked forever.
+
+Reserve spending transactionally before dispatch across run, branch, parent/worker, and protected review/finalization allowances. Include member, worker, retry, Orchestrator, verifier, and finalization use. Reserve a conservative bound using explicit pricing/units and input/output limits; unknown pricing cannot pass a cost ceiling as zero. Pre-dispatch expiry may release a reservation; dispatched/unknown requests retain it until reconciliation or conservative settlement. A retry needs independently authorized allowance unless the provider contract proves reuse of the same charged operation. Protected review funds are not ordinary development balance. Fixed-precision accounting and consistent lock ordering are required; concrete provider adapters and tests remain pending.
+
+A user-accepted candidate is eligible for retention, not automatically a validated general rule. Every reusable lesson retains applicable task/environment/version conditions, source and test evidence, limitations, failures/counterexamples, uncertainty, and reassessment triggers. Do not label empirical lessons unconditionally PROVEN. Keep the memory snapshot fixed during a run; independent retrieval must not become live cross-branch communication.
+
+Before deleting the temporary control database, export the accepted project and selected learning/evidence to a durable Git-backed archive. Validate the transitive reference closure from a fresh archive checkout or retained artifact store, with hashes and permissions checked and no dependency on the live Council database, temporary sandbox paths, expiring URLs, or credentials. Essential missing/restricted evidence blocks teardown or requires an explicitly approved archive/retention change that honestly downgrades the unsupported lesson. Do not silently retain forbidden source data or silently delete the only evidence.
+
+Export acceptance/contract history and relevant provenance needed by retained lessons/reports; transient sessions, leases, and caches need not be retained. Archived failed approaches remain distinguishable from accepted candidates. Temporary restore validation and cleanup must be safe to retry. Final archive visibility follows explicit authorization and is not inferred from earlier public checkpoints.
+
+### Required experimental comparison
+
+Pre-register tasks, model/tool permissions, total budget, evaluation method, trial count/variations, and reporting rules. Compare: (A) a strong single agent with the comparison budget; (B) five independent attempts with a fixed external evaluation/selection procedure and no peer discussion; (C) five members with sealed review, discussion, and revision; and (D) targeted ablations such as without sealed review or graph-assisted retrieval. Use the same protected evaluation procedure where applicable, retain unsuccessful trials, and report cost-matched quality separately from wall-clock latency/resource use.
+
+Measure defects uniquely found through peer review, valid corrections incorporated, regressions introduced after review, unresolved required checks, and total spend including review. An evaluation procedure scores experimental outcomes; it does not replace the user's authority to accept a delivered candidate. Static documentation checks are not evidence that Council improves quality. Live evaluation and statistical conclusions remain NOT RUN.

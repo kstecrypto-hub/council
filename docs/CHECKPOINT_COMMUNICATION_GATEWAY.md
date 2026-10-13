@@ -1,5 +1,7 @@
 # Checkpoint Communication Gateway
 
+**October 13, 2026 amendment:** [decision/status index](ARCHITECTURE_DECISIONS.md). Requirements below are specifications; application implementation is NOT STARTED and runtime tests are NOT RUN.
+
 **Status:** approved architecture baseline; protocol command surface still to be finalized.  
 **Scope:** temporary Council-member communication during Orchestrator-defined project checkpoints.  
 **Implementation status:** specification only.
@@ -45,36 +47,27 @@ Checkpoint closure invalidates/removes these conditions.
 
 ## 3. Checkpoint lifecycle integration
 
-Before checkpoint opening, the checkpoint acts as an all-required-member arrival barrier. Members may reach the Orchestrator-defined semantic milestone at different wall-clock times because only a subset of member work sandboxes may execute concurrently. An early member records its checkpoint-ready repository SHA/state, stops private development beyond the barrier, and may release its scarce work-execution slot. Runtime does not open the checkpoint communication/review session until every required member has independently reached the same checkpoint milestone.
+All five members reach an outcome-based semantic barrier. Early arrivals freeze their candidate and release execution capacity; finite private-work slices also release capacity before readiness. No failed/blocked member is silently excluded. A one-slot deployment rotates the same five logical agents through all stages.
 
-At checkpoint opening, runtime:
+Each of five fixed logical Council members owns its candidate repository under its own GitHub identity. Between checkpoints it is private. At an approved checkpoint the trusted runtime makes the member repositories **public on GitHub**, records exact frozen commits and observed visibility, and later makes them private again before private development resumes. Peer collaborator grants are not the publication mechanism. Reviewers never receive another member's write or administration credentials.
 
-1. records each participating repository and exact opening commit;
-2. grants participating peers reciprocal read access to the authorized repositories;
-3. creates the checkpoint communication session;
-4. creates checkpoint-scoped member credentials;
-5. enables checkpoint participation routes for member environments as they are scheduled;
-6. verifies membership/connectivity for each resumed participant;
-7. enters the communication/review period.
+Public means internet-wide publication, not merely access for Council peers. Approval must cover all repository content/history and other surfaces made public, including logs, releases, and artifacts where applicable. Secrets, personal/private inputs, unapproved intellectual property, and sealed reviews must stay outside the published repository. A publication manifest records approved refs/history, content hashes, scope, and authorization; checking only the latest checkout is insufficient. A failed safety check blocks publication. A confidential project that cannot authorize this exposure cannot use this publication mode; do not silently publish it or silently substitute a different protocol.
 
-All participating members need not be executing simultaneously. When sandbox capacity is lower than Council membership, checkpoint participation is time-sliced across the same member sandboxes. The gateway durably retains ordered messages and structured actions while a member is inactive and delivers the accumulated checkpoint traffic plus current obligations when that member resumes. A member that had reached `/done` becomes AVAILABLE again if a new required action targets it. Checkpoint closure still requires the existing all-obligations/all-DONE conditions; time-slicing does not weaken them.
+Once published, copies and public forks cannot be recalled by making the original private. The private transition protects later unpublished work, not already disclosed information. Runtime-controlled outbound access, repository writes, comments/issues, caches, and retrieval must not provide hidden inter-member communication outside the checkpoint protocol. Public read access is not write access, and visibility is not a frozen-snapshot guarantee: record/pin approved SHAs and enforce the write freeze outside member control.
 
-Checkpoint-mode resumption does not authorize private implementation work. The member remains bound to the frozen checkpoint snapshot and the existing verification-only `/work` rules.
+Visibility changes are durable external operations. OPENING cannot declare publication successful until observed state is verified. Partial/unknown publication blocks review and is reconciled; any real exposure is recorded even after rollback. On closing, terminate communication authority, make repositories private, verify visibility and required isolation controls, and only then permit new private commits. A failed private transition keeps affected work blocked. This policy applies to generated member repositories, not to the Council source repository itself.
 
-At checkpoint closure, runtime:
+Checkpoint sequence: all-five arrival barrier -> freeze and publication safety checks -> public repositories -> SEALED_REVIEW -> shared REVIEWING -> CLOSING -> confirmed private visibility -> CLOSED/private revision.
 
-1. stops accepting new checkpoint messages;
-2. drains already accepted messages where applicable;
-3. persists the final transcript and communication metadata;
-4. records closing repository commits;
-5. revokes checkpoint credentials;
-6. removes environment-to-gateway routes;
-7. destroys the checkpoint communication session;
-8. revokes reciprocal peer repository access;
-9. verifies revocation;
-10. returns Council members to private work.
+During SEALED_REVIEW each member independently submits an immutable assessment bound to the checkpoint, candidate SHAs, reviewer identity, evidence, objections, and proposed tests. The gateway withholds peer assessments and shared debate until every required member has submitted. Reviews remain in scoped canonical storage, never in a public repository or shared retrieval cache before reveal. Finite slices/budgets apply; a missing reviewer blocks the reveal barrier or produces an explicitly incomplete/aborted review, never a fabricated fifth assessment. No fixed skeptical personas or forced disagreement are required.
 
-The persistent gateway process may remain alive. An existing gateway process does not imply that agents are able to communicate.
+Executable peer tests use a separate disposable verification environment, never a reviewer's persistent branch environment. It has pinned read-only inputs and isolated scratch storage; it cannot write member repositories, continuation files, protected acceptance definitions, or control-plane state. Provider/admin credentials and unrestricted network access are absent. The requester still chooses and interprets the test. A trusted runner records actual snapshot/environment/harness hashes, command, execution outcome, and exported output hashes. Candidate-supplied tests remain distinguishable from protected acceptance checks. Recorded execution is evidence of what ran, not automatic proof of methodological adequacy.
+
+Runtime creates checkpoint-scoped gateway membership/credentials during opening, but shared send/replay is gated off during SEALED_REVIEW. SubmitIndependentCheckpointReview records a private immutable assessment. RevealCheckpointReviews publishes those records to all five participants atomically only after all required submissions exist; shared discussion then begins.
+
+On normal closure, atomically fence new review messages, persist the final transcript/closeouts and completion frontier, terminate work excursions and checkpoint authority/routes, make repositories private, verify external visibility/isolation, create deterministic return packets, and emit CheckpointClosed. Each external operation remains recoverable rather than hidden inside a SQL transaction. Forced closure preserves its reason and unperformed work and never masquerades as full review.
+
+The persistent gateway process may remain running without any active communication authority. Inactive members receive ordered backlog and current obligations on resumption; they do not receive another member's sealed assessment prematurely.
 
 ## 4. Communication model
 
@@ -216,7 +209,7 @@ Initial dispositions:
 
 A checkpoint does not require consensus. A CHALLENGE may close as DISPUTED and remain visible as an unresolved disagreement. A TEST_REQUEST may close as DEFERRED with a reason if it cannot be completed within the checkpoint.
 
-A TEST_REQUEST is a peer communication request, not an automatic task assignment. The target Council member remains intellectually and operationally autonomous: it may run the requested test, reject/dispute the premise, defer it, or answer from its own inspection. Because participating members have read access to peer repositories during the checkpoint, the requesting member may also clone/run/test the peer candidate independently in its own environment. The communication protocol must not silently create work inside another branch merely because one peer requested it.
+A TEST_REQUEST is a peer communication request, not an automatic task assignment. The target Council member remains intellectually and operationally autonomous: it may run the requested test, reject/dispute the premise, defer it, or answer from its own inspection. Because participating members have read access to peer repositories during the checkpoint, the requesting member may also clone/run/test the peer candidate independently in a separate disposable verification environment. The communication protocol must not silently create work inside another branch merely because one peer requested it.
 
 The runtime must never turn silence into RESOLVED.
 
@@ -252,14 +245,16 @@ This is not an immediate disconnect. If new checkpoint communication validly req
 
 Normal checkpoint communication closure occurs when all required participants are done and no accepted messages remain pending, subject to a bounded fallback/ceiling so a failed or looping agent cannot keep a checkpoint open indefinitely.
 
-The exact DONE/ACTIVE/quiescing state contract will be specified in Part 4.
+The AVAILABLE/WORKING/DONE/DISCONNECTED states and version-bound completion guards are defined in Part 4 and the October 13 refinements below; wire framing and executable integration remain pending.
 
 A normal /done request succeeds only when:
 - the member has no required OPEN/unacknowledged peer actions;
 - any required items have an explicit disposition;
-- the member has no accepted outbound message still pending delivery.
+- the member has no accepted outbound message still pending delivery;
+- its processed message frontier and expected obligation version match the current checkpoint generation;
+- it has no active verification work, and the completion decision is committed under the same guard as message/action acceptance and closure.
 
-A new message/action that explicitly requires a DONE member's attention may return that member to ACTIVE before checkpoint closure.
+A new message/action that explicitly requires a DONE member's attention invalidates its completion certificate and returns that member to AVAILABLE before checkpoint closure.
 
 ### 6.1 Communication and work are mutually exclusive per member
 
@@ -294,7 +289,7 @@ WORKING is verification-only. It may run tests, reproduce failures, benchmark, i
 
 WORKING may not modify the authoritative candidate. It may not edit source code, refactor, add features, alter architecture, commit, or push.
 
-Verification must run against the frozen checkpoint snapshot or a disposable copy of that snapshot. Temporary test-side mutations, generated files, or harness changes remain disposable and cannot become authoritative candidate changes during the checkpoint.
+Executable verification must run in a separate disposable verifier with pinned checkpoint inputs, no writable reviewer workspace/continuation mounts, and externally retained execution evidence. Temporary test-side mutations, generated files, or harness changes remain disposable and cannot become authoritative candidate changes during the checkpoint.
 
 When bounded work completes, fails, or reaches its runtime ceiling, the member returns to AVAILABLE and receives:
 - every complete queued logical message in order;
@@ -331,7 +326,7 @@ A checkpoint work excursion must never create authoritative repository commits. 
 
 This prevents an infinite checkpoint loop in which discussion causes a fix, the fix creates new review surface, and the checkpoint repeatedly reopens implementation work.
 
-A TEST_REQUEST remains advisory. The target member decides whether to enter /work, answer from existing evidence, dispute the request, or defer it. The requesting member may independently test the peer's checkpoint-visible repository in its own environment.
+A TEST_REQUEST remains advisory. The target member decides whether to enter /work, answer from existing evidence, dispute the request, or defer it. The requesting member may independently test the peer's checkpoint-visible repository in a separate disposable verification environment.
 
 ## 7. Network and capability implications
 
@@ -346,7 +341,7 @@ External access must be mediated by Council-controlled capabilities/gateways whe
 - checkpoint communication gateway.
 
 Between checkpoints:
-- peer repository access is absent;
+- live access to new unpublished peer repository work is absent; previously authorized frozen snapshots may remain available;
 - checkpoint communication sessions are absent;
 - checkpoint credentials are invalid/absent;
 - checkpoint gateway routes from the agent environments are absent.
@@ -359,7 +354,7 @@ Council members own and develop their own repositories, but an agent sandbox mus
 
 Repository-content authority and repository-administration authority should remain separable.
 
-The trusted runtime is responsible for checkpoint-related peer access grants/revocations. A Council member must not be able to bypass checkpoint isolation by permanently adding peers, changing visibility, or otherwise administratively exposing its repository outside the checkpoint policy.
+The trusted runtime is responsible for approved checkpoint public/private visibility transitions, publication-safety checks, write freezes, and verification of the actual resulting visibility. A Council member must not be able to bypass checkpoint isolation by permanently adding peers, changing visibility, or otherwise administratively exposing its repository outside the checkpoint policy.
 
 Exact Git credential and administration mechanics remain implementation details for a later contract.
 
@@ -377,7 +372,7 @@ For each checkpoint Council retains, at minimum:
 - completion-state transitions such as /done;
 - formal challenges/findings linked from the discussion where applicable;
 - closing repository commit per participant;
-- repository-access grant/revocation events;
+- public/private visibility requests and verified outcomes, including partial exposure, failed transitions, and publication-manifest references;
 - communication-route creation/removal events;
 - whether closure was normal or ceiling-forced.
 
@@ -430,12 +425,14 @@ This gives the overall project loop:
 ```text
 private independent work
 -> semantic checkpoint reached
--> freeze snapshots
--> peer inspection and discussion
+-> freeze snapshots and pass publication approval/safety checks
+-> confirm member repositories public
+-> sealed independent review by all five members
+-> reveal assessments and open shared discussion
 -> verification-only /work as needed
 -> all members done
 -> agent-authored closeouts
--> close communication and peer access
+-> close communication and confirm repositories private
 -> deterministic return packets
 -> private revision
 -> next semantic checkpoint
@@ -476,8 +473,16 @@ The next design pass must decide:
 - maximum logical message/action sizes;
 - exact message/action schemas and protocol versioning;
 - reply/thread semantics beyond parent message/action references;
-- exact /done wire representation and ACTIVE/DONE/DISCONNECTED state transitions;
+- exact /done wire representation and integration of AVAILABLE/WORKING/DONE/DISCONNECTED transitions with versioned completion frontiers;
 - reconnect/replay behavior inside an active checkpoint;
 - bounded communication ceilings;
 - transcript/event schemas;
 - which structured peer actions, if any, become first-class investigation-graph nodes automatically.
+
+## October 13 completion and verification guards
+
+Communication completion, verification coverage, candidate readiness, and user acceptance are separate records. DISPUTED or DEFERRED can satisfy a response obligation without resolving the underlying risk or passing an acceptance criterion. Required checks remain NOT_RUN, BLOCKED, FAILED, or PASSED with evidence; an explicit policy waiver is recorded separately and is never a test pass. Forced closure records incomplete review and outstanding obligations.
+
+MarkCheckpointCommunicationDone carries checkpoint_generation, processed_message_sequence, and expected_obligation_version. Under the same checkpoint lock/version guard used to accept messages/actions and close the checkpoint, reject stale declarations, unanswered required obligations, unprocessed required messages, or active verification work. A relevant accepted message or new required action invalidates the affected DONE certificate and reactivates that member. Delivery to a socket is not evidence of processing. Internal bookkeeping alone must not endlessly invalidate completion. Close atomically only after current certificates cover the current review/obligation frontier; record ceiling-forced closure distinctly.
+
+The UI and final review expose communication_closed, verification_coverage, candidate_readiness, and acceptance_decision independently. An incomplete candidate may be presented for an informed user decision where the existing contract allows it; presentation or acceptance does not alter failed/unperformed verification.

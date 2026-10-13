@@ -56,7 +56,7 @@ Complete product
 
 MVP must implement
 ~~~~~~~~~~~~~~~~~~
-- One backend runtime capable of coordinating 3-4 peer council members.
+- One backend runtime capable of coordinating five fixed logical council members.
 - Parallel model calls subject to a simple configurable concurrency limit.
 - Separate local sandbox concurrency limit.
 - Tasks can wait for dependencies without blocking all worker capacity.
@@ -69,7 +69,7 @@ Defer until after MVP evidence
 - Sophisticated host-pressure heuristics.
 - Multiple execution backends beyond the one needed by the MVP.
 - Advanced distributed deployment.
-- Complex fairness/starvation policies beyond simple queue aging/priority.
+- Sophisticated priority scoring; bounded slices and deterministic seat rotation are still required in the MVP.
 
 
 STEP 2 - REPOSITORY LAYOUT, DEPENDENCIES, AND IMPORT RULES
@@ -79,7 +79,7 @@ Complete product
 ~~~~~~~~~~~~~~~~
 - Each council member has a distinct repository/account/workspace boundary.
 - Private independent work until checkpoint policy allows publication.
-- Repositories can later become mutually readable at the appropriate checkpoint.
+- Member repositories become internet-public at approved checkpoints, then private again before new private work; prior public copies cannot be recalled.
 - Prior accepted projects may be copied/reused as bases or references.
 - Accepted output is migrated/retained; disposable run state is removed.
 - Clear backend/frontend/runtime/domain boundaries and dependency direction.
@@ -103,19 +103,19 @@ Defer until after MVP evidence
 
 
 STEP 3 - POSTGRESQL SCHEMA AND VERSIONING
-Status: DESIGNED
+Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
 Primary specification: docs/POSTGRES_DATA_MODEL.md
 
 Complete product
 ~~~~~~~~~~~~~~~~
-- council_core, council_runtime, and solution_registry logical schemas.
+- council_core and council_runtime logical schemas; accepted learning is Git-backed, not a permanent SQL schema.
 - Versioned Project Contracts, approvals, instruction packages, deliveries.
 - Checkpoint policy versions, publications, deliveries, visibility enforcement.
 - Persistent logical agents, sessions, candidates, repositories, snapshots.
 - Host Profiles, Environment Contracts, privileged grants, drift tracking.
 - Canonical evidence/provenance/claims/reviews/graph records.
 - Continuation packets/context manifests.
-- Solution registry, reuse relationships, retention/archive rules.
+- Git-backed accepted-project archive, reuse relationships, retention/archive rules.
 - Artifact-store boundary, migrations, backup/recovery, HDD-aware indexes.
 
 MVP must implement
@@ -141,13 +141,13 @@ MVP can simplify
 - No separate physical databases.
 - No vector database.
 - No graph database.
-- Minimal solution registry sufficient to retain accepted candidate metadata.
+- Minimal Git-backed archive/index sufficient to retain accepted candidate metadata and validated evidence references.
 - Match My PC persistence tables may exist but do not need to be exercised by
   the MVP if Match My PC itself is deferred.
 
 
 STEP 4 - TYPED COMMANDS, EVENTS, STATE MACHINES, AND INTERACTION CONTRACTS
-Status: DESIGNED
+Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
 Primary specifications: docs/TYPED_INTERACTION_CONTRACTS.md and docs/PART_4A_AUTHORITY_BOUNDARIES.md
 
 Complete product
@@ -166,8 +166,8 @@ MVP must implement
   * start/pause/resume/stop run;
   * create/complete/fail task;
   * create worker;
-  * open checkpoint repository access for allowed peers;
-  * record opening/closing repository commits and revoke peer access;
+  * make approved member repositories public, verify frozen publication scope, and collect sealed reviews;
+  * record opening/closing commits and confirm private visibility before private work resumes;
   * create/disposition structured peer actions;
   * request requirement clarification/checkpoint;
   * model call request/result;
@@ -187,7 +187,7 @@ Defer until after MVP evidence
 
 
 STEP 5 - TRANSACTIONS, IDEMPOTENCY, AND CONFLICT HANDLING
-Status: DESIGNED
+Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
 Primary specification: docs/PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md
 
 Complete product
@@ -258,7 +258,7 @@ Defer until after MVP evidence
 
 
 STEP 7 - MEMBER EXECUTION SCHEDULING, RECOVERY, AND RESOURCE CONTROLS
-Status: IN DESIGN
+Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
 Primary working specification: docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md
 
 Complete product
@@ -304,7 +304,7 @@ Defer until after MVP evidence
 
 
 STEP 8 - AGENT LOOP, COUNCIL PHASES, AND DELEGATION
-Status: TO DESIGN / IMPLEMENT IN DETAIL
+Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
 Core governance is already designed.
 
 Pre-design consideration
@@ -348,13 +348,13 @@ MVP must implement
 - Each Council member owns its own repository under its own GitHub identity.
 - Between checkpoints, peer repositories are private.
 - At least:
-  * one early/mid checkpoint with temporary reciprocal peer read access to the
-    participating repositories; and
+  * one early/mid checkpoint that makes approved member repositories public,
+    collects all five sealed reviews, then opens shared discussion; and
   * one mature-candidate full peer-review checkpoint using the same mechanism.
-- Record exact opening/closing commit SHAs and the peer-access window for every
+- Record exact opening/closing commit SHAs and the observed public-visibility window for every
   checkpoint.
-- Peers may clone/test another member's repo but never receive write access to it.
-- Revoke reciprocal repo access when the checkpoint closes.
+- Peers may inspect pinned snapshots and test them in separate disposable verifiers; they receive no peer write/admin credentials or writable persistent reviewer mounts.
+- Make member repositories private and verify visibility/isolation before private work resumes; public copies already taken cannot be recalled.
 - Use a per-deployment Checkpoint Communication Gateway with ephemeral checkpoint
   rooms/sessions, identities, credentials, and sandbox routes.
 - No direct sandbox-to-sandbox communication path.
@@ -369,7 +369,7 @@ MVP must implement
 - Allow a member to enter bounded /work excursions during a checkpoint; while WORKING it cannot communicate live, and incoming messages/actions are durably queued and replayed on return.
 - Communication/execution exclusivity is per member, not global: other peers may continue discussion while one member works.
 - Record bounded-work provenance and enforce a ceiling so /work cannot become unlimited checkpoint escape.
-- /work uses a frozen or disposable checkpoint snapshot and is limited to verification activities.
+- /work uses a separate disposable verification environment with pinned checkpoint inputs; it is limited to verification activities.
 - The authoritative candidate stays read-only during /work.
 - Candidate implementation resumes only after the checkpoint closes.
 - At checkpoint close, each member writes its own closeout and receives a deterministic return packet containing relevant actions, evidence, frozen peer snapshot references, unresolved items, and transcript references.
@@ -461,7 +461,7 @@ Those remain complete-product features unless an experiment proves them necessar
 
 
 STEP 11 - CONTEXT RETRIEVAL, GRAPH RETRIEVAL, AGENT MEMORY, AND ROLLOVER
-Status: HIGH-LEVEL DESIGN EXISTS; MEMORY POLICY STILL TO DESIGN
+Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
 
 Pre-design consideration
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -654,7 +654,7 @@ Recommended first implementation sequence:
 2. PostgreSQL migrations for the MVP subset of Part 3.
 3. Typed commands/contracts.
 4. Project Orchestrator + Project Contract approval.
-5. Provider adapter abstraction + 3-4 council seats.
+5. Provider adapter abstraction + five council seats.
 6. Durable queue/leases/events.
 7. Branch isolation + repo/worktree management.
 8. Council-managed Docker execution.
@@ -693,7 +693,7 @@ The Council MVP is done when a user can:
 
 1. discuss a project with the Project Orchestrator;
 2. approve a canonical Project Contract;
-3. launch 3-4 peer agents with configurable reasoning models;
+3. launch five peer agents with configurable reasoning models;
 4. have those agents begin independently in private branches;
 5. let them execute/test work in isolated Council-managed environments;
 6. preserve each agent across session rollovers;
@@ -706,3 +706,23 @@ The Council MVP is done when a user can:
 
 Everything beyond this can remain in the complete-product specification until
 evidence shows it deserves implementation.
+
+OCTOBER 13, 2026 - ACCEPTED ARCHITECTURE CORRECTIONS
+=================================================
+
+The changes below are requirements, not implemented features. Runtime implementation: NOT STARTED. Runtime tests and comparative evaluations: NOT RUN. No implementation step is closed by this update.
+
+1. Five fixed logical members; private -> PUBLIC GitHub repositories at approved checkpoints -> private before new work. Public history/copies cannot be recalled. Publication safety/authorization is mandatory.
+2. Finite private-work slices independent from semantic milestones; deterministic fair rotation; explicit blocked-member/recovery ceilings; no silently reduced Council.
+3. Separate disposable peer-test environments with protected acceptance definitions and trusted execution provenance.
+4. Operation-specific unknown-outcome policy and old-epoch fencing; safe independent work can resume without guessing consequential effects.
+5. Atomic pre-dispatch budget reservations for every caller; protected review funds; unresolved requests retain accounting; resource-vector admission.
+6. Commit-safe transactional event clock/outbox/projection watermarks; framework checkpoints subordinate to canonical operations.
+7. Outcome-based milestones, source-linked clarification strength, explicit consequential confirmations, and branch-local Orchestrator context.
+8. All-five sealed independent assessments before shared debate.
+9. Versioned /done certificates; communication closure separate from verification coverage/readiness/user acceptance.
+10. Conditioned, evidenced Git lessons; frozen per-run memory snapshot; reference-closure validation before database teardown.
+11. Single-agent, five-independent/no-discussion, full-Council, and ablation comparisons using consistent protected evaluation and cost reporting.
+12. One machine-readable architecture contract and explicit specification/implementation/test status.
+
+Still open: Step 7 concrete limits/provider adapters/accounting schema/state wiring; Step 8 complete agent-loop and termination design; Step 10 containment technology and integration; Step 11 selection/promotion/archive validation details; all executable runtime acceptance tests and repeated evaluations. See docs/ARCHITECTURE_DECISIONS.md.

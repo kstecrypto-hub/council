@@ -47,3 +47,9 @@ Graph behavior, authorization, retries, deduplication, evidence validation, and 
 - Git credential setup through GitHub CLI: https://cli.github.com/manual/gh_auth_setup-git
 
 The publishing helper uses the user's locally authenticated GitHub CLI. It never asks the user to paste credentials into the design documents or this conversation.
+
+## Architecture-review references checked October 13, 2026
+
+- GitHub repository visibility: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility . Public publication exposes repository content and related history; public forks remain public when the original becomes private. Council's publication safeguards are design requirements, not tested integration behavior.
+- PostgreSQL transaction isolation and sequence behavior: https://www.postgresql.org/docs/current/transaction-iso.html . Sequence allocation is not transactional commit order; the event-clock protocol is Council's chosen design and still needs integration tests.
+- LangGraph persistence: https://docs.langchain.com/oss/python/langgraph/persistence . Framework continuation does not replace Council's own operation/authorization/accounting authority; concrete adapter/replay behavior must be verified during implementation.

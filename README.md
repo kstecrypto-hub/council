@@ -48,3 +48,13 @@ The full 18-section specification is in `docs/APP_DESIGN.md`. Application implem
 `publish.ps1` is retained from the earlier offline export for a separately authorized new-repository publication. It is not required for this repository and must not be run to recreate `kstecrypto-hub/council`. See `PUBLISHING.md`.
 
 No project license has been selected. No upstream implementation is vendored by this revision. Inspect relevant upstream licenses and preserve required notices before any later code reuse.
+
+## Architecture review update - October 13, 2026
+
+The approved corrections are integrated into the current design documents. See [decision/status index](docs/ARCHITECTURE_DECISIONS.md) and [machine-readable contract](docs/architecture_contract.json).
+
+Generated member repositories are private between checkpoints and public during approved frozen-snapshot review; public exposure is not reversible. Council has five fixed logical members, sealed independent reviews, isolated peer testing, bounded execution slices, and explicit recovery/accounting/completion boundaries.
+
+**Application implementation: NOT STARTED. Runtime acceptance tests and comparative evaluations: NOT RUN.** Step 7 and the remaining Step 8/10/11 work are not marked completed by these specification changes.
+
+Run `python3 tools/check_specs.py` for static documentation/contract checks only. These checks cannot establish runtime correctness or research performance.
