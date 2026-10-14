@@ -553,7 +553,7 @@ Before designing Step 11, explicitly evaluate a shared Council-memory architectu
 - all fixed Council members begin a project from the same pinned memory snapshot/index version, while their retrieval queries and interpretations remain independent;
 - the memory snapshot stays frozen during an active project so newly discovered branch knowledge cannot bypass checkpoint isolation;
 - new long-term memory is written/re-indexed only after user acceptance and archival;
-- memory records should preserve context and evidence strength rather than universal prescriptions, with candidate labels such as PROVEN, OBSERVED, FAILED, and INCONCLUSIVE;
+- memory records preserve evidence, conditions and strength rather than universal prescriptions: SUCCESS_OBSERVED_IN_CONTEXT, FAILED_IN_CONTEXT, REPRODUCED_IN_CONTEXT, INCONCLUSIVE, NOT_TESTED and BLOCKED; do **not** use globally PROVEN/FAILED verdicts;
 - both successful and failed approaches may be retained when they provide reusable evidence;
 - agents can inspect the original Git-backed source behind a RAG result rather than trusting a generated summary;
 - model diversity should remain a source of independent interpretation even when historical factual/empirical memory is shared.
