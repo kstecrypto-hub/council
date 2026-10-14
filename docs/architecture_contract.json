@@ -47,7 +47,7 @@
     },
     {
       "id": "ADR-02",
-      "design_status": "IN_DESIGN",
+      "design_status": "DESIGNED",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -71,7 +71,7 @@
     },
     {
       "id": "ADR-05",
-      "design_status": "IN_DESIGN",
+      "design_status": "DESIGNED",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -183,5 +183,71 @@
     "inclusion": "DEFERRED_NOT_MVP_NOT_IMPLEMENTED",
     "requires_separate_provider_payment_risk_tax_security_design": true,
     "no_commitment_to_implement": true
+  },
+  "step7": {
+    "design_status": "DESIGNED",
+    "specification_path": "docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md",
+    "runtime_implementation_status": "NOT_STARTED",
+    "runtime_tests_status": "NOT_RUN",
+    "requires_approved_user_budget": true,
+    "suggested_default_budget_allocation_percent": {
+      "private_development": 70,
+      "protected_checkpoint_review": 25,
+      "protected_orchestration_finalization": 5
+    },
+    "member_development_allocation": "equal_monetary_shares_by_default_configurable",
+    "user_approves_run_and_phase_token_and_cost_limits": true,
+    "initial_remote_model_call_cap_per_provider": 2,
+    "initial_local_inference_concurrency_cap": 1,
+    "concurrency_subject_to_provider_rate_and_measured_local_capacity": true,
+    "fixed_member_seat_admission_order": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "requires_periodic_private_work_slices": false,
+    "default_recovery_retries": 3,
+    "default_recovery_retry_backoff_seconds": [
+      5,
+      30,
+      120
+    ],
+    "operation_timeout_defaults_seconds": {
+      "network_connect": 15,
+      "ordinary_read_only_tool": 120,
+      "provider_inference_max_request": 1200,
+      "ordinary_local_command": 600
+    },
+    "no_general_reasoning_deadline": true,
+    "host_ram_headroom_target_fraction": 0.2,
+    "host_ram_headroom_adjusted_to_observed_os_runtime_baseline": true,
+    "gpu_vram_budget_measured_separately": true,
+    "resource_release_requires_trusted_backend_confirmation": true,
+    "spending_lock_order": [
+      "deployment_event_clock",
+      "run_budget",
+      "spend_pool",
+      "member_phase_budget"
+    ],
+    "reserve_commit_precedes_external_dispatch": true,
+    "unknown_dispatched_usage_remains_reserved": true,
+    "budget_exhaustion_state": "BUDGET_EXHAUSTED_INCOMPLETE",
+    "budget_exhaustion_not_semantic_readiness": true,
+    "pause_activity": "QUIESCING_FOR_PAUSE",
+    "pause_lifecycle_state_after_verified_quiescence": "PAUSED",
+    "stop_state": "STOPPING",
+    "stop_success_state": "CANCELLED",
+    "incomplete_unsafe_cleanup_state": "FAILED",
+    "user_acceptance_separate_from_stop": true,
+    "implementation_dependencies": [
+      "Part 3 database migrations",
+      "Part 4 typed command/event implementation",
+      "Part 5 atomic reservation operation implementation",
+      "Step 9 provider/local-model adapters",
+      "Step 10 container/runtime enforcement",
+      "runtime acceptance and failure-injection tests"
+    ]
   }
 }
