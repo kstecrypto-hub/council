@@ -715,7 +715,7 @@ The scheduler reserves allowance before concurrent calls, then reconciles actual
 
 Token budgets limit Council-authorized inference consumption, not intellectual completion. If a member exhausts its phase tokens/cost before CHECKPOINT_READY, preserve BUDGET_EXHAUSTED / INCOMPLETE and allow user-approved additional allowance or cancellation. Individual tool/provider operations still have safety timeouts; no general reasoning-duration limit or fixed model-call count is required.
 
-Optional token/cost forecasts may be displayed per phase and selected model as rough ranges with explicit assumptions, historical calibration when available, and a conspicuous uncertainty label. If evidence is insufficient, show 'insufficient data'; do not fabricate precision. Forecasts are independent of approved ceilings, never automatic quota changes, and are revised against actual usage. Local inference tokens and remote API/billed tokens are recorded with model/provider units, while monetary budgets remain separately enforced.
+Optional token/cost forecasts may be displayed for the overall project and per phase/selected model as rough ranges with explicit assumptions, historical calibration when available, and a conspicuous uncertainty label. If evidence is insufficient, show 'insufficient data'; do not fabricate precision. Forecasts are independent of approved ceilings, never automatic quota changes, and are revised against actual usage. Local inference tokens and remote API/billed tokens are recorded with model/provider units, while monetary budgets remain separately enforced.
 
 These are bounds on autonomy, not instructions to ask the user for permission at every step.
 
