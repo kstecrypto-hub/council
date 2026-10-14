@@ -36,8 +36,8 @@ assert len(contract['separate_outcomes']) == 4
 assert contract['event_ordering'] == 'deployment_transactional_event_clock'
 assert contract['long_term_learning_store'] == 'git_backed_archive'
 assert len({x['id'] for x in contract['requirements']}) == len(contract['requirements'])
-assert len(contract['requirements']) >= 15
-assert {'ADR-13', 'ADR-14', 'ADR-15'} <= {x['id'] for x in contract['requirements']}
+assert len(contract['requirements']) >= 16
+assert {'ADR-13', 'ADR-14', 'ADR-15', 'ADR-16'} <= {x['id'] for x in contract['requirements']}
 assert contract['step8']['design_status'] == 'IN_DESIGN'
 assert contract['step8']['runtime_implementation_status'] == 'NOT_STARTED'
 assert contract['step8']['runtime_tests_status'] == 'NOT_RUN'
@@ -59,6 +59,20 @@ assert contract['step8']['resource_monitor']['monitor_guarantees_crash_preventio
 assert contract['step8']['resource_monitor']['implementation_status'] == 'NOT_STARTED'
 assert contract['step8']['resource_monitor']['test_status'] == 'NOT_RUN'
 assert contract['step7']['resource_monitor_approved'] is True
+assert contract['step7']['member_workspace_storage'] == 'stable_private_docker_volume'
+assert contract['step7']['council_worker_recovery_daemon_required'] is False
+worker_store = contract['step8']['worker_persistence']
+assert worker_store['durable_storage'] == 'dedicated_named_Docker_volume_or_authorized_bind_mount_per_member'
+assert worker_store['container_writable_layer_survives_recreation'] is False
+assert worker_store['in_memory_process_resumption_on_restart'] is False
+assert worker_store['parent_member_controls_local_worker_resume'] is True
+assert worker_store['dedicated_council_worker_recovery_service'] is False
+assert worker_store['uncontrolled_docker_restart_during_pause_or_checkpoint'] is False
+assert worker_store['external_effect_reconciliation_still_required'] is True
+assert worker_store['implementation_status'] == 'NOT_STARTED'
+assert worker_store['test_status'] == 'NOT_RUN'
+assert 'worker_result_return_cancellation_crash_recovery_and_merge_protocol' not in contract['step8']['pending_design']
+
 assert contract['step7']['shared_local_inference_one_job_cap_applies_to'] == 'trusted_shared_local_model_gateway_not_arbitrary_sandbox_local_subagent_processes'
 assert {'ADR-02', 'ADR-05', 'ADR-13'} <= {x['id'] for x in contract['requirements']}
 assert all(x['design_status'] == 'DESIGNED' for x in contract['requirements'] if x['id'] in {'ADR-02', 'ADR-05'})
@@ -114,8 +128,14 @@ assert '### 14.4 Approved trusted Docker resource monitor' in part7_text
 assert 'monitoring **cannot guarantee**' in part7_text
 assert '80%' in part7_text and '90%' in part7_text
 assert 'Docker Engine' in part7_text
+assert '### 7.1 Docker storage and process-restart policy' in part7_text
+assert 'Docker restart does not' in step8_spec
+assert 'named Docker volume' in step8_scope
+assert 'per-worker recovery manager' in step8_scope
 assert '## 4.1 Accepted Step 8.2 policy' in step8_spec
 assert '## 4.2 Accepted Step 8.2 resource monitoring boundary' in step8_spec
+assert '## 4.3 Accepted Step 8.2a — Docker-backed persistence' in step8_spec
+assert 'no worker recovery manager' in step8_spec.lower()
 assert 'No Council-imposed fixed worker count' in step8_spec
 assert 'OOM' in step8_spec
 assert 'MemberSandboxOOMObserved' in (root / 'docs/TYPED_INTERACTION_CONTRACTS.md').read_text(encoding='utf-8')
