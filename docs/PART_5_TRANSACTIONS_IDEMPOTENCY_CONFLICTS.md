@@ -2,7 +2,7 @@
 
 **October 13, 2026 amendment:** [decision/status index](ARCHITECTURE_DECISIONS.md). Requirements below are specifications; application implementation is NOT STARTED and runtime tests are NOT RUN.
 
-**Design status:** DESIGNED (October 14, 2026); canonical transaction, idempotency, publication, checkpoint and recovery semantics reconciled.  
+**Design status:** BASELINE DESIGNED; **ADR-17 local snapshot operations and retention REOPENED IN DESIGN**. Unchanged event-clock, spend, idempotency, UNKNOWN semantics remain specified.  
 **Scope:** consistency and retry semantics for active Council deployments.  
 **Implementation:** NOT STARTED. **Concurrent/recovery/runtime tests:** NOT RUN.
 
@@ -44,8 +44,8 @@ Important atomic groups include:
 - user response + interaction resolution + corresponding domain decision;
 - Project Contract approval + launch revision activation + run creation/provisioning + events;
 - project-wide contract revision activation + intended branch delivery records;
-- checkpoint opening INTENT + five frozen repository SHAs + approved publication manifests + external operation records + events; **confirmed internet-public status and SEALED_REVIEW occur only in a later local transaction after GitHub observation**, never atomically with GitHub itself;
-- checkpoint closing INTENT + version-bound DONE/frontier guards + durable transcript/closeout references + external private-transition operations; **CLOSED/return-packet delivery commits only after external repo-private and gateway-isolation verification**, never by assuming cleanup succeeded;
+- checkpoint opening INTENT + five frozen **local Git** tree/commit IDs + approved snapshot-export/recipient access manifests + durable operations/events; **SEALED_REVIEW follows only externally verified content-hashed read-only local snapshot grants**, never assumptions from the SQL intent;
+- checkpoint closing INTENT + version-bound DONE/frontier guards + durable transcript/closeout references + local snapshot grant-revocation operations; **CLOSED/return packets require confirmed revocation and gateway isolation**, not merely a requested cleanup;
 - candidate acceptance + accepted-candidate record + archival/teardown scheduling;
 - claim revision + essential provenance relationships + event.
 
@@ -113,7 +113,7 @@ Any action outside PostgreSQL is represented by a durable operation before execu
 
 Examples include:
 
-- GitHub repository public/private visibility changes and scoped content operations;
+- local frozen Git snapshot export, read-grant and revocation operations (plus optional separately authorized external Git/publication actions);
 - model-provider requests;
 - sandbox/container operations;
 - privileged broker actions;
@@ -155,8 +155,8 @@ A timeout or lost connection after an external request does not prove failure.
 Example:
 
 ```text
-Council -> GitHub: make an approved member repository public
-GitHub may complete it
+Council -> trusted local snapshot gateway: grant Member 2 read access to approved frozen Member 1 snapshot
+Gateway may have granted access
 connection fails before response
 ```
 
@@ -285,11 +285,11 @@ LangGraph checkpoints are continuation projections, not a second authority over 
 
 ## 14. Uncertain effects and reservation transactions
 
-Unknown outcomes have operation-specific dependency gates. Read-only retrieval/inference may allow safe independent progress after fencing and isolation checks, while stale results remain quarantined and uncertain usage remains reserved. Consequential writes must be reconciled before replay and block work dependent on their outcome. Authority, public/private visibility, and isolation mutations fail closed for the affected boundary until safe state is verified. Unknown does not mean successful, failed, cancelled, free, or that the entire run must stay blocked forever.
+Unknown outcomes have operation-specific dependency gates. Read-only retrieval/inference may allow safe independent progress after fencing and isolation checks, while stale results remain quarantined and uncertain usage remains reserved. Consequential writes must be reconciled before replay and block work dependent on their outcome. Authority, checkpoint snapshot read grants/revocations, optional external publication, and isolation mutations fail closed for the affected boundary until safe state is verified. Unknown does not mean successful, failed, cancelled, free, or that the entire run must stay blocked forever.
 
 Reserve spending transactionally before dispatch across run, branch, parent/worker, and protected review/finalization allowances. Include member, worker, retry, Orchestrator, verifier, and finalization use. Reserve a conservative bound using explicit pricing/units and input/output limits; unknown pricing cannot pass a cost ceiling as zero. Pre-dispatch expiry may release a reservation; dispatched/unknown requests retain it until reconciliation or conservative settlement. A retry needs independently authorized allowance unless the provider contract proves reuse of the same charged operation. Protected review funds are not ordinary development balance. Fixed-precision accounting and consistent lock ordering are required; concrete provider adapters and tests remain pending.
 
-Repository visibility remains an external operation: requested/public/private state and verified publication/closure are separate commits. A SQL transaction must never pretend to atomically toggle GitHub visibility. All listed runtime acceptance tests remain NOT RUN.
+Local snapshot export/grant/revoke remains an operation outside PostgreSQL: desired/granted/revoked states and verified physical access/closure require separate commits. A SQL transaction must not claim that a Git archive, controlled mount, access grant or route actually changed. Optional hosted/public publication remains a separately authorized adapter. All listed runtime acceptance tests remain NOT RUN.
 
 ## 15. Step 7 budget and resource reservation integration (October 14 specification)
 
@@ -308,7 +308,7 @@ The accepted Step 7 design establishes these additional **transaction contracts*
 
 ## 16. October 14 Part 5 design closure — exact transaction and recovery boundaries
 
-**Part 5 is DESIGNED as a transaction/idempotency/reconciliation contract.** The earlier sections are retained and this section resolves the October corrections. No SQL, queue, provider client, GitHub visibility toggle, Docker recovery logic or integration test has been executed by this specification update.
+**Part 5 is DESIGNED as a transaction/idempotency/reconciliation contract.** The earlier sections are retained and this section resolves the October corrections. No SQL, queue, provider client, local snapshot gateway or Docker recovery logic or integration test has been executed by this specification update.
 
 ### 16.1 Database-local atomicity versus external truth
 
@@ -317,9 +317,9 @@ Council's per-deployment **temporary PostgreSQL** is the only active canonical s
 External effects have two independently auditable facts:
 
 1. **intent/dispatched**: a user-authorized operation is durably queued with exact target, scope/hash and retry/reconciliation policy;
-2. **observed outcome**: external provider/GitHub/Docker evidence proves success, proves known non-effect/failure, or remains UNKNOWN_PENDING_RECONCILIATION.
+2. **observed outcome**: external provider/customer-local snapshot gateway/optional Git/Docker evidence proves success, proves known non-effect/failure, or remains UNKNOWN_PENDING_RECONCILIATION.
 
-A command response `accepted=true` means its canonical intent was committed, **not** that the outside action succeeded. Emit externally successful events (`CheckpointRepositoriesPublished`, `CheckpointRepositoriesMadePrivate`, `SandboxResourceReleaseConfirmed`, `CleanRebuildPassed`) only on actual trusted evidence. A late response from an old bridge epoch may be used for reconciliation of the original attempt but never grant a new action, current identity, or unversioned state mutation.
+A command response `accepted=true` means its canonical intent was committed, **not** that the outside action succeeded. Emit externally successful events (`CheckpointSnapshotsAvailable`, `CheckpointSnapshotAccessRevoked`, `SandboxResourceReleaseConfirmed`, `CleanRebuildPassed`) only on actual trusted evidence. A late response from an old bridge epoch may be used for reconciliation of the original attempt but never grant a new action, current identity, or unversioned state mutation.
 
 ### 16.2 Scoped idempotency and commit ordering
 
@@ -335,11 +335,11 @@ A command response `accepted=true` means its canonical intent was committed, **n
 | Project Contract approval | exact revision/hash, interaction response + decision, immediate run PROVISIONING intent, budget/permission policy identity, events/outbox + receipt | member repos, sandboxes and credentials provision afterward by durable operations; do not declare ACTIVE until verified prerequisites |
 | Project-wide clarification/change | confirmed source-linked raw/processed answer, revision/permission scope and intended target deliveries, events/outbox | only approved processed/revision packages delivered to authorized branches; partial delivery remains visible and retryable |
 | Member checkpoint readiness | member-authored READY, exact current phase/generation, frozen candidate SHA/environment/evidence, unique per seat, event/receipt | all five arrivals enable triggering; no automatic substantive readiness or bypass from BUDGET_EXHAUSTED |
-| Checkpoint opening/publication | phase/generation freeze + five arrivals, approved internet-public history/refs/surfaces manifest, publication-safety attestations, intended external operations, OPENING event | independently observe each repository PUBLIC; only after all current-generation checks pass commit publication successes and SEALED_REVIEW; partial/unknown stays guarded |
+| Checkpoint opening/local snapshot sharing | phase/generation freeze + five arrivals, user-approved selected local read-only tree snapshot manifests/hashes/recipients, intended export/grant operations, OPENING event | independently observe each immutable snapshot hash and scoped recipient read access; only after all current-generation exports/grants verified enter SEALED_REVIEW; partial/unknown stays guarded |
 | Sealed-review submission | immutable reviewer/candidate-set/evidence hash, one per seat/generation, event scoped to submitting reviewer/trusted runtime | **not** published in Git repos, shared retrieval/SSE or peers prior to authorized reveal |
 | Sealed-review reveal | under same checkpoint generation/frontier lock, verify all five distinct submissions; one reveal/recipient delivery set + event/outbox | all-five reveal is one canonical visibility change; zero partial peeks or skipped seats |
 | Gateway message/action and DONE | complete hashed logical message + monotonic checkpoint sequence + action obligations/versions; DONE validates processed and outbound frontiers and work state under same checkpoint lock | socket delivery does not prove processed; new relevant required action atomically invalidates affected DONE certificate |
-| Checkpoint closing | CLOSING guard + accepted transcript/closeout/return intent + revoked gateway session operations and per-repo PRIVATE requests | wait for each repo confirmed PRIVATE, old routes/credentials invalid, active verifier resolved and valid DONE or explicit forced-incomplete policy before CLOSED and authorized return packet delivery |
+| Checkpoint closing | CLOSING guard + accepted transcript/closeout/return intent + gateway session and temporary snapshot grant revoke operation requests | wait for trusted proof that each peer grant/route is revoked, active verifier resolved and valid DONE or explicit forced-incomplete policy before CLOSED and authorized return packet delivery |
 | Budget/phase model dispatch | versioned user-approved run/pool/member-phase token+cost caps, worst-case reserved usage, provider/local resources, operation/attempt, event/outbox/receipt | call only after COMMIT; unknown dispatched cost stays reserved, no automatic budget increase or claim of checkpoint readiness |
 | Candidate acceptance | exact user-approved snapshot/interaction, immutable acceptance decision, export/retention manifest INTENT, archive/cleanup operations, event | fresh Git checkout/hashed evidence reference closure and product restore succeed **before** Council control DB teardown; acceptance itself is not completed archival |
 | Claim revision | append new claim version, source/evidence relationships and attribution, challenge/revision justification, events/outbox | no automatic reinterpretation of support, universal truth score, or external effects |
@@ -348,7 +348,7 @@ A command response `accepted=true` means its canonical intent was committed, **n
 
 - **Read-only retrieval and inference:** if the provider or bridge loses contact, fence old epoch; quarantine stale result until reconciled. Safe *independent* work may continue with a fresh authorized request, but uncertain tokens/cost remain reserved and duplicates require their own allowance.
 - **Consequential external writes:** query provider-side state/request ID/idempotency status before retry; dependent operations wait. A write being unobserved is not proof of no effect. Do not duplicate a publication, Git commit, payment, or host mutation blindly.
-- **Authority / visibility / isolation mutations:** fail closed for the affected boundary until observed safe state is verified; a supposedly private GitHub repository still public blocks new secret/private work. Temporary access revocation cannot erase prior internet-public data.
+- **Authority / visibility / isolation mutations:** fail closed for the affected boundary until observed safe state is verified; a peer still able to access another's changing local workspace or an unapproved exported snapshot blocks new private work. Revocation cannot erase already-delivered knowledge; public exposure is possible only by separately approved external operation.
 - **Container/resource cleanup:** a stop request or Docker exit code alone is not proof of all resource/route release. Only trusted backend checker evidence can free the reservation and permit reusing a scarce slot.
 - **Billing:** Council's BYOK budget is an internal authorization constraint, not the user's exact invoice. A request handoff that cannot prove non-dispatch retains a conservative reservation; no timeout or process crash silently refunds it. Review reserve is protected from development charges. Reallocation/top-up requires explicit versioned user approval.
 - **Stop and acceptance:** STOPPING -> CANCELLED only when required cleanup safety is verified, otherwise FAILED/incomplete record with outstanding consequences. AcceptCandidate is separate: export/validate retained project and Git lessons, then clean Council control DB. An explicitly approved retention/evidence limitation may downgrade an archive claim; it cannot silently fabricate proof.
@@ -366,10 +366,18 @@ A command response `accepted=true` means its canonical intent was committed, **n
 2. Two transactions producing canonical events cannot commit in a different order than recorded event positions. Rollback emits no event/outbox data; outbox retry picks older unpublished records.
 3. Two members/workers/Orchestrator calls cannot spend shared phase/run funds twice; partial/missing provider responses retain proper unknown liabilities, and no protected review funds leak to development.
 4. Task lease expiry/regrant invalidates stale worker completion/heartbeat; sandbox epoch rollover invalidates forgotten bridge requests without assuming sent provider calls were cancelled.
-5. A partial GitHub public/private transition cannot move checkpoint into SEALED_REVIEW/CLOSED; each observed repository and approved history/manifest must agree with the published state.
+5. A partial/unknown **local snapshot export, read grant or revocation** cannot move the checkpoint into SEALED_REVIEW/CLOSED; verify each pinned hash, approved scope and authorized recipient's actual access/no-access. Any optional external Git publication is separately consented and verified.
 6. Five distinct sealed assessments must be committed before reveal. A simultaneous fifth submission and reveal never sends an unauthorized partial peer assessment.
 7. DONE racing against a new required action/message or closing checkpoint preserves obligation and current processed frontier; /done stale retries do not fake completion.
 8. Crash during STOPPING, archive export, fresh Git reference validation, or teardown can restart idempotently; missing retained evidence blocks deletion instead of erasing its only source.
 9. A UI snapshot followed by ordered replay cannot lose, duplicate or leak canonical events even across reconnects, hidden-branch authorization filters or delayed outbox publications.
 
-**Part 5 design completion:** transaction ownership, idempotency, committed-event ordering, unknown external effects, budget/resource reservations, checkpoint publication/review/close boundaries, replay/projection semantics and accepted-project teardown gates are now specified. **DESIGNED does not imply any provider, GitHub, SQL, or sandbox behavior has been implemented or tested.**
+**Historical Part 5 baseline** was DESIGNED for the old public-GitHub workflow. ADR-17 **reopens local snapshot/grant/revoke and customer-private archive transactional integration**. Idempotency, committed-event ordering, conservative budget reservations and UNKNOWN reconciliation remain specified. No provider, local Git gateway, SQL or sandbox behavior has been implemented or tested.
+
+## 17. ADR-17 local-source consent and checkpoint transactions (DESIGN REOPENED)
+
+The new [local-first repository/knowledge design](LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md) is authoritative over former PUBLIC GitHub semantics. `PublishCheckpointSnapshots` commits desired export/grant operation intent and outbox, then verifies local tree snapshot hashes, selected content and scoped read grants outside SQL. Only confirmed observations lead to `CheckpointSnapshotsAvailable`. `RevokeCheckpointSnapshotAccess` separately requests cleanup, and `CheckpointSnapshotAccessRevoked` requires verified scope/route closure. The same committed-event/idempotency/UNKNOWN controls remain. A local read grant does not imply customer permission to send source to remote AI providers or share learning outside the tenant.
+
+Customer-owned long-term archive export and evidence-closure validation must honor the user's retention/deletion rules and remain independent of **optional, specifically approved** general-knowledge disclosure. Any cross-customer pattern export requires an independently idempotent authorization, content review/approved audience, minimal permitted evidence, and proof of *what* actually left the trust boundary. Rejected/unknown consent is never treated as permission. No automatic extraction or uploaded lesson from customer work.
+
+Step 5 design was reopened only for these interfaces; execution/race/side-effect tests **NOT RUN**.
