@@ -269,6 +269,7 @@ The following are **default proposals accepted for the architecture**, not immut
 
 - Remote API inference starts at **up to two concurrent requests per provider**, reduced further by actual provider/account limits, request-token and output-token budgets, rate-limit headers, and retry-after signals. Concurrency may increase only after measured/verified capacity and user configuration. Different providers may have different caps.
 - Local inference starts at **one active inference job**; increase only after a concrete model + quantization + runtime/context profile passes Step 9 compatibility tests and measured memory/compute admission. A model whose tool-loop compatibility or resource fit is unknown is not silently considered Council-seat compatible.
+- The one-job cap describes the **trusted shared local-inference gateway**, not a fixed number of subagent processes permitted inside a member sandbox. Workers and recursively spawned subagents are unrestricted in count/depth within the sandbox but remain bounded by its aggregate cgroups/resources and the parent's token/cost budget. Do not introduce another Council worker scheduler.
 - Continue the **same fixed seat-order member queue** 1 -> 2 -> 3 -> 4 -> 5 when slots free. Local-model inference jobs and remote-provider requests consume independently metered gateway resources; they do not form a second intellectual scheduler. No periodic private-work time quantum is required.
 - Initial host RAM headroom target is **about 20% of total physical RAM**, adjusted upward if observed OS + trusted Council runtime + database/recovery usage requires more. GPU VRAM is measured separately for each local model; do not apply the RAM percentage blindly to VRAM. Keep an explicit disk/workspace reserve and avoid uncontrolled oversubscription; unmeasurable capacity is not assumed free.
 - On resource pressure: stop admitting new heavy operations first; then throttle concurrency; then safely quiesce/suspend an active member if necessary. Preserve durable state. If host safety or isolation cannot be restored, mark the affected member blocked / run paused with an actionable reason. Release a slot **only after the backend confirms container/resource release**.
@@ -278,6 +279,35 @@ The following are **default proposals accepted for the architecture**, not immut
 - Default automatic **three infrastructure-recovery retries** after a failed attempt with increasing delays **5s / 30s / 120s**, configurable by operation/backend. Enforce a finite retry ceiling and record all attempts. Exhaustion leaves the required member `BLOCKED`, preserving its identity, data, outstanding operations and the five-seat barrier.
 - Use **operation-class safety timeouts**, not a universal model reasoning deadline. Suggested initial profiles: network connect 15 seconds; ordinary read-only HTTP/tool operation up to 120 seconds; single provider inference request up to 20 minutes with an independent configurable no-progress/stream-idle threshold; ordinary local command up to 10 minutes. Declared long-running operations may receive an approved larger bounded limit. Provider-specific contracts and measured runtime behavior may override these *per-operation* settings.
 - Timeout means `request timed out`, **not** `provider did not charge` or `external effect did not happen`. Cancel where supported, revoke stale epochs, and preserve UNKNOWN outcomes/reservations until reconciliation. Repeated failure never fabricates completion.
+
+### 14.4 Approved trusted Docker resource monitor (Step 8.2 amendment, October 14)
+
+This monitoring mechanism is part of Step 7's resource-admission **design**, with Step 10 responsible for actual implementation and sandbox safety tests. Each Council-member sandbox may run arbitrary internal subagents, recursive workers and subprocesses, but its **aggregate** resource limit remains authoritative; worker count/depth is not a Council-level scheduling variable.
+
+**Monitoring source and deployment**
+
+- A trusted, host-side/deployment-control-plane **Resource Monitor** outside agent-owned Docker containers consumes Docker Engine `GET /containers/{id}/stats` (the source behind `docker stats`) for aggregate container CPU, memory, PIDs/threads, network and block I/O. It also consumes Engine container lifecycle and `oom`/`die` events for prompt incident detection. Detect Docker API version and measurement availability; raw memory stats and the CLI differ in cache-adjusted presentation.
+- Sample approximately **every 2–5 seconds** as a configurable initial target; record monotonic observation/freshness times, backend ID and metric source. Short spikes can occur between samples; monitoring **cannot guarantee** that a sandbox never crashes.
+- Container hard CPU quota/period, memory, PIDs and other **supported** cgroups/Engine limits enforce the sandbox boundary. Memory-limit exceedance can cause Linux OOM kills; a soft alert is not a kernel-enforced process-creation ban.
+- Monitor host RAM/free disk and Docker/WSL2 VM capacity in addition to per-container usage. In Windows Docker Desktop with WSL2 backend, WSL2 VM memory/swap limits and host OS headroom are separate from container limits. The approved initial **~20% host RAM headroom** remains tunable. Network/block I/O counters are not remaining disk space; inspect relevant writable layers, volumes/bind mounts, log growth and free space/quota through trusted host/runtime facilities as supported.
+- For permitted NVIDIA GPU workloads, use a **separate** NVML/`nvidia-smi` GPU/VRAM observer, checking device and virtualization support. Normal Docker container stats does not provide guaranteed VRAM use or enforce hard per-container VRAM caps. When precise GPU attribution/enforcement is unavailable, be conservative about concurrent GPU allocation; do not invent assurances or silently oversubscribe. GPU restrictions never permit agent Docker socket access.
+- Engine API/daemon/socket access is restricted to the trusted monitor/broker only, ideally through a least-privilege internal interface; agents and ordinary child processes **never** receive the Docker socket, daemon credentials, host PID namespace or administrative privilege. Standard subagents run inside their parent's container. Any separately isolated child Docker environment must be provisioned through an approved trusted broker, counted against the parent's aggregate resource claim, not spawned through an agent-exposed Docker API.
+
+**Initial configurable pressure response**
+
+| Observed resource | Suggested policy (not a safety guarantee) |
+| --- | --- |
+| Container memory below 80% of assigned cap | Normal internal work; maintain host-admission and operation limits |
+| Container memory reaches ~80% | Warn and stop/slow **new broker-mediated heavy work** when practical; member remains free to choose its internal workflow |
+| Container memory reaches ~90% or keeps increasing | Deny new heavy admissions; if pressure persists, initiate durable safe quiescence of the whole member environment, preserving the same logical member |
+| Host/WSL VM RAM, disk, GPU or monitor health unsafe | First close new admissions, then throttle brokered operations, then safely suspend affected whole sandboxes; if safe conditions unknown, do not assume spare capacity |
+| Backend OOM/crash/hard-limit exceeded | Record the actual failure and metrics/attempt identity, fence old bridge epoch, retain outstanding UNKNOWN operations, apply the Step 7 bounded recovery protocol; never emit member readiness |
+
+- Council does **not** intercept or individually schedule arbitrary local `fork`/`spawn` calls. No fixed worker count/depth is imposed. Thus the 80/90% gates can restrict future **trusted gateway/broker admissions**, but they cannot promise to prevent an agent from internally spawning a process and hitting OOM. Hard sandbox isolation is the final safety boundary.
+- Telemetry loss/staleness fails closed for **new resource-heavy admissions**, not by automatically labeling healthy running members `FAILED` or falsely releasing slots. Existing in-flight effects are reconciled; slot reuse requires trusted backend-confirmed resource release.
+- Fast sampling should use bounded overhead and limited retention; record important OOM/resource incidents and threshold actions durably through existing events/operations. Raw high-frequency resource samples can be disposable monitoring data, not permanent Git lessons.
+
+**Implementation and validation pending:** test real Docker Desktop/WSL2 and Linux host behavior, cgroups availability, Engine version, GPU/VRAM adapters, disk/volume limits, threshold actions, stale telemetry, host pressure, OOM, restart and resource-release evidence. Prometheus/Grafana/Windows Resource Monitor are not required in the MVP. This amendment refines the already-DESIGNED Step 7 specification; implementation NOT STARTED, tests NOT RUN.
 
 ## 15. Atomic budget and resource admission contract
 
@@ -344,4 +374,8 @@ Implementation and measured adapter values remain pending and must not be marked
 - [ ] Individual operation safety timeouts can fence hung provider/tool calls without imposing a semantic reasoning deadline or forcing CHECKPOINT_READY.
 - [ ] Pause remains QUIESCING_FOR_PAUSE until suspension and release are verified; Resume revalidates guards; Stop cannot report CANCELLED while required boundary cleanup is unresolved, and acceptance is not inferred from Stop.
 - [ ] BYOK secrets stay outside agent containers and no prepaid Council token-wallet requirement or invoice-guarantee claim is introduced for the MVP.
+- [ ] Docker Engine API stats and lifecycle/OOM events are collected **outside** agent sandboxes and cover child process resource consumption; no agent can reach the Docker daemon socket or bypass cgroup/resource/tenant permissions.
+- [ ] Configurable 2–5-second telemetry, soft 80%/90% sandbox-memory warnings and broker-admission/quiescence guards, real host/WSL2 memory pressure and OOM incidents are correctly reported without pretending to prevent every crash.
+- [ ] GPU/VRAM monitoring is explicitly separate and unsupported capabilities fail conservatively; disk/volume/free-space monitoring is separate from Docker block-I/O counters.
+- [ ] Unbounded in-sandbox worker hierarchies do not create new member slots, unauthorized budgets, or special host capacity; suspended/crashed sandbox restarts only after durable recovery and trusted resource-release verification.
 
