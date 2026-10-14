@@ -36,7 +36,15 @@ assert len(contract['separate_outcomes']) == 4
 assert contract['event_ordering'] == 'deployment_transactional_event_clock'
 assert contract['long_term_learning_store'] == 'git_backed_archive'
 assert len({x['id'] for x in contract['requirements']}) == len(contract['requirements'])
-assert len(contract['requirements']) >= 13
+assert len(contract['requirements']) >= 14
+assert {'ADR-13', 'ADR-14'} <= {x['id'] for x in contract['requirements']}
+assert contract['step8']['design_status'] == 'IN_DESIGN'
+assert contract['step8']['runtime_implementation_status'] == 'NOT_STARTED'
+assert contract['step8']['runtime_tests_status'] == 'NOT_RUN'
+assert contract['step8']['experiment_is_optional_under_act'] is True
+assert contract['step8']['separate_ai_judge_or_experiment_scheduler'] is False
+assert contract['step8']['worker_may_declare_parent_checkpoint_ready'] is False
+assert contract['step8']['checkpoint_work_excursion'] == 'verification_only_disposable_read_only_candidate'
 assert {'ADR-02', 'ADR-05', 'ADR-13'} <= {x['id'] for x in contract['requirements']}
 assert all(x['design_status'] == 'DESIGNED' for x in contract['requirements'] if x['id'] in {'ADR-02', 'ADR-05'})
 for item in contract['requirements']:
@@ -75,6 +83,13 @@ for doc, required in (
     assert 'DESIGNED' in text_doc, doc
 assert 'Status: DESIGNED' in (root / 'docs/MVP_SCOPE_BY_STEP.txt').read_text(encoding='utf-8').split('STEP 7 -', 1)[1].split('STEP 8 -', 1)[0]
 assert '**Design status:** DESIGNED' in (root / 'docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md').read_text(encoding='utf-8')
+step8_spec = (root / 'docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md').read_text(encoding='utf-8')
+assert '**Design status:** IN DESIGN' in step8_spec
+assert 'HYPOTHESIS -> CHANGE/ALTERNATIVE -> TEST/CHECK -> OBSERVE' in step8_spec
+assert 'KEEP | REVISE | DISCARD | INCONCLUSIVE' in step8_spec
+step8_scope = scope_text.split('STEP 8 -', 1)[1].split('STEP 9 -', 1)[0]
+assert 'Status: IN DESIGN' in step8_scope
+assert 'optional' in step8_scope.lower()
 print(f'Static specification checks passed: {len(files)} documents and {len(contract["requirements"])} tracked requirements.')
 print('Scope: documentation/contract consistency only. Runtime tests and comparative evaluations NOT RUN.')
 
