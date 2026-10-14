@@ -40,6 +40,15 @@ Model identifiers, prices, context allowances, and compatibility are registry da
 
 Graph behavior, authorization, retries, deduplication, evidence validation, and review rules still need application-specific implementation and testing.
 
+## Customer-local Git and checkpoint snapshot references (ADR-17; October 14, 2026)
+
+- Native Git tree archive (selected frozen tree, without full repository ancestry by default): https://git-scm.com/docs/git-archive
+- Git bundle (repository objects/refs/history, **not** interchangeable with a sanitized frozen file-tree export): https://git-scm.com/docs/git-bundle
+- Forgejo self-hosted Docker installation and local SQLite option: https://forgejo.org/docs/latest/admin/installation/ and https://forgejo.org/docs/latest/admin/installation/database-preparation/
+- GitLab Self-Managed installation and hardware requirements: https://docs.gitlab.com/install/requirements/
+
+These sources support feasible local Git storage/adapters, not the correctness of Council's still unimplemented snapshot gateway, scope protection or tenant privacy controls. Do not expose a hosted Git interface or send customer source outside approved infrastructure by default. The former PUBLIC GitHub checkpoint model is superseded; GitHub publication references below are historical/repository-publishing only.
+
 ## Repository publication only
 
 - GitHub CLI repository creation: https://cli.github.com/manual/gh_repo_create
