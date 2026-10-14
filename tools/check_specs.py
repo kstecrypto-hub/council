@@ -36,8 +36,8 @@ assert len(contract['separate_outcomes']) == 4
 assert contract['event_ordering'] == 'deployment_transactional_event_clock'
 assert contract['long_term_learning_store'] == 'git_backed_archive'
 assert len({x['id'] for x in contract['requirements']}) == len(contract['requirements'])
-assert len(contract['requirements']) >= 14
-assert {'ADR-13', 'ADR-14'} <= {x['id'] for x in contract['requirements']}
+assert len(contract['requirements']) >= 15
+assert {'ADR-13', 'ADR-14', 'ADR-15'} <= {x['id'] for x in contract['requirements']}
 assert contract['step8']['design_status'] == 'IN_DESIGN'
 assert contract['step8']['runtime_implementation_status'] == 'NOT_STARTED'
 assert contract['step8']['runtime_tests_status'] == 'NOT_RUN'
@@ -45,6 +45,21 @@ assert contract['step8']['experiment_is_optional_under_act'] is True
 assert contract['step8']['separate_ai_judge_or_experiment_scheduler'] is False
 assert contract['step8']['worker_may_declare_parent_checkpoint_ready'] is False
 assert contract['step8']['checkpoint_work_excursion'] == 'verification_only_disposable_read_only_candidate'
+assert contract['step8']['member_controls_local_worker_count_and_depth'] is True
+assert contract['step8']['fixed_member_local_worker_count_cap'] is None
+assert contract['step8']['fixed_member_local_worker_delegation_depth_cap'] is None
+assert contract['step8']['no_central_scheduler_for_internal_workers'] is True
+assert contract['step8']['direct_docker_engine_socket_access_to_agent_sandbox'] is False
+assert contract['step8']['resource_monitor']['monitor_owner'] == 'trusted_deployment_control_plane_outside_agent_sandboxes'
+assert contract['step8']['resource_monitor']['sampling_seconds_initial_range'] == [2, 5]
+assert contract['step8']['resource_monitor']['soft_sandbox_memory_threshold_percent'] == 80
+assert contract['step8']['resource_monitor']['high_sandbox_memory_threshold_percent'] == 90
+assert contract['step8']['resource_monitor']['monitors_every_internal_worker_individually'] is False
+assert contract['step8']['resource_monitor']['monitor_guarantees_crash_prevention'] is False
+assert contract['step8']['resource_monitor']['implementation_status'] == 'NOT_STARTED'
+assert contract['step8']['resource_monitor']['test_status'] == 'NOT_RUN'
+assert contract['step7']['resource_monitor_approved'] is True
+assert contract['step7']['shared_local_inference_one_job_cap_applies_to'] == 'trusted_shared_local_model_gateway_not_arbitrary_sandbox_local_subagent_processes'
 assert {'ADR-02', 'ADR-05', 'ADR-13'} <= {x['id'] for x in contract['requirements']}
 assert all(x['design_status'] == 'DESIGNED' for x in contract['requirements'] if x['id'] in {'ADR-02', 'ADR-05'})
 for item in contract['requirements']:
@@ -90,6 +105,22 @@ assert 'KEEP | REVISE | DISCARD | INCONCLUSIVE' in step8_spec
 step8_scope = scope_text.split('STEP 8 -', 1)[1].split('STEP 9 -', 1)[0]
 assert 'Status: IN DESIGN' in step8_scope
 assert 'optional' in step8_scope.lower()
+assert 'no fixed worker-count or delegation-depth limit' in step8_scope
+assert '2–5' in step8_scope
+assert 'Bounded worker delegation (one simple depth/worker cap is enough)' not in step8_scope
+assert 'Deep worker hierarchies.' not in step8_scope
+part7_text = (root / 'docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md').read_text(encoding='utf-8')
+assert '### 14.4 Approved trusted Docker resource monitor' in part7_text
+assert 'monitoring **cannot guarantee**' in part7_text
+assert '80%' in part7_text and '90%' in part7_text
+assert 'Docker Engine' in part7_text
+assert '## 4.1 Accepted Step 8.2 policy' in step8_spec
+assert '## 4.2 Accepted Step 8.2 resource monitoring boundary' in step8_spec
+assert 'no fixed worker-count or delegation-depth' in step8_spec.lower()
+assert 'OOM' in step8_spec
+assert 'MemberSandboxOOMObserved' in (root / 'docs/TYPED_INTERACTION_CONTRACTS.md').read_text(encoding='utf-8')
+assert 'member_resource_monitor_latest' in (root / 'docs/POSTGRES_DATA_MODEL.md').read_text(encoding='utf-8')
+
 print(f'Static specification checks passed: {len(files)} documents and {len(contract["requirements"])} tracked requirements.')
 print('Scope: documentation/contract consistency only. Runtime tests and comparative evaluations NOT RUN.')
 
