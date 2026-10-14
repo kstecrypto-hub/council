@@ -678,15 +678,58 @@ Immutable attempt history.
 - `run_id` FK
 - `logical_agent_id` FK
 - `agent_session_id` FK
+- `phase_id` / `checkpoint_generation` as applicable
+- `operation_id` FK and `usage_reservation_id` FK
 - `provider_profile_version_id`
 - `model_profile_version_id`
+- `pricing_or_local_metering_profile_version_id`
+- `execution_epoch`
 - `status`
 - `input_tokens`
-- `cached_input_tokens`
+- `cached_input_tokens` (provider-reported subset, not automatically double-counted)
 - `output_tokens`
-- `cost_amount` nullable
+- `cost_amount` nullable (known/settled amount; no UNKNOWN=zero)
+- `usage_uncertainty_status`
 - `started_at`
 - `finished_at`
+
+### council_core.budget_policy_versions (approved run-level budget contract)
+- `id` PK, `run_id` FK, `policy_version` monotonic per run
+- `contract_revision_id`, `approved_by_user_id`, `approved_at`
+- `currency`, `run_cost_ceiling` fixed-precision decimal, `pricing_version_refs`
+- `pool_allocations_json` (development, checkpoint_review, orchestration_finalization)
+- `member_phase_token_cost_caps_json` (versioned approved per-member/phase/token-unit limits)
+- `supersedes_policy_version_id`, `change_reason`
+- `initial_proposal_json` (non-authoritative 70/25/5 with equal monetary member shares unless user changes it)
+
+### council_runtime.budget_accounts
+- `id` PK, `run_id` FK, `policy_version_id` FK
+- `scope_type` = RUN | POOL | MEMBER_PHASE; `pool_kind` = DEVELOPMENT | CHECKPOINT_REVIEW | ORCHESTRATION_FINALIZATION nullable for RUN
+- `logical_member_id` nullable, `semantic_phase_id` nullable
+- `unit_type` = CURRENCY | TOKENS (explicit provider/model metering unit when tokens)
+- `ceiling`, `settled_amount`, `reserved_unsettled_amount`, `row_version`
+- Unique active scope per run/policy + pool/member/phase/unit, with nonnegative accounting and enforced ceiling
+
+### council_runtime.usage_reservations
+- `id` PK, `operation_id` FK, `attempt_no`, `idempotency_key` / canonical request hash
+- `run_id`, `member_id`, `semantic_phase_id`, `worker_parent_id` nullable, `spend_pool`
+- `account_refs`, `token_bound`, `cost_bound`, `currency`, `pricing_version_ref`
+- `execution_epoch`, `status` = RESERVED | DISPATCHED | SETTLED | RELEASED_UNDISPATCHED | UNKNOWN_PENDING_RECONCILIATION
+- `actual_input_output_cached_tokens_json`, `actual_cost` nullable, `settlement_evidence_ref`, `last_reconciled_at`
+- Unique logical operation/attempt; a dispatched/unknown record cannot expire into a free reservation
+
+### council_runtime.resource_admissions
+- `id` PK, `run_id`, `logical_member_id`, `sandbox_instance_id`, `execution_epoch`
+- `requested_and_granted_resource_vector_json` (slots, CPU, RAM, disk, VRAM/device, remote/local model concurrency as applicable)
+- `host_capability_snapshot_ref`, `status`, `granted_at`, `confirmed_released_at`
+- Resources are not considered available for another sandbox until a trusted backend confirms release
+
+### council_runtime.recovery_attempts
+- `id` PK, `run_id`, `logical_member_id`, `operation_id` nullable
+- `source_failure_id`, `attempt_number`, `retry_after_at`, `execution_epoch`
+- `observed_cleanup_json`, `outcome`, `blocked_reason`, `created_at`
+- Initial recovery policy: three retries with default 5s/30s/120s backoff; actual backend timeouts configurable by operation class
+
 
 ### council_runtime.outbox
 Used for reliable publication of committed events to SSE/workers.
@@ -897,6 +940,8 @@ Required additional record groups:
 - checkpoint review frontiers: message sequence, obligation version, review generation, member processed watermark, and version-bound DONE certificate. Communication state is separate from verification/check status and candidate readiness.
 - clarification lineage: raw response reference, processed response, source statement locators, scope/strength, branch-local context manifest, confirmation, and effective contract revision.
 - budget accounts/reservations/settlements: fixed-precision units, pricing version, run/branch/parent scope, operation/attempt, pre-dispatch bound, protected review allocation, dispatch state, actual usage, and unresolved liability. Expiry cannot refund a dispatched/unknown operation.
+- approved budget version governs 70% development / 25% protected checkpoint review / 5% protected orchestration-finalization **proposed defaults**, with equal monetary development shares among five members; user may approve a different distribution, and hard token ceilings remain separately explicit. BYOK billing is outside these Council budget tables.
+- event-producing budget reserve/settle transactions lock the deployment transactional event-clock row first, then budgets in run -> pool -> member/phase order, before operations/events/outbox commit. No external request while SQL locks are held.
 - BYOK remote-provider configuration: provider/model profile version, owning user/deployment, scoped opaque credential reference in trusted secret storage, verification/revocation metadata, and authorized model-bridge policy. Never store raw API keys in Council control tables, event payloads, agent sandboxes, or Git archives. Local inference requires no external provider key. Provider directly bills user in the MVP; no prepaid Council-wallet ledger is required. Managed credits/payment reconciliation is a deferred, separately designed option.
 - member phase admission and blocked/exhausted records: stable seat cursor, execution epoch, resource vector, semantic phase/checkpoint identifier, per-member phase token/cost ceilings and usage, durable suspension point, BUDGET_EXHAUSTED / INCOMPLETE status, block reason/dependency, operation timeout/recovery retry ceiling, and confirmed release state. No mandatory periodic private-work slice is required.
 - optional project-total and per-phase token/cost planning forecasts: estimated ranges, source/history basis, assumptions, uncertainty flag and forecast version. Forecasts are never spending authorizations or automatic budget adjustments; actual usage and approved ceilings remain separate.
