@@ -162,6 +162,8 @@ Initial authoritative set:
 - TESTING_REVISION
 - PREPARING_FINAL_CANDIDATE
 - WAITING_ON_CLARIFICATION
+- WAITING_ON_PHASE_BUDGET
+- RECOVERING_MEMBER_SANDBOX
 - AWAITING_FINALIZATION
 
 ### 3.4 Worker/task activity codes
@@ -542,13 +544,15 @@ Rejecting permission does not automatically fail the project. The requesting bra
 
 ### 10.2 Budget expansion
 
+The initial user-approved budget policy is immutable and versioned; propose a configurable 70% private development / 25% checkpoint review / 5% orchestration-finalization allocation. Equal monetary development shares across five seats are a starting suggestion only, not equal token entitlement. Users approve the hard run/member/semantic-phase token and cost ceilings and every material top-up or redistribution. The protected review/finalization pools cannot be debited by development without the appropriate new explicit authorization. The UI must distinguish a rough uncertain estimate from a ceiling and actual usage.
+
 If the run reaches a protected budget boundary:
 - new spend that would cross the boundary is blocked;
 - already safe/recoverable work may continue according to reservation rules;
 - dialog shows current usage, requested increase, reason, and protected review allowance;
 - user may APPROVE_NEW_CEILING, SET_DIFFERENT_CEILING, or REJECT_INCREASE.
 
-Rejecting an increase causes the runtime/council to continue within the existing ceiling where possible and produce a partial outcome if required. It must not silently exceed the budget.
+Rejecting an increase causes the runtime/council to continue within the existing ceiling where possible and produce a partial outcome if required. It must not silently exceed the budget. If the blocked work is a member's semantic phase, the member enters WAITING_ON_PHASE_BUDGET / BUDGET_EXHAUSTED_INCOMPLETE, retains its logical identity and unfinished phase, and cannot satisfy an all-five barrier.
 
 ### 10.3 Match My PC and host mutation
 
@@ -650,6 +654,13 @@ Escalation/user interaction:
 - RequestBudgetExpansion
 
 Model/tool/environment:
+- ApproveRunBudgetPolicy (user-authorized, immutable policy revision)
+- ReserveModelCallAllowance (trusted runtime; atomic budget + resource operation before dispatch)
+- RecordBudgetReservationSettlement (trusted runtime; actual usage or conservative unknown liability)
+- RecordMemberPhaseBudgetExhaustion (trusted runtime; incomplete, not readiness)
+- RecordResourceAdmission
+- RecordSandboxResourceRelease
+- RecordMemberRecoveryAttempt
 - RequestModelCall
 - RecordModelCallResult
 - CreateSandbox
@@ -739,6 +750,17 @@ Interaction:
 - InteractionCancelled
 
 Model/tool/environment:
+- BudgetPolicyApproved
+- BudgetReservationCreated
+- BudgetReservationSettled
+- BudgetReservationOutcomeUnknown
+- MemberPhaseBudgetExhausted
+- MemberRecoveryAttempted
+- MemberBlocked
+- SandboxQuiesced
+- SandboxResourceReleaseConfirmed
+- BridgeExecutionEpochRevoked
+- ResourceAdmissionDenied
 - ModelCallRequested
 - ModelCallSucceeded
 - ModelCallFailed
@@ -773,19 +795,25 @@ CREATED -> PROVISIONING only after an approved launch revision exists.
 
 PROVISIONING -> ACTIVE only after required seats/workspaces/environments are ready or explicitly recorded as not required.
 
-PauseRun or a system safety condition stops new ordinary admissions and enters QUIESCING_FOR_PAUSE. ACTIVE -> PAUSED occurs only when the required durable pause boundary is confirmed. In-flight unknown external operations remain separately recorded and are not implicitly cancelled.
+PauseRun or a system safety condition stops new ordinary admissions and enters run **activity** QUIESCING_FOR_PAUSE while lifecycle remains ACTIVE. ACTIVE -> PAUSED occurs only when the required durable member suspension, revoked bridge authority, and backend-confirmed resource release have been recorded. In-flight unknown external operations remain separately recorded and are not implicitly cancelled. The PAUSED state is recoverable, not terminal.
 
-PAUSED -> ACTIVE through ResumeRun after guards pass.
+PAUSED -> ACTIVE through ResumeRun only after approved contract, permissions, phase budget/reservations, host resources, model credentials, sandbox checker, execution epochs, and affected uncertain-operation dependencies pass. If guards fail remain PAUSED with explicit reasons.
 
-ACTIVE/PAUSED -> STOPPING through StopRun.
+ACTIVE/PAUSED -> STOPPING through StopRun, which fences old execution epochs, prohibits new ordinary work, requests only supported cancellations, and records unresolved effects. STOP does not imply project/user candidate acceptance.
 
-STOPPING -> CANCELLED when cancellation/cleanup completes, or -> FAILED when required cleanup/reconciliation cannot complete safely.
+STOPPING -> CANCELLED when cancellation/cleanup completes, or -> FAILED / explicitly incomplete cleanup when required boundary safety cannot be established. Report unresolved provider billing/side effects and reservations honestly.
 
 ACTIVE -> FINALIZING only when the Council protocol reaches its configured completion gate.
 
 FINALIZING -> COMPLETED only after required final records and cleanup are durable.
 
 No terminal state may return to ACTIVE.
+
+### Step 7 operational events and phase invariants
+
+All commands/events above use the existing typed envelope, idempotency, expected-version checks, Part 5 transactional event-clock ordering, and outbox. `BudgetReservationCreated` and its operation record must commit before any external request; `BudgetReservationSettled` cannot clear another caller's reserved amount. A timeout or disconnected provider produces an outcome-specific status, not a fictional cancellation or refund.
+
+A member that exhausts its approved per-phase token/cost cap remains an **incomplete** required seat. The runtime may preserve and suspend it, but may not emit its `CHECKPOINT_READY` or `/done`. A new explicit user-approved budget policy can make it eligible to resume; the original checkpoint barrier remains intact. Recovery uses default three retries (5, 30, 120 seconds) and individual tool/provider safety timeouts; neither operates as a semantic reasoning deadline.
 
 ### 13.2 Council member
 
