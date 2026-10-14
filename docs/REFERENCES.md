@@ -54,6 +54,14 @@ The publishing helper uses the user's locally authenticated GitHub CLI. It never
 - PostgreSQL transaction isolation and sequence behavior: https://www.postgresql.org/docs/current/transaction-iso.html . Sequence allocation is not transactional commit order; the event-clock protocol is Council's chosen design and still needs integration tests.
 - LangGraph persistence: https://docs.langchain.com/oss/python/langgraph/persistence . Framework continuation does not replace Council's own operation/authorization/accounting authority; concrete adapter/replay behavior must be verified during implementation.
 
+## Step 8.2a Docker persistence references (October 14, 2026)
+
+- Docker named volumes and their lifecycle: https://docs.docker.com/engine/storage/volumes/ . Volume content remains independent of the container's writable layer and persists across container removal unless the volume is explicitly deleted. Bind mounts are an alternative when explicitly permitted.
+- Docker container writable layers versus durable mounts: https://docs.docker.com/engine/storage/ . A deleted container loses its writable layer; `tmpfs` also does not provide persistent storage.
+- Docker automatic restart policies: https://docs.docker.com/engine/containers/start-containers-automatically/ . Container restart starts the configured process again; it does not restore arbitrary in-memory worker/process state and must not bypass Council's intentional whole-member stop/admission gates.
+
+Council's chosen worker recovery model is **member-owned persistent workspace files on authorized Docker mounts**, not a Council per-worker recovery manager. The references provide Docker mechanics, not a claim that a live Council volume-restart workflow has been implemented or verified.
+
 ## Step 8.2 Docker monitoring references (October 14, 2026)
 
 Official backend references for the approved **design-only** trusted Council Resource Monitor:
