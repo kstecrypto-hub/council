@@ -128,6 +128,20 @@ These open choices do not authorize replacing the peer council with a supervisor
 
 Describe the behavior delivered, affected records and boundaries, tests actually executed, known limitations, and next unfinished milestone. Do not equate more messages or graph nodes with a better investigation. Do not label proposed work as implemented.
 
+## October 14 Steps 3–5 design closure (implementation explicitly pending)
+
+Steps **3, 4 and 5 are DESIGNED**, and their authoritative normative closure sections are [Part 3 §20](POSTGRES_DATA_MODEL.md), [Part 4 §26](TYPED_INTERACTION_CONTRACTS.md) and [Part 5 §16](PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md). Application code, migrations, test execution and provider/sandbox integration remain **NOT STARTED / NOT RUN**.
+
+Implementation order once explicitly authorized:
+
+1. Define/version the temporary per-deployment `council_core` and `council_runtime` migrations with exact five-seat uniqueness, same-run foreign-scope constraints, append-only immutable versions, branch/RLS policies, command receipts and committed event clock. Add checkpoint arrivals, approved full public-history manifests and externally observed transitions, sealed reviews/reveal, transcript/action/obligation/frontier/DONE, budget accounts/operation attempts, scoped clarification lineage, archive validation.
+2. Generate typed v1 command/event/result schemas and the State Contract registry from Part 4. Enforce user/Orchestrator/member/runtime authority. Retried commands with same scoped key/request hash return the saved authorized result **before** stale/transition guards; do not repeat effects. Reject cross-branch scope, changed hash, stale version, and unauthorized transitions.
+3. Implement Part 5's one-transaction aggregate + operation-intent + event-clock + outbox + receipt, ordered locks and idempotent runtime queue. Make external GitHub/provider/Docker actions and Git archive export separate durable operations, reconciled against observed truth. Do not claim external success on request/timeout. Keep resource/budget reservations until safe settlement.
+4. Exercise **deterministic failure-injection tests** before connecting real models: simultaneous budget callers, idempotent approval retry after run advances, lower-position outbox delayed publication, disconnect/reconnect SSE, sealed fifth-review/reveal race, /done vs new required action, full repo-public and failed-private transitions, old bridge/lease tokens, and accepted Git archive restore/reference closure. Testing one stub or static schema does not prove runtime correctness.
+5. Only then integrate Step 8 agent-loop policy, Step 9 provider/local-model adapters, Step 10 verified sandbox isolation and Step 11 memory retrieval/promotion, preserving the above authorization, evidence and transaction boundaries.
+
+**Do not mark any Part 3–5 runtime item IMPLEMENTED or VERIFIED until code references and executed scoped test evidence are available.** No database schema, endpoint, or production workflow has been deployed by this design-specification task.
+
 ## October 14 completed Step 7 design handoff (specification only)
 
 The accepted Part 7 design is [PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md](PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md). Its **design** status is DESIGNED. No queue/scheduler, budget provider adapter, container backend, safety checker, DB migration, or runtime test has been implemented or run by completing this document.
