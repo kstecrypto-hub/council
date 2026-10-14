@@ -1,8 +1,9 @@
 # Part 7 - member execution scheduling, recovery, and resource controls
 
-**Status:** IN DESIGN; amended October 14, 2026.
+**Design status:** DESIGNED (specification approved October 14, 2026).
 **Scope:** runtime scheduling of Council-member execution environments, checkpoint barriers, resource limits, recovery, pause/stop, and budget controls.  
 **Implementation status:** NOT STARTED. **Runtime acceptance tests:** NOT RUN.
+**Boundary:** Defaults below are configurable recommendations; provider/runtime-specific adapters and enforcement tests belong to implementation and Step 9/10. This specification does not claim any working scheduler.
 **Decision record:** [ARCHITECTURE_DECISIONS.md](ARCHITECTURE_DECISIONS.md). Accepted requirements below do not mark Part 7 complete.
 
 ## 1. Schedule member environments, not their internal work
@@ -250,21 +251,79 @@ The run remains STOPPING or enters an explicitly failed/incomplete cleanup outco
 
 Resume rechecks the current contract, permissions, budgets/reservations, resource availability, operation dependencies, and isolation. Restored framework state is continuation only; canonical Council operation and authorization records take precedence.
 
-## 14. Still to design before Part 7 is marked DESIGNED
+## 14. Approved MVP defaults and validation
 
-The accepted behavior above is not a completed scheduler. Open work includes:
+The following are **default proposals accepted for the architecture**, not immutable pricing, time limits on reasoning, or statements of measured capacity. They are shown to the user and can be overridden subject to validation. User-approved budgets and permissions are versioned and authoritative; no estimator can silently alter them.
 
-- concrete validation/default proposals for per-member/per-phase token budgets, cost ceilings, protected review allowances, tool-call timeouts, recovery retry/backoff ceilings, and host headroom (without semantic-work time limits);
-- provider-specific token metering and cost accounting, local-model sizing/compatibility measurements and remote concurrency/rate contracts;
-- exact reservation/accounting schema, lock ordering, dispatch/settlement transactions, and review-reserve allocation;
-- precise pause/stop state/event wiring with Part 4 and provider-specific cancellation behavior;
-- backend-specific enforcement, crash-safe environment persistence, and proof of resource release;
-- optional historically calibrated token-usage estimation with uncertainty disclosures (not a prerequisite for agent readiness);
-- full failure-injection and deterministic acceptance tests.
+### 14.1 User budget and phase allowances
 
-These choices must be resolved without weakening the accepted boundaries. Application implementation and runtime tests remain NOT STARTED / NOT RUN.
+- User sets the total project budget in currency and approves per-run token/cost ceilings and the Orchestrator's semantic phases. Under MVP BYOK, provider charges go directly to the user's accounts; Council does not collect a wallet deposit.
+- Propose **70% private development / 25% protected checkpoint peer review / 5% orchestration and finalization**. These are initial suggestions, not automatic deductions or quotas imposed without approval. No development call may debit protected review/finalization money.
+- Propose an equal *monetary* development allocation across the five peers (14% of project total per seat with the default split). Within a member, divide its allowance among the approved phase objectives using an explicitly reviewable provisional phase plan. Users may edit all splits. Do not equate equal dollars with equal tokens or equal reasoning capability.
+- Each member/phase also has its own approved token ceiling. For a budget entered only as money, Council may **propose** model-specific token caps using versioned pricing and conservative estimates; the user approves or edits these before launch. If a model cannot support a reliable price bound, or a proposed allowance cannot support a minimal authorized call, block that admission and ask for another approved configuration rather than silently overspending.
+- The total budget must cover all chargeable member, worker, Orchestrator, checkpoint, verification and finalization requests. Allocate the associated request to exactly one spend pool and the relevant parent/run scopes; do not double-count the protected reserve. Local inference consumes approved token/resource allowances but normally no third-party inference API cost.
+- `BUDGET_EXHAUSTED / INCOMPLETE` saves the same logical agent and unfinished semantic phase, releases capacity after safe quiescence, and exposes `Approve additional allowance` / `Adjust allocation` / `Stop`. A top-up is a new explicit user-approved revision; rejecting it does not mark a member ready, shorten the barrier or consume another seat's funds.
+- Show `estimated range`, `approved ceiling`, `reserved`, `settled actual`, and `unknown pending reconciliation` separately. Forecasts remain optional and may say `insufficient data`.
 
-## 15. Required acceptance evidence (all pending)
+### 14.2 Inference concurrency and resource admission
+
+- Remote API inference starts at **up to two concurrent requests per provider**, reduced further by actual provider/account limits, request-token and output-token budgets, rate-limit headers, and retry-after signals. Concurrency may increase only after measured/verified capacity and user configuration. Different providers may have different caps.
+- Local inference starts at **one active inference job**; increase only after a concrete model + quantization + runtime/context profile passes Step 9 compatibility tests and measured memory/compute admission. A model whose tool-loop compatibility or resource fit is unknown is not silently considered Council-seat compatible.
+- Continue the **same fixed seat-order member queue** 1 -> 2 -> 3 -> 4 -> 5 when slots free. Local-model inference jobs and remote-provider requests consume independently metered gateway resources; they do not form a second intellectual scheduler. No periodic private-work time quantum is required.
+- Initial host RAM headroom target is **about 20% of total physical RAM**, adjusted upward if observed OS + trusted Council runtime + database/recovery usage requires more. GPU VRAM is measured separately for each local model; do not apply the RAM percentage blindly to VRAM. Keep an explicit disk/workspace reserve and avoid uncontrolled oversubscription; unmeasurable capacity is not assumed free.
+- On resource pressure: stop admitting new heavy operations first; then throttle concurrency; then safely quiesce/suspend an active member if necessary. Preserve durable state. If host safety or isolation cannot be restored, mark the affected member blocked / run paused with an actionable reason. Release a slot **only after the backend confirms container/resource release**.
+
+### 14.3 Timeouts and bounded infrastructure recovery (not reasoning deadlines)
+
+- Default automatic **three infrastructure-recovery retries** after a failed attempt with increasing delays **5s / 30s / 120s**, configurable by operation/backend. Enforce a finite retry ceiling and record all attempts. Exhaustion leaves the required member `BLOCKED`, preserving its identity, data, outstanding operations and the five-seat barrier.
+- Use **operation-class safety timeouts**, not a universal model reasoning deadline. Suggested initial profiles: network connect 15 seconds; ordinary read-only HTTP/tool operation up to 120 seconds; single provider inference request up to 20 minutes with an independent configurable no-progress/stream-idle threshold; ordinary local command up to 10 minutes. Declared long-running operations may receive an approved larger bounded limit. Provider-specific contracts and measured runtime behavior may override these *per-operation* settings.
+- Timeout means `request timed out`, **not** `provider did not charge` or `external effect did not happen`. Cancel where supported, revoke stale epochs, and preserve UNKNOWN outcomes/reservations until reconciliation. Repeated failure never fabricates completion.
+
+## 15. Atomic budget and resource admission contract
+
+This is the **canonical design interface** to be integrated into the Part 3/4/5 records; no SQL migrations or model adapter are claimed implemented.
+
+### 15.1 Required canonical records
+
+- `budget_policy_version`: approving user, contract/run revision, currency and fixed-precision units, per-provider pricing-version assumptions, hard project ceiling, hard phase/member token/cost ceilings, approved development/review/finalization pools, and effective revision.
+- `budget_account`: `run_id`, spend pool (development/review/finalization), optional `member_id` and `phase_id`, token-unit scope, `approved_ceiling`, `settled`, `reserved_unsettled`, `row_version`. Each debit has one assigned pool plus aggregate constraints.
+- `usage_reservation`: durable idempotent `operation_id` / attempt, parent worker/member, provider/model/pricing version or local-metering profile, pool, token/cost pre-dispatch upper bounds, status, dispatch epoch, actual returned usage, and reconciliation state. A reservation is not a prepaid wallet/charge.
+- `resource_admission`: member execution epoch, seat, sandbox instance, CPU/RAM/VRAM/disk/slot/concurrency claims, admission status, confirmed release, and machine capability snapshot.
+- `recovery_attempt`: source failure/operation, attempt count and retry-not-before, sandbox/bridge epoch, observed cleanup and resulting BLOCKED/PAUSED/resumable state. Optional forecasts have **separate** versioned records and cannot authorize dispatch.
+
+### 15.2 Authorize, reserve, dispatch, settle
+
+1. Verify the current approved Project Contract, BYOK credential capability (or local model runtime), model compatibility, spend policy/version, the caller's member/worker authority, phase/checkpoint scope, and resource capacity.
+2. In **one PostgreSQL transaction**, lock the deployment's transactional event clock **first** (existing Part 5 invariant), then lock budget scopes in deterministic order **run -> spend pool -> member/phase**; check all relevant **token and fixed-precision monetary** ceilings with settled use plus outstanding reservations, including protected review funds. Deduplicate by operation/attempt idempotency key.
+3. Atomically insert the operation, reservation, resource-admission claim, canonical event(s), outbox and idempotent result. **Commit before making any external model/tool request**. Concurrent dispatchers cannot reserve the same money/tokens/slot twice.
+4. The trusted model/tool bridge marks `DISPATCHED` durably before handing off the external request, with epoch fencing. If the attempt dies near that boundary and non-dispatch cannot be proven, treat outcome/usage as uncertain; do not blindly refund or replay.
+5. On a definite response, settle the actual usage atomically and release only the unused reserved part. A proven no-dispatch/known non-effect may release its reservation. A dispatched or UNKNOWN attempt retains conservative liability until provider-specific reconciliation or an explicitly approved conservative settlement. Retries require a new authorized reservation unless provider semantics prove the same charged operation is reused.
+6. Cost/usage arriving late cannot revive an old execution epoch or change semantic completion. All settlements and budget revisions carry versioned canonical events and are exposed to UI projections through the committed outbox.
+
+**No Council-enforced ceiling is a guarantee against the external provider's final bill.** BYOK cost accounting is observational/reservational control over Council-authorized calls, not merchant settlement.
+
+## 16. Pause, stop, recovery, and host-pressure state contract
+
+The existing Part 4 canonical run lifecycle stays authoritative; do not invent a competing state machine.
+
+| Command or cause | Durable status and effect | Completion guard |
+|---|---|---|
+| `PauseRun` or host safety pressure | `ACTIVE` + activity `QUIESCING_FOR_PAUSE` while bridge admissions close and containers reach durable boundaries | Transition to `PAUSED` only when required suspension/fencing and confirmed resource release have been recorded; unresolved calls remain visible separately |
+| `ResumeRun` | `PAUSED` remains until contract, permissions, budgets, obligations, provider capabilities, resources, sandbox checker, and uncertain dependencies pass | Then `ACTIVE` with fresh bridge epoch; otherwise stay `PAUSED` with a reason |
+| `StopRun` | `ACTIVE/PAUSED -> STOPPING`; reject new ordinary work, fence epochs, request supported cancellations, record known/unknown effects and tear down controllable resources | `CANCELLED` only after sufficient cleanup/reconciliation, else explicit `FAILED` / incomplete cleanup; never report cancellation as a successful candidate |
+| Final user `AcceptCandidate` and gated finalization | User acceptance is separate from `StopRun`, with archive/export and teardown prerequisites | `FINALIZING -> COMPLETED` only after accepted project + Git archive and cleanup are verified |
+| Infrastructure recovery failure | Preserve required logical member and durable state as `BLOCKED`; no fifth seat is silently substituted | User can approve repaired continuation, budget expansion, or stop; barrier never crosses |
+| Unexpected resource exhaustion | Stop new admissions, reconcile in-flight work, attempt safe quiescence; if unable, fence/contain and expose FAILED/PAUSED as appropriate | No claimed release without backend evidence |
+
+Typed events needed alongside the existing Part 4 catalog: `MemberPhaseBudgetExhausted`, `BudgetPolicyApproved`, `BudgetReservationCreated`, `BudgetReservationSettled`, `BudgetReservationOutcomeUnknown`, `MemberRecoveryAttempted`, `MemberBlocked`, `SandboxQuiesced`, `SandboxResourceReleaseConfirmed`, `BridgeExecutionEpochRevoked`, and `ResourceAdmissionDenied`. Their common envelope, idempotency, outbox ordering, and authorization rules are inherited from Parts 4 and 5. The event records **what occurred**, not that the agent was intellectually finished.
+
+## 17. Design completion boundary and implementation dependencies
+
+**PART 7 DESIGN: DESIGNED.** Configurable defaults, user-budget model, resource admission, atomic reservation ordering, recovery ceilings, and pause/stop behaviors are now specified. The Step 7 design is complete at the architecture level, **not implemented or verified**.
+
+Implementation and measured adapter values remain pending and must not be marked completed: actual provider token/rate-limit adapters and pricing; Step 9 local-model/tool-call profiles; Step 10 Docker backend enforcement, volumes, checker and verified resource release; Part 3 migrations and Part 4/5 state/transaction wiring; and all forced-failure/concurrency/integration acceptance tests. Optional historically calibrated token estimation is deferred until real evidence exists, not required to consider Part 7 designed.
+
+## 18. Required acceptance evidence (all pending)
 
 - [ ] A one-slot run admits the next eligible member after the active member reaches its milestone, blocks, safely yields, or exhausts its phase allowance; no forced readiness is inferred.
 - [ ] A member that exhausts its phase token/cost ceiling remains INCOMPLETE with recoverable state; no checkpoint/review barrier crosses and no implicit top-up occurs.
