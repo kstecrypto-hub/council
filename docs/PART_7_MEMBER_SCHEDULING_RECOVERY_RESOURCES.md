@@ -61,15 +61,15 @@ For checkpoint K:
 3. that member may not enter post-checkpoint private revision;
 4. its execution capacity is released while other members continue toward K;
 5. runtime opens K only when all five required members are ready and publication guards pass;
-6. approved member repositories become public; sealed independent review precedes shared discussion;
-7. communication closes, repositories return to private, and isolation is verified;
+6. approved **customer-local pinned read-only snapshots** become visible only to authorized checkpoint reviewers; sealed independent review precedes shared discussion;
+7. communication closes, temporary snapshot grants/routes are revoked and isolation is verified;
 8. each member receives its deterministic return packet and may enter the next private phase as capacity becomes available.
 
-A faster member cannot gain an extra private phase merely by reaching the barrier first. Public visibility is not an approval to modify the frozen candidate or publish new private work.
+A faster member cannot gain an extra private phase merely by reaching the barrier first. Checkpoint-scoped snapshot read access is not permission to modify frozen candidates, access unpublished peer work or publish source outside the customer's trust boundary.
 
 ## 5. Separation from Part 5 task leasing
 
-Part 5 durable operations, leases, retries, and reconciliation govern **trusted runtime work** such as provisioning, external effects, repository visibility, publication, accounting, and lifecycle operations.
+Part 5 durable operations, leases, retries, and reconciliation govern **trusted runtime work** such as provisioning, external effects, local snapshot export/grant/revocation, optional explicitly authorized external Git publication, accounting, and lifecycle operations.
 
 These records are not a central intellectual task scheduler for the member. Agent-internal development remains controlled by the member inside its sandbox.
 
@@ -392,3 +392,7 @@ Implementation and measured adapter values remain pending and must not be marked
 - [ ] A container restart begins a fresh process, not a reconstructed in-memory worker; saved worker artifacts are available to the member, no per-worker Council resurrection occurs, and stopped checkpoint/PAUSED/BUDGET_EXHAUSTED members cannot auto-restart past admission guards.
 - [ ] External pending/UNKNOWN operations and user budgets remain authoritative after Docker-backed workspace restart; no duplicate provider/write calls are emitted from restored local files alone.
 
+
+## Local-first checkpoint amendment (ADR-17, October 14)
+
+The checkpoint admission/suspension, five-member barrier, protected review budget, recovery/slot scheduling and no mandatory work-slice rules remain unchanged. **The older requirement to make GitHub repositories public at checkpoints is superseded**. Step 7 now triggers a customer-local immutable selected read-only snapshot export/grant from the trusted gateway. Actual verified recipient access permits SEALED_REVIEW; actual verified grant/route revocation permits private revisions. The member's own sandbox Git remains under its control and does not gain other branches' unpublished source. See [LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md](LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md). Storage/adapters and failure-injection tests are not implemented.
