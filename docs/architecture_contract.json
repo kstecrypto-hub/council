@@ -5,9 +5,9 @@
   "logical_member_count": 5,
   "member_count_changes_require_explicit_revision": true,
   "repository_visibility_cycle": [
-    "private",
-    "public",
-    "private"
+    "private_work",
+    "approved_checkpoint_local_read_only_snapshot",
+    "private_work"
   ],
   "changes_council_source_repository_visibility": false,
   "public_exposure_reversible": false,
@@ -33,13 +33,13 @@
     "user_acceptance"
   ],
   "event_ordering": "deployment_transactional_event_clock",
-  "long_term_learning_store": "git_backed_archive",
+  "long_term_learning_store": "customer_owned_git_archive_with_optional_permitted_general_knowledge",
   "runtime_implementation_status": "NOT_STARTED",
   "runtime_test_status": "NOT_RUN",
   "requirements": [
     {
       "id": "ADR-01",
-      "design_status": "SPECIFIED",
+      "design_status": "SUPERSEDED_BY_ADR_17",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -111,7 +111,7 @@
     },
     {
       "id": "ADR-10",
-      "design_status": "SPECIFIED",
+      "design_status": "REOPENED_IN_DESIGN_BY_ADR_17_18",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -160,6 +160,22 @@
     {
       "id": "ADR-16",
       "design_status": "ACCEPTED_STEP8_2A_FULL_STEP8_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-17",
+      "design_status": "APPROVED_DIRECTION_INTEGRATION_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-18",
+      "design_status": "APPROVED_DIRECTION_INTEGRATION_IN_DESIGN",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -280,15 +296,15 @@
     "council_worker_recovery_daemon_required": false
   },
   "step3": {
-    "design_status": "DESIGNED",
+    "design_status": "REOPENED_IN_DESIGN",
     "implementation_status": "NOT_STARTED",
     "runtime_tests_status": "NOT_RUN",
     "specification_path": "docs/POSTGRES_DATA_MODEL.md",
     "deployment_database": "project_lifetime_isolated_postgres",
-    "durable_learning": "git_archive_after_acceptance_verified_before_db_teardown",
+    "durable_learning": "customer_owned_archive_with_authorized_separate_general_lessons",
     "fixed_member_seats": 5,
     "checkpoints_require_all_five_unique_member_arrivals": true,
-    "github_publication": "approved_full_exposure_manifest_and_separate_observed_public_private_transitions",
+    "github_publication": "SUPERSEDED_PUBLIC_DEFAULT_NOT_VALID",
     "sealed_review": "one_immutable_submission_per_seat_per_generation_and_atomic_all_five_reveal",
     "checkpoint_done": "processed_message_frontier_plus_obligation_version_plus_generation",
     "branch_local_clarification_and_rag_isolation": true,
@@ -296,10 +312,13 @@
     "committed_event_clock": "deployment_locked_row_updated_with_canonical_transaction",
     "resource_lease_requires_current_token": true,
     "budget_db_records": "approved_policy_accounts_reservations_resource_admissions_recovery",
-    "archive_deletion_guard": "fresh_checkout_reference_closure_and_verified_accepted_project_restore"
+    "archive_deletion_guard": "fresh_checkout_reference_closure_and_verified_accepted_project_restore",
+    "baseline_design_status": "DESIGNED_UNDER_SUPERSEDED_PUBLIC_GITHUB_POLICY",
+    "pending_redesign": "LOCAL_GIT_CHECKPOINT_SNAPSHOT_AND_TENANT_PRIVATE_ARCHIVE_INTEGRATION",
+    "checkpoint_sharing": "local_customer_private_export_manifest_grants_observed_access_revoke"
   },
   "step4": {
-    "design_status": "DESIGNED",
+    "design_status": "REOPENED_IN_DESIGN",
     "implementation_status": "NOT_STARTED",
     "runtime_tests_status": "NOT_RUN",
     "specification_path": "docs/TYPED_INTERACTION_CONTRACTS.md",
@@ -317,11 +336,11 @@
     ],
     "checkpoint_progress": [
       "all_five_member_emitted_ready",
-      "opening_with_verified_public_repos",
+      "opening_with_verified_local_snapshot_grants",
       "sealed_five_independent_reviews",
       "atomic_reveal",
       "reviewing",
-      "closing_verified_private",
+      "closing_verified_local_access_revoked",
       "closed"
     ],
     "checkpoint_done_requires": [
@@ -335,10 +354,12 @@
     "activity_not_user_decision": true,
     "no_runtime_intellectual_quality_judgment": true,
     "pause_state": "ACTIVE_with_QUIESCING_FOR_PAUSE_then_PAUSED_after_guards",
-    "stop_state": "STOPPING_then_CANCELLED_or_FAILED_cleanup_incomplete"
+    "stop_state": "STOPPING_then_CANCELLED_or_FAILED_cleanup_incomplete",
+    "baseline_design_status": "DESIGNED_UNDER_SUPERSEDED_PUBLIC_GITHUB_POLICY",
+    "pending_redesign": "LOCAL_GIT_CHECKPOINT_SNAPSHOT_AND_TENANT_PRIVATE_ARCHIVE_INTEGRATION"
   },
   "step5": {
-    "design_status": "DESIGNED",
+    "design_status": "REOPENED_IN_DESIGN",
     "implementation_status": "NOT_STARTED",
     "runtime_tests_status": "NOT_RUN",
     "specification_path": "docs/PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md",
@@ -362,12 +383,14 @@
     "external_effects_execute_after_commit": true,
     "retries": "scoped_key_same_hash_returns_original_result_conflicting_hash_rejected",
     "unknown_effects": "operation_class_specific_reconcile_before_consequential_retry",
-    "checkpoint_visibility": "external_public_private_observed_not_atomic_with_sql",
+    "checkpoint_visibility": "local_snapshot_export_and_grant_revoke_observed_not_atomic_with_sql",
     "sealed_reveal": "atomic_all_five_generation_locked",
     "done": "version_bound_same_checkpoint_message_obligation_lock",
     "budget": "reserve_before_dispatch_release_only_on_proven_non_dispatch_or_settlement",
     "projections": "committed_event_cursor_consistent_snapshot_authorization_filtered_replay",
-    "finalization": "archive_export_and_reference_closure_before_control_db_teardown"
+    "finalization": "authorized_customer_owned_archive_export_and_restore_validation_before_control_db_teardown",
+    "baseline_design_status": "DESIGNED_UNDER_SUPERSEDED_PUBLIC_GITHUB_POLICY",
+    "pending_redesign": "LOCAL_GIT_CHECKPOINT_SNAPSHOT_AND_TENANT_PRIVATE_ARCHIVE_INTEGRATION"
   },
   "step8": {
     "design_status": "IN_DESIGN",
@@ -462,6 +485,54 @@
       "external_effect_reconciliation_still_required": true,
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN"
-    }
+    },
+    "checkpoint_publication": "customer_local_frozen_snapshot_only_by_default"
+  },
+  "checkpoint_public_github_default": false,
+  "local_first_repository_specification": "docs/LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md",
+  "repository_backend_default": "native_local_git",
+  "repository_optional_adapters": [
+    "customer_self_hosted_forgejo",
+    "customer_approved_enterprise_git"
+  ],
+  "checkpoint_snapshot_scope": "customer_private_selected_frozen_read_only_tree_no_full_history_by_default",
+  "cross_customer_knowledge_sharing_default": false,
+  "cross_customer_derived_knowledge_requires": "specific_customer_authorization_and_privacy_ip_license_review",
+  "failure_memory_policy": "success_first_conditional_failure_warning_never_universal_blacklist",
+  "experiment_failure_applicability": [
+    "objective",
+    "constraints",
+    "environment",
+    "software_versions",
+    "scale",
+    "workload",
+    "configuration",
+    "test_method",
+    "failure_mechanism",
+    "uncertainty"
+  ],
+  "new_repositories_and_knowledge_design_integration": "IN_DESIGN",
+  "step2": {
+    "design_status": "REOPENED_IN_DESIGN",
+    "baseline_design_status": "DESIGNED_UNDER_SUPERSEDED_PUBLIC_GITHUB_POLICY",
+    "repository_backend_default": "native_local_git",
+    "source_ownership": "customer",
+    "checkpoint_access": "selected_immutable_read_only_local_snapshot",
+    "runtime_implementation_status": "NOT_STARTED",
+    "runtime_tests_status": "NOT_RUN"
+  },
+  "step11": {
+    "design_status": "IN_DESIGN",
+    "retention_tiers": [
+      "temporary_deployment",
+      "customer_owned_opt_in_project_archive",
+      "independently_authorized_shared_knowledge"
+    ],
+    "shared_customer_data_default": "FORBIDDEN",
+    "generalization_requires": "explicit_approved_specific_release",
+    "retrieval_order": "success_first_then_context_specific_failure_risks_and_tests",
+    "negative_exclusion_policy": "no_universal_blacklist_or_silent_filter_based_on_prior_failure",
+    "runtime_implementation_status": "NOT_STARTED",
+    "runtime_tests_status": "NOT_RUN"
   }
 }
