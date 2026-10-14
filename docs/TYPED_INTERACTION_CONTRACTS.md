@@ -2,7 +2,7 @@
 
 **October 13, 2026 amendment:** [decision/status index](ARCHITECTURE_DECISIONS.md). Requirements below are specifications; application implementation is NOT STARTED and runtime tests are NOT RUN.
 
-**Design status:** DESIGNED (October 14, 2026); the extended command/event/interaction and transition contracts are now reconciled. **Implementation:** NOT STARTED. **Runtime/state-machine tests:** NOT RUN.
+**Design status:** BASELINE DESIGNED; **ADR-17 local checkpoint interface REOPENED IN DESIGN**. Other command/interaction semantics remain established. **Implementation:** NOT STARTED. **Runtime/state-machine tests:** NOT RUN.
 **Authority:** this document refines the state/action, user-interaction, command, event, and UI-wiring requirements in APP_DESIGN.md and the persistence model in POSTGRES_DATA_MODEL.md. If a supporting document conflicts with the latest explicit owner instruction or APP_DESIGN.md, the latest owner instruction and APP_DESIGN.md remain authoritative.  
 **Implementation status:** specification only. No application code is implied by this document.
 
@@ -186,11 +186,11 @@ Initial authoritative set:
 
 Checkpoint states: SCHEDULED, TRIGGERED, OPENING, SEALED_REVIEW, REVIEWING, CLOSING, CLOSED, CANCELLED, FAILED.
 
-TRIGGERED does not publish anything. OPENING pins all five candidates, validates internet-publication approval/history/safety, creates recoverable visibility operations, and verifies actual public state. Only successful opening enters SEALED_REVIEW. Partial/unknown publication remains guarded and reconciled.
+TRIGGERED does not expose any candidate. OPENING pins all five members' current local Git commits/trees, validates customer-authorized snapshot manifests and read-only recipient scopes, creates recoverable local export/grant operations and verifies actual content hashes/access. Only successfully verified local snapshots enter SEALED_REVIEW. Partial/unknown grants remain guarded and reconciled; no internet-public GitHub publication is implied.
 
 SEALED_REVIEW permits independent repository inspection and isolated verification but not shared discussion or access to peer assessments. Each member submits an immutable review bound to the frozen candidates. RevealCheckpointReviews atomically publishes all required submissions and enters REVIEWING. Missing reviewers remain explicit blockers; ceiling-forced abort is incomplete, not successful review.
 
-During REVIEWING candidates stay frozen. /work uses separate disposable verifiers; no implementation commits or pushes. Normal CLOSING requires current versioned DONE certificates, processed message/obligation frontiers, and no active work excursion. CLOSING fences the gateway, persists closeouts/transcript, removes temporary authority, makes repositories private, verifies the safe boundary, and creates return packets before CLOSED permits private revision. Failures remain observable/blocked rather than emitting a premature successful closure.
+During REVIEWING candidates stay frozen. /work uses separate disposable verifiers; no implementation commits or pushes. Normal CLOSING requires current versioned DONE certificates, processed message/obligation frontiers, and no active work excursion. CLOSING fences the gateway, persists closeouts/transcript, revokes all temporary peer snapshot grants/routes, verifies the safe boundary, and creates return packets before CLOSED permits private revision. Failures remain observable/blocked rather than emitting a premature successful closure.
 
 Communication completion, verification coverage, candidate readiness, and acceptance remain independent. See section 25 and CHECKPOINT_COMMUNICATION_GATEWAY.md.
 
@@ -316,8 +316,8 @@ Commands and events use different names deliberately.
 Examples:
 - ApproveProjectContract is a command.
 - ProjectContractApproved is an event.
-- PublishCheckpointRepositories is a command.
-- CheckpointRepositoriesPublished is an event.
+- PublishCheckpointSnapshots is a command.
+- CheckpointSnapshotsAvailable is an event.
 - ExecuteSandboxOperation is a command.
 - SandboxOperationSucceeded, SandboxOperationFailed, and SandboxOperationOutcomeUnknown are mutually distinct event outcomes.
 
@@ -621,7 +621,7 @@ Council/task:
 
 Checkpoint/review:
 - TriggerCheckpoint
-- PublishCheckpointRepositories
+- PublishCheckpointSnapshots
 - CreateCheckpointCommunicationSession
 - SubmitIndependentCheckpointReview
 - RevealCheckpointReviews
@@ -637,7 +637,7 @@ Checkpoint/review:
 - MarkCheckpointCommunicationDone
 - ReopenCheckpointCommunicationMember
 - CloseCheckpointCommunicationSession
-- MakeCheckpointRepositoriesPrivate
+- RevokeCheckpointSnapshotAccess
 - SubmitCheckpointCloseout
 - CreateCheckpointReturnPacket
 - RecordClaimRevision
@@ -717,7 +717,7 @@ Council/task:
 
 Checkpoint/review:
 - CheckpointTriggered
-- CheckpointRepositoriesPublished
+- CheckpointSnapshotsAvailable
 - CheckpointCommunicationSessionCreated
 - IndependentCheckpointReviewSubmitted
 - CheckpointPeerReviewsRevealed
@@ -734,7 +734,7 @@ Checkpoint/review:
 - CheckpointMemberReactivated
 - CheckpointCommunicationQuiescing
 - CheckpointCommunicationSessionClosed
-- CheckpointRepositoriesMadePrivate
+- CheckpointSnapshotAccessRevoked
 - CheckpointCloseoutRecorded
 - CheckpointReturnPacketCreated
 - ClaimRevisionRecorded
@@ -1215,7 +1215,7 @@ Exact local wire framing belongs to implementation. The semantic behavior above 
 | ResumeRun | RunResumed | run ACTIVE | normal activity resumes |
 | StopRun | RunStopRequested | run STOPPING | stop/cleanup status |
 | TriggerCheckpoint | CheckpointTriggered | checkpoint TRIGGERED | checkpoint opening becomes visible |
-| PublishCheckpointRepositories | CheckpointRepositoriesPublished | approved repositories confirmed internet-public; frozen SHAs pinned | sealed-review UI available after opening guards |
+| PublishCheckpointSnapshots | CheckpointSnapshotsAvailable | approved frozen local snapshot hashes and scoped read grants confirmed; source Git histories remain private | sealed-review UI available after opening guards |
 | CreateCheckpointCommunicationSession | CheckpointCommunicationSessionCreated | checkpoint session initialized; shared communication remains gated during SEALED_REVIEW | independent-review controls only |
 | SubmitIndependentCheckpointReview | IndependentCheckpointReviewSubmitted | immutable reviewer assessment recorded privately | own submission status |
 | RevealCheckpointReviews | CheckpointPeerReviewsRevealed | all-five submissions revealed; SEALED_REVIEW -> REVIEWING | shared review controls active |
@@ -1228,7 +1228,7 @@ Exact local wire framing belongs to implementation. The semantic behavior above 
 | new required action to DONE member | CheckpointMemberReactivated | DONE -> AVAILABLE | member active again |
 | SubmitCheckpointCloseout | CheckpointCloseoutRecorded | immutable member closeout retained | closeout status visible |
 | CloseCheckpointCommunicationSession | CheckpointCommunicationSessionClosed | no new live checkpoint communication | communication controls disappear |
-| MakeCheckpointRepositoriesPrivate | CheckpointRepositoriesMadePrivate | repositories confirmed private; prior public copies not recalled | visibility status updated; new private work still waits for CLOSED |
+| RevokeCheckpointSnapshotAccess | CheckpointSnapshotAccessRevoked | checkpoint read-grant/routes revoked and isolation verified; previously seen material cannot be made unknown | visibility status updated; new private work still waits for CLOSED |
 | CreateCheckpointReturnPacket | CheckpointReturnPacketCreated | deterministic next-phase context created | no blocking UI |
 | CloseCheckpoint | CheckpointClosed | checkpoint CLOSED; private revision resumes | checkpoint history finalized |
 | CreateInteractionRequest | InteractionRequested | durable user gate/question created | Interaction Center + blocking surface when configured |
@@ -1289,7 +1289,7 @@ Additional contract payloads:
 - SubmitIndependentCheckpointReview: checkpoint_id/generation, reviewer identity, frozen candidate references, immutable assessment/evidence, idempotency key. Legal only in SEALED_REVIEW for the submitting member; it emits IndependentCheckpointReviewSubmitted without peer delivery.
 - RevealCheckpointReviews: expected checkpoint generation and required submission IDs/hashes. Runtime-only, all-five guard, atomic visibility/delivery activation plus CheckpointPeerReviewsRevealed. No model selects which reviews to reveal.
 - MarkCheckpointCommunicationDone: processed_message_sequence and expected_obligation_version as well as checkpoint generation. A stale frontier returns STALE_TARGET or REQUIRED_ACTIONS_OPEN, never successful DONE.
-- PublishCheckpointRepositories / MakeCheckpointRepositoriesPrivate: publication authorization, repository set, pinned refs, desired visibility, external-operation identities, and verified observed state. A requested transition is not its completion event.
+- PublishCheckpointSnapshots / RevokeCheckpointSnapshotAccess: customer-approved local snapshot manifest, repository commit/tree hashes, selected files/artifacts, recipient grants/revocation operations, exact desired and observed access state. A requested transition is not its completion event.
 - PauseRun first stops new ordinary admissions and quiesces; RunPaused is emitted only once the required pause boundary is actually reached. Unknown external requests remain separately recorded. StopRun does not claim external cancellation merely from local revocation.
 
 Command/result schemas, registry wiring, UI mappings, and deterministic tests for these additions remain pending implementation. No new completion status is asserted by this amendment.
@@ -1307,7 +1307,7 @@ QUIESCING_FOR_PAUSE is runtime-owned activity entered by an authorized PauseRun 
 
 The canonical command envelope in Sections 5 and 24.3 is v1 and must carry `command_id`, `command_type`, `schema_version`, `actor_type/id`, `project_id`, `run_id` when relevant, `branch_id`/seat scope when relevant, `target_type/id`, expected version/hash for mutable or revision-pinned targets, `idempotency_key`, correlation/causation IDs, and typed payload. Typed errors preserve AUTH_REQUIRED, FORBIDDEN, VALIDATION_FAILED, STALE_TARGET, INVALID_TRANSITION, IDEMPOTENCY_CONFLICT, REQUIRED_ACTIONS_OPEN, EXTERNAL_OUTCOME_UNKNOWN and RESOURCE_LIMIT, with additional precise errors `BUDGET_EXHAUSTED`, `STALE_EXECUTION_EPOCH`, `PUBLICATION_UNSAFE`, `PUBLICATION_NOT_VERIFIED`, `SEALED_REVIEWS_INCOMPLETE`, and `ARCHIVE_VALIDATION_INCOMPLETE` where appropriate.
 
-- Only the **user** may approve/revise permissions, Project Contract, phase/run budgets, internet-publication exposure and final acceptance; the **Orchestrator** prepares contract revisions and neutral semantic milestones; the **member** alone authors intellectual readiness, original review, challenges and closeout; the **trusted runtime** verifies mechanical state, delivers events, reconciles effects and performs authorized transitions. Auditor flags protocol/semantic-fidelity violations, not solution quality.
+- Only the **user** may approve/revise permissions, Project Contract, phase/run budgets, separately requested optional external-publication exposure and final acceptance; the **Orchestrator** prepares contract revisions and neutral semantic milestones; the **member** alone authors intellectual readiness, original review, challenges and closeout; the **trusted runtime** verifies mechanical state, delivers events, reconciles effects and performs authorized transitions. Auditor flags protocol/semantic-fidelity violations, not solution quality.
 - A command requests an operation. `*Requested`/`*Started` records and desired external status are distinct from `*Succeeded`/`*Published`/`*Private` verification events. The runtime cannot emit success from an API timeout or requested transition.
 - Activity code, lifecycle, operation state, member checkpoint communication state, independent-review status, verification coverage, budget exhaustion and user acceptance remain **different concepts**. No activity label alone grants capability, publishes data or opens a user dialog; only a durable `interaction_request` invokes blocking user input.
 
@@ -1323,15 +1323,15 @@ The following is the normative completion of the existing catalog. Payloads and 
 | `RecordMemberPhaseBudgetExhaustion` / runtime | approved phase policy, available/settled/reserved usage, exhausted scope and unfinished member state | `MemberPhaseBudgetExhausted`; member remains BUDGET_EXHAUSTED / INCOMPLETE and must not satisfy a checkpoint/accepted-candidate barrier |
 | `ReserveModelCallAllowance` / trusted runtime | operation identity, requester/parent, model/profile/phase, fixed-precision token+cost bound, all pool/member/run caps and resource ceiling checks | `BudgetReservationCreated` + requested operation/outbox in one transaction; call dispatched only after commit; uncertain dispatched liability retained |
 | `RecordBudgetReservationSettlement` / trusted runtime | original operation/attempt, current authorization epoch for effects, actual usage or explicit unknown/reconciliation evidence | `BudgetReservationSettled` or `BudgetReservationOutcomeUnknown`; balances updated atomically, never refund unknown dispatched use |
-| `PublishCheckpointRepositories` / trusted runtime with exact user approval | five arrivals, frozen snapshot SHAs, full **internet-public GitHub exposure** manifest/history and user authorization, passed safety checks | first schedules external publication operations; **only observed verified public visibility** emits `CheckpointRepositoriesPublished`, enables SEALED_REVIEW; partial/unknown leaves OPENING guarded |
+| `PublishCheckpointSnapshots` / trusted runtime with exact user approval | five arrivals, frozen snapshot SHAs, approved local read-only snapshot manifest/hash and intended recipients, passed scope/sensitivity checks | first schedules local snapshot export/grant operations; **only observed verified export hashes and scoped read access** emit `CheckpointSnapshotsAvailable`, enables SEALED_REVIEW; partial/unknown leaves OPENING guarded |
 | `SubmitIndependentCheckpointReview` / each member | SEALED_REVIEW, current generation, exact frozen peer candidate set, own authored assessment and evidence hash | `IndependentCheckpointReviewSubmitted`, immutable and visible only to own reviewer/trusted runtime before reveal |
 | `RevealCheckpointReviews` / runtime | all five distinct valid current-generation sealed submissions; consistent pinned candidate set; no leakage | one `CheckpointPeerReviewsRevealed` atomic visibility/delivery activation; SEALED_REVIEW -> REVIEWING; missing reviewer stays blocked/aborted explicitly |
 | `SendCheckpointMessage` / available member | active REVIEWING session and execution bridge/epoch, complete verified logical message; optional target refs | `CheckpointMessageAccepted`; one immutable full body/sequence, no delivery guaranteed merely by acceptance |
 | `CreatePeerAction` / member | explicit action type and original message reference, targets, response requirement, full body/evidence | `PeerActionCreated` + recipient obligations; TEST_REQUEST never auto-creates target branch work; delivered/processed frontiers advance separately |
 | `MarkCheckpointCommunicationDone` / member | checkpoint/generation, processed message sequence, obligation version, accepted-outbound delivery frontier, no active verification work | `CheckpointMemberMarkedDone`; version-bound DONE certificate; stale frontier or unaddressed required obligations reject |
 | `ReopenCheckpointCommunicationMember` / runtime | new accepted required message/action for DONE member under checkpoint lock | `CheckpointMemberReactivated`; invalidate affected DONE certificate, schedule same member for re-entry, preserve prior discussion history |
-| `MakeCheckpointRepositoriesPrivate` / runtime | CLOSING, external operations for all checkpoint public repos, observed confirmed private state and removed temporary gateway authority | `CheckpointRepositoriesMadePrivate` only after verified private; public history previously copied remains irrevocably exposed; failure blocks private work |
-| `CloseCheckpoint` / runtime | current DONE frontiers or explicitly recorded forced-incomplete closure, persisted closeouts, complete transcript reference, verifier finish/ceiling, private repo confirmation, revoked gateway routes/credentials, created return packets | `CheckpointClosed` and CLOSED only after local and external preconditions are confirmed; private phase can resume. Forced incomplete close cannot masquerade as passed verification |
+| `RevokeCheckpointSnapshotAccess` / runtime | CLOSING, verified revoke operations for all selected checkpoint peer snapshot grants/routes and removed temporary gateway authority | `CheckpointSnapshotAccessRevoked` only after verified grant/route revocation; previously received material cannot be unlearned; failure blocks private work |
+| `CloseCheckpoint` / runtime | current DONE frontiers or explicitly recorded forced-incomplete closure, persisted closeouts, complete transcript reference, verifier finish/ceiling, checkpoint snapshot grant/route revocation confirmation, created return packets | `CheckpointClosed` and CLOSED only after local and external preconditions are confirmed; private phase can resume. Forced incomplete close cannot masquerade as passed verification |
 | `RequestUserInput` / member or worker via runtime | scoped clarification, request text, parent agent/branch, question ID, blocked dependency | `InteractionRequested`; user RAW response retained, Orchestrator processes within **approved requesting-branch** and global context, and only PROCESSED answer delivered; consequential scope changes require confirmation |
 | `PauseRun` / user or safety trigger | ACTIVE run, exact run version; closes new ordinary admissions immediately | `RunPauseRequested`, ACTIVE with QUIESCING_FOR_PAUSE activity; only verified durable quiescence produces `RunPaused`/PAUSED |
 | `ResumeRun` / user | PAUSED, approved contract/budgets/permissions, provider credentials, sandbox checks, current epoch and affected unknown operations reconciled or safely gated | `RunResumed`, ACTIVE with fresh scoped bridges, otherwise stays PAUSED |
@@ -1341,34 +1341,34 @@ The following is the normative completion of the existing catalog. Payloads and 
 
 ### 26.3 Independent review and version-bound communication closure
 
-- `CHECKPOINT_READY` is authored per member for the **Orchestrator-proposed, user-approved outcome phase**, not generated by an optimizer, runtime or /done. The five-arrival barrier is separate from entering OPENING, internet-public publication, SEALED_REVIEW and REVIEWING.
-- SEALED_REVIEW is a **strict privacy barrier**: peer assessments and the shared debate stream stay unavailable across DB queries, graph/RAG, caches, SSE, Git and UI until all five reviewers submit and one atomic RevealCheckpointReviews succeeds. Public GitHub candidate repos alone are not permission to reveal sealed review text.
+- `CHECKPOINT_READY` is authored per member for the **Orchestrator-proposed, user-approved outcome phase**, not generated by an optimizer, runtime or /done. The five-arrival barrier is separate from entering OPENING, verified customer-local snapshot grants, SEALED_REVIEW and REVIEWING.
+- SEALED_REVIEW is a **strict privacy barrier**: peer assessments and the shared debate stream stay unavailable across DB queries, graph/RAG, caches, SSE, Git and UI until all five reviewers submit and one atomic RevealCheckpointReviews succeeds. Read-only candidate snapshots alone are not permission to reveal sealed review text.
 - All messages carry a server-assigned checkpoint-local ordered sequence. Every peer action retains its original complete message; typed action is an attributed *member declaration*. Required responses may be ACKNOWLEDGED, DISPUTED, DEFERRED, etc., without marking underlying test coverage PASSED or consensus reached.
 - DONE is **checkpoint communication state only**. Under one checkpoint generation/frontier lock, it requires no undelivered outbound accepted messages, no unprocessed required messages, no outstanding required response obligations, no active `/work`, and current expected obligation version. A new relevant accepted required action invalidates the certificate and returns DONE -> AVAILABLE. Mere keepalives/internal bookkeeping do not invalidate it. `/work` uses a separate disposable verifier, never modifies authoritative candidate.
-- Normal CLOSING requires current DONE certificates for all five and no pending communications/verification work, plus member-authored closeouts, durable message/action index and private visibility. An explicitly bounded forced close records who/what is incomplete and never pretends five DONE messages or passing tests existed.
+- Normal CLOSING requires current DONE certificates for all five and no pending communications/verification work, plus member-authored closeouts, durable message/action index and verified closure of temporary snapshot access. An explicitly bounded forced close records who/what is incomplete and never pretends five DONE messages or passing tests existed.
 
 ### 26.4 Clarification, budget, retention and SSE state guards
 
 - A structurally valid user question raised by member/worker must not receive an Orchestrator **intellectual veto**. Persist RAW answer separately, process faithfully with locators/semantic strength/scope, and create a new versioned Project Contract approval gate for consequential changes. Branch-private Orchestrator clarification cache and derived retrieval artifacts follow requesting-branch scope.
-- Permission expansion, public publication, budget policy change and candidate acceptance are independent, explicit **user decisions** tied to exact target revisions/hashes. Browser dismissals and SSE replay do not count as decisions. Same actor/scope/idempotency key/hash returns the original result before stale-version checks; key/hash disagreement returns IDEMPOTENCY_CONFLICT.
+- Permission expansion, optional external-publication authorization, local snapshot scope approval, budget policy change and candidate acceptance are independent, explicit **user decisions** tied to exact target revisions/hashes. Browser dismissals and SSE replay do not count as decisions. Same actor/scope/idempotency key/hash returns the original result before stale-version checks; key/hash disagreement returns IDEMPOTENCY_CONFLICT.
 - A budget-reserve failure produces `RESOURCE_LIMIT` / `BUDGET_EXHAUSTED` with current remaining/reserved and an optional durable user budget-expansion interaction. Users may approve different limits; neither Orchestrator nor agent grants money. BYOK credits/wallet billing is not an MVP domain action.
 - An execution bridge epoch revocation blocks **new authorization**, not proof that an external provider call was cancelled or free. Unknown effects are stateful Part 5 operations; only applicable dependents block. Activity/coverage/verification/candidate acceptance are reported separately.
 - SSE clients first obtain a canonical scope-filtered snapshot and its committed event watermark from one database snapshot, then subscribe/replay **after** that position; duplicate/out-of-order events are deduped and replayed from canonical history. Private/hidden events cannot leak by position gaps or change-event payloads. A UI cannot optimistically mark external PUBLIC/PRIVATE, archive, or acceptance events successful before canonical observation.
 
 ### 26.5 Required deterministic tests (not run)
 
-- Idempotent replay of a successful contract approval returns the saved response despite later run state; conflicting same-key payload rejects; no duplicate run or public publication.
+- Idempotent replay of a successful contract approval returns the saved response despite later run state; conflicting same-key payload rejects; no duplicate run or checkpoint snapshot export/grant.
 - Five valid member readiness records are required; BUDGET_EXHAUSTED or FAILED members cannot advance the arrival barrier, sealed review reveal, or final acceptance.
 - Simultaneous fifth sealed submission/reveal cannot emit partial assessment disclosure or a duplicate reveal; branch-local/private caches and Git never leak sealed reviews early.
 - Message acceptance, new required action and /done race under the same guard: no lost obligation, invalid DONE certificate, false checkpoint closure or stale reactivation.
-- Unknown provider/public-private GitHub/host operation never emits a successful observation event. Stop/Resume/Pause recovery behaves according to the true state, not the last UI projection.
+- Unknown provider/local snapshot grant-revoke/optional external Git/host operation never emits a successful observation event. Stop/Resume/Pause recovery behaves according to the true state, not the last UI projection.
 - All four user Project Contract decisions and budget/permission/candidate decisions are target-version pinned and reconnect-safe. No raw answer delivered directly to a member; local clarifications cannot appear in other members' contexts.
 - A report shows verification NOT_RUN/BLOCKED/FAILED independently of DISPUTED/DEFERRED communication and user acceptance. Forced checkpoint close remains explicit incomplete.
 - Event snapshot/SSE replay is committed-order safe, authorization-filtered and independent of transport reconnects.
 
 ### 26.6 Completion boundary
 
-This defines the full **Step 4** command/event/actor/transition behavior and persisted user interaction surfaces without depending on a particular transport library. **DESIGNED does not mean IMPLEMENTED or VERIFIED.** The precise endpoint framing, generated DTO code, tests, model adapters, checkpoint gateway implementation and user interface remain future work. The current Part 4 registry is a specification, not a deployed service.
+This captures the previously DESIGNED Step 4 baseline. **ADR-17 reopens the repository/snapshot command, grant, consent and closure integration**, while existing actor, idempotency and peer-review semantics remain specified. No part is IMPLEMENTED or VERIFIED. The precise endpoint framing, generated DTO code, tests, model adapters, checkpoint gateway implementation and user interface remain future work. The current Part 4 registry is a specification, not a deployed service.
 
 
 ## 27. Accepted Step 8.2 resource-monitor and worker-authority refinement (design only)
@@ -1387,3 +1387,13 @@ The trusted runtime, not the member model, monitors aggregate sandbox resource u
 **Security rule:** no agent-controlled sandbox or worker receives raw Docker Engine socket/API credentials. Optional isolated child containers require a separately authorized trusted broker and count against the parent's aggregate resource vector; child workers cannot expand parent spending, visibility or reviewer authority.
 
 **Verification boundary:** typed DTO/handler generation, external Docker metrics/oom integration, Windows Docker Desktop WSL2/host checks, supported GPU accounting and actual pressure/OOM/lease tests are **NOT STARTED / NOT RUN**. These new events are a specification update, not executable implementation.
+
+## 27. Local-first checkpoint interaction amendment (ADR-17/18; design integration open)
+
+**New authoritative gateway contract:** [LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md](LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md). The MVP checkpoint publication is now a **customer-local selected frozen read-only snapshot**, not a GitHub PUBLIC transition. `PublishCheckpointSnapshots` requests export/hash verification and explicitly scoped recipient read grants, with confirmed `CheckpointSnapshotsAvailable` only after externally verified safe access. `RevokeCheckpointSnapshotAccess` requests local permission/mount/route teardown; only observed closure emits `CheckpointSnapshotAccessRevoked`. Desired action != confirmed physical access. Optional externally public publication remains a *different* separately authorized action/operation and is absent by default. Old public-GitHub event meanings are legacy/superseded, not renamed external proofs.
+
+User gates for **retention/share** are separate from checkpoint peer-grants: customer-specific archive retention is policy-bound, and customer-derived general knowledge release outside the tenant needs its own specific informed approval, content/access scope, privacy/IP/license review and idempotent decision record. Approved scoped local snapshots are not consent to vendor access or cross-customer lesson export.
+
+**Step 11 retrieval behavior (design direction):** authorized memory search presents context-relevant working approaches first; prior failures are `FAILED_IN_CONTEXT` observations and test ideas, never automatic universal blacklist verdicts. Agent intellectual discretion and independent hypothesis testing remain intact. Ranking and enforcement implementation/tests are pending.
+
+**Step 4 integration status:** REOPENED IN DESIGN only for these affected typed operations and user sharing/consent semantics; no production gateways, DTOs, or runtime tests have been executed.
