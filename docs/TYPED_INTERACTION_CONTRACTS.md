@@ -2,7 +2,7 @@
 
 **October 13, 2026 amendment:** [decision/status index](ARCHITECTURE_DECISIONS.md). Requirements below are specifications; application implementation is NOT STARTED and runtime tests are NOT RUN.
 
-**Status:** DESIGN AMENDED; extended state/command integration remains open. The approved baseline and October 13 requirements are specifications, not implemented behavior.
+**Design status:** DESIGNED (October 14, 2026); the extended command/event/interaction and transition contracts are now reconciled. **Implementation:** NOT STARTED. **Runtime/state-machine tests:** NOT RUN.
 **Authority:** this document refines the state/action, user-interaction, command, event, and UI-wiring requirements in APP_DESIGN.md and the persistence model in POSTGRES_DATA_MODEL.md. If a supporting document conflicts with the latest explicit owner instruction or APP_DESIGN.md, the latest owner instruction and APP_DESIGN.md remain authoritative.  
 **Implementation status:** specification only. No application code is implied by this document.
 
@@ -279,16 +279,14 @@ Every command uses a common envelope containing:
 - payload
 
 Command handling order:
-1. authenticate actor;
-2. authorize actor for target scope;
-3. validate schema;
-4. verify expected version/hash;
-5. verify lifecycle/activity transition guard;
-6. check idempotency;
-7. perform canonical mutation atomically;
-8. write audit/event/outbox records in the same transaction;
-9. return the canonical result;
-10. perform external side effects only through a recoverable operation record.
+1. authenticate actor and authorize its exact scope;
+2. validate the command schema and canonicalize the request body/hash;
+3. inside the event-clock-first canonical transaction, **check the scoped idempotency receipt/key before expected-version or transition guards**: same request returns the original authorized result even if the target has since changed; same key with different hash rejects as IDEMPOTENCY_CONFLICT;
+4. for new commands only, verify expected version/hash and lifecycle/activity/permission/phase guards;
+5. atomically perform the canonical mutation, append audit events/outbox records and persist the command receipt/result;
+6. commit, then return the canonical result and dispatch any durable external operations **outside** the SQL transaction.
+
+An idempotent replay must still authenticate/authorize the requesting actor, and it must not execute a second external operation. This ordering prevents a retry of a successful approval or /done from returning a spurious STALE_TARGET simply because the original command already advanced the state.
 
 A rejected command produces an explicit typed error. It must not partially mutate canonical state.
 
@@ -1295,3 +1293,75 @@ Command/result schemas, registry wiring, UI mappings, and deterministic tests fo
 ### Pause-request contract refinement
 
 QUIESCING_FOR_PAUSE is runtime-owned activity entered by an authorized PauseRun or recorded safety trigger. It immediately closes ordinary work admission; fencing, safe persistence, reconciliation, and cleanup remain allowed. The UI shows pausing with affected members/operations and StopRun available, without a new blocking dialog. Repeated pause requests deduplicate. RunPaused is emitted only after the required controllable execution boundaries have quiesced and durable state is recorded; unknown provider outcomes remain visible independently. StopRun supersedes pending pause with STOPPING. Quiescence failure/ceiling records a blocked or failed pause operation rather than falsely declaring PAUSED; scope-specific recovery is governed by Part 7. ResumeRun is available only after PAUSED and current safety/authority/budget guards pass. No runtime implementation or test completion is implied.
+
+
+## 26. October 14 Part 4 design closure — typed protocol and state/authority matrix
+
+**Part 4 is DESIGNED as a typed behavior specification only.** The October 13 state refinements and Step 7 integration above are authoritative; this section specifies missing payloads, actors, guards, events, transitions and interaction behavior without implementing the agent loop (Step 8), provider adapters (Step 9), sandboxes (Step 10) or frontend transport (Step 12). No runtime or state-machine tests have been run.
+
+### 26.1 Common envelope, result, and error policy
+
+The canonical command envelope in Sections 5 and 24.3 is v1 and must carry `command_id`, `command_type`, `schema_version`, `actor_type/id`, `project_id`, `run_id` when relevant, `branch_id`/seat scope when relevant, `target_type/id`, expected version/hash for mutable or revision-pinned targets, `idempotency_key`, correlation/causation IDs, and typed payload. Typed errors preserve AUTH_REQUIRED, FORBIDDEN, VALIDATION_FAILED, STALE_TARGET, INVALID_TRANSITION, IDEMPOTENCY_CONFLICT, REQUIRED_ACTIONS_OPEN, EXTERNAL_OUTCOME_UNKNOWN and RESOURCE_LIMIT, with additional precise errors `BUDGET_EXHAUSTED`, `STALE_EXECUTION_EPOCH`, `PUBLICATION_UNSAFE`, `PUBLICATION_NOT_VERIFIED`, `SEALED_REVIEWS_INCOMPLETE`, and `ARCHIVE_VALIDATION_INCOMPLETE` where appropriate.
+
+- Only the **user** may approve/revise permissions, Project Contract, phase/run budgets, internet-publication exposure and final acceptance; the **Orchestrator** prepares contract revisions and neutral semantic milestones; the **member** alone authors intellectual readiness, original review, challenges and closeout; the **trusted runtime** verifies mechanical state, delivers events, reconciles effects and performs authorized transitions. Auditor flags protocol/semantic-fidelity violations, not solution quality.
+- A command requests an operation. `*Requested`/`*Started` records and desired external status are distinct from `*Succeeded`/`*Published`/`*Private` verification events. The runtime cannot emit success from an API timeout or requested transition.
+- Activity code, lifecycle, operation state, member checkpoint communication state, independent-review status, verification coverage, budget exhaustion and user acceptance remain **different concepts**. No activity label alone grants capability, publishes data or opens a user dialog; only a durable `interaction_request` invokes blocking user input.
+
+### 26.2 Typed command -> guarded effect -> event matrix
+
+The following is the normative completion of the existing catalog. Payloads and their target versions are mandatory when listed; named transition events are emitted only on the recorded guard being satisfied. Internal adapter commands may be split by endpoint but retain the same semantic contract.
+
+| Command / owner | Required payload + guard | Canonical event and state effect |
+| --- | --- | --- |
+| `ApproveProjectContract` / user | exact contract revision/hash, live PROJECT_CONTRACT_APPROVAL request, explicit accepted run/budget/permission/semantic-phase configuration | `ProjectContractApproved`; creates/activates approved revision and (when immediate) PROVISIONING run atomically with the resolved interaction; later external setup via durable operations |
+| `ApproveRunBudgetPolicy` / user | exact run/contract revision, prior policy version, run ceiling, **approved** development/review/finalization pools and member/phase token+cost caps; optional suggested 70/25/5 is not authority | `BudgetPolicyApproved`; append immutable budget policy revision; revalidate all outstanding reservations before reallocation; no automatic top-up |
+| `RecordMemberCheckpointReady` / member-originated, trusted gateway | member/seat, current phase/checkpoint generation, authored readiness outcome, candidate frozen repo SHA/snapshot/evidence refs; mechanical metadata valid and correct owner | `MemberCheckpointReady`; immutable per-generation arrival; never runtime-assigned intellectual completion; fifth valid distinct arrival makes checkpoint eligible to trigger but does not publish it |
+| `RecordMemberPhaseBudgetExhaustion` / runtime | approved phase policy, available/settled/reserved usage, exhausted scope and unfinished member state | `MemberPhaseBudgetExhausted`; member remains BUDGET_EXHAUSTED / INCOMPLETE and must not satisfy a checkpoint/accepted-candidate barrier |
+| `ReserveModelCallAllowance` / trusted runtime | operation identity, requester/parent, model/profile/phase, fixed-precision token+cost bound, all pool/member/run caps and resource ceiling checks | `BudgetReservationCreated` + requested operation/outbox in one transaction; call dispatched only after commit; uncertain dispatched liability retained |
+| `RecordBudgetReservationSettlement` / trusted runtime | original operation/attempt, current authorization epoch for effects, actual usage or explicit unknown/reconciliation evidence | `BudgetReservationSettled` or `BudgetReservationOutcomeUnknown`; balances updated atomically, never refund unknown dispatched use |
+| `PublishCheckpointRepositories` / trusted runtime with exact user approval | five arrivals, frozen snapshot SHAs, full **internet-public GitHub exposure** manifest/history and user authorization, passed safety checks | first schedules external publication operations; **only observed verified public visibility** emits `CheckpointRepositoriesPublished`, enables SEALED_REVIEW; partial/unknown leaves OPENING guarded |
+| `SubmitIndependentCheckpointReview` / each member | SEALED_REVIEW, current generation, exact frozen peer candidate set, own authored assessment and evidence hash | `IndependentCheckpointReviewSubmitted`, immutable and visible only to own reviewer/trusted runtime before reveal |
+| `RevealCheckpointReviews` / runtime | all five distinct valid current-generation sealed submissions; consistent pinned candidate set; no leakage | one `CheckpointPeerReviewsRevealed` atomic visibility/delivery activation; SEALED_REVIEW -> REVIEWING; missing reviewer stays blocked/aborted explicitly |
+| `SendCheckpointMessage` / available member | active REVIEWING session and execution bridge/epoch, complete verified logical message; optional target refs | `CheckpointMessageAccepted`; one immutable full body/sequence, no delivery guaranteed merely by acceptance |
+| `CreatePeerAction` / member | explicit action type and original message reference, targets, response requirement, full body/evidence | `PeerActionCreated` + recipient obligations; TEST_REQUEST never auto-creates target branch work; delivered/processed frontiers advance separately |
+| `MarkCheckpointCommunicationDone` / member | checkpoint/generation, processed message sequence, obligation version, accepted-outbound delivery frontier, no active verification work | `CheckpointMemberMarkedDone`; version-bound DONE certificate; stale frontier or unaddressed required obligations reject |
+| `ReopenCheckpointCommunicationMember` / runtime | new accepted required message/action for DONE member under checkpoint lock | `CheckpointMemberReactivated`; invalidate affected DONE certificate, schedule same member for re-entry, preserve prior discussion history |
+| `MakeCheckpointRepositoriesPrivate` / runtime | CLOSING, external operations for all checkpoint public repos, observed confirmed private state and removed temporary gateway authority | `CheckpointRepositoriesMadePrivate` only after verified private; public history previously copied remains irrevocably exposed; failure blocks private work |
+| `CloseCheckpoint` / runtime | current DONE frontiers or explicitly recorded forced-incomplete closure, persisted closeouts, complete transcript reference, verifier finish/ceiling, private repo confirmation, revoked gateway routes/credentials, created return packets | `CheckpointClosed` and CLOSED only after local and external preconditions are confirmed; private phase can resume. Forced incomplete close cannot masquerade as passed verification |
+| `RequestUserInput` / member or worker via runtime | scoped clarification, request text, parent agent/branch, question ID, blocked dependency | `InteractionRequested`; user RAW response retained, Orchestrator processes within **approved requesting-branch** and global context, and only PROCESSED answer delivered; consequential scope changes require confirmation |
+| `PauseRun` / user or safety trigger | ACTIVE run, exact run version; closes new ordinary admissions immediately | `RunPauseRequested`, ACTIVE with QUIESCING_FOR_PAUSE activity; only verified durable quiescence produces `RunPaused`/PAUSED |
+| `ResumeRun` / user | PAUSED, approved contract/budgets/permissions, provider credentials, sandbox checks, current epoch and affected unknown operations reconciled or safely gated | `RunResumed`, ACTIVE with fresh scoped bridges, otherwise stays PAUSED |
+| `StopRun` / user | ACTIVE/PAUSED, versioned stop request and authority | `RunStopRequested`, STOPPING; clean confirmed teardown -> `RunCancelled`, unsafe/incomplete cleanup -> `RunFailed` with unresolved effects listed |
+| `AcceptCandidate` / user | live FINAL_CANDIDATE_REVIEW interaction bound to exact candidate SHA, limits/verification disclosures and authorized retention decisions | `CandidateAccepted`; schedules separate verifiable archival/teardown operations; NOT equivalent to StopRun and not completed finalization merely on acceptance |
+| `FinalizeCandidate` / runtime | accepted candidate, exported Git/evidence manifest and fresh-checkout reference closure validated, unresolved consequential obligations handled, explicit repo retention/visibility authorization, Council runtime cleanup verified | `CandidateFinalized`, `RunCompleted`; cleanup failures remain FINALIZING/FAILED as appropriate, never fictitious completion |
+
+### 26.3 Independent review and version-bound communication closure
+
+- `CHECKPOINT_READY` is authored per member for the **Orchestrator-proposed, user-approved outcome phase**, not generated by an optimizer, runtime or /done. The five-arrival barrier is separate from entering OPENING, internet-public publication, SEALED_REVIEW and REVIEWING.
+- SEALED_REVIEW is a **strict privacy barrier**: peer assessments and the shared debate stream stay unavailable across DB queries, graph/RAG, caches, SSE, Git and UI until all five reviewers submit and one atomic RevealCheckpointReviews succeeds. Public GitHub candidate repos alone are not permission to reveal sealed review text.
+- All messages carry a server-assigned checkpoint-local ordered sequence. Every peer action retains its original complete message; typed action is an attributed *member declaration*. Required responses may be ACKNOWLEDGED, DISPUTED, DEFERRED, etc., without marking underlying test coverage PASSED or consensus reached.
+- DONE is **checkpoint communication state only**. Under one checkpoint generation/frontier lock, it requires no undelivered outbound accepted messages, no unprocessed required messages, no outstanding required response obligations, no active `/work`, and current expected obligation version. A new relevant accepted required action invalidates the certificate and returns DONE -> AVAILABLE. Mere keepalives/internal bookkeeping do not invalidate it. `/work` uses a separate disposable verifier, never modifies authoritative candidate.
+- Normal CLOSING requires current DONE certificates for all five and no pending communications/verification work, plus member-authored closeouts, durable message/action index and private visibility. An explicitly bounded forced close records who/what is incomplete and never pretends five DONE messages or passing tests existed.
+
+### 26.4 Clarification, budget, retention and SSE state guards
+
+- A structurally valid user question raised by member/worker must not receive an Orchestrator **intellectual veto**. Persist RAW answer separately, process faithfully with locators/semantic strength/scope, and create a new versioned Project Contract approval gate for consequential changes. Branch-private Orchestrator clarification cache and derived retrieval artifacts follow requesting-branch scope.
+- Permission expansion, public publication, budget policy change and candidate acceptance are independent, explicit **user decisions** tied to exact target revisions/hashes. Browser dismissals and SSE replay do not count as decisions. Same actor/scope/idempotency key/hash returns the original result before stale-version checks; key/hash disagreement returns IDEMPOTENCY_CONFLICT.
+- A budget-reserve failure produces `RESOURCE_LIMIT` / `BUDGET_EXHAUSTED` with current remaining/reserved and an optional durable user budget-expansion interaction. Users may approve different limits; neither Orchestrator nor agent grants money. BYOK credits/wallet billing is not an MVP domain action.
+- An execution bridge epoch revocation blocks **new authorization**, not proof that an external provider call was cancelled or free. Unknown effects are stateful Part 5 operations; only applicable dependents block. Activity/coverage/verification/candidate acceptance are reported separately.
+- SSE clients first obtain a canonical scope-filtered snapshot and its committed event watermark from one database snapshot, then subscribe/replay **after** that position; duplicate/out-of-order events are deduped and replayed from canonical history. Private/hidden events cannot leak by position gaps or change-event payloads. A UI cannot optimistically mark external PUBLIC/PRIVATE, archive, or acceptance events successful before canonical observation.
+
+### 26.5 Required deterministic tests (not run)
+
+- Idempotent replay of a successful contract approval returns the saved response despite later run state; conflicting same-key payload rejects; no duplicate run or public publication.
+- Five valid member readiness records are required; BUDGET_EXHAUSTED or FAILED members cannot advance the arrival barrier, sealed review reveal, or final acceptance.
+- Simultaneous fifth sealed submission/reveal cannot emit partial assessment disclosure or a duplicate reveal; branch-local/private caches and Git never leak sealed reviews early.
+- Message acceptance, new required action and /done race under the same guard: no lost obligation, invalid DONE certificate, false checkpoint closure or stale reactivation.
+- Unknown provider/public-private GitHub/host operation never emits a successful observation event. Stop/Resume/Pause recovery behaves according to the true state, not the last UI projection.
+- All four user Project Contract decisions and budget/permission/candidate decisions are target-version pinned and reconnect-safe. No raw answer delivered directly to a member; local clarifications cannot appear in other members' contexts.
+- A report shows verification NOT_RUN/BLOCKED/FAILED independently of DISPUTED/DEFERRED communication and user acceptance. Forced checkpoint close remains explicit incomplete.
+- Event snapshot/SSE replay is committed-order safe, authorization-filtered and independent of transport reconnects.
+
+### 26.6 Completion boundary
+
+This defines the full **Step 4** command/event/actor/transition behavior and persisted user interaction surfaces without depending on a particular transport library. **DESIGNED does not mean IMPLEMENTED or VERIFIED.** The precise endpoint framing, generated DTO code, tests, model adapters, checkpoint gateway implementation and user interface remain future work. The current Part 4 registry is a specification, not a deployed service.
