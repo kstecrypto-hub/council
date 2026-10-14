@@ -1,6 +1,6 @@
 # Local-first repositories, checkpoint sharing, and privacy-preserving learning
 
-**Architecture amendment approved October 14, 2026 (ADR-16 / ADR-17).** The owner approves customer-controlled local Git and scoped checkpoint snapshot sharing instead of internet-public GitHub repositories by default, and customer-controlled knowledge retention with **explicit opt-in and review** before any cross-customer generalization. The owner further specifies **success-first retrieval** and **contextual—not universal—failure learning**.
+**Architecture amendment approved October 14, 2026 (ADR-17 / ADR-18).** The owner approves customer-controlled local Git and scoped checkpoint snapshot sharing instead of internet-public GitHub repositories by default, and customer-controlled knowledge retention with **explicit opt-in and review** before any cross-customer generalization. The owner further specifies **success-first retrieval** and **contextual—not universal—failure learning**.
 
 **Design status:** APPROVED DIRECTION / IN DESIGN for integration across existing Steps 2–5, 8, 10, 11, 12. **Runtime implementation:** NOT STARTED. **Tests:** NOT RUN. This file supersedes the *former default public-GitHub checkpoint and centrally reusable customer-derived knowledge* assumptions in older specifications. It does not assert an implemented local Git gateway or a completed Step 11 memory-ranking policy.
 
@@ -45,7 +45,7 @@ At close: export/validate only policy-authorized deliverables and memory before 
 
 ## 4. Success-first retrieval; failures are conditional evidence, never blacklists
 
-**Accepted owner correction (ADR-17):** When a member needs a previous implementation strategy, first look for **working approaches** relevant to the requested objective and current constraints. Show workable alternatives and their tested limits before exploring lessons from failed attempts. Failed approaches remain indexed, but **a previous failure never by itself excludes the approach from consideration** on a new, merely similar task.
+**Accepted owner correction (ADR-18):** When a member needs a previous implementation strategy, first look for **working approaches** relevant to the requested objective and current constraints. Show workable alternatives and their tested limits before exploring lessons from failed attempts. Failed approaches remain indexed, but **a previous failure never by itself excludes the approach from consideration** on a new, merely similar task.
 
 ### 4.1 Suggested retrieval and presentation contract
 
@@ -83,4 +83,4 @@ Customer-local projects can reuse their own pinned recipes/code/artifacts when a
 
 **Open design matters:** precise gateway/adapter protocol, authenticated read-only snapshot mounting, consistency and crashes during export/revoke, legacy public-GitHub migration/compatibility, exact retention/deletion and customer opt-in UX, semantic lesson metadata/index schema, pricing/benchmark measurements. No live customer's code was retrieved or modified as part of this decision.
 
-**State:** ADR-16 local-first and ADR-17 success-first contextual failures are **APPROVED DESIGN DIRECTIONS**. Integration of older specs is not yet verified as complete; Step 11 is still **IN DESIGN** and implementation/testing across all affected steps remains **NOT STARTED / NOT RUN**.
+**State:** ADR-17 local-first and ADR-18 success-first contextual failures are **APPROVED DESIGN DIRECTIONS**. Integration of older specs is not yet verified as complete; Step 11 is still **IN DESIGN** and implementation/testing across all affected steps remains **NOT STARTED / NOT RUN**.
