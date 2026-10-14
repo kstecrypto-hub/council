@@ -2,7 +2,7 @@
 
 **October 13, 2026 amendment:** [decision/status index](ARCHITECTURE_DECISIONS.md). Requirements below are specifications; application implementation is NOT STARTED and runtime tests are NOT RUN.
 
-**Design status:** DESIGNED (October 14, 2026); persistence boundaries, record groups, cardinalities, and consistency constraints specified. **Implementation:** NOT STARTED. **Migration/integration tests:** NOT RUN.  
+**Design status:** PREVIOUS BASELINE DESIGNED; **ADR-17 local snapshot/customer-retention integration REOPENED IN DESIGN** (October 14). Core event/lease/budget/authorization invariants remain specified. **Implementation:** NOT STARTED. **Migration/integration tests:** NOT RUN.  
 **Authority:** this document refines section 13 of [APP_DESIGN.md](APP_DESIGN.md). If they conflict, the latest explicit owner instruction and APP_DESIGN remain authoritative.
 
 ## 1. Database layout
@@ -16,7 +16,7 @@ Use two logical schemas:
 
 The PostgreSQL instance is **project-lifetime control infrastructure**, not the long-term learning store. It may use a persistent volume so crashes/restarts do not destroy an active project, but after user acceptance and successful export of the retained project/learning artifacts, the Council PostgreSQL volume is deleted with the rest of the Council runtime.
 
-Long-term reuse of accepted work is Git-backed and is described in section 13.
+Long-term reuse of accepted work is **customer-owned**, Git-backed only if the customer's retention policy permits, and described in section 13 and the [local repository/memory decision](LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md). No cross-customer export by default.
 
 Use application-generated UUIDs for canonical identities, `timestamptz` for timestamps, explicit version numbers for versioned aggregates, and a monotonically increasing `bigint` event position for ordered audit/projection processing.
 
@@ -846,7 +846,7 @@ Artifact references are content-hashed where practical. A database backup withou
 
 The long-term reuse layer is **not** a permanent PostgreSQL schema.
 
-After the user accepts a project, Council writes a compact reusable archive to Git before destroying the temporary Council runtime database. Git is the durable source for personal reuse and for improving future Council runs.
+After the user accepts a project, Council **may, under the customer's explicit retention policy**, write a reusable archive to **customer-controlled Git/artifact storage** before destroying the temporary Council runtime database. The archive is the customer's durable source for its own future reuse, not a vendor-owned permanent project copy. If exact source cannot be legally retained, a generic recipe cannot promise exact code reconstruction. Any independently permitted general knowledge library is separately authorized, not implicit.
 
 Retain, at minimum, when available and useful:
 - the accepted project/repository or an immutable reference to it;
@@ -862,17 +862,17 @@ Retain, at minimum, when available and useful:
 
 Do **not** retain the PostgreSQL control database merely to preserve this information. Raw leases, queue state, runtime sessions, transient checkpoint machinery, caches, and other operational residue are deleted with the Council deployment unless they were deliberately distilled into useful retained project knowledge.
 
-A future Council run may search the Git-backed archive to recognize similar prior projects and use an accepted prior project as a base, reference, technique source, or near-copy where appropriate. Originality is not a requirement.
+A future Council run may search **its own authorized customer-local Git archive** to identify applicable prior projects and use a prior solution as a starting point. Success is evidence **within tested conditions**; retain alternatives and context-specific failures as warnings/tests, not blacklist rules. No other customer can retrieve this archive without explicitly authorized specific sharing.
 
 The exact Git index/file layout is an implementation detail for the later reuse design. The architectural rule is:
 
-> PostgreSQL remembers the active Council run; Git remembers accepted work worth learning from.
+> Temporary PostgreSQL remembers the active Council run; **the customer's authorized Git/archive** remembers its permitted accepted work. General knowledge across customers is independently approved and never inferred from acceptance.
 
 ## 14. Acceptance, archival, and deletion
 
 1. Freeze the accepted candidate and record the exact user decision.
 2. Preserve actual clean-rebuild/acceptance results; do not claim reproducibility without the required successful checks.
-3. Export the accepted project, reproducible environment, authorized learning package, and essential provenance/evidence to Git and durable referenced artifact storage.
+3. Export **only retention-authorized** accepted project material, reproducible environment, customer-local learning, and permitted provenance/evidence to customer-owned Git and durable referenced artifact storage. Do not send customer-derived patterns to a central library without specific opt-in/review.
 4. Validate reference closure and restoreability from the retained archive without the temporary control database.
 5. Reconcile consequential external effects and unresolved spending/authority operations, retaining the records needed to resolve any still-open obligations.
 6. Apply the explicitly authorized repository archival/visibility policy.
@@ -880,7 +880,7 @@ The exact Git index/file layout is an implementation detail for the later reuse 
 
 A user-accepted candidate is eligible for retention, not automatically a validated general rule. Every reusable lesson retains applicable task/environment/version conditions, source and test evidence, limitations, failures/counterexamples, uncertainty, and reassessment triggers. Do not label empirical lessons unconditionally PROVEN. Keep the memory snapshot fixed during a run; independent retrieval must not become live cross-branch communication.
 
-Before deleting the temporary control database, export the accepted project and selected learning/evidence to a durable Git-backed archive. Validate the transitive reference closure from a fresh archive checkout or retained artifact store, with hashes and permissions checked and no dependency on the live Council database, temporary sandbox paths, expiring URLs, or credentials. Essential missing/restricted evidence blocks teardown or requires an explicitly approved archive/retention change that honestly downgrades the unsupported lesson. Do not silently retain forbidden source data or silently delete the only evidence.
+Before deleting the temporary control database, export any **policy-authorized** accepted project and selected learning/evidence to a **customer-owned** durable Git-backed archive. Validate the transitive reference closure from a fresh archive checkout or retained artifact store, with hashes and permissions checked and no dependency on the live Council database, temporary sandbox paths, expiring URLs, or credentials. Essential missing/restricted evidence blocks teardown or requires an explicitly approved archive/retention change that honestly downgrades the unsupported lesson. Do not silently retain forbidden source data or silently delete the only evidence.
 
 Export acceptance/contract history and relevant provenance needed by retained lessons/reports; transient sessions, leases, and caches need not be retained. Archived failed approaches remain distinguishable from accepted candidates. Temporary restore validation and cleanup must be safe to retry. Final archive visibility follows explicit authorization and is not inferred from earlier public checkpoints.
 
@@ -965,7 +965,7 @@ LangGraph checkpoints are continuation projections, not a second authority over 
 Required additional record groups:
 
 - council_core.event_clock: singleton per deployment with last_position; locked through each event-producing canonical transaction.
-- checkpoint repository publications: checkpoint/generation, repository, approved refs/history manifest and hashes, user authorization, desired/observed visibility, external operation IDs, first observed exposure, private confirmation, errors. This does not make private database rows public.
+- checkpoint local snapshot exports/grants: checkpoint/generation, source repo/tree, selected allowed files/artifacts and content hashes, customer authorization, immutable exported object reference, recipient read-grant version, desired/observed authorized reachability, outbox/operation IDs, verified revocation, failures/UNKNOWN. **No PUBLIC GitHub transition is the default.** Optional external visibility has separate user authorization/audit.
 - independent checkpoint reviews: immutable checkpoint/generation/reviewer/candidate-bound assessment and evidence hashes; private until an atomic all-five reveal/delivery record.
 - checkpoint review frontiers: message sequence, obligation version, review generation, member processed watermark, and version-bound DONE certificate. Communication state is separate from verification/check status and candidate readiness.
 - clarification lineage: raw response reference, processed response, source statement locators, scope/strength, branch-local context manifest, confirmation, and effective contract revision.
@@ -996,12 +996,11 @@ These are accepted data requirements. Section 20 now specifies their additional 
 New required record groups (table identifiers illustrative, relationships and guards normative):
 
 - `council_core.checkpoint_arrivals`: `checkpoint_id`, `generation`, `member_seat_id`, `phase_id`, `member_emitted_ready_event_id`, `candidate_snapshot_id`, `frozen_repository_revision_id`, `environment_version_id` nullable, `ready_at`; UNIQUE(checkpoint, generation, seat). Runtime validates required metadata but never makes the member's intellectual readiness decision. A failed/BUDGET_EXHAUSTED member does not acquire an arrival row. Opening requires exactly five current-generation arrivals.
-- `council_core.repository_publication_manifests`: checkpoint/generation, repo identity, exact frozen SHA(s), **all refs/history/surfaces made internet-public**, reviewed content hashes, policy version, explicit user authorization interaction/decision, safety-check outcome, immutable approved scope/hash. Confidential material, keys and sealed review data must not leak via refs, tags, logs, releases, artifacts, or side channels. Failure/unknown safety blocks opening.
-- `council_runtime.repository_visibility_transitions` and durable external `operations`: checkpoint/generation/repo, desired PUBLIC/PRIVATE, request/attempt IDs, observed external visibility, first observed public exposure, verification time/evidence, errors, and confirmed private-at-close proof. **Desired != observed.** Changing a GitHub repository is never part of a PostgreSQL transaction. Prior public exposure/copies are irreversible; flipping it private cannot be represented as revocation of already published data. A failed private transition blocks unpublished follow-on work.
-- `council_core.sealed_review_submissions`: checkpoint/generation, reviewer seat, referenced exact frozen candidate set, immutable assessment/evidence hash (or artifact pointer), created event/at; UNIQUE(checkpoint, generation, reviewer). Record only reviewer-private/trusted storage before reveal. Five distinct current-generation submissions are mandatory.
-- `council_core.sealed_review_reveals`: checkpoint/generation, immutable set of five submission IDs/hashes, event ID and atomic reveal/authorized-delivery frontier; UNIQUE(checkpoint, generation). Reveal only when every required submission is committed. If a reviewer is missing, no partial implicit reveal; record an explicit incomplete/aborted review without inventing a fifth assessment.
+- `council_core.checkpoint_snapshot_manifests`: checkpoint/generation, source repo/tree SHA, immutable selected file/artifact scope, approved hash manifest, sensitive-content/permissions checks, snapshot hash/store reference, exact intended peer recipients and recorded owner authorization. The selected **read-only customer-local export** excludes unapproved Git ancestry/refs by default.
+- `council_runtime.checkpoint_snapshot_access_operations` plus durable `operations`: checkpoint/generation/export, desired grant/revoke and scope, exact recipient, current observed ability to access only selected frozen content, attempt/request ID, proof/check time, failure/reconciliation evidence. A new private phase requires confirmed closure of temporary peer grants. Do not claim that revocation can erase already learned/cached information.
+- `council_core.optional_external_repository_publications`: used **only when separately approved** by the customer, records destination, full actual external exposure/history, consent and observed publication/withdrawal evidence. Not an MVP prerequisite.
 
-Checkpoint status, public repository observation, sealed assessment visibility and internal publication recipient deliveries are **separate facts**. Public GitHub repo history is internet-public; this does not grant external access to Council's private PostgreSQL rows.
+Checkpoint lifecycle, local snapshot-export observation, scoped read-grant/revocation, sealed-review visibility and canonical recipient delivery are **separate facts**. Customer-local source snapshots and Council-private PostgreSQL data are never internet-public by default.
 
 ### 20.3 Communication, version-bound DONE, verifier, and return
 
@@ -1028,4 +1027,12 @@ Checkpoint traffic and review visibility are authorized by **generation + scope 
 - Enforce `visibility_class` + branch/run scopes through trusted Capability Gateway and RLS on private canonical tables where practical. Use **transaction-local** trusted run/branch identity with connection-pool reset; app database roles do not have unscoped BYPASSRLS/owner access for ordinary agent-facing queries. Sealed submissions remain reviewer-only until the atomic reveal. Canonical admin/runtime reconciliation uses separate narrowly scoped trusted roles. Tests must prove no cross-run access, no hidden-branch leak via graphs, summaries, Orchestrator branch-local caches, search or SSE.
 - Schema migration files and rollback policy, executable SQL constraints, backup + referenced-artifact restore, true concurrent locks, backend isolation and retention teardown tests are **implementation work**, not part of this design completion claim. No permanent Council SQL learning registry is introduced.
 
-**Part 3 design completion:** database ownership, fields/record relationships, immutable/mutable constraints, publication/review/frontier representation, transactional event/budget integration, safe archival boundary and isolation rules are now specified. **DESIGNED** is not **IMPLEMENTED** or **VERIFIED**.
+**Historical Part 3 baseline:** October 14 publication/review/frontier models were DESIGNED for the then-default public-GitHub policy. ADR-17 supersedes that policy; **customer-local snapshot/grant/retention integration is REOPENED IN DESIGN**, while the other data/transaction invariants remain specified. No implementation or runtime verification exists.
+
+## 21. ADR-17/18 local checkpoint and contextual knowledge integration — DESIGN REOPENED
+
+**Authoritative redesign:** [LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md](LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md). Existing public-GitHub/default historical fields are *not* permission to publish source externally; the new local snapshot manifest/grant lifecycle replaces them for the MVP. The control PostgreSQL remains temporary inside customer infrastructure. An optional retained Git project archive is **customer-owned**. A separate general knowledge library must never be populated from customer's work without specific informed approval and an appropriate IP/privacy/license review.
+
+**Conditional knowledge records (Step 11 pending):** store permitted recipe/experiment references with objective, constraints, environment/software versions, configuration, scale/workload, test conditions, true outcomes, regressions, uncertainty, suspected versus demonstrated failure mechanism, source/evidence permissions, source/content hashes where retainable, and relevance boundaries. Label success/failure **IN_CONTEXT**; no failed attempt creates a universal exclusion. Retrieval starts with applicable working approaches and surfaces failure outcomes as relevant warnings and test suggestions, not invisible filters. If supporting evidence may not be retained, mark claims unsupported rather than fabricate reproducibility.
+
+**Open integration:** precise SQL DDL, snapshot integrity and read-grant/revoke operations/constraints, sharing and deletion consent audit, optional external adapters, index/ranking design, authorization tests and archive restoration are NOT IMPLEMENTED or TESTED. This amendment is a design direction, not a complete new schema migration.
