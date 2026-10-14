@@ -10,6 +10,14 @@ Read [the complete design](APP_DESIGN.md) first, then the [PostgreSQL data model
 
 The older single-lead swarm starter is not a valid implementation baseline. Do not import its fixed managerial structure, coding-first assumptions, dashboard, or runtime as if they implement the approved council.
 
+## Model billing and credentials — MVP versus deferred
+
+MVP requires **BYOK for all remote providers** (or compatible local models that need no remote API key). The user connects their own API credentials and approves Council's project/phase token-and-cost allowances. The provider bills the user directly. Do not build a prepaid Council wallet, token reseller, or Council-paid provider account as an MVP dependency. Council budget reservations restrict Council-originated calls; they are not a guaranteed cap on a provider's final invoice, especially for uncertain/late usage or non-Council calls on the same key.
+
+Raw BYOK secrets must remain in trusted per-user/deployment credential storage, never in agent-controlled containers, project artifacts, repositories, normal logs or browser persistence. Expose scoped model-call capabilities through the trusted bridge only; support rotation/revocation and fail closed on unauthorized credential access. BYOK lowers Council's billing exposure but does **not** make key handling automatically secure.
+
+**Deferred option, explicitly retained for a later product decision:** optional Council-managed inference billing, prepaid service credits/wallet, and/or per-token markup. This requires separate provider-commercial, payment-processing, metering/reconciliation, fraud/chargeback/refund, taxation/compliance and financial-risk design. Do not label it specified, implemented, or required in the MVP. Any platform subscription is separate from provider API payments.
+
 ## Product outcome
 
 Build accountable parallel investigations, not an agent chatroom. The three defining graph capabilities are:
