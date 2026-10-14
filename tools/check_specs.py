@@ -6,14 +6,20 @@ import re
 root = Path(__file__).resolve().parents[1]
 contract = json.loads((root / 'docs/architecture_contract.json').read_text())
 assert contract['logical_member_count'] == 5
-assert contract['repository_visibility_cycle'] == ['private', 'public', 'private']
+assert contract['repository_visibility_cycle'] == ['private_work', 'approved_checkpoint_local_read_only_snapshot', 'private_work']
+assert contract['checkpoint_public_github_default'] is False
+assert contract['repository_backend_default'] == 'native_local_git'
+assert contract['cross_customer_knowledge_sharing_default'] is False
+assert contract['failure_memory_policy'] == 'success_first_conditional_failure_warning_never_universal_blacklist'
+assert contract['step2']['design_status'] == 'REOPENED_IN_DESIGN'
 assert contract['public_exposure_reversible'] is False
 assert contract['changes_council_source_repository_visibility'] is False
 assert contract['peer_verification_environment'] == 'separate_disposable'
 assert contract['private_work_requires_finite_slices'] is False
 for step_no in (3, 4, 5):
     row = contract[f'step{step_no}']
-    assert row['design_status'] == 'DESIGNED', step_no
+    assert row['design_status'] == 'REOPENED_IN_DESIGN', step_no
+    assert row['baseline_design_status'] == 'DESIGNED_UNDER_SUPERSEDED_PUBLIC_GITHUB_POLICY', step_no
     assert row['implementation_status'] == 'NOT_STARTED', step_no
     assert row['runtime_tests_status'] == 'NOT_RUN', step_no
 assert contract['step3']['checkpoints_require_all_five_unique_member_arrivals']
@@ -34,10 +40,12 @@ assert 'sealed_review' in contract['checkpoint_phases']
 assert set(contract['done_requires']) == {'checkpoint_generation', 'processed_message_sequence', 'expected_obligation_version'}
 assert len(contract['separate_outcomes']) == 4
 assert contract['event_ordering'] == 'deployment_transactional_event_clock'
-assert contract['long_term_learning_store'] == 'git_backed_archive'
+assert contract['long_term_learning_store'] == 'customer_owned_git_archive_with_optional_permitted_general_knowledge'
 assert len({x['id'] for x in contract['requirements']}) == len(contract['requirements'])
-assert len(contract['requirements']) >= 16
-assert {'ADR-13', 'ADR-14', 'ADR-15', 'ADR-16'} <= {x['id'] for x in contract['requirements']}
+assert len(contract['requirements']) >= 18
+assert {'ADR-13', 'ADR-14', 'ADR-15', 'ADR-16', 'ADR-17', 'ADR-18'} <= {x['id'] for x in contract['requirements']}
+assert contract['requirements'][0]['design_status'] == 'SUPERSEDED_BY_ADR_17'
+assert contract['step11']['negative_exclusion_policy'] == 'no_universal_blacklist_or_silent_filter_based_on_prior_failure'
 assert contract['step8']['design_status'] == 'IN_DESIGN'
 assert contract['step8']['runtime_implementation_status'] == 'NOT_STARTED'
 assert contract['step8']['runtime_tests_status'] == 'NOT_RUN'
@@ -101,7 +109,7 @@ assert 'NOT STARTED' in (root / 'README.md').read_text()
 scope_text = (root / 'docs/MVP_SCOPE_BY_STEP.txt').read_text(encoding='utf-8')
 for n in (3, 4, 5):
     section = scope_text.split(f'STEP {n} -', 1)[1].split(f'STEP {n+1} -', 1)[0]
-    assert 'Status: DESIGNED' in section, n
+    assert 'Status: REOPENED IN DESIGN' in section, n
 for doc, required in (
     ('POSTGRES_DATA_MODEL.md', '## 20. October 14 Part 3 design closure'),
     ('TYPED_INTERACTION_CONTRACTS.md', '## 26. October 14 Part 4 design closure'),
@@ -110,6 +118,12 @@ for doc, required in (
     text_doc = (root / 'docs' / doc).read_text(encoding='utf-8')
     assert required in text_doc, (doc, required)
     assert 'DESIGNED' in text_doc, doc
+assert 'Status: REOPENED IN DESIGN' in scope_text.split('STEP 2 -', 1)[1].split('STEP 3 -', 1)[0]
+local_repos = (root / 'docs/LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md').read_text(encoding='utf-8')
+assert 'Success-first retrieval' in local_repos
+assert 'FAILED_IN_CONTEXT' in local_repos
+assert 'customer' in local_repos.lower() and 'Git' in local_repos
+assert 'no internet-public publication' in local_repos or 'No internet-public publication' in local_repos
 assert 'Status: DESIGNED' in (root / 'docs/MVP_SCOPE_BY_STEP.txt').read_text(encoding='utf-8').split('STEP 7 -', 1)[1].split('STEP 8 -', 1)[0]
 assert '**Design status:** DESIGNED' in (root / 'docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md').read_text(encoding='utf-8')
 step8_spec = (root / 'docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md').read_text(encoding='utf-8')
