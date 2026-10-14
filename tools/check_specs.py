@@ -11,6 +11,16 @@ assert contract['public_exposure_reversible'] is False
 assert contract['changes_council_source_repository_visibility'] is False
 assert contract['peer_verification_environment'] == 'separate_disposable'
 assert contract['private_work_requires_finite_slices'] is False
+for step_no in (3, 4, 5):
+    row = contract[f'step{step_no}']
+    assert row['design_status'] == 'DESIGNED', step_no
+    assert row['implementation_status'] == 'NOT_STARTED', step_no
+    assert row['runtime_tests_status'] == 'NOT_RUN', step_no
+assert contract['step3']['checkpoints_require_all_five_unique_member_arrivals']
+assert contract['step3']['sealed_review'] == 'one_immutable_submission_per_seat_per_generation_and_atomic_all_five_reveal'
+assert contract['step4']['command_replay_order'] == 'authenticate_authorize_then_idempotency_before_stale_transition_guards'
+assert contract['step5']['external_effects_execute_after_commit'] is True
+assert contract['step5']['committed_positions_from_sequence'] is False
 assert contract['step7']['design_status'] == 'DESIGNED'
 assert contract['step7']['runtime_implementation_status'] == 'NOT_STARTED'
 assert contract['step7']['runtime_tests_status'] == 'NOT_RUN'
@@ -51,6 +61,18 @@ for path in files:
             assert (path.parent / target).exists(), (path.name, link)
 assert 'SEALED_REVIEW' in (root / 'docs/TYPED_INTERACTION_CONTRACTS.md').read_text()
 assert 'NOT STARTED' in (root / 'README.md').read_text()
+scope_text = (root / 'docs/MVP_SCOPE_BY_STEP.txt').read_text(encoding='utf-8')
+for n in (3, 4, 5):
+    section = scope_text.split(f'STEP {n} -', 1)[1].split(f'STEP {n+1} -', 1)[0]
+    assert 'Status: DESIGNED' in section, n
+for doc, required in (
+    ('POSTGRES_DATA_MODEL.md', '## 20. October 14 Part 3 design closure'),
+    ('TYPED_INTERACTION_CONTRACTS.md', '## 26. October 14 Part 4 design closure'),
+    ('PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md', '## 16. October 14 Part 5 design closure')
+):
+    text_doc = (root / 'docs' / doc).read_text(encoding='utf-8')
+    assert required in text_doc, (doc, required)
+    assert 'DESIGNED' in text_doc, doc
 assert 'Status: DESIGNED' in (root / 'docs/MVP_SCOPE_BY_STEP.txt').read_text(encoding='utf-8').split('STEP 7 -', 1)[1].split('STEP 8 -', 1)[0]
 assert '**Design status:** DESIGNED' in (root / 'docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md').read_text(encoding='utf-8')
 print(f'Static specification checks passed: {len(files)} documents and {len(contract["requirements"])} tracked requirements.')
