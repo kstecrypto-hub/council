@@ -294,6 +294,9 @@ MVP must implement
 - Configurable max concurrent model calls.
 - Configurable max concurrent local sandboxes.
 - Per-run, per-phase, per-member token/cost metering and conservative pre-dispatch reservations.
+- Users approve their run/phase budgets and connect their own remote-provider API credentials (BYOK), or use compatible local models with no remote key; in the MVP providers bill users directly and Council does not run a prepaid token wallet.
+- Raw user API credentials remain in trusted secret storage and only the scoped runtime model bridge may use them; they never enter agent sandboxes, repos, ordinary logs, or client-side persistence.
+- Council budget gates limit authorized requests but do not guarantee provider-invoice caps; report uncertain usage/settlement honestly.
 - Simple hard per-phase/member/run budgets plus a protected checkpoint/review/finalization reserve.
 - Optional non-binding rough overall-project and per-phase token/cost estimate ranges shown with uncertainty and evidence basis; never automatically treated as a quota, top-up, or promise.
 - Restart recovery for unfinished tasks.
@@ -407,6 +410,9 @@ Complete product
 MVP must implement
 ~~~~~~~~~~~~~~~~~~
 - A common model adapter interface.
+- Per-user BYOK credential configuration and verification for enabled remote providers, with credential references (not raw keys) used by the trusted gateway.
+- Local-model operation without remote API keys where hardware/tool-loop compatibility checks pass.
+- No prepaid Council wallet, Council-owned inference credits, or mandatory reseller billing in the MVP.
 - At least enough adapters to run a genuinely model-diverse council if accounts
   and APIs are available.
 - Per-seat provider/model selection at run start.
@@ -421,6 +427,7 @@ Defer until after MVP evidence
 - Automatic fallback.
 - Huge provider catalog.
 - Fine-grained worker-level switching UI.
+- Optional Council-managed inference payments, prepaid credits/wallet, and per-token markup/resale model, subject to separate business, provider, payment, security, and compliance design.
 
 
 STEP 10 - TOOLS, PERMISSIONS, AND EXECUTION ENVIRONMENTS
@@ -449,6 +456,7 @@ MVP must implement
   the candidate is reproducible.
 - Clean rebuild test before treating an executable candidate as valid.
 - No provider/API credentials inside candidate containers.
+- BYOK API secrets held outside candidate/agent sandboxes in trusted, scoped credential storage; brokered provider calls only, with no raw key disclosure to agent tools.
 - No raw Docker socket exposed to agents.
 - Simple typed tool permissions.
 - Read/write access only to the branch's approved repo/workspace.
