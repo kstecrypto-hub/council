@@ -952,7 +952,7 @@ Required additional record groups:
 - optional project-total and per-phase token/cost planning forecasts: estimated ranges, source/history basis, assumptions, uncertainty flag and forecast version. Forecasts are never spending authorizations or automatic budget adjustments; actual usage and approved ceilings remain separate.
 - archive manifests/validation: retained hashes and reference closure, authorization, validation outcome, missing evidence, and teardown eligibility.
 
-These are accepted data requirements. Concrete field types, constraints, migration code, lock ordering beyond the stated event-clock rule, adapters, and integration tests remain open. There is no permanent SQL learning schema.
+These are accepted data requirements. Section 20 now specifies their additional normalized record fields, run/seat/visibility constraints, lifecycle guards and consistent lock ordering at the **design** level. Executable SQL data types/DDL migrations, provider adapters, backend enforcement and integration/concurrency tests remain implementation work. There is no permanent SQL learning schema.
 
 
 ## 20. October 14 Part 3 design closure — normalized constraints and access boundaries
