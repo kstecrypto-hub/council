@@ -42,3 +42,14 @@ The Step 7 **specification** is marked DESIGNED. The latest Part 7 document, MVP
 The repository's static-check script was updated to reject the superseded mandatory-private-work-slice assumption, check the Step 7 DESIGNED boundary without treating it as implementation, and recognize ADR-13 (BYOK). This record **does not claim that the script was executed in a complete local checkout** as part of this connector-based edit; no passing check output is invented.
 
 **Runtime implementation, PostgreSQL migrations, provider/model integrations, Docker containment/recovery tests, concurrent budget tests, and repeated Council evaluations remain NOT STARTED / NOT RUN.** The acceptance checklist in Part 7 is a test plan only. Historical original-publication blob hashes above describe the earlier publication snapshot and are not current file hashes.
+
+
+## October 14 Steps 3–5 specification reconciliation
+
+Part 3 (PostgreSQL data), Part 4 (typed commands/events/state), and Part 5 (transactions/idempotency/UNKNOWN handling) have been reconciled and marked **DESIGNED at specification level**, not implemented.
+
+Cross-document design assertions checked by connector read-back include: five fixed member seats; separately approved internet-public GitHub publication and observed private closure; all-five sealed reviews and version-bound /done; branch-local scope; ephemeral BYOK credential references; user budget policies and pre-dispatch reservations; one locked transactional event clock; idempotency replay preceding stale-target checks; unknown external effects retaining outstanding reservations; and verified Git reference closure before deletion of the project-lifetime Council database. Corresponding implementation/test statuses stay **NOT STARTED / NOT RUN**.
+
+The repository's `tools/check_specs.py` was extended to assert these invariants, but this entry **does not claim that the script ran in a complete local checkout**. Connector read-back and static text/JSON consistency are not PostgreSQL migrations, deployed security controls, executed failure-injection tests, live provider requests or an implemented Council runtime.
+
+The October 13 publication blob hashes above refer to the original publication snapshot and are not current content hashes.
