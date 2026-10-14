@@ -10,6 +10,7 @@ DeepSeek is the initial default for every agent. Per-agent provider/model select
 
 - [Complete app design](docs/APP_DESIGN.md) - the authoritative approved product and architecture specification, including the complete UI, graph, context lifecycle, execution boundaries, and acceptance criteria.
 - [PostgreSQL data model](docs/POSTGRES_DATA_MODEL.md) - the authoritative Part 3 persistence model and invariants.
+- [Step 7 execution and budget design](docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md) - approved sandbox scheduling, user-budget, model-concurrency, recovery, and pause/stop specification.
 - [Typed interaction/state contracts](docs/TYPED_INTERACTION_CONTRACTS.md) - the approved Part 4 design linking every meaningful state to runtime behavior, user surfaces, commands, events, transitions, and recovery.
 - [Implementation handoff](docs/IMPLEMENTATION_HANDOFF.md) - scope boundaries, build sequence, invariants, and instructions for a later authorized implementation.
 - [Agent instructions](AGENTS.md) - repository-level requirements for future development agents.
@@ -53,8 +54,8 @@ No project license has been selected. No upstream implementation is vendored by 
 
 The approved corrections are integrated into the current design documents. See [decision/status index](docs/ARCHITECTURE_DECISIONS.md) and [machine-readable contract](docs/architecture_contract.json).
 
-Generated member repositories are private between checkpoints and public during approved frozen-snapshot review; public exposure is not reversible. Council has five fixed logical members, sealed independent reviews, isolated peer testing, bounded execution slices, and explicit recovery/accounting/completion boundaries.
+Generated member repositories are private between checkpoints and public during approved frozen-snapshot review; public exposure is not reversible. Council has five fixed logical members, sealed independent reviews, isolated peer testing, semantic phases with user-approved token/cost budgets (not mandatory periodic private-work slices), and explicit recovery/accounting/completion boundaries.
 
-**Application implementation: NOT STARTED. Runtime acceptance tests and comparative evaluations: NOT RUN.** Step 7 and the remaining Step 8/10/11 work are not marked completed by these specification changes.
+**Application implementation: NOT STARTED. Runtime acceptance tests and comparative evaluations: NOT RUN.** Step 7 is now **DESIGNED (specification only)** with initial configurable 70/25/5 development/review/orchestration-finalization allocations, BYOK/local-LLM billing, model concurrency/resource-admission defaults, and recovery/pause/stop contracts. Its runtime enforcement remains unimplemented; Steps 8/10/11 and other pending design areas are not silently marked completed.
 
 Run `python3 tools/check_specs.py` for static documentation/contract checks only. These checks cannot establish runtime correctness or research performance.
