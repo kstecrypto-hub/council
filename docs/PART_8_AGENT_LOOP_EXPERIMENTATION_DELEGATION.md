@@ -17,7 +17,7 @@ OUTER COUNCIL LOOP
   user-approved semantic phases
   -> five members independently investigate
   -> all five member-declared checkpoint arrivals
-  -> approved public frozen snapshot / sealed independent reviews
+  -> approved customer-local frozen read-only snapshot / sealed independent reviews
   -> shared peer challenge and verification-only /work
   -> closeout and next private revision phase
   -> final candidate review / user acceptance
@@ -103,7 +103,7 @@ This is a **design choice**, not a claim that Docker monitoring or thresholds ha
 ## 5. Checkpoint integration and safety
 
 - During private work, experiments may make authorized changes in the member's own branch/candidate. All five members independently emit CHECKPOINT_READY against the Orchestrator's approved phase criteria; runtime checks required frozen SHAs/evidence references **mechanically**, without intellectually scoring readiness.
-- At a checkpoint, repositories are frozen to approved pinned SHAs and made internet-public only after separate user-approved publication/safety checks. All five members submit **sealed** independent assessments before shared debate; experiments/records must not leak peer-private or sealed review data into Git/public snapshots.
+- At a checkpoint, the trusted **customer-local Git gateway** exports selected, pinned, immutable read-only tree snapshots under approved scope. No public GitHub exposure is the default. All five members submit **sealed** independent assessments before shared debate; experiments/records must not leak other peers' unpublished work or sealed-review data into shared snapshots, caches or retrieval.
 - During checkpoint `/work`, an experiment can only **verify**, test/reproduce or compare pinned snapshots in a **separate disposable verifier**. The authoritative candidate and protected acceptance harness are read-only; no candidate commits, fixes or pushes. Revisions of private candidates resume only after verified checkpoint closure.
 - Experiment IDs/results and objections become evidence and optional next-private-phase revision inputs, **not** automatic obligations imposed by one Council peer on another. Preserve disputed, inconclusive and failed evidence for peer challenge.
 
@@ -127,3 +127,9 @@ Member identity, experiment operation IDs, baseline versions, evidence and dispo
 - 8.5: precise acceptance scenarios and interfaces for Step 9 providers, Step 10 tools and Step 11 context rollover.
 
 **Step 8 remains IN DESIGN.** Decisions 8.1, 8.2 and the Docker-backed 8.2a persistence policy are approved. No central worker-recovery design remains open; member action protocol, phase/final readiness and checkpoint/finalization integration still require design. Application code and runtime tests remain NOT STARTED / NOT RUN.
+
+## ADR-17/18 local-first checkpoints and conditional experiment reuse (October 14)
+
+Step 8's member autonomy and Karpathy-style optional hypothesis/test loop are unchanged. The previous PUBLIC GitHub checkpoint pathway is **superseded**: ordinary peer evidence comes from customer-controlled immutable selected read-only local Git snapshots granted through a trusted gateway. The member still has unrestricted local-worker autonomy inside its resource-defined sandbox, but no peer obtains raw other-repo credentials or editable persistent volumes. Checkpoint `/work` remains verification-only.
+
+**Success-first memory reuse:** the next member may see an applicable earlier successful experiment/recipe first, but a prior FAILED or INCONCLUSIVE result is a **conditional finding** with versions, environment and failure mechanism; it is *never* an automatically suppressed strategy for a similar task. A member may re-run an earlier failed approach under changed requirements/conditions. Keep parent member's intellectual control and explicit checked evidence. Customer-specific experiments/memory stay in their permitted tenant; generalized cross-customer technique sharing needs informed opt-in and review. Step 11 will define exact ranking/indexing; this is not a completed runtime feature.
