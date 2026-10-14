@@ -2,7 +2,7 @@
 
 **October 13, 2026 amendment:** [decision/status index](ARCHITECTURE_DECISIONS.md). Requirements below are specifications; application implementation is NOT STARTED and runtime tests are NOT RUN.
 
-**Status:** approved design model for Part 3; this document defines persistence boundaries and invariants, not executable migrations.  
+**Design status:** DESIGNED (October 14, 2026); persistence boundaries, record groups, cardinalities, and consistency constraints specified. **Implementation:** NOT STARTED. **Migration/integration tests:** NOT RUN.  
 **Authority:** this document refines section 13 of [APP_DESIGN.md](APP_DESIGN.md). If they conflict, the latest explicit owner instruction and APP_DESIGN remain authoritative.
 
 ## 1. Database layout
@@ -614,33 +614,37 @@ The runtime schema is disposable operational machinery. It must be reconstructab
 ### council_runtime.task_leases
 - `task_id` PK/FK
 - `lease_owner`
+- `lease_token` opaque UUID/nonce (new token on every grant/regrant)
 - `attempt_no`
 - `leased_at`
 - `heartbeat_at`
 - `expires_at`
+- Task completion/heartbeat requires the current token and attempt, not just an unexpired timestamp. Only trusted Council-runtime tasks use central leasing; do not centrally lease an agent's private internal work.
 
 ### council_runtime.operations
 - `id` PK
 - `run_id` FK
 - `task_id` nullable FK
-- `operation_kind`
-- `idempotency_key`
-- `status`
-- `row_version`
-- `requested_at`
-- `updated_at`
-- UNIQUE(`run_id`, `idempotency_key`)
+- `actor_type`, `actor_id`, `branch_id` nullable, `logical_agent_id` nullable
+- `operation_kind`, `operation_key`, `target_type`, `target_id` nullable
+- `idempotency_key`, `canonical_request_hash`, `schema_version`
+- `execution_epoch` nullable, `capability_scope_ref` nullable
+- `status`, `attempt_count`, `latest_known_result_ref` nullable, `reconciliation_policy`
+- `row_version`, `requested_at`, `updated_at`
+- UNIQUE(`run_id`, `operation_key`) for one logical intended external effect; scoped command-idempotency uniqueness is enforced separately by `command_receipts`.
+- The operation and its attempts do not assert an external effect occurred merely because a request was durably queued.
 
 ### council_runtime.operation_attempts
 Immutable attempt history.
 - `id` PK
 - `operation_id` FK
 - `attempt_no`
-- `status`
-- `started_at`
-- `finished_at`
-- `result_artifact_id` nullable
-- UNIQUE(`operation_id`, `attempt_no`)
+- `execution_epoch` nullable, `lease_token` nullable
+- `dispatch_status` = PREPARED | DISPATCHED | UNKNOWN
+- `status`, `external_request_id` nullable, `idempotency_token` nullable
+- `started_at`, `finished_at` nullable
+- `result_artifact_id` nullable, `reconciliation_evidence_ref` nullable
+- UNIQUE(`operation_id`, `attempt_no`); a stale epoch/lease cannot advance the current authoritative operation.
 
 ### council_runtime.scheduler_reservations
 - `id` PK
@@ -678,7 +682,8 @@ Immutable attempt history.
 - `run_id` FK
 - `logical_agent_id` FK
 - `agent_session_id` FK
-- `phase_id` / `checkpoint_generation` as applicable
+- `semantic_phase_id` nullable
+- `checkpoint_generation` nullable
 - `operation_id` FK and `usage_reservation_id` FK
 - `provider_profile_version_id`
 - `model_profile_version_id`
@@ -948,3 +953,54 @@ Required additional record groups:
 - archive manifests/validation: retained hashes and reference closure, authorization, validation outcome, missing evidence, and teardown eligibility.
 
 These are accepted data requirements. Concrete field types, constraints, migration code, lock ordering beyond the stated event-clock rule, adapters, and integration tests remain open. There is no permanent SQL learning schema.
+
+
+## 20. October 14 Part 3 design closure — normalized constraints and access boundaries
+
+**Part 3 is DESIGNED as a persistence specification only.** The earlier tables and October 13 requirements above are the baseline; the normalized MVP record groups and invariants below resolve the remaining design ambiguity. They do not claim migrations, schema generation, security enforcement, or executed database tests.
+
+### 20.1 Identity, referential integrity, and ownership
+
+- Exactly **five** Council-member seats must be provisioned before a run enters ACTIVE: `council_seats` has `UNIQUE(run_id, seat_no)`, `CHECK(seat_no BETWEEN 1 AND 5)`; a run-level activation guard proves all 1–5 exist. Workers have parent agent IDs, never consume extra seats or receive peer governance authority. Every Council member has exactly one owned branch/repo identity for a given run. Seal the seat/model configuration revision at launch; later model changes are separately versioned.
+- Every branch, candidate, snapshot, checkpoint, publication, reviewer, message, permission and model-call reference must resolve to the **same run/deployment**; use composite keys/guarded joins where a plain UUID FK cannot ensure run scope. Canonical IDs and artifact hash references may not point to another active deployment.
+- Immutable/versioned data has unique parent/version and append-only provenance. Mutable pointers and runtime controls carry `row_version`; the full causal approval/event history is preserved. Disallow hard deletion of canonical records while referenced by active work or retained archive manifests.
+- The Project Orchestrator's checkpoint plan is an immutable `checkpoint_policy_version` tied to the approved contract revision. `checkpoint_definitions` encode **outcome-based** phase criteria rather than a mandated solution path. New plan revisions require the proper canonical approval/delivery route.
+
+### 20.2 Checkpoint arrival, public repository publication, and sealed review
+
+New required record groups (table identifiers illustrative, relationships and guards normative):
+
+- `council_core.checkpoint_arrivals`: `checkpoint_id`, `generation`, `member_seat_id`, `phase_id`, `member_emitted_ready_event_id`, `candidate_snapshot_id`, `frozen_repository_revision_id`, `environment_version_id` nullable, `ready_at`; UNIQUE(checkpoint, generation, seat). Runtime validates required metadata but never makes the member's intellectual readiness decision. A failed/BUDGET_EXHAUSTED member does not acquire an arrival row. Opening requires exactly five current-generation arrivals.
+- `council_core.repository_publication_manifests`: checkpoint/generation, repo identity, exact frozen SHA(s), **all refs/history/surfaces made internet-public**, reviewed content hashes, policy version, explicit user authorization interaction/decision, safety-check outcome, immutable approved scope/hash. Confidential material, keys and sealed review data must not leak via refs, tags, logs, releases, artifacts, or side channels. Failure/unknown safety blocks opening.
+- `council_runtime.repository_visibility_transitions` and durable external `operations`: checkpoint/generation/repo, desired PUBLIC/PRIVATE, request/attempt IDs, observed external visibility, first observed public exposure, verification time/evidence, errors, and confirmed private-at-close proof. **Desired != observed.** Changing a GitHub repository is never part of a PostgreSQL transaction. Prior public exposure/copies are irreversible; flipping it private cannot be represented as revocation of already published data. A failed private transition blocks unpublished follow-on work.
+- `council_core.sealed_review_submissions`: checkpoint/generation, reviewer seat, referenced exact frozen candidate set, immutable assessment/evidence hash (or artifact pointer), created event/at; UNIQUE(checkpoint, generation, reviewer). Record only reviewer-private/trusted storage before reveal. Five distinct current-generation submissions are mandatory.
+- `council_core.sealed_review_reveals`: checkpoint/generation, immutable set of five submission IDs/hashes, event ID and atomic reveal/authorized-delivery frontier; UNIQUE(checkpoint, generation). Reveal only when every required submission is committed. If a reviewer is missing, no partial implicit reveal; record an explicit incomplete/aborted review without inventing a fifth assessment.
+
+Checkpoint status, public repository observation, sealed assessment visibility and internal publication recipient deliveries are **separate facts**. Public GitHub repo history is internet-public; this does not grant external access to Council's private PostgreSQL rows.
+
+### 20.3 Communication, version-bound DONE, verifier, and return
+
+- `council_core.checkpoint_messages`: immutable `message_id`, checkpoint/generation, server-assigned **checkpoint-local sequence**, sender seat, full logical body/artifact pointer plus content hash, server timestamp, reply reference. Transport chunks/reassembly are ephemeral until one complete verified logical message is accepted. Preserve full body; structured actions never overwrite it.
+- `council_core.peer_actions` + `peer_action_obligations` + append-only `peer_action_responses`: original message ID, explicitly member-declared action type, targets, full text reference, response-required flag, disposition, target-specific response/ack watermark/version and challenge/test refs. `TEST_REQUEST` is advisory, **not** an automatic cross-branch task. `DISPUTED` or `DEFERRED` may satisfy a response obligation while leaving the intellectual issue unresolved.
+- `council_runtime.checkpoint_member_frontiers` and immutable `checkpoint_done_certificates`: checkpoint/generation/seat, highest **processed** message sequence (not merely delivered), obligation_version, outbound accepted-and-delivered frontier, member activity state, certificate event/validity. A relevant new required action/message invalidates the affected DONE certificate atomically; unrelated bookkeeping/keepalive does not. DONE requires no outstanding response obligations or active verification excursion.
+- `council_core.checkpoint_work_excursions`: seat, checkpoint/generation, request/action ID, pinned snapshot, disposable verifier identity, trust-separated evidence hash/results, start/end/outcome, bounded resource use. The authoritative member candidate remains frozen; peer test code cannot write reviewer continuation, credentials, another candidate, or protected acceptance harness definitions.
+- `council_core.checkpoint_closeouts` + `checkpoint_return_packets`: immutable own member-authored closeout, frozen peer snapshot references actually observed, action/disposition references, unresolved objections, verification evidence, transcript index/hash, return packet version and authorized delivery. Require private-repo visibility confirmation, gateway/session revocation and current DONE guards (or explicit forced-incomplete close) before CLOSED.
+
+Checkpoint traffic and review visibility are authorized by **generation + scope + event frontier**, not by a stale socket credential or timestamp.
+
+### 20.4 Clarifications, budgets, reconciliation, and event ordering
+
+- `council_core.clarification_lineage` binds the requesting agent/branch, raw user response, processed agent-ready response, source-statement locators, semantic strength and intended local/project-wide scope, effective contract revision, authorized delivery targets and user confirmation where consequential. **Branch-local** Orchestrator context, cache and retrieval references cannot bleed into other branches. Raw replies do not go directly to requesting agents.
+- `council_core.command_receipts`: scope/actor/command_type/idempotency_key, canonical request hash, target/version, result/error payload, emitted event IDs and operation ID; UNIQUE(scope, actor, command_type, idempotency_key). Same key + different hash => IDEMPOTENCY_CONFLICT; same key/hash returns original receipt even after reconnect/retry.
+- `council_core.event_clock`: one deployment-local row with `last_position`, locked and updated in the **same canonical event transaction** before aggregate/budget locks. `events` also records `schema_version`, aggregate identity/version, visibility/branch scope, causation command, correlation ID, and immutable actor attribution. No ordinary PostgreSQL sequence/IDENTITY is authoritative as a *committed-order* cursor. The `outbox` references unique `event_id` and has independent claim/delivery status; consumers deduplicate and replay committed event positions, not outbox auto IDs.
+- Accepted Step 7 `budget_policy_versions`, `budget_accounts`, `usage_reservations`, `resource_admissions`, `recovery_attempts` and `model_calls` remain normalized contracts: guard run/pool/member-phase token and currency ceiling concurrently; cache/cost token units explicit; unknown dispatched requests retain reservations; phase exhaustion stays INCOMPLETE. Persist only scoped opaque BYOK credential *references*, never raw keys.
+- `council_core.archive_manifests` + immutable `archive_validation_results` + external `archive_operations` record accepted snapshot SHA, authorized learning/evidence selection and source permissions, Git snapshot/commit IDs, artifact hashes, reference closure/restore checks, unresolved obligations, and teardown eligibility. Council PG teardown cannot become eligible before the acceptance/export/validation dependencies are verified. Product-owned databases remain distinct.
+
+### 20.5 Index/constraint minimum and migration boundary
+
+- Use unique constraints for run seats; per-generation member checkpoint arrivals; per-generation sealed submission/reveal; operation key; scoped command idempotency; per-entity immutable version; logical event ID; checkpoint-local message sequence; accepted message/action identity; and active user interaction gate for an exact target revision (partial unique on OPEN/PRESENTED).
+- Add narrow indexes for checkpoint/generation/seat and disposition, message sequence/frontier, public/private transition status, pending outbox claims, unknown external operations, budget scope and unsettled reservations, lease expiry/token, and archive validation. Avoid generic JSONB/full-graph indexes or partitioning before measurement.
+- Enforce `visibility_class` + branch/run scopes through trusted Capability Gateway and RLS on private canonical tables where practical. Use **transaction-local** trusted run/branch identity with connection-pool reset; app database roles do not have unscoped BYPASSRLS/owner access for ordinary agent-facing queries. Sealed submissions remain reviewer-only until the atomic reveal. Canonical admin/runtime reconciliation uses separate narrowly scoped trusted roles. Tests must prove no cross-run access, no hidden-branch leak via graphs, summaries, Orchestrator branch-local caches, search or SSE.
+- Schema migration files and rollback policy, executable SQL constraints, backup + referenced-artifact restore, true concurrent locks, backend isolation and retention teardown tests are **implementation work**, not part of this design completion claim. No permanent Council SQL learning registry is introduced.
+
+**Part 3 design completion:** database ownership, fields/record relationships, immutable/mutable constraints, publication/review/frontier representation, transactional event/budget integration, safe archival boundary and isolation rules are now specified. **DESIGNED** is not **IMPLEMENTED** or **VERIFIED**.
