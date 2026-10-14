@@ -132,6 +132,14 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-13",
+      "design_status": "SPECIFIED_MVP_POLICY_DEFERRED_COMMERCIAL_OPTION",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -160,5 +168,20 @@
       "per_phase",
       "per_member_where_meaningful"
     ]
+  },
+  "mvp_inference_billing": {
+    "remote_provider_payment": "BYOK_direct_provider_to_user",
+    "local_inference": "supported_if_compatible_without_remote_api_key",
+    "user_approved_run_phase_token_cost_budgets": true,
+    "council_prepaid_wallet_required": false,
+    "council_token_reseller_required": false,
+    "council_budget_enforcement_scope": "Council_authorized_dispatch_not_provider_invoice_guarantee",
+    "credential_boundary": "trusted_scoped_runtime_secrets_no_raw_credentials_in_agent_sandboxes_or_repos"
+  },
+  "future_commercial_consideration": {
+    "option": "optional_Council_managed_provider_billing_prepaid_credits_or_markup",
+    "inclusion": "DEFERRED_NOT_MVP_NOT_IMPLEMENTED",
+    "requires_separate_provider_payment_risk_tax_security_design": true,
+    "no_commitment_to_implement": true
   }
 }
