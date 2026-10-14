@@ -342,25 +342,23 @@ STEP 8 - AGENT LOOP, COUNCIL PHASES, AND DELEGATION
 Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
 Core governance is already designed.
 
-Pre-design consideration
-~~~~~~~~~~~~~~~~~~~~~~~~
-Start Step 8 by defining the Council-member agentic execution loop itself.
+Accepted design decision 8.1 - member loop + optional experiments (October 14, 2026)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Primary working specification: docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md
 
-The loop should evaluate a member's current objective/state, reason, act/use tools, inspect results, record durable progress, delegate where useful, and repeat until the member itself emits a bounded control outcome. At minimum, distinguish:
-- `CHECKPOINT_READY`: private work has reached the current Orchestrator-defined semantic checkpoint milestone; this triggers Step 7 suspension/barrier behavior.
-- checkpoint `/done`: used only inside an open checkpoint and means the member currently has no outstanding communication obligations; it does not mean the project/candidate is finished.
-- final-candidate readiness: the member believes its candidate is ready for the final peer-review/user-evaluation stage.
-- `BLOCKED`: progress requires a missing permission, user clarification, unavailable dependency/hardware, or another external condition.
+The outer Council loop follows the Orchestrator's approved semantic phases, five independent private candidates, all-five checkpoint arrivals, sealed peer reviews, discussion and private revisions. A persistent member's **own** agentic loop reasons -> selects an authorized action -> observes/records the result -> repeats until that member reports readiness, blocking or another legitimate lifecycle outcome. The runtime does not intellectually judge readiness. Candidate readiness, checkpoint communication /done, BLOCKED and Step 7 budget exhaustion remain separate outcomes.
 
-Consider a minimal member control surface such as `ACT`, `DELEGATE`, `ASK_USER`, `CHECKPOINT_READY`, and `BLOCKED`. The exact protocol is still to design.
+**Optional Karpathy-style autoresearch inside ACT**:
+HYPOTHESIS -> CHANGE or ALTERNATIVE -> TEST/CHECK -> OBSERVE -> KEEP | REVISE | DISCARD | INCONCLUSIVE -> RECORD -> return to the same member's loop.
 
-The runtime may mechanically validate that required checkpoint artifacts/metadata exist, but it must not intellectually judge whether the member's approach is good enough or force additional reasoning. The member decides substantive readiness.
+- This is a first-class **optional workflow**, not mandatory for each action, not a replacement for ordinary tools/reasoning, and not a separate AI supervisor/scheduler.
+- Works for code, research, or other domains: compare baselines and counterexamples; numerical benchmarks only when meaningful, with units, conditions, uncertainty and regressions. No universal scalar score or automatic winner selection.
+- Experiments retain exact hypothesis, baseline/changed source or repo SHA, environment/test/data versions, operations, results, limitations, member decision and immutable attributable evidence. Reverted/failed work retains the experiment record, not necessarily failed code.
+- An authorized worker may perform a bounded experiment for its parent member; child calls use parent branch permissions and phase budget, and results return to the parent. Parent alone decides whether to integrate, revise, discard, or declare the **parent's** semantic checkpoint ready.
+- Exploratory agent-edited tests are distinguishable from protected acceptance tests. Checkpoint /work may verify approved frozen snapshots in disposable verifiers only; no candidate implementation edits during review.
+- The loop has no fixed model-call count, forced reasoning time limit, experiment quota or indefinite-experiment obligation. Step 7 budgets and operation-specific safety timeouts bound spend; Step 11 session rollover preserves logical member and experiment/operation evidence. A budget ceiling does not force CHECKPOINT_READY.
 
-A member may require an unknown number of reasoning/tool cycles before readiness. Do not design the loop around a fixed number of model calls. Termination/transition instead comes from readiness, blocking, budget/resource ceilings, pause/stop, fatal failure, or Step 11 session rollover.
-
-This loop must work identically whether inference is remote through a provider adapter or local; Step 7 handles resource ceilings and Step 9 handles provider/model-specific calling semantics.
-
-Treat this as a design direction to resolve at the start of Step 8, not as a finalized Step 8 contract.
+This accepted subdesign does **not** mark Step 8 complete. Worker depth/lifecycle/merge rules, exact action protocol, final-phase transitions and checkpoint/finalization integration remain to design.
 
 Complete product
 ~~~~~~~~~~~~~~~~
@@ -412,6 +410,8 @@ MVP must implement
 - Checkpoint knowledge is revision input, not an automatic task list or peer authority.
 - Peer challenge and revision cycle.
 - Bounded worker delegation (one simple depth/worker cap is enough).
+- Optional Karpathy-style structured experiment cycle as a member-chosen ACT workflow, with versioned baseline/change, test/evidence, explicit KEEP/REVISE/DISCARD/INCONCLUSIVE decision, persistent failed-attempt history, and no mandatory experiment count or global quality score.
+- Worker-led experiment requests return attributable results only to the authorized parent branch; workers cannot declare the parent's checkpoint ready or edit protected acceptance tests.
 - Structured escalation back to Project Orchestrator for requirement ambiguity.
 - No direct user-to-agent natural-language guidance.
 - Final candidate(s) preserved for evaluation.
@@ -421,6 +421,7 @@ Defer until after MVP evidence
 - Sophisticated adaptive-checkpoint replanning beyond the initial project-specific milestone plan.
 - Complex voting/agenda machinery.
 - Deep worker hierarchies.
+- Separate experiment optimizers/supervisors, fixed Karpathy time-boxes, global scalar winner-selection metrics, and complex automatic experiment-tree exploration.
 - Every planned review phase if it does not affect the core experiment.
 
 
