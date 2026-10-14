@@ -63,7 +63,7 @@
     },
     {
       "id": "ADR-04",
-      "design_status": "SPECIFIED",
+      "design_status": "DESIGNED",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -79,7 +79,7 @@
     },
     {
       "id": "ADR-06",
-      "design_status": "SPECIFIED",
+      "design_status": "DESIGNED",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -103,7 +103,7 @@
     },
     {
       "id": "ADR-09",
-      "design_status": "IN_DESIGN",
+      "design_status": "DESIGNED",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -249,5 +249,95 @@
       "Step 10 container/runtime enforcement",
       "runtime acceptance and failure-injection tests"
     ]
+  },
+  "step3": {
+    "design_status": "DESIGNED",
+    "implementation_status": "NOT_STARTED",
+    "runtime_tests_status": "NOT_RUN",
+    "specification_path": "docs/POSTGRES_DATA_MODEL.md",
+    "deployment_database": "project_lifetime_isolated_postgres",
+    "durable_learning": "git_archive_after_acceptance_verified_before_db_teardown",
+    "fixed_member_seats": 5,
+    "checkpoints_require_all_five_unique_member_arrivals": true,
+    "github_publication": "approved_full_exposure_manifest_and_separate_observed_public_private_transitions",
+    "sealed_review": "one_immutable_submission_per_seat_per_generation_and_atomic_all_five_reveal",
+    "checkpoint_done": "processed_message_frontier_plus_obligation_version_plus_generation",
+    "branch_local_clarification_and_rag_isolation": true,
+    "command_receipt_uniqueness": "actor_scope_command_key_and_canonical_hash",
+    "committed_event_clock": "deployment_locked_row_updated_with_canonical_transaction",
+    "resource_lease_requires_current_token": true,
+    "budget_db_records": "approved_policy_accounts_reservations_resource_admissions_recovery",
+    "archive_deletion_guard": "fresh_checkout_reference_closure_and_verified_accepted_project_restore"
+  },
+  "step4": {
+    "design_status": "DESIGNED",
+    "implementation_status": "NOT_STARTED",
+    "runtime_tests_status": "NOT_RUN",
+    "specification_path": "docs/TYPED_INTERACTION_CONTRACTS.md",
+    "actor_authority_boundary": "user_approvals_member_intellectual_readiness_orchestrator_semantic_plan_runtime_mechanics",
+    "command_version": "v1",
+    "command_replay_order": "authenticate_authorize_then_idempotency_before_stale_transition_guards",
+    "distinct_status_axes": [
+      "lifecycle",
+      "scoped_activity",
+      "operation_status",
+      "interaction",
+      "checkpoint_communication",
+      "verification",
+      "acceptance"
+    ],
+    "checkpoint_progress": [
+      "all_five_member_emitted_ready",
+      "opening_with_verified_public_repos",
+      "sealed_five_independent_reviews",
+      "atomic_reveal",
+      "reviewing",
+      "closing_verified_private",
+      "closed"
+    ],
+    "checkpoint_done_requires": [
+      "checkpoint_generation",
+      "processed_message_sequence",
+      "expected_obligation_version",
+      "delivered_outbound",
+      "no_open_required_actions",
+      "no_active_work_excursion"
+    ],
+    "activity_not_user_decision": true,
+    "no_runtime_intellectual_quality_judgment": true,
+    "pause_state": "ACTIVE_with_QUIESCING_FOR_PAUSE_then_PAUSED_after_guards",
+    "stop_state": "STOPPING_then_CANCELLED_or_FAILED_cleanup_incomplete"
+  },
+  "step5": {
+    "design_status": "DESIGNED",
+    "implementation_status": "NOT_STARTED",
+    "runtime_tests_status": "NOT_RUN",
+    "specification_path": "docs/PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md",
+    "canonical_database": "isolated_project_lifetime_postgres",
+    "db_lock_order": [
+      "deployment_event_clock",
+      "aggregate_scope_stable_order",
+      "run_budget",
+      "pool_budget",
+      "member_phase_budget",
+      "resource_claims"
+    ],
+    "committed_positions_from_sequence": false,
+    "atomic_canonical_effects": [
+      "domain_mutation",
+      "durable_external_operation_intent",
+      "events",
+      "outbox",
+      "command_receipt"
+    ],
+    "external_effects_execute_after_commit": true,
+    "retries": "scoped_key_same_hash_returns_original_result_conflicting_hash_rejected",
+    "unknown_effects": "operation_class_specific_reconcile_before_consequential_retry",
+    "checkpoint_visibility": "external_public_private_observed_not_atomic_with_sql",
+    "sealed_reveal": "atomic_all_five_generation_locked",
+    "done": "version_bound_same_checkpoint_message_obligation_lock",
+    "budget": "reserve_before_dispatch_release_only_on_proven_non_dispatch_or_settlement",
+    "projections": "committed_event_cursor_consistent_snapshot_authorization_filtered_replay",
+    "finalization": "archive_export_and_reference_closure_before_control_db_teardown"
   }
 }
