@@ -1254,7 +1254,7 @@ Ordinary activities inherit:
 
 ### 24.8 Part 4 completion boundary
 
-The original Part 4 baseline specified the following boundaries. The October 13 state/command refinements reopen integration work; the revised part must not be marked complete until the extended registry and guards are reconciled:
+The original Part 4 baseline specified the following boundaries. The October 13 state/command refinements required reconciliation; **Section 26 now supplies the missing typed registry, actor/guard and state contracts**, so Part 4 is DESIGNED as a specification (not an implemented registry or passing test suite):
 - who may issue an action;
 - whether it is legal in the current state;
 - what durable event follows;
