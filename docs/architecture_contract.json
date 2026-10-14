@@ -156,6 +156,14 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-16",
+      "design_status": "ACCEPTED_STEP8_2A_FULL_STEP8_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -267,7 +275,9 @@
     ],
     "shared_local_inference_one_job_cap_applies_to": "trusted_shared_local_model_gateway_not_arbitrary_sandbox_local_subagent_processes",
     "resource_monitor_approved": true,
-    "resource_monitor_specification_path": "docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md"
+    "resource_monitor_specification_path": "docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md",
+    "member_workspace_storage": "stable_private_docker_volume",
+    "council_worker_recovery_daemon_required": false
   },
   "step3": {
     "design_status": "DESIGNED",
@@ -363,7 +373,8 @@
     "design_status": "IN_DESIGN",
     "accepted_subdesigns": [
       "8.1_MEMBER_LOOP_OPTIONAL_KARPATHY_STYLE_EXPERIMENTATION",
-      "8.2_SANDBOX_LOCAL_WORKER_AUTONOMY_AND_TRUSTED_DOCKER_MONITORING"
+      "8.2_SANDBOX_LOCAL_WORKER_AUTONOMY_AND_TRUSTED_DOCKER_MONITORING",
+      "8.2A_DOCKER_PERSISTENT_VOLUME_MEMBER_MANAGED_WORKER_RESUME"
     ],
     "specification_path": "docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md",
     "runtime_implementation_status": "NOT_STARTED",
@@ -397,7 +408,6 @@
     "fixed_reasoning_iteration_or_experiment_count": false,
     "budget_exhaustion_means_completion": false,
     "pending_design": [
-      "worker_result_return_cancellation_crash_recovery_and_merge_protocol",
       "complete_action_observation_schema",
       "phase_and_final_candidate_transitions",
       "checkpoint_final_review_termination_integration"
@@ -438,6 +448,18 @@
       "confirmed_resource_release_required": true,
       "operating_system_windows_resource_monitor_required": false,
       "prom_grafana_required": false,
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN"
+    },
+    "worker_persistence": {
+      "durable_storage": "dedicated_named_Docker_volume_or_authorized_bind_mount_per_member",
+      "container_writable_layer_survives_recreation": false,
+      "in_memory_process_resumption_on_restart": false,
+      "parent_member_controls_local_worker_resume": true,
+      "dedicated_council_worker_recovery_service": false,
+      "uncontrolled_docker_restart_during_pause_or_checkpoint": false,
+      "trusted_whole_member_restart_guards": true,
+      "external_effect_reconciliation_still_required": true,
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN"
     }
