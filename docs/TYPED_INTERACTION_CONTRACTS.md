@@ -759,6 +759,10 @@ Model/tool/environment:
 - SandboxResourceReleaseConfirmed
 - BridgeExecutionEpochRevoked
 - ResourceAdmissionDenied
+- MemberSandboxResourcePressureDetected (a meaningful 80%/90% policy state transition, not every sample)
+- MemberSandboxOOMObserved
+- MemberResourceMonitoringUnavailable (stale/unavailable monitor state affecting safe admissions)
+- MemberResourceMonitoringRestored
 - ModelCallRequested
 - ModelCallSucceeded
 - ModelCallFailed
@@ -1365,3 +1369,21 @@ The following is the normative completion of the existing catalog. Payloads and 
 ### 26.6 Completion boundary
 
 This defines the full **Step 4** command/event/actor/transition behavior and persisted user interaction surfaces without depending on a particular transport library. **DESIGNED does not mean IMPLEMENTED or VERIFIED.** The precise endpoint framing, generated DTO code, tests, model adapters, checkpoint gateway implementation and user interface remain future work. The current Part 4 registry is a specification, not a deployed service.
+
+
+## 27. Accepted Step 8.2 resource-monitor and worker-authority refinement (design only)
+
+**Step 4 remains DESIGNED** as the authority/state specification. The owner-approved Step 8.2 policy clarifies that ordinary subprocesses and AI subagents created **inside** an authorized Council-member sandbox are not automatically new centrally scheduled Worker entities or Docker containers; there is **no Council-fixed internal worker count or delegation-depth cap**. `CreateWorker` remains the typed command for workers that need Council-canonical task identity/operation attribution, not an interception requirement for every `fork`/local subprocess.
+
+The trusted runtime, not the member model, monitors aggregate sandbox resource use via Docker Engine's stats/oom/die interface and optional host/VM/disk/GPU adapters. New authoritative resource event families (added to the catalog) are:
+
+- `MemberSandboxResourcePressureDetected`: trusted policy-level transition SOFT (~80% assigned memory cap) or HIGH (~90%), measured/limit values and incident ID, configuration version, timestamp and affected **whole sandbox**. A raw telemetry sample alone does not emit a canonical event.
+- `MemberSandboxOOMObserved`: actual backend OOM/die event with sandbox/epoch, last known measurement and recoverability; it never means CHECKPOINT_READY, cancellation of pending provider calls or safe resource release.
+- `MemberResourceMonitoringUnavailable` / `MemberResourceMonitoringRestored`: stale/available observation boundary; affected **new** heavyweight broker admissions are gated while measurements are unsafe, without falsely marking an existing logical member complete/failed.
+- Existing `ResourceAdmissionDenied`, `SandboxQuiesced`, `SandboxResourceReleaseConfirmed`, `MemberRecoveryAttempted`, `MemberBlocked` and bridge fencing events govern actual interventions/recovery. Merely crossing 80% does not authorize killing a member.
+
+**State/UI rule:** the Council dashboard may display measured aggregate usage, limits, freshness, pressure and actions; show missing metrics as unknown rather than zero. Warnings are informative unless a genuine user decision (new permission/budget/host authorization) is required. The runtime may throttle **trusted gateway/broker operations**, initiate safe whole-sandbox quiescence or block a new member admission, but cannot claim to micromanage every internal worker fork. External Docker resource release needs observed backend evidence under Part 5; incomplete safe quiescence remains explicitly unresolved.
+
+**Security rule:** no agent-controlled sandbox or worker receives raw Docker Engine socket/API credentials. Optional isolated child containers require a separately authorized trusted broker and count against the parent's aggregate resource vector; child workers cannot expand parent spending, visibility or reviewer authority.
+
+**Verification boundary:** typed DTO/handler generation, external Docker metrics/oom integration, Windows Docker Desktop WSL2/host checks, supported GPU accounting and actual pressure/OOM/lease tests are **NOT STARTED / NOT RUN**. These new events are a specification update, not executable implementation.
