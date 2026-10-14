@@ -154,6 +154,11 @@
     "uncertainty_disclosed": true,
     "historical_calibration_when_available": true,
     "separated_from_approved_budgets_and_actual_usage": true,
-    "may_automatically_change_quota": false
+    "may_automatically_change_quota": false,
+    "scope": [
+      "overall_project",
+      "per_phase",
+      "per_member_where_meaningful"
+    ]
   }
 }
