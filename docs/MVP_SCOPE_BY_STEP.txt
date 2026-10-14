@@ -103,7 +103,7 @@ Defer until after MVP evidence
 
 
 STEP 3 - POSTGRESQL SCHEMA AND VERSIONING
-Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
+Status: DESIGNED - October 14 reconciled specification; runtime implementation NOT STARTED and tests NOT RUN
 Primary specification: docs/POSTGRES_DATA_MODEL.md
 
 Complete product
@@ -133,6 +133,12 @@ MVP must implement
 - Tasks, leases, operations, events, model calls.
 - Context manifests + continuation packets.
 - Artifact metadata/pointers instead of storing large artifacts in PostgreSQL.
+- Explicit per-seat checkpoint-arrival SHA records; public repository approved-history manifests and desired/observed transitions; five sealed reviewer assessments and atomic reveal.
+- Durable full checkpoint messages/peer-action obligations, processed-message frontiers, version-bound DONE certificates, verifier/closeout/return-packet references.
+- Source-linked branch-local versus project-wide clarification lineage, scoped command receipts, transactional committed event-clock, budget reservations and reconciliation attempts.
+- Five-seat and cross-run referential constraints, branch/RLS privacy, verified Git archive/evidence-reference closure before deleting temporary Council PostgreSQL.
+- Part 3 design specifies normalized record groups and constraints; physical SQL migrations, query performance and enforcement tests are not claimed complete.
+
 - Version-controlled migrations from day one.
 
 MVP can simplify
@@ -147,7 +153,7 @@ MVP can simplify
 
 
 STEP 4 - TYPED COMMANDS, EVENTS, STATE MACHINES, AND INTERACTION CONTRACTS
-Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
+Status: DESIGNED - October 14 reconciled specification; runtime implementation NOT STARTED and tests NOT RUN
 Primary specifications: docs/TYPED_INTERACTION_CONTRACTS.md and docs/PART_4A_AUTHORITY_BOUNDARIES.md
 
 Complete product
@@ -178,6 +184,12 @@ MVP must implement
 - Implement exact Project Contract approval UI semantics, including Approve & launch, Request changes, Reject current approach, and Cancel project.
 - Implement idempotent/stale-safe interaction responses and reconnect-safe Interaction Center behavior.
 - Schema validation at every API/runtime boundary.
+- Command idempotency is checked before stale-target/transition guards for authenticated same-scope replays; same key/changed request hash fails with IDEMPOTENCY_CONFLICT.
+- Define actor/authority and exact revision/frontier guards for member-emitted CHECKPOINT_READY, public repo publication, all-five SEALED_REVIEW reveal, peer messages/actions, version-bound /done and forced-incomplete closure.
+- Run PAUSE/RESUME/STOP, approved budget pools/phase ceilings, BYOK secret references, unknown provider outcomes and explicit candidate acceptance have distinct typed results/events and UI effects.
+- No raw user answers to members; Orchestrator processes faithful branch-scoped clarifications and does not judge solutions or select winners.
+- Step 4 design registry and transition examples are specified; executable DTOs, UI and state-machine tests are not claimed complete.
+
 
 Defer until after MVP evidence
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -187,7 +199,7 @@ Defer until after MVP evidence
 
 
 STEP 5 - TRANSACTIONS, IDEMPOTENCY, AND CONFLICT HANDLING
-Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
+Status: DESIGNED - October 14 reconciled specification; runtime implementation NOT STARTED and tests NOT RUN
 Primary specification: docs/PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md
 
 Complete product
@@ -212,6 +224,13 @@ MVP must implement
 - Transactional outbox or equivalent reliable event delivery.
 - Treat PostgreSQL as isolated project-lifetime Council state inside each deployment sandbox; do not require a host-global shared Council database.
 - After acceptance, verify Git export of the accepted project/reusable learning package before deleting the Council control database and runtime state.
+- Deployment event-clock row allocated in the committing transaction before aggregate/budget locks; no PostgreSQL sequence/IDENTITY presumed to represent committed event order.
+- Scoped command receipts + canonical hash deduplicate before version/transition validation; model/GitHub/sandbox effects use durable logical operations and append-only attempts with stale epoch/lease fencing.
+- Budget/resource reservations for each request commit with canonical event/outbox before external dispatch; reconcile late/unknown usage without falsely releasing protected review funds.
+- Checkpoint READY and sealed-review reveal are local atomic guards; public/private repository transitions and cleanup require separately verified external observations before successful state transitions.
+- SSE/canonical snapshots use a consistent committed event watermark; outbox retries unpublished rows and projections expose lag rather than skipping lower unprocessed events.
+- Step 5 design is specified; SQL migrations, concurrency/failure-injection, external adapters and runtime tests are not claimed complete.
+
 
 Defer until after MVP evidence
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
