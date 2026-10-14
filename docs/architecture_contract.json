@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "decision_date": "2026-10-13",
+  "decision_date": "2026-10-14",
   "scope": "specification_only",
   "logical_member_count": 5,
   "member_count_changes_require_explicit_revision": true,
@@ -20,7 +20,7 @@
     "closed"
   ],
   "peer_verification_environment": "separate_disposable",
-  "private_work_requires_finite_slices": true,
+  "private_work_requires_finite_slices": false,
   "done_requires": [
     "checkpoint_generation",
     "processed_message_sequence",
@@ -133,5 +133,27 @@
       "implementation_evidence": [],
       "test_evidence": []
     }
-  ]
+  ],
+  "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
+  "semantic_checkpoint_objectives_defined_by": "orchestrator_in_approved_project_contract",
+  "checkpoint_readiness_authority": "logical_council_member",
+  "phase_budget_policy": {
+    "per_member_per_phase_token_ceiling_required": true,
+    "per_member_per_phase_cost_ceiling_required": true,
+    "protected_checkpoint_review_finalization_allowance": true,
+    "delegated_workers_and_session_rollovers_count_toward_applicable_budget": true,
+    "exhaustion_outcome": "BUDGET_EXHAUSTED_INCOMPLETE",
+    "exhaustion_auto_completes_checkpoint": false,
+    "extension_requires_user_authorization": true,
+    "no_general_reasoning_deadlines_or_fixed_model_call_counts": true,
+    "individual_tool_and_provider_safety_timeouts": true
+  },
+  "phase_token_estimates": {
+    "enabled": "optional",
+    "expected_output": "non_binding_range_or_insufficient_data",
+    "uncertainty_disclosed": true,
+    "historical_calibration_when_available": true,
+    "separated_from_approved_budgets_and_actual_usage": true,
+    "may_automatically_change_quota": false
+  }
 }
