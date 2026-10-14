@@ -402,6 +402,16 @@ All initially resolve to the chosen DeepSeek model.
 
 The UI shows where a setting is inherited and offers an explicit override. It also labels an all-DeepSeek council as same-model rather than implying training diversity.
 
+### MVP inference billing and user credentials
+
+Council's MVP uses **Bring Your Own API Key (BYOK)** for remote inference and supports compatible local LLMs without a remote provider key. Users select providers/models and supply provider-specific credentials during configuration. External providers bill the user's own account directly; **Council does not require, store, or operate a prepaid inference wallet**, does not resell remote tokens, and does not act as the provider-billing merchant in the MVP.
+
+Credential material belongs in trusted, scoped secret storage outside agent-owned filesystems, Git repos, browser persistence, and normal logs. The controlled model gateway retrieves the relevant secret to make a permitted provider request; individual Council members/worker containers receive only the capability to request a model call, never the raw credential. Rotation/revocation and execution-epoch fencing apply. BYOK **does not itself eliminate credential theft or other security risks**: Council remains responsible for its trusted credential handling.
+
+User-approved Council budgets and phase allowances gate Council-authorized model requests. They are not guarantees about provider invoicing or charges from the same API key outside Council. Provider-native account spending controls are advisable when supported, but may not be exact. Show metered, reserved, and uncertain costs transparently.
+
+**Future consideration only (not MVP):** optional Council-managed provider billing with prepaid credits/wallet or a per-token markup. Before implementing, separately design merchant/provider terms, secure payments, usage reconciliation, fraud/abuse control, refunds/chargebacks, taxation/compliance, and financial exposure. A software subscription fee, if adopted, is a separate business decision, not an implied inference wallet.
+
 ### Provider registry
 
 Each model entry records its provider, identifier, available capabilities, supported settings, context allowance, credential reference, configured pricing, and last compatibility check.
@@ -707,7 +717,7 @@ Pause prevents new scheduling and lets the runtime reach a safe state. Stop canc
 
 ### Budget controls
 
-The run allowance is divided into configurable per-phase member token/cost allowances and a protected checkpoint/review/finalization reserve. The Orchestrator sets semantic phase/checkpoint objectives and does not grade whether a member has intellectually completed them; the member decides readiness.
+With BYOK, users approve project and phase spending allowances and the external providers bill their accounts directly; Council requires no upfront wallet deposit. These allowances restrict Council-authorized calls, not the provider's ultimate invoice. The run allowance is divided into configurable per-phase member token/cost allowances and a protected checkpoint/review/finalization reserve. The Orchestrator sets semantic phase/checkpoint objectives and does not grade whether a member has intellectually completed them; the member decides readiness.
 
 Limits apply to concurrent model calls, worker creation, delegation depth, tool execution, and cumulative usage. Retries and failed attempts count.
 
