@@ -19,6 +19,9 @@ The owner corrected the repository policy to public member repositories at check
 | ADR-10 | Conditional evidence-backed Git lessons; frozen memory; verified archive closure before teardown | POSTGRES_DATA_MODEL.md | Specified; Step 11 policy/implementation pending | NOT STARTED / NOT RUN |
 | ADR-11 | Single agent, five independent attempts, full Council, and ablations under consistent evaluation | APP_DESIGN.md | Evaluation requirements specified | NOT STARTED / NOT RUN |
 | ADR-12 | Reconciled defaults and explicit status/evidence tracking | architecture_contract.json | Documentation/contract maintenance only | Council runtime NOT STARTED / NOT RUN |
+| ADR-13 | MVP remote inference is BYOK (or local LLMs), with user-defined budgets and direct provider billing; no Council prepaid wallet; optional managed-credits/reseller approach reserved for a later decision | PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md; APP_DESIGN.md | BYOK product policy specified; deferred credits not designed | NOT STARTED / NOT RUN |
+
+October 14, 2026 owner decision: BYOK/local inference is the MVP billing model, while optional Council-managed prepaid credits/provider-token resale may be investigated later. BYOK lowers Council's billing exposure but does not remove trusted API-key storage and revocation obligations. User-set Council budgets govern Council-authorized calls, not absolute provider bills. No Council payment/wallet system has been built or approved for MVP.
 
 ## Completion policy
 
