@@ -34,3 +34,11 @@ No project license was selected, and no third-party implementation was copied.
 The required runtime scenarios in docs/ARCHITECTURE_DECISIONS.md remain NOT RUN: single-slot fairness, all-five barriers, visibility failures, sealed review isolation, hostile peer-test containment, unknown external effects, reservation races, committed event replay, stale /done races, clarification isolation, and archive reference closure. Provider integration, sandbox integration, database migrations, live experiments, and deployment have not been verified by this update.
 
 Do not mark implementation or runtime verification complete from a passed documentation check or a pushed commit.
+
+## October 14 Step 7 design verification boundary
+
+The Step 7 **specification** is marked DESIGNED. The latest Part 7 document, MVP scope, main design, implementation handoff, Part 3 schema proposal, Part 4 command/event/state interfaces, Part 5 transaction contract, architecture decisions, machine-readable contract, README, and agent instructions now carry the same approved budget/resource/recovery policies.
+
+The repository's static-check script was updated to reject the superseded mandatory-private-work-slice assumption, check the Step 7 DESIGNED boundary without treating it as implementation, and recognize ADR-13 (BYOK). This record **does not claim that the script was executed in a complete local checkout** as part of this connector-based edit; no passing check output is invented.
+
+**Runtime implementation, PostgreSQL migrations, provider/model integrations, Docker containment/recovery tests, concurrent budget tests, and repeated Council evaluations remain NOT STARTED / NOT RUN.** The acceptance checklist in Part 7 is a test plan only. Historical original-publication blob hashes above describe the earlier publication snapshot and are not current file hashes.
