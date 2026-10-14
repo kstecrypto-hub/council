@@ -53,3 +53,17 @@ The publishing helper uses the user's locally authenticated GitHub CLI. It never
 - GitHub repository visibility: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility . Public publication exposes repository content and related history; public forks remain public when the original becomes private. Council's publication safeguards are design requirements, not tested integration behavior.
 - PostgreSQL transaction isolation and sequence behavior: https://www.postgresql.org/docs/current/transaction-iso.html . Sequence allocation is not transactional commit order; the event-clock protocol is Council's chosen design and still needs integration tests.
 - LangGraph persistence: https://docs.langchain.com/oss/python/langgraph/persistence . Framework continuation does not replace Council's own operation/authorization/accounting authority; concrete adapter/replay behavior must be verified during implementation.
+
+## Step 8.2 Docker monitoring references (October 14, 2026)
+
+Official backend references for the approved **design-only** trusted Council Resource Monitor:
+
+- Docker `docker stats` behavior: https://docs.docker.com/reference/cli/docker/container/stats/ . Docker CLI memory presentation can differ from raw API memory stats/cache fields.
+- Docker Engine `GET /containers/{id}/stats`: https://docs.docker.com/reference/api/engine/version/v1.51/ . Negotiate the actual server-supported API; do not hard-code v1.51.
+- Docker resource constraints and OOM risks: https://docs.docker.com/engine/containers/resource_constraints . Supported CPU/memory/PIDs/cgroups hard limits reduce damage but do **not** guarantee a workload cannot crash.
+- Docker Engine container events (including `oom`, `die`, `restart`): https://docs.docker.com/reference/cli/docker/system/events/ .
+- Docker Desktop WSL2 backend and VM resource boundaries: https://docs.docker.com/desktop/features/wsl/ and https://docs.docker.com/desktop/features/wsl/best-practices/ .
+- Docker storage/volumes and why block-I/O does not equal free disk space: https://docs.docker.com/engine/storage/drivers/ .
+- NVIDIA NVML as optional supported GPU/VRAM observer: https://developer.nvidia.com/management-library-nvml and https://docs.nvidia.com/deploy/nvml-api/latest/index.html .
+
+These sources describe available primitives, **not** a tested Council monitoring service, GPU isolation guarantee, OOM prevention guarantee, or permission to expose Docker Engine credentials inside agent sandboxes. Windows Resource Monitor and Prometheus/Grafana are not MVP dependencies.
