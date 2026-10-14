@@ -49,15 +49,13 @@ Checkpoint closure invalidates/removes these conditions.
 
 All five members reach an outcome-based semantic barrier. Early arrivals freeze their candidate and release execution capacity; finite private-work slices also release capacity before readiness. No failed/blocked member is silently excluded. A one-slot deployment rotates the same five logical agents through all stages.
 
-Each of five fixed logical Council members owns its candidate repository under its own GitHub identity. Between checkpoints it is private. At an approved checkpoint the trusted runtime makes the member repositories **public on GitHub**, records exact frozen commits and observed visibility, and later makes them private again before private development resumes. Peer collaborator grants are not the publication mechanism. Reviewers never receive another member's write or administration credentials.
+Each member owns its own **customer-controlled local Git repository** in its sandbox storage. A trusted local repository/snapshot gateway—not public GitHub—creates a content-hashed, selected, frozen, read-only checkpoint export. At the approved semantic milestone, the gateway grants each authorized reviewer **only the approved frozen snapshot**, not the member's full Git history or writable/private workspace. Verified snapshot content, approved source/data scope, exact source/tree hash and recipient read grants are distinct canonical records. See [local repository and memory architecture](LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md).
 
-Public means internet-wide publication, not merely access for Council peers. Approval must cover all repository content/history and other surfaces made public, including logs, releases, and artifacts where applicable. Secrets, personal/private inputs, unapproved intellectual property, and sealed reviews must stay outside the published repository. A publication manifest records approved refs/history, content hashes, scope, and authorization; checking only the latest checkout is insufficient. A failed safety check blocks publication. A confidential project that cannot authorize this exposure cannot use this publication mode; do not silently publish it or silently substitute a different protocol.
+**Internet-public repository publication is no longer the default.** Any optional public/hosted export is a separately approved external operation. Local checkpoint sharing stays entirely in the customer's chosen trust boundary; owning the source does not mean Council the vendor receives it. Missing/unscannable files, sensitive material, unexpected LFS/submodule dependencies or unsafe snapshot content block grant until resolved.
 
-Once published, copies and public forks cannot be recalled by making the original private. The private transition protects later unpublished work, not already disclosed information. Runtime-controlled outbound access, repository writes, comments/issues, caches, and retrieval must not provide hidden inter-member communication outside the checkpoint protocol. Public read access is not write access, and visibility is not a frozen-snapshot guarantee: record/pin approved SHAs and enforce the write freeze outside member control.
+Checkpoint OPENING verifies the full five-member frozen snapshot set, manifest hashes and intended read-only recipient access. During closing the runtime revokes each temporary snapshot grant/route and proves isolation before private development resumes. Previously received source information may be known to reviewers; revocation prevents additional access but does not promise to erase their memory. Partial/unknown grants or revocations are reconciled, not treated as successes. No member can acquire another's write/admin credential or open a direct cross-sandbox connection.
 
-Visibility changes are durable external operations. OPENING cannot declare publication successful until observed state is verified. Partial/unknown publication blocks review and is reconciled; any real exposure is recorded even after rollback. On closing, terminate communication authority, make repositories private, verify visibility and required isolation controls, and only then permit new private commits. A failed private transition keeps affected work blocked. This policy applies to generated member repositories, not to the Council source repository itself.
-
-Checkpoint sequence: all-five arrival barrier -> freeze and publication safety checks -> public repositories -> SEALED_REVIEW -> shared REVIEWING -> CLOSING -> confirmed private visibility -> CLOSED/private revision.
+Checkpoint sequence: all-five member arrivals -> freeze approved local snapshot exports -> scoped verified peer grants -> SEALED_REVIEW -> shared REVIEWING -> CLOSING -> verified access/route revocation -> CLOSED/private revision.
 
 During SEALED_REVIEW each member independently submits an immutable assessment bound to the checkpoint, candidate SHAs, reviewer identity, evidence, objections, and proposed tests. The gateway withholds peer assessments and shared debate until every required member has submitted. Reviews remain in scoped canonical storage, never in a public repository or shared retrieval cache before reveal. Finite slices/budgets apply; a missing reviewer blocks the reveal barrier or produces an explicitly incomplete/aborted review, never a fabricated fifth assessment. No fixed skeptical personas or forced disagreement are required.
 
@@ -348,15 +346,11 @@ Between checkpoints:
 
 The exact broader outbound-network policy is a later environment/capability design decision, but it must preserve the no-out-of-band-peer-communication invariant.
 
-## 8. GitHub/repository administration
+## 8. Local repository / snapshot gateway administration
 
-Council members own and develop their own repositories, but an agent sandbox must not require unrestricted GitHub-account administration authority in order to push its work.
+Each member may use local Git freely inside its own authorized sandbox and persistent workspace. The **trusted local snapshot gateway outside member control** owns temporary peer-grant authorization, fixed snapshot exports, read-only mounts, revocation and verification. Members do not need any third-party Git account credentials for MVP operation.
 
-Repository-content authority and repository-administration authority should remain separable.
-
-The trusted runtime is responsible for approved checkpoint public/private visibility transitions, publication-safety checks, write freezes, and verification of the actual resulting visibility. A Council member must not be able to bypass checkpoint isolation by permanently adding peers, changing visibility, or otherwise administratively exposing its repository outside the checkpoint policy.
-
-Exact Git credential and administration mechanics remain implementation details for a later contract.
+Content authority over a member's own files is not administrative authority over other members' storage, local gateway routes or protected harnesses. A member cannot permanently grant peer access or bypass checkpoint communication boundaries. Optional customer-owned Forgejo/enterprise Git adapters must preserve the same guarantees. Exact gateway authorization and mount protocols are Step 10/Step 12 implementation work.
 
 ## 9. Persistence and provenance
 
@@ -372,7 +366,7 @@ For each checkpoint Council retains, at minimum:
 - completion-state transitions such as /done;
 - formal challenges/findings linked from the discussion where applicable;
 - closing repository commit per participant;
-- public/private visibility requests and verified outcomes, including partial exposure, failed transitions, and publication-manifest references;
+- local snapshot export/grant/revoke requests and verified outcomes, manifest hashes, partial grant/revocation failures, and any separately user-authorized external publication history;
 - communication-route creation/removal events;
 - whether closure was normal or ceiling-forced.
 
