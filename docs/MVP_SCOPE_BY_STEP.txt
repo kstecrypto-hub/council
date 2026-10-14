@@ -328,7 +328,7 @@ MVP must implement
 - Pause uses QUIESCING_FOR_PAUSE activity and becomes PAUSED only on verified durable suspension; Resume rechecks guards; Stop enters STOPPING and becomes CANCELLED only after sufficient cleanup, otherwise FAILED. Candidate ACCEPT is a separate event/flow.
 
 - Optional non-binding rough overall-project and per-phase token/cost estimate ranges shown with uncertainty and evidence basis; never automatically treated as a quota, top-up, or promise.
-- Restart recovery for unfinished tasks.
+- **Whole-member** restart recovery and continuation from the member-owned persistent Docker volume plus existing canonical operations; no Council-owned per-worker task recovery service.
 - Safe cancellation/pause.
 
 Defer until after MVP evidence
@@ -370,7 +370,15 @@ Accepted Step 8.2 worker autonomy and monitoring policy (October 14, 2026)
 - Worker-created model calls still use the trusted BYOK provider gateway and per-phase cost/token reservations; all children inherit the same or narrower authority. They cannot escape branch isolation, access raw credentials, grade Council peers, or declare their parent's CHECKPOINT_READY.
 - The default shared **local inference gateway** concurrency limit in Step 7 is not a fixed cap on ordinary worker processes inside a sandbox.
 
-The accepted decisions 8.1 and 8.2 do **not** close Step 8. Exact action/observation and worker result persistence/restart/merge protocol, final-phase transitions, and checkpoint/finalization integration remain to design.
+Accepted Step 8.2a persistence decision (October 14, 2026)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Docker's **named volumes** (or approved persistent bind mounts) provide each member's durable private workspace, Git repo, saved notes, ordinary worker progress files and results across stop/container recreation. Fixed private volume ownership and mount isolation are required.
+- Worker processes **do not continue from in-memory instruction state** after a container stops/crashes; the member's new process/agent session decides how to resume or repeat local subtasks from saved files. Docker does not provide automatic transparent subagent task replay. If progress was not persisted, no exact resume is promised.
+- **No Council per-worker recovery manager, separate worker process ledger, resurrection daemon, mandatory worker result protocol, or per-worker scheduler**. Council controls whole-member sandbox stop/start/recreation and capability/budget/operation reconciliation; all external calls and consequential evidence still use existing trusted records.
+- Deliberately stopped/paused/at-checkpoint/budget-exhausted member sandboxes must remain stopped; Docker `restart: always`/`unless-stopped` may not bypass the host scheduler, protected review barrier or reauthorization. Docker/container readable writable layer and tmpfs are **not substitutes for durable mounted storage**.
+- Recreating a sandbox requires reattaching the exact member-owned volume, validating mount/permission/resource/isolation guard, fencing old epoch and reconciling UNKNOWN external effects before member authorization. Archive/retention/verified deletion controls still apply.
+
+Step 8.1, 8.2 and 8.2a are accepted **subdesigns**, but **Step 8 remains IN DESIGN** for precise member action/observation, private-phase/final-candidate states, and checkpoint/finalization transition integration.
 
 Complete product
 ~~~~~~~~~~~~~~~~
@@ -504,6 +512,9 @@ MVP must implement
 - Read/write access only to the branch's approved repo/workspace.
 - Implement Step 7 trusted backend-confirmed resource release and resume-time external sandbox checks; use the initial approximately 20% host RAM headroom target adjusted for measured OS/runtime overhead, with separate VRAM/admission measurements.
 - Preserve member identity/state across Docker restart; implement finite three-retry infrastructure recovery with 5s/30s/120s initial backoff as configurable backend policy and no reasoning deadlines.
+- Provision one trusted, member-scoped **named Docker volume or explicitly approved bind mount** per logical member for private workspace/Git/worker-written progress files and owned candidate data. Stop/recreate containers with the same authorized volume; do not count container writable layer/tmpfs/process memory as reconstructible member state.
+- Explicitly gate container restarts by Council's whole-member admission/status: PAUSED, checkpoint-ready and BUDGET_EXHAUSTED sandboxes cannot automatically restart through Docker restart policy and bypass approved budgets/barriers.
+- Do **not** implement per-worker resurrection, CRIU/process memory snapshots, or a Council worker scheduler. A fresh member process decides whether to recreate internal workers from saved workspace progress, subject to external-effect reconciliation, old bridge fencing and protected evidence provenance.
 - Monitor Docker stats and `oom`/`die` lifecycle events via **trusted control-plane access**, not Windows Resource Monitor. Distinguish aggregate container memory from WSL2 VM/host memory, disk/volume free-space from block-I/O counters, and optional NVIDIA NVML GPU/VRAM from ordinary Docker stats.
 - Protect container-level CPU, RAM and PIDs via supported Docker/cgroups, reserve disk/volume and GPU resources separately where backend permits, and prevent agent access to Docker socket even when the member creates nested AI worker processes.
 - Default pressure-policy samples every 2–5 seconds with configurable 80%/90% sandbox-RAM thresholds; throttle/deny new trusted heavy admissions, safely suspend whole sandbox on sustained pressure, fence epochs on OOM/crash, retain UNKNOWN effects, and verify resource release before slot reuse.
