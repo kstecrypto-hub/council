@@ -427,6 +427,7 @@ MVP must implement
 - Per-seat provider/model selection at run start.
 - Preserve provider/model attribution for every call/result.
 - Record tokens, cached tokens when reported, latency, and cost when known.
+- Carry forward the approved Step 7 default of up to two concurrent remote calls per provider, subordinate to actual account/provider limits, and per-provider versioned pricing/metering and operation-class timeouts for atomic budget settlement.
 - Capability check before assigning a task requiring tools/context features.
 - No silent provider fallback.
 
@@ -469,6 +470,8 @@ MVP must implement
 - No raw Docker socket exposed to agents.
 - Simple typed tool permissions.
 - Read/write access only to the branch's approved repo/workspace.
+- Implement Step 7 trusted backend-confirmed resource release and resume-time external sandbox checks; use the initial approximately 20% host RAM headroom target adjusted for measured OS/runtime overhead, with separate VRAM/admission measurements.
+- Preserve member identity/state across Docker restart; implement finite three-retry infrastructure recovery with 5s/30s/120s initial backoff as configurable backend policy and no reasoning deadlines.
 
 Architecture hooks should exist, but MVP does NOT need
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -563,6 +566,7 @@ MVP must implement
 - Peer challenges/revisions.
 - Basic candidate/repo/test status.
 - Usage/cost display.
+- Show user approval and editable initial 70/25/5 project budget allocations, per-member/per-phase monetary and token ceilings, protected review funds, BYOK/local provider setup, cost uncertainty, and BUDGET_EXHAUSTED / INCOMPLETE top-up/stop actions.
 - Activity stream via SSE.
 - A minimal final/evaluation view.
 
