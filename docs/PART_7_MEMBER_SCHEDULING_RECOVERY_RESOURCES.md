@@ -1,6 +1,6 @@
 # Part 7 - member execution scheduling, recovery, and resource controls
 
-**Status:** IN DESIGN; amended October 13, 2026.
+**Status:** IN DESIGN; amended October 14, 2026.
 **Scope:** runtime scheduling of Council-member execution environments, checkpoint barriers, resource limits, recovery, pause/stop, and budget controls.  
 **Implementation status:** NOT STARTED. **Runtime acceptance tests:** NOT RUN.
 **Decision record:** [ARCHITECTURE_DECISIONS.md](ARCHITECTURE_DECISIONS.md). Accepted requirements below do not mark Part 7 complete.
@@ -20,29 +20,19 @@ Host allows N active work sandboxes: N may be 1, 2, 3, 4, or 5.
 
 The number of logical Council members does not change with machine capacity. Only wall-clock parallelism changes.
 
-## 2. Member execution slots and bounded private-work slices
+## 2. Member execution slots and phase-budget-bounded private work
 
-The runtime activates only as many member work sandboxes as the deployment resource policy permits.
+The Project Orchestrator prepares a versioned, outcome-based semantic phase/checkpoint plan as part of the approved Project Contract. Each of the five equal members independently runs its own agentic loop until it declares CHECKPOINT_READY for that phase, becomes externally blocked, is paused/stopped, or its authorized **per-member, per-phase token/cost allowance** is exhausted.
 
-With two active slots, A and B may execute while C, D, and E wait. Reaching a semantic checkpoint releases a slot, but **reaching a checkpoint is not the only way to release a slot**.
+**No general reasoning deadline, artificial model-call count, or mandatory private-work time slice establishes completion.** Runtime never emits CHECKPOINT_READY for a member, grades intellectual completeness, or advances the checkpoint because an allowance elapsed.
 
-Private work and checkpoint participation both have finite execution slices. At a slice boundary, the runtime quiesces the member at a durable boundary, records unfinished work, stops its execution container, and rotates to the next eligible seat. A slice yield does not mean CHECKPOINT_READY, /done, failed investigation, or candidate completion. The same member resumes the same unfinished phase on a later rotation.
+On phase-budget exhaustion, mark the member **BUDGET_EXHAUSTED / INCOMPLETE**, preserve workspace/continuation and the exact remaining checkpoint obligations, revoke/suspend the execution bridge safely, and release its sandbox slot. The user may approve extra phase allowance or cancel/stop. A budget-exhausted member never satisfies the all-five arrival or review barrier.
 
-Required scheduling configuration includes a positive finite active-slice ceiling and a positive finite quiescence grace period. Values are run/deployment policy, not judgments about how much reasoning is enough. Their production defaults remain open until measured.
+With two active slots, Members 1 and 2 run while Members 3-5 wait. When an active member reaches its checkpoint, blocks, voluntarily yields for a durable wait, or exhausts its phase allowance, it releases the slot; the next eligible seat starts in fixed order. A one-slot deployment may wait for Member 1 to reach one of those conditions before Member 2 starts. That elapsed-time trade-off is explicit, not a reason to force a member to claim readiness.
 
-When a slice expires:
+Only **individual tool operations, provider calls, bridge leases, and infrastructure recovery** need enforceable safety timeouts/backoff and bounded cancellation; those are not semantic-work deadlines. A stalled tool cannot hold the host forever. Safe resumption follows the existing epoch fencing, persistence and reconciliation rules.
 
-1. stop admitting new work through the member's runtime bridges;
-2. finish, cancel, or isolate in-flight work according to its operation contract;
-3. persist the member's durable continuation and environment state;
-4. revoke that execution's ephemeral authority, stop its execution process, and release only resources confirmed released;
-5. schedule the next eligible seat.
-
-A member that refuses to yield does not hold the queue indefinitely. At the grace ceiling, the runtime fences the execution and terminates controllable processes, retaining uncertain external-operation records. Failed containment or cleanup blocks the affected execution/backend and is reported explicitly rather than falsely releasing resources. This bounds scheduling attempts; it is not a promise that a broken host can always be recovered automatically.
-
-Waiting on a child, provider, permission, or unavailable dependency should release scarce execution capacity when durable continuation makes that safe. A model call being in flight is not permission for its parent sandbox to monopolize a slot indefinitely.
-
-The scheduler decides **when an environment may execute**, not which intellectual approach is better or what the member should investigate.
+The runtime schedules **whole member environments**, not their internal reasoning choices or work decomposition.
 
 ## 3. Checkpoints are all-member barriers
 
@@ -59,7 +49,7 @@ A failed, blocked, or disconnected member is not ready. The runtime never silent
 
 A blocked-member record identifies the reason, affected dependencies, attempted recovery, next eligible retry/condition, and consumed allowance. Transient infrastructure recovery uses finite attempts/backoff. Unaffected members may continue to the same barrier; they may not cross it.
 
-When the configured recovery, time, or budget ceiling is exhausted, expose a paused/incomplete run with the missing member and outstanding work. The user may repair/resume or stop under the existing controls. A future explicit membership change would require a new versioned run/protocol decision and would not be reported as the original five-member experiment.
+When the configured recovery or phase-budget ceiling is exhausted, expose a paused/incomplete run with the missing member and outstanding work. The user may repair/resume or stop under the existing controls. A future explicit membership change would require a new versioned run/protocol decision and would not be reported as the original five-member experiment.
 
 ## 4. Barrier semantics
 
@@ -90,7 +80,7 @@ During sealed review, each member independently inspects frozen candidates; peer
 
 Inactive members retain their logical identities and durable state. The gateway queues ordered messages and actions. On resumption, the same member receives its accumulated messages, current obligations, and latest checkpoint generation before making a new completion decision.
 
-A member may release its slot after /done, while waiting, or at its execution-slice boundary. It need not finish all communication to let another seat run. A member with a stale /done certificate or a new required action re-enters the normal rotation.
+A member may release its slot after /done, while durably awaiting an external dependency, or when its checkpoint/review allowance is exhausted. A member can voluntarily yield at a safe boundary with incomplete obligations preserved; the runtime does not manufacture /done. If a review allowance is exhausted with required actions still open, the checkpoint remains blocked/incomplete until authorized continuation. A member with a stale /done certificate or a new required action re-enters the normal rotation.
 
 A one-slot deployment can execute all five members and revisit them as necessary. It never creates a lightweight replacement reviewer or permits private implementation while the checkpoint is open.
 
@@ -129,7 +119,7 @@ Provider tokens, Git-administration credentials, checkpoint credentials, tempora
 
 ## 8. Deterministic seat-order scheduling
 
-Eligible members rotate in stable ascending seat order:
+Eligible members are admitted to available sandbox slots in stable ascending seat order:
 
 ```text
 1 -> 2 -> 3 -> 4 -> 5 -> wrap
@@ -137,9 +127,11 @@ Eligible members rotate in stable ascending seat order:
 
 Skip members that need no execution or are blocked by a known dependency/resource condition. Record why a seat is skipped and reconsider it when eligibility changes.
 
-Each eligible active seat receives a bounded slice; a running member cannot defer rotation indefinitely by withholding readiness. A member becoming eligible later joins the current rotation rather than resetting priority to seat 1.
+Admission happens when a slot is actually freed by CHECKPOINT_READY, BLOCKED, phase-budget exhaustion, voluntary safe waiting/yield, pause/stop, or other lifecycle release; **there is no mandatory periodic private-work rotation**. A member becoming eligible later joins the current seat order rather than resetting priority to seat 1.
 
-For multiple slots, maintain one durable dispatch cursor and reserve seats atomically so concurrent schedulers cannot select the same member twice. Schedule eligible seats in order without ranking their solutions. Fairness applies among runnable members whose declared resource requirements can be admitted; unavailable hardware remains an explicit blocker.
+For multiple slots, keep a durable dispatch cursor and reserve seats atomically so concurrent schedulers cannot select the same member twice. Resource constraints may defer an otherwise eligible seat; do not silently prioritize a favored solution.
+
+The finite phase allowance bounds Council-authorized inference spend, not an exact wall-clock duration. Delayed tool work is separately governed by operation timeouts and recovery. The one-slot model may take longer because it waits for the active member's phase result or exhaustion.
 
 Seat number conveys no rank, seniority, intellectual authority, or model-quality preference. No fairness scorer or branch-importance model is required.
 
@@ -232,6 +224,14 @@ A reservation expires safely only before confirmed dispatch. For dispatched or u
 
 Protected review/finalization allowance cannot be consumed by ordinary development. Reallocation requires the recorded budget policy/user authorization; it cannot happen silently to keep an agent running. Exhaustion produces blocked/partial outcomes, not forced agreement.
 
+### Per-phase budgets and non-binding token forecasts
+
+- The approved Project Contract defines semantic phase objectives and checkpoint criteria. Each member receives a configurable **hard token allowance for each phase**, plus the applicable cost ceiling. A dedicated protected allowance covers checkpoint review, required communication, and finalization. The budget boundary must include member calls, child workers, retries, model-session rollovers and any chargeable orchestration work using explicit accounting scopes.
+- A member itself decides semantic readiness and emits CHECKPOINT_READY. If phase tokens or allowed spending run out first, record BUDGET_EXHAUSTED / INCOMPLETE, preserve the work, and ask the user to extend the affected allowance or stop. Never infer CHECKPOINT_READY, /done, acceptance, or agreement from budget exhaustion.
+- Token metering records input and output tokens (and cached-token accounting when available) by model/provider/runtime with explicit units. Remote providers may apply different pricing; local inference still uses a token allowance although there may be no provider fee. Do not pretend token counts are equivalent measures of capability across models.
+- **Optional estimates are planning forecasts, not approved quotas or guarantees.** Before approval, Council may display a rough *range* of expected token usage for each phase/member and an associated indicative cost range by selected model, along with uncertainty/assumptions and whether the estimate is based on comparable historical runs or a weak heuristic. If evidence is too sparse, show 'insufficient data' rather than a fabricated number.
+- Estimates may have a very wide error margin, should be calibrated/revised against actual usage over time, and must never automatically expand, shrink, or substitute for user-approved hard phase/run budgets. Display estimated vs. authorized vs. actually spent values separately. Approval of a budget is a decision by the user, not by the estimation algorithm.
+
 ## 13. Pause, stop, and unknown outcomes
 
 Pause stops new ordinary admissions, reaches durable boundaries, and suspends members. Safety work such as fencing, reconciliation, and cleanup remains permitted within its existing scope. Do not claim all processes paused while they are still quiescing.
@@ -246,19 +246,21 @@ Resume rechecks the current contract, permissions, budgets/reservations, resourc
 
 The accepted behavior above is not a completed scheduler. Open work includes:
 
-- concrete defaults and validation for slice duration, quiescence grace, retry/backoff, recovery ceilings, and host headroom;
-- remote provider concurrency/rate contracts and local-model sizing/compatibility measurements;
+- concrete validation/default proposals for per-member/per-phase token budgets, cost ceilings, protected review allowances, tool-call timeouts, recovery retry/backoff ceilings, and host headroom (without semantic-work time limits);
+- provider-specific token metering and cost accounting, local-model sizing/compatibility measurements and remote concurrency/rate contracts;
 - exact reservation/accounting schema, lock ordering, dispatch/settlement transactions, and review-reserve allocation;
 - precise pause/stop state/event wiring with Part 4 and provider-specific cancellation behavior;
 - backend-specific enforcement, crash-safe environment persistence, and proof of resource release;
+- optional historically calibrated token-usage estimation with uncertainty disclosures (not a prerequisite for agent readiness);
 - full failure-injection and deterministic acceptance tests.
 
 These choices must be resolved without weakening the accepted boundaries. Application implementation and runtime tests remain NOT STARTED / NOT RUN.
 
 ## 15. Required acceptance evidence (all pending)
 
-- [ ] One-slot run rotates all five eligible members even when the first never declares readiness.
-- [ ] A slice yield resumes the same logical agent and unfinished phase without passing a semantic barrier.
+- [ ] A one-slot run admits the next eligible member after the active member reaches its milestone, blocks, safely yields, or exhausts its phase allowance; no forced readiness is inferred.
+- [ ] A member that exhausts its phase token/cost ceiling remains INCOMPLETE with recoverable state; no checkpoint/review barrier crosses and no implicit top-up occurs.
+- [ ] The approved phase budget, uncertain planning estimates, and metered actual usage are distinguished; unknown dispatched operations retain conservative reservations.
 - [ ] Concurrent dispatchers do not double-schedule a member or oversubscribe resources.
 - [ ] A failed/blocked member cannot silently shrink Council or open the arrival barrier.
 - [ ] Time-sliced sealed review and discussion retain independent reviews and all message obligations.
