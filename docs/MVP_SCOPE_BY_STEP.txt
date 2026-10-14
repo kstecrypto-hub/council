@@ -312,6 +312,7 @@ MVP must implement
 - Lease expiry + heartbeat + retry attempt number for Council-controlled operations.
 - Configurable max concurrent model calls.
 - Configurable max concurrent local sandboxes.
+- Trusted Council-host-side Docker Engine API stats/events monitoring per **whole member** sandbox, with adaptive/cgroup hard limits and configurable 2–5s samples, 80%/90% assigned-RAM soft-pressure response, WSL2/host memory and free-disk checks, and separate GPU/VRAM monitoring when supported. This policy does not guarantee preventing OOM kills and does not impose an internal worker-count cap.
 - A failed/BLOCKED member remains a required logical Council seat; no silently reduced five-member barrier.
 - BYOK/local-inference MVP; provider accounts bill users directly. Council-authorized budget gates are not guaranteed provider-invoice limits.
 - Per-run, per-phase, per-member token/cost metering and conservative pre-dispatch reservations.
@@ -358,7 +359,18 @@ HYPOTHESIS -> CHANGE or ALTERNATIVE -> TEST/CHECK -> OBSERVE -> KEEP | REVISE | 
 - Exploratory agent-edited tests are distinguishable from protected acceptance tests. Checkpoint /work may verify approved frozen snapshots in disposable verifiers only; no candidate implementation edits during review.
 - The loop has no fixed model-call count, forced reasoning time limit, experiment quota or indefinite-experiment obligation. Step 7 budgets and operation-specific safety timeouts bound spend; Step 11 session rollover preserves logical member and experiment/operation evidence. A budget ceiling does not force CHECKPOINT_READY.
 
-This accepted subdesign does **not** mark Step 8 complete. Worker depth/lifecycle/merge rules, exact action protocol, final-phase transitions and checkpoint/finalization integration remain to design.
+Accepted Step 8.2 worker autonomy and monitoring policy (October 14, 2026)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- A Council **worker** is a member-created AI subagent/process inside the member's allocated Docker sandbox, **not** a sixth Council seat or automatically another Docker container.
+- Each member controls its internal worker count, nesting/delegation depth and parallel work. There is **no fixed worker-count or delegation-depth limit and no Council internal worker scheduler**. Workers use the parent's sandbox CPU, RAM, PID, storage, permitted GPU/device resources and approved model/API phase budget.
+- Docker Engine API stats plus container lifecycle/OOM events drive one trusted resource-monitor component **outside agent sandboxes**. Monitor total sandbox consumption, including every child process. Docker/cgroups provide supported hard memory/CPU/PID boundaries. Separate trusted checks monitor host/WSL2 VM RAM, free storage/volume use, and optional GPU/VRAM through NVML or another supported device adapter.
+- Initial **configurable** policy: 2–5-second metrics samples, warnings/limits on new brokered heavy work at about 80% of assigned sandbox RAM, stronger admission denial plus safe whole-member quiescence if pressure persists near 90%. These are heuristic thresholds, not guaranteed OOM prevention. Step 7's approximately 20% host RAM headroom remains separate and adjustable.
+- The monitor controls **new trusted gateway/broker actions and entire sandbox lifecycle**, not arbitrary local process forks or individual worker scheduling. Unsafe/stale monitoring blocks additional heavy admissions; OOM events trigger durable same-member recovery rather than forced semantic readiness.
+- The Docker daemon socket is never given to agent-controlled containers. Optional separately isolated child containers need a trusted scoped broker and must still count against the parent's aggregate approved resources.
+- Worker-created model calls still use the trusted BYOK provider gateway and per-phase cost/token reservations; all children inherit the same or narrower authority. They cannot escape branch isolation, access raw credentials, grade Council peers, or declare their parent's CHECKPOINT_READY.
+- The default shared **local inference gateway** concurrency limit in Step 7 is not a fixed cap on ordinary worker processes inside a sandbox.
+
+The accepted decisions 8.1 and 8.2 do **not** close Step 8. Exact action/observation and worker result persistence/restart/merge protocol, final-phase transitions, and checkpoint/finalization integration remain to design.
 
 Complete product
 ~~~~~~~~~~~~~~~~
@@ -409,7 +421,7 @@ MVP must implement
 - Full transcripts remain retrievable but are not automatically stuffed into every later model context.
 - Checkpoint knowledge is revision input, not an automatic task list or peer authority.
 - Peer challenge and revision cycle.
-- Bounded worker delegation (one simple depth/worker cap is enough).
+- Unlimited **sandbox-local worker count and delegation depth**, subject to shared sandbox aggregate hard resources, protected host headroom, parent BYOK/phase spend and security boundaries; no Council scheduling of internal workers.
 - Optional Karpathy-style structured experiment cycle as a member-chosen ACT workflow, with versioned baseline/change, test/evidence, explicit KEEP/REVISE/DISCARD/INCONCLUSIVE decision, persistent failed-attempt history, and no mandatory experiment count or global quality score.
 - Worker-led experiment requests return attributable results only to the authorized parent branch; workers cannot declare the parent's checkpoint ready or edit protected acceptance tests.
 - Structured escalation back to Project Orchestrator for requirement ambiguity.
@@ -420,7 +432,7 @@ Defer until after MVP evidence
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Sophisticated adaptive-checkpoint replanning beyond the initial project-specific milestone plan.
 - Complex voting/agenda machinery.
-- Deep worker hierarchies.
+- Sophisticated **separately managed cross-sandbox** worker orchestration; ordinary recursive worker hierarchies inside the parent's sandbox remain permitted in the MVP.
 - Separate experiment optimizers/supervisors, fixed Karpathy time-boxes, global scalar winner-selection metrics, and complex automatic experiment-tree exploration.
 - Every planned review phase if it does not affect the core experiment.
 
@@ -492,6 +504,9 @@ MVP must implement
 - Read/write access only to the branch's approved repo/workspace.
 - Implement Step 7 trusted backend-confirmed resource release and resume-time external sandbox checks; use the initial approximately 20% host RAM headroom target adjusted for measured OS/runtime overhead, with separate VRAM/admission measurements.
 - Preserve member identity/state across Docker restart; implement finite three-retry infrastructure recovery with 5s/30s/120s initial backoff as configurable backend policy and no reasoning deadlines.
+- Monitor Docker stats and `oom`/`die` lifecycle events via **trusted control-plane access**, not Windows Resource Monitor. Distinguish aggregate container memory from WSL2 VM/host memory, disk/volume free-space from block-I/O counters, and optional NVIDIA NVML GPU/VRAM from ordinary Docker stats.
+- Protect container-level CPU, RAM and PIDs via supported Docker/cgroups, reserve disk/volume and GPU resources separately where backend permits, and prevent agent access to Docker socket even when the member creates nested AI worker processes.
+- Default pressure-policy samples every 2–5 seconds with configurable 80%/90% sandbox-RAM thresholds; throttle/deny new trusted heavy admissions, safely suspend whole sandbox on sustained pressure, fence epochs on OOM/crash, retain UNKNOWN effects, and verify resource release before slot reuse.
 
 Architecture hooks should exist, but MVP does NOT need
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
