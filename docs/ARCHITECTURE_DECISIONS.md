@@ -3,7 +3,7 @@
 **Owner approval:** October 13, 2026, with phase-budget clarification October 14, 2026. **Delivery:** specification amendments only.
 **Application implementation:** NOT STARTED. **Runtime tests/evaluations:** NOT RUN.
 
-Historical October 13 public-GitHub checkpoint policy is **SUPERSEDED** by the owner's October 14 local-first customer-controlled repository and scoped snapshot policy (ADR-16). Earlier text requiring internet-public GitHub for checkpoints is **not normative** and must be reconciled before implementation. ADR-17 further requires working approaches be found first, with failed approaches presented as context-specific risk evidence rather than excluded. The latest owner-approved contract remains authoritative; no runtime implementation is implied.
+Historical October 13 public-GitHub checkpoint policy is **SUPERSEDED** by the owner's October 14 local-first customer-controlled repository and scoped snapshot policy (ADR-17). Earlier text requiring internet-public GitHub for checkpoints is **not normative** and must be reconciled before implementation. ADR-18 further requires working approaches be found first, with failed approaches presented as context-specific risk evidence rather than excluded. The latest owner-approved contract remains authoritative; no runtime implementation is implied.
 
 | ID | Accepted requirement | Primary specification | Design status | Runtime implementation / tests |
 |---|---|---|---|---|
