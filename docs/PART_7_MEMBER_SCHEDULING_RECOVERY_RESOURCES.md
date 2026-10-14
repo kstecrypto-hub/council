@@ -4,7 +4,7 @@
 **Scope:** runtime scheduling of Council-member execution environments, checkpoint barriers, resource limits, recovery, pause/stop, and budget controls.  
 **Implementation status:** NOT STARTED. **Runtime acceptance tests:** NOT RUN.
 **Boundary:** Defaults below are configurable recommendations; provider/runtime-specific adapters and enforcement tests belong to implementation and Step 9/10. This specification does not claim any working scheduler.
-**Decision record:** [ARCHITECTURE_DECISIONS.md](ARCHITECTURE_DECISIONS.md). Accepted requirements below do not mark Part 7 complete.
+**Decision record:** [ARCHITECTURE_DECISIONS.md](ARCHITECTURE_DECISIONS.md). Part 7 is **DESIGNED as a specification**; approved requirements below do not mark its resource monitor, scheduler or runtime tests implemented or verified.
 
 ## 1. Schedule member environments, not their internal work
 
