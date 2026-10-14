@@ -739,6 +739,21 @@ Immutable attempt history.
 - `host_capability_snapshot_ref`, `status`, `granted_at`, `confirmed_released_at`
 - Resources are not considered available for another sandbox until a trusted backend confirms release
 
+### council_runtime.member_resource_monitor_latest (Step 8.2 accepted monitor policy)
+Latest **mutable/ephemeral** metric projection per member sandbox, outside agent-controlled writable tables:
+- `run_id`, `logical_member_id`, `sandbox_instance_id`, `resource_admission_id`, `backend_engine_instance_id`
+- `observed_at`, `received_at`, `telemetry_freshness` = FRESH | STALE | UNAVAILABLE, `source_api_version`, `metric_availability_json`
+- `cpu`, `memory_usage_bytes`, `memory_limit_bytes`, `pids_current`, `network_io_json`, `block_io_json` as supported; report raw Docker memory and cache-adjusted display values separately
+- `host_ram_available_bytes`, `host_or_wsl_vm_capacity_json`, `disk_free_and_volume_usage_json`, `gpu_vram_json` nullable/explicit UNAVAILABLE, `pressure_level`, `updated_at`
+- Last-value telemetry is **not** canonical truth or a full time-series archive; do not store every 2–5-second sample indefinitely in PostgreSQL. Small bounded incident windows may use disposable artifact references when justified.
+
+### council_core.member_resource_incidents
+Immutable **meaningful transition** records, not high-frequency raw samples:
+- `id`, `run_id`, `member_id`, `sandbox_instance_id`, `resource_admission_id`, `execution_epoch`, `observed_event_id`
+- `incident_kind` = SOFT_PRESSURE | HIGH_PRESSURE | OOM_OBSERVED | SANDBOX_CRASH | MONITOR_STALE | ADMISSION_DENIED | QUIESCE_REQUESTED | RESOURCE_RELEASE_VERIFIED | RECOVERED
+- `trigger_resource`, `measured_value` nullable, `limit_value` nullable, `source`, `observation_time`, `policy_version`, `consequential_action_operation_id` nullable, `outcome`, `created_at`
+- Incidents and consequential safety actions produce typed canonical events/outbox; observability alone does not grant intellectual completion or provider-budget refunds. Actual reclaim/reuse remains gated on trusted backend release evidence. Agent sandbox/worker cannot authoritatively write incident outcomes.
+
 ### council_runtime.recovery_attempts
 - `id` PK, `run_id`, `logical_member_id`, `operation_id` nullable
 - `source_failure_id`, `attempt_number`, `retry_after_at`, `execution_epoch`
