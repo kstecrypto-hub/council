@@ -118,6 +118,16 @@ Open sockets, in-memory processes, GPU state, and other ephemeral execution deta
 
 Provider tokens, Git-administration credentials, checkpoint credentials, temporary routes, and privileged grants are not preserved inside the member filesystem. Persisting workspace state never persists authority.
 
+### 7.1 Docker storage and process-restart policy (approved Step 8.2a)
+
+- Persistent member-private files, Git workspaces and agent-written worker notes/results live on **member-scoped named Docker volumes** (or authorized persistent bind mounts) with stable volume identities independent of transient container IDs. Recreated containers must mount the **same authorized** private storage; Docker's container writable layer, process RAM and `tmpfs` are not sufficient for recreation persistence.
+- Stopping and restarting a container **does not preserve running worker processes or their execution stacks**. On restart, the container entrypoint starts again and the Council member chooses how to resume its own workers from saved workspace artifacts. Council does **not** maintain a per-worker resurrection table, autonomous worker scheduler, or process-memory snapshot/CRIU requirement. If the worker did not save progress, it may have to repeat local work.
+- Deliberately stopped, checkpoint-ready, paused and budget-exhausted sandboxes **must not restart themselves** outside the Step 7 whole-member admission schedule. Docker restart policies such as unconditional `always`/`unless-stopped` cannot bypass budget/permission, barrier, host headroom and security checks. Start/recreate is authorized only after the existing epoch-fencing, unknown-effect reconciliation, sandbox checker, stable volume identity and resource admission guards.
+- Agent-owned local worker resumption does not override canonical member continuation, evidence/provenance or consequential external-operation records. Before retrying external API/write/tool operations, reconcile their existing operation IDs/UNKNOWN outcomes under Parts 3–5, then issue new authority only for allowed work.
+- Intentional suspension preserves volumes and provenance; verified final teardown follows the accepted-project archive/retention gates. Do not casually `docker volume prune` member data or use a removal option that implicitly deletes the **only** retained workspace. Check restored filesystem identity, contents and ownership from a fresh container during Step 10 validation.
+
+This is a **specification**. Container/volume recovery and security tests remain NOT RUN, and no worker-specific recovery service is required.
+
 ## 8. Deterministic seat-order scheduling
 
 Eligible members are admitted to available sandbox slots in stable ascending seat order:
@@ -378,4 +388,7 @@ Implementation and measured adapter values remain pending and must not be marked
 - [ ] Configurable 2–5-second telemetry, soft 80%/90% sandbox-memory warnings and broker-admission/quiescence guards, real host/WSL2 memory pressure and OOM incidents are correctly reported without pretending to prevent every crash.
 - [ ] GPU/VRAM monitoring is explicitly separate and unsupported capabilities fail conservatively; disk/volume/free-space monitoring is separate from Docker block-I/O counters.
 - [ ] Unbounded in-sandbox worker hierarchies do not create new member slots, unauthorized budgets, or special host capacity; suspended/crashed sandbox restarts only after durable recovery and trusted resource-release verification.
+- [ ] A member's named volume survives stop and container deletion/recreation with exact files and permissions; another member cannot mount it, and Docker writable-layer/tmpfs-only progress is not falsely assumed persistent.
+- [ ] A container restart begins a fresh process, not a reconstructed in-memory worker; saved worker artifacts are available to the member, no per-worker Council resurrection occurs, and stopped checkpoint/PAUSED/BUDGET_EXHAUSTED members cannot auto-restart past admission guards.
+- [ ] External pending/UNKNOWN operations and user budgets remain authoritative after Docker-backed workspace restart; no duplicate provider/write calls are emitted from restored local files alone.
 
