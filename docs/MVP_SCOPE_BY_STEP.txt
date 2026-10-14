@@ -295,7 +295,7 @@ MVP must implement
 - Configurable max concurrent local sandboxes.
 - Per-run, per-phase, per-member token/cost metering and conservative pre-dispatch reservations.
 - Simple hard per-phase/member/run budgets plus a protected checkpoint/review/finalization reserve.
-- Optional non-binding rough phase token/cost estimate ranges shown with uncertainty and evidence basis; never automatically treated as a quota, top-up, or promise.
+- Optional non-binding rough overall-project and per-phase token/cost estimate ranges shown with uncertainty and evidence basis; never automatically treated as a quota, top-up, or promise.
 - Restart recovery for unfinished tasks.
 - Safe cancellation/pause.
 
