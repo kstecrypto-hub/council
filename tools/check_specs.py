@@ -116,7 +116,7 @@ assert '80%' in part7_text and '90%' in part7_text
 assert 'Docker Engine' in part7_text
 assert '## 4.1 Accepted Step 8.2 policy' in step8_spec
 assert '## 4.2 Accepted Step 8.2 resource monitoring boundary' in step8_spec
-assert 'no fixed worker-count or delegation-depth' in step8_spec.lower()
+assert 'No Council-imposed fixed worker count' in step8_spec
 assert 'OOM' in step8_spec
 assert 'MemberSandboxOOMObserved' in (root / 'docs/TYPED_INTERACTION_CONTRACTS.md').read_text(encoding='utf-8')
 assert 'member_resource_monitor_latest' in (root / 'docs/POSTGRES_DATA_MODEL.md').read_text(encoding='utf-8')
