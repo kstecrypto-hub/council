@@ -65,7 +65,19 @@ Read `docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md` when designing/imple
 
 Persist hypothesis, exact baseline/change and environment/test inputs, measured or qualitative results, failures/regressions, and member dispositions with Step 6 source/provenance lineage. Agent-created exploratory tests are not a substitute for protected acceptance checks. A worker can perform a parent-authorized experiment under the parent's capabilities, branch and budget, but cannot approve parent readiness or cross-peer changes. During checkpoint `/work`, frozen authoritative candidates remain read-only and only disposable verifier environments execute tests. Failed/inconclusive experiment records survive if code changes are reverted.
 
-**Step 8 remains IN DESIGN** pending worker/delegation/action and final phase gates. This addition does not authorize or claim runtime implementation.
+**Step 8 remains IN DESIGN**; the policy for sandbox-local worker autonomy is now accepted in Step 8.2, but worker result handoff/restore, action schemas and final phase gates remain to design. This addition does not authorize or claim runtime implementation.
+
+## Accepted Step 8.2 — no internal worker cap; Docker controls the sandbox (October 14, 2026)
+
+A permanent Council member can create **as many nested AI worker agents or ordinary child processes as it chooses** inside its own sandbox. There is no **Council-level worker count cap, depth cap or global worker scheduler**. Do not revive a "simple worker/delegation depth limit" in MVP. The five Council logical seats and admission queue operate on whole member sandboxes, not on each worker process.
+
+All processes share the parent's **aggregate sandbox** CPU, memory, PID, disk and permitted GPU/device limits, and any provider/gateway calls charge the parent-approved phase token/cost ceiling. They inherit only the parent or narrower permissions, cannot reach other members' unpublished data, and do not obtain raw BYOK keys or Docker Engine socket access. A separate child Docker container, if needed, is provisioned only by a trusted scoped broker and counted against the same aggregate member resources.
+
+The **trusted host-side Resource Monitor** uses Docker Engine container stats plus OOM/die events, not Windows Resource Monitor or agent-supplied metrics. Start with configurable **2–5s** sample intervals, monitor **80%/90%** assigned-sandbox-RAM pressure and new **broker-mediated** heavyweight admissions, keep separately measured adjustable ~20% host RAM headroom, and separately monitor WSL2 VM RAM, free disk/volume/log growth and optionally NVIDIA GPU/VRAM via NVML. Docker-supported **cgroups hard memory/CPU/PID limits** enforce the aggregate boundary; telemetry and thresholds cannot guarantee prevention of sudden OOM/crashes. Council can safely quiesce/recover the entire sandbox, not individually intercept every arbitrary local worker fork.
+
+Monitor operates outside sandbox control with narrowly scoped host Docker access; never bind-mount the daemon socket into a member or worker container. Stale/unknown metrics stop *new* unsafe admissions but do not retroactively mark existing work failed/successful. OOM/crash/cleanup is reconciled under Step 7, with durable same-logical-member recovery and no fabricated CHECKPOINT_READY.
+
+**Design only:** Step 8.2 worker/resource policy ACCEPTED; Step 8 overall IN DESIGN. No Docker monitor, agent worker runtime, SQL schema migrations or resource-pressure test is implemented or verified by this specification edit.
 
 ## October 14, 2026 design-stage closure of Steps 3–5
 
