@@ -54,6 +54,18 @@ Keep documentation aligned with implemented behavior and record substantive devi
 
 ## October 13, 2026 architecture amendment
 
-Read docs/ARCHITECTURE_DECISIONS.md and docs/architecture_contract.json alongside the amended specifications. The owner's public-checkpoint policy applies to generated member repositories, not this source repository. Preserve five fixed members, sealed independent reviews, externally isolated peer verification, bounded private-work slices, conservative reservation accounting, commit-safe event replay, and the separate communication/verification/acceptance records.
+Read docs/ARCHITECTURE_DECISIONS.md and docs/architecture_contract.json alongside the amended specifications. The owner's public-checkpoint policy applies to generated member repositories, not this source repository. Preserve five fixed members, sealed independent reviews, externally isolated peer verification, **member-declared semantic milestones with user-approved phase token/cost ceilings (no mandatory periodic private-work slices)**, conservative reservation accounting, commit-safe event replay, and separate communication/verification/acceptance records.
 
 A documentation edit can be SPECIFIED without being IMPLEMENTED or VERIFIED. Do not close a runtime step from prose, a generated schema, static checks, mocks, or a successful push. Implementation completion requires code and scoped evidence; verification requires executed tests with recorded environment and results. Existing accepted design sections do not imply that later amendments or application work are complete. No application implementation is authorized merely by this maintenance update.
+
+
+## October 14, 2026 design-stage closure of Steps 3–5
+
+Steps 3, 4 and 5 have completed **design specifications** (see the October 14 closure sections of docs/POSTGRES_DATA_MODEL.md, docs/TYPED_INTERACTION_CONTRACTS.md and docs/PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md). The Council application, database migrations, provider/host interactions, runtime tests and evaluation results remain NOT STARTED / NOT RUN.
+
+- One project-lifetime isolated PostgreSQL per trusted Council deployment; exactly five logical member seats; branch-private/source-linked context; separate immutable user approvals; full GitHub internet-public publication manifest and observed visibility transitions; all-five sealed reviews, atomic reveal, communication obligations and version-bound DONE; Git evidence validation before teardown.
+- Typed command schemas and actor permissions are authoritative. **Authenticate and authorize, then deduplicate a same-key/same-hash command before applying new-command stale-state/transition guards.** An identical successful approval replay must not launch a second run or be rejected solely because the first changed the target version.
+- Lock deployment event-clock first and use deterministic aggregate/budget order. Commit canonical state, external-operation intent, event, outbox and result atomically; dispatch GitHub/provider/Docker effects only after commit. Reconcile unknown effects; never infer a successful public/private transition, cancellation, refunded usage, or final archive from a requested action.
+- The runtime does not intellectually judge CHECKPOINT_READY, turn BUDGET_EXHAUSTED into completion, reveal sealed reviewer text early, or erase disagreements. State/UI labels do not constitute real authorization or passing tests.
+
+Implementation completion requires code references and actual test evidence. A documentation update alone may only say DESIGNED.
