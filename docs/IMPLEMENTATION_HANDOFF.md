@@ -128,6 +128,18 @@ These open choices do not authorize replacing the peer council with a supervisor
 
 Describe the behavior delivered, affected records and boundaries, tests actually executed, known limitations, and next unfinished milestone. Do not equate more messages or graph nodes with a better investigation. Do not label proposed work as implemented.
 
+## Step 8.1 accepted — nested member reasoning and optional Karpathy-style experiments (October 14)
+
+The member's existing general-purpose agentic loop can optionally perform a Karpathy/autoresearch-inspired experiment **under ACT**: `HYPOTHESIS -> CHANGE/ALTERNATIVE -> TEST/CHECK -> OBSERVE -> KEEP/REVISE/DISCARD/INCONCLUSIVE -> RECORD`, then return to the same member loop. This is an **optional workflow** chosen by the member, not a fixed procedure after every action, a second AI supervisor, scheduler, quality scorer, or coding-only optimizer. For research/noncoding work, `TEST/CHECK` may be evidence comparisons, counterexamples and assumption checks rather than numerical benchmarks.
+
+The experiment/attempt ledger must preserve attributable hypothesis, baseline and changed source/repo SHA or alternative, versioned test/data/environment inputs, durable operation IDs, results/failures/regressions, units/measurement conditions or qualitative evidence, limitations, and the member's own KEEP/REVISE/DISCARD/INCONCLUSIVE disposition. Failed/reverted code need not be retained, but the **evidence and experiment outcome record** remains. Agent-edited exploratory tests never replace trusted protected acceptance tests.
+
+Delegated workers may run an authorized branch-local experiment using the parent's capabilities and phase token/cost allowance. They return evidence/results to the parent; they cannot mark the parent CHECKPOINT_READY, publish peer-private work, or silently merge changes. Worker lifecycle/depth/merge rules are **still to design in Step 8.2**.
+
+At a checkpoint, sealed review and public pinned SHA rules still apply. `/work` uses disposable **verification-only** sandboxes: no authoritative candidate edits or pushes, and no overriding protected evaluation. Subsequent private revisions wait for verified checkpoint closure. Experiments survive session rollover under the same logical member, and a budget limit cannot force intellectual completion.
+
+**Design status:** only Step 8.1 is accepted, with [the working Part 8 specification](PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md). **Step 8 remains IN DESIGN; runtime implementation NOT STARTED and tests NOT RUN.** The remaining Step 8 areas are action/worker lifecycle, delegation ceilings, final candidate/termination transitions, and checkpoint integration.
+
 ## October 14 Steps 3–5 design closure (implementation explicitly pending)
 
 Steps **3, 4 and 5 are DESIGNED**, and their authoritative normative closure sections are [Part 3 §20](POSTGRES_DATA_MODEL.md), [Part 4 §26](TYPED_INTERACTION_CONTRACTS.md) and [Part 5 §16](PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md). Application code, migrations, test execution and provider/sandbox integration remain **NOT STARTED / NOT RUN**.
