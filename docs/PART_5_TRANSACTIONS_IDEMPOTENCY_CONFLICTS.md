@@ -2,9 +2,9 @@
 
 **October 13, 2026 amendment:** [decision/status index](ARCHITECTURE_DECISIONS.md). Requirements below are specifications; application implementation is NOT STARTED and runtime tests are NOT RUN.
 
-**Status:** DESIGN AMENDED; transaction integration and runtime verification remain pending.
+**Design status:** DESIGNED (October 14, 2026); canonical transaction, idempotency, publication, checkpoint and recovery semantics reconciled.  
 **Scope:** consistency and retry semantics for active Council deployments.  
-**Implementation status:** specification only.
+**Implementation:** NOT STARTED. **Concurrent/recovery/runtime tests:** NOT RUN.
 
 ## 1. Core rule
 
@@ -19,16 +19,22 @@ This part deliberately does not introduce distributed transactions, CRDTs, Kafka
 A command whose authoritative effects are entirely inside Council PostgreSQL executes in one transaction:
 
 ```text
+authenticate actor / authorize scope, validate schema and canonical request hash
+
 BEGIN
-  authenticate / authorize
-  validate schema
-  check expected target version
-  check idempotency
-  mutate canonical state
-  write durable event(s)
-  write outbox row(s)
-  persist command result
+  lock deployment event-clock row first (before aggregate/budget locks)
+  find scoped idempotency receipt under unique-key serialization
+  if same key/hash: return original authorized receipt without re-execution
+  if same key/different hash: return IDEMPOTENCY_CONFLICT
+  for new command: check expected target version and transition guards
+  lock/update affected aggregates and budget/resource scopes in deterministic order
+  mutate canonical state / persist external-operation INTENT where needed
+  allocate ordered event position(s) from the locked transactional event clock
+  append immutable durable event(s), outbox entry/entries and command receipt/result
 COMMIT
+
+perform external effects only from committed durable operation records
+
 ```
 
 Any failure before commit rolls back the complete canonical change.
@@ -38,8 +44,8 @@ Important atomic groups include:
 - user response + interaction resolution + corresponding domain decision;
 - Project Contract approval + launch revision activation + run creation/provisioning + events;
 - project-wide contract revision activation + intended branch delivery records;
-- checkpoint opening + frozen repository SHAs + access/session records + events;
-- checkpoint closing + closeouts + access/session closure + return-packet records + events;
+- checkpoint opening INTENT + five frozen repository SHAs + approved publication manifests + external operation records + events; **confirmed internet-public status and SEALED_REVIEW occur only in a later local transaction after GitHub observation**, never atomically with GitHub itself;
+- checkpoint closing INTENT + version-bound DONE/frontier guards + durable transcript/closeout references + external private-transition operations; **CLOSED/return-packet delivery commits only after external repo-private and gateway-isolation verification**, never by assuming cleanup succeeded;
 - candidate acceptance + accepted-candidate record + archival/teardown scheduling;
 - claim revision + essential provenance relationships + event.
 
@@ -298,3 +304,72 @@ The accepted Step 7 design establishes these additional **transaction contracts*
 7. **Phase exhaustion:** `BUDGET_EXHAUSTED_INCOMPLETE` is a member/phase operational result, not `CHECKPOINT_READY`, `/done`, or project acceptance. It durably preserves the phase/agent, blocked obligations, and five-seat barrier until user-approved top-up or cancellation.
 
 **No additional Council billing ledger or prepaid wallet is introduced.** BYOK users are billed by external providers; Council-reserved allowances restrict Council-authorized dispatch and cannot guarantee the user's final external-provider bill. Per-provider pricing/metering and Docker sandbox enforcement belong to Step 9 and Step 10 implementations respectively.
+
+
+## 16. October 14 Part 5 design closure — exact transaction and recovery boundaries
+
+**Part 5 is DESIGNED as a transaction/idempotency/reconciliation contract.** The earlier sections are retained and this section resolves the October corrections. No SQL, queue, provider client, GitHub visibility toggle, Docker recovery logic or integration test has been executed by this specification update.
+
+### 16.1 Database-local atomicity versus external truth
+
+Council's per-deployment **temporary PostgreSQL** is the only active canonical state authority. Canonical commands use a single local transaction for the required aggregate mutation, immutable domain decision, related provenance, event(s), outbox record(s), and idempotency receipt. Do not put network/API/filesystem/Docker calls inside a transaction or claim two-phase/distributed atomicity with those systems.
+
+External effects have two independently auditable facts:
+
+1. **intent/dispatched**: a user-authorized operation is durably queued with exact target, scope/hash and retry/reconciliation policy;
+2. **observed outcome**: external provider/GitHub/Docker evidence proves success, proves known non-effect/failure, or remains UNKNOWN_PENDING_RECONCILIATION.
+
+A command response `accepted=true` means its canonical intent was committed, **not** that the outside action succeeded. Emit externally successful events (`CheckpointRepositoriesPublished`, `CheckpointRepositoriesMadePrivate`, `SandboxResourceReleaseConfirmed`, `CleanRebuildPassed`) only on actual trusted evidence. A late response from an old bridge epoch may be used for reconciliation of the original attempt but never grant a new action, current identity, or unversioned state mutation.
+
+### 16.2 Scoped idempotency and commit ordering
+
+- Store a `command_receipt` with actor/scope, command type/schema version, user/target revision, `idempotency_key`, **canonical request hash**, original result/error and operation/event identities. Unique(scope, actor, command_type, key) is enforced by PostgreSQL. Repeat with same hash returns saved authorized result even when target is now at a later version; same key with altered request returns IDEMPOTENCY_CONFLICT. Authenticate/authorize before revealing the saved response; internal retrier identities are appropriately scoped. Do not rerun external effects.
+- For a **new** command, hold the deployment event-clock row lock first, then lock mutable target aggregates/required checkpoint frontiers in canonical ID order, then budget rows in run -> pool -> member/phase order (where involved), then resource claims in stable ID order. A transaction touching both target and budgets must use the same global ordering; use a standardized helper instead of ad hoc competing lock sequences. Validate expected versions *under* those locks. Conflict => STALE_TARGET, never an overwrite.
+- Allocate contiguous **committed** event positions by updating the locked event-clock row inside the same transaction. If transaction rolls back, its event clock increment rolls back. Do not substitute a PostgreSQL sequence/IDENTITY as a committed cursor. Event type/schema/actor, aggregate identity/version, command causation, visibility scope and correlation are immutable. Commit event+outbox+command receipt with the canonical mutation.
+- All retryable durable effects use one logical operation key per intended effect, with append-only attempt IDs, idempotency support where providers offer it, current lease/epoch fencing, and a recorded `last_observed` outcome. A lease heartbeat/completion or delayed action needs the current `lease_token` and attempt, not merely a task ID. `FOR UPDATE SKIP LOCKED` is for trusted runtime jobs only, never the agent's self-directed internal work.
+
+### 16.3 Canonical atomic groups and checkpoint staging
+
+| Operation | Single PostgreSQL transaction | External/staged condition |
+| --- | --- | --- |
+| Project Contract approval | exact revision/hash, interaction response + decision, immediate run PROVISIONING intent, budget/permission policy identity, events/outbox + receipt | member repos, sandboxes and credentials provision afterward by durable operations; do not declare ACTIVE until verified prerequisites |
+| Project-wide clarification/change | confirmed source-linked raw/processed answer, revision/permission scope and intended target deliveries, events/outbox | only approved processed/revision packages delivered to authorized branches; partial delivery remains visible and retryable |
+| Member checkpoint readiness | member-authored READY, exact current phase/generation, frozen candidate SHA/environment/evidence, unique per seat, event/receipt | all five arrivals enable triggering; no automatic substantive readiness or bypass from BUDGET_EXHAUSTED |
+| Checkpoint opening/publication | phase/generation freeze + five arrivals, approved internet-public history/refs/surfaces manifest, publication-safety attestations, intended external operations, OPENING event | independently observe each repository PUBLIC; only after all current-generation checks pass commit publication successes and SEALED_REVIEW; partial/unknown stays guarded |
+| Sealed-review submission | immutable reviewer/candidate-set/evidence hash, one per seat/generation, event scoped to submitting reviewer/trusted runtime | **not** published in Git repos, shared retrieval/SSE or peers prior to authorized reveal |
+| Sealed-review reveal | under same checkpoint generation/frontier lock, verify all five distinct submissions; one reveal/recipient delivery set + event/outbox | all-five reveal is one canonical visibility change; zero partial peeks or skipped seats |
+| Gateway message/action and DONE | complete hashed logical message + monotonic checkpoint sequence + action obligations/versions; DONE validates processed and outbound frontiers and work state under same checkpoint lock | socket delivery does not prove processed; new relevant required action atomically invalidates affected DONE certificate |
+| Checkpoint closing | CLOSING guard + accepted transcript/closeout/return intent + revoked gateway session operations and per-repo PRIVATE requests | wait for each repo confirmed PRIVATE, old routes/credentials invalid, active verifier resolved and valid DONE or explicit forced-incomplete policy before CLOSED and authorized return packet delivery |
+| Budget/phase model dispatch | versioned user-approved run/pool/member-phase token+cost caps, worst-case reserved usage, provider/local resources, operation/attempt, event/outbox/receipt | call only after COMMIT; unknown dispatched cost stays reserved, no automatic budget increase or claim of checkpoint readiness |
+| Candidate acceptance | exact user-approved snapshot/interaction, immutable acceptance decision, export/retention manifest INTENT, archive/cleanup operations, event | fresh Git checkout/hashed evidence reference closure and product restore succeed **before** Council control DB teardown; acceptance itself is not completed archival |
+| Claim revision | append new claim version, source/evidence relationships and attribution, challenge/revision justification, events/outbox | no automatic reinterpretation of support, universal truth score, or external effects |
+
+### 16.4 Unknown outcome classes and safe progress
+
+- **Read-only retrieval and inference:** if the provider or bridge loses contact, fence old epoch; quarantine stale result until reconciled. Safe *independent* work may continue with a fresh authorized request, but uncertain tokens/cost remain reserved and duplicates require their own allowance.
+- **Consequential external writes:** query provider-side state/request ID/idempotency status before retry; dependent operations wait. A write being unobserved is not proof of no effect. Do not duplicate a publication, Git commit, payment, or host mutation blindly.
+- **Authority / visibility / isolation mutations:** fail closed for the affected boundary until observed safe state is verified; a supposedly private GitHub repository still public blocks new secret/private work. Temporary access revocation cannot erase prior internet-public data.
+- **Container/resource cleanup:** a stop request or Docker exit code alone is not proof of all resource/route release. Only trusted backend checker evidence can free the reservation and permit reusing a scarce slot.
+- **Billing:** Council's BYOK budget is an internal authorization constraint, not the user's exact invoice. A request handoff that cannot prove non-dispatch retains a conservative reservation; no timeout or process crash silently refunds it. Review reserve is protected from development charges. Reallocation/top-up requires explicit versioned user approval.
+- **Stop and acceptance:** STOPPING -> CANCELLED only when required cleanup safety is verified, otherwise FAILED/incomplete record with outstanding consequences. AcceptCandidate is separate: export/validate retained project and Git lessons, then clean Council control DB. An explicitly approved retention/evidence limitation may downgrade an archive claim; it cannot silently fabricate proof.
+
+### 16.5 Outbox, projections and SSE reconnect without lost events
+
+- Outbox is a transactional representation of already **committed** canonical events. Publishers claim unpublished rows with leases/attempts and retry after process failure. A queued row whose ID is lower than the highest published ID still needs delivery; never rely exclusively on `id > last_published_id` to discover work.
+- Consumer deduplication is by immutable `event_id`. A projection advances its processed committed position **only after** applying all relevant earlier events or explicitly accounting for authorization-filtered/skipped events in its own scope. Arrival order from workers/SSE is not committed order.
+- A canonical UI snapshot and its event watermark must be read under **one consistent database snapshot**; clients then replay authorized events after that position. Filtering hidden branch-local events must not leak secret payloads or be rendered as a fake missing-event error. Authorization is checked at replay and at snapshot. An out-of-order or duplicate SSE notification triggers gap recovery from canonical committed history, not invented state.
+- Evidence graph/retrieval indexes and UI counters may lag; expose a projection's last applied event position. Framework session checkpoints never override canonical operation, budget, permission, epoch or event history.
+
+### 16.6 Failure-injection and deterministic acceptance cases (all NOT RUN)
+
+1. Concurrent same-key/same-payload commands return **one** receipt/result and one external operation; same key/different payload fails with IDEMPOTENCY_CONFLICT; a successful approval retry after state advancement returns the original result.
+2. Two transactions producing canonical events cannot commit in a different order than recorded event positions. Rollback emits no event/outbox data; outbox retry picks older unpublished records.
+3. Two members/workers/Orchestrator calls cannot spend shared phase/run funds twice; partial/missing provider responses retain proper unknown liabilities, and no protected review funds leak to development.
+4. Task lease expiry/regrant invalidates stale worker completion/heartbeat; sandbox epoch rollover invalidates forgotten bridge requests without assuming sent provider calls were cancelled.
+5. A partial GitHub public/private transition cannot move checkpoint into SEALED_REVIEW/CLOSED; each observed repository and approved history/manifest must agree with the published state.
+6. Five distinct sealed assessments must be committed before reveal. A simultaneous fifth submission and reveal never sends an unauthorized partial peer assessment.
+7. DONE racing against a new required action/message or closing checkpoint preserves obligation and current processed frontier; /done stale retries do not fake completion.
+8. Crash during STOPPING, archive export, fresh Git reference validation, or teardown can restart idempotently; missing retained evidence blocks deletion instead of erasing its only source.
+9. A UI snapshot followed by ordered replay cannot lose, duplicate or leak canonical events even across reconnects, hidden-branch authorization filters or delayed outbox publications.
+
+**Part 5 design completion:** transaction ownership, idempotency, committed-event ordering, unknown external effects, budget/resource reservations, checkpoint publication/review/close boundaries, replay/projection semantics and accepted-project teardown gates are now specified. **DESIGNED does not imply any provider, GitHub, SQL, or sandbox behavior has been implemented or tested.**
