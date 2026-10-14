@@ -148,6 +148,14 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-15",
+      "design_status": "ACCEPTED_STEP8_2_POLICY_FULL_STEP8_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -256,7 +264,10 @@
       "Step 9 provider/local-model adapters",
       "Step 10 container/runtime enforcement",
       "runtime acceptance and failure-injection tests"
-    ]
+    ],
+    "shared_local_inference_one_job_cap_applies_to": "trusted_shared_local_model_gateway_not_arbitrary_sandbox_local_subagent_processes",
+    "resource_monitor_approved": true,
+    "resource_monitor_specification_path": "docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md"
   },
   "step3": {
     "design_status": "DESIGNED",
@@ -351,7 +362,8 @@
   "step8": {
     "design_status": "IN_DESIGN",
     "accepted_subdesigns": [
-      "8.1_MEMBER_LOOP_OPTIONAL_KARPATHY_STYLE_EXPERIMENTATION"
+      "8.1_MEMBER_LOOP_OPTIONAL_KARPATHY_STYLE_EXPERIMENTATION",
+      "8.2_SANDBOX_LOCAL_WORKER_AUTONOMY_AND_TRUSTED_DOCKER_MONITORING"
     ],
     "specification_path": "docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md",
     "runtime_implementation_status": "NOT_STARTED",
@@ -385,11 +397,49 @@
     "fixed_reasoning_iteration_or_experiment_count": false,
     "budget_exhaustion_means_completion": false,
     "pending_design": [
-      "worker_depth_lifecycle_merge_protocol",
+      "worker_result_return_cancellation_crash_recovery_and_merge_protocol",
       "complete_action_observation_schema",
       "phase_and_final_candidate_transitions",
       "checkpoint_final_review_termination_integration"
     ],
-    "implementation_and_tests_pending": true
+    "implementation_and_tests_pending": true,
+    "member_controls_local_worker_count_and_depth": true,
+    "fixed_member_local_worker_count_cap": null,
+    "fixed_member_local_worker_delegation_depth_cap": null,
+    "no_central_scheduler_for_internal_workers": true,
+    "internal_workers_are_not_council_seats_or_automatically_docker_containers": true,
+    "all_worker_processes_share_parent_sandbox_resource_limits": true,
+    "all_worker_external_model_calls_charge_parent_authorized_phase_allowance": true,
+    "all_workers_inherit_parent_or_narrower_permissions": true,
+    "direct_docker_engine_socket_access_to_agent_sandbox": false,
+    "separate_child_containers_require_scoped_trusted_broker": true,
+    "member_parent_controls_result_integration_and_checkpoint_readiness": true,
+    "resource_monitor": {
+      "monitor_owner": "trusted_deployment_control_plane_outside_agent_sandboxes",
+      "base_metrics": "Docker_Engine_API_get_containers_id_stats_and_lifecycle_oom_events",
+      "scope": "aggregate_member_sandbox_descendant_processes",
+      "sampling_seconds_initial_range": [
+        2,
+        5
+      ],
+      "soft_sandbox_memory_threshold_percent": 80,
+      "high_sandbox_memory_threshold_percent": 90,
+      "soft_threshold_action": "warn_and_restrict_new_brokered_heavy_operations",
+      "high_threshold_action": "deny_new_heavy_admissions_then_safely_quiesce_whole_sandbox_if_sustained",
+      "hard_limits": "supported_Docker_cgroups_memory_cpu_pids",
+      "host_ram_headroom_fraction": 0.2,
+      "host_and_wsl_vm_memory_monitored_separately": true,
+      "host_free_disk_volume_log_monitoring_separate_from_block_io": true,
+      "gpu_monitor_optional": "NVIDIA_NVML_or_equivalent_supported_adapter",
+      "docker_stats_has_guaranteed_gpu_vram_enforcement": false,
+      "monitors_every_internal_worker_individually": false,
+      "monitor_guarantees_crash_prevention": false,
+      "stale_telemetry": "block_new_heavy_admissions_without_declaring_existing_run_completed_or_failed",
+      "confirmed_resource_release_required": true,
+      "operating_system_windows_resource_monitor_required": false,
+      "prom_grafana_required": false,
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN"
+    }
   }
 }
