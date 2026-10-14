@@ -65,7 +65,7 @@ Read `docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md` when designing/imple
 
 Persist hypothesis, exact baseline/change and environment/test inputs, measured or qualitative results, failures/regressions, and member dispositions with Step 6 source/provenance lineage. Agent-created exploratory tests are not a substitute for protected acceptance checks. A worker can perform a parent-authorized experiment under the parent's capabilities, branch and budget, but cannot approve parent readiness or cross-peer changes. During checkpoint `/work`, frozen authoritative candidates remain read-only and only disposable verifier environments execute tests. Failed/inconclusive experiment records survive if code changes are reverted.
 
-**Step 8 remains IN DESIGN**; the policy for sandbox-local worker autonomy is now accepted in Step 8.2, but worker result handoff/restore, action schemas and final phase gates remain to design. This addition does not authorize or claim runtime implementation.
+**Step 8 remains IN DESIGN**; Steps 8.2 and 8.2a now settle sandbox-local worker autonomy **and Docker-based worker-file persistence**. No new Council per-worker recovery system or mandatory worker merge protocol remains to design. Member action/observation schemas and final phase/checkpoint gates remain open. These approvals do not authorize or claim runtime implementation.
 
 ## Accepted Step 8.2 — no internal worker cap; Docker controls the sandbox (October 14, 2026)
 
@@ -78,6 +78,20 @@ The **trusted host-side Resource Monitor** uses Docker Engine container stats pl
 Monitor operates outside sandbox control with narrowly scoped host Docker access; never bind-mount the daemon socket into a member or worker container. Stale/unknown metrics stop *new* unsafe admissions but do not retroactively mark existing work failed/successful. OOM/crash/cleanup is reconciled under Step 7, with durable same-logical-member recovery and no fabricated CHECKPOINT_READY.
 
 **Design only:** Step 8.2 worker/resource policy ACCEPTED; Step 8 overall IN DESIGN. No Docker monitor, agent worker runtime, SQL schema migrations or resource-pressure test is implemented or verified by this specification edit.
+
+## Accepted Step 8.2a — Docker-native worker workspace persistence (October 14, 2026)
+
+The Council **does not manage every local worker's life/restart/recovery**. Each of five logical members owns a private, durable **named Docker volume** or specifically approved bind mount for project files, private Git, worker notes, saved plans and results. Stop/recreate can remount those files into a fresh member sandbox after identity, mount/permission, resource and execution-epoch checks.
+
+Important boundaries:
+
+- Docker restart starts a new container process. **It does not restore in-memory AI worker execution**. Saved worker progress and how to resume/retry it is an autonomous member concern; unsaved process state can be lost. Container writable layers and tmpfs alone are not durable across recreation.
+- **Do not add** Council per-worker resurrection/lease/orchestration machinery, mandatory process checkpointing/CRIU or an independent child scheduling system merely for internal workers. Existing trusted canonical evidence, spend, user approvals and external operation/UNKNOWN reconciliation still apply.
+- **Do not** enable unconditional Docker restart policies for deliberately inactive/checkpoint-ready, PAUSED or BUDGET_EXHAUSTED members; they must be re-admitted under the existing Step 7 **whole-member** resource/authority/checkpoint guards.
+- Do not share one member's private volume with another. Member-local persistence is not permission to publish peer state, skip checkpoint safety, bypass raw-credential isolation or delete archives before verified retention closure.
+- Docker storage/restart correctness and isolation checks are pending Step 10 implementation and test execution. **No runtime worker restoration is marked implemented**.
+
+This completes the **worker persistence design decision**, not Step 8 or Step 10 runtime implementation.
 
 ## October 14, 2026 design-stage closure of Steps 3–5
 
