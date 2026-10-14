@@ -337,3 +337,11 @@ Implementation and measured adapter values remain pending and must not be marked
 - [ ] Concurrent member/worker/Orchestrator requests cannot overspend one balance or consume protected review funds.
 - [ ] Peer test code cannot alter a reviewer's candidate, continuation, or trusted acceptance definition.
 - [ ] Pause/stop/restart under active calls preserves actual effects, resources, reservations, and honest status.
+- [ ] The editable 70/25/5 allocation and five monetary development shares appear as proposals, not automatic charges; altered user-approved phase limits are honored and protected pools cannot be spent by private development.
+- [ ] Provider concurrency respects the lower of the initial two-call cap and actual provider limits; local inference defaults to one until proven safe and admission honors RAM/VRAM/CPU/device headroom.
+- [ ] Budget reserve, dispatch, settle, late billing and simultaneous member/worker calls follow event-clock-first lock ordering and never overspend a shared account or incorrectly refund dispatched unknown liability.
+- [ ] Three default infrastructure recovery retries apply backoff 5s/30s/120s; a fourth is not silently attempted. Exhaustion retains the same BLOCKED logical member and cannot advance a checkpoint.
+- [ ] Individual operation safety timeouts can fence hung provider/tool calls without imposing a semantic reasoning deadline or forcing CHECKPOINT_READY.
+- [ ] Pause remains QUIESCING_FOR_PAUSE until suspension and release are verified; Resume revalidates guards; Stop cannot report CANCELLED while required boundary cleanup is unresolved, and acceptance is not inferred from Stop.
+- [ ] BYOK secrets stay outside agent containers and no prepaid Council token-wallet requirement or invoice-guarantee claim is introduced for the MVP.
+
