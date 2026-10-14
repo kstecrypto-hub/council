@@ -10,13 +10,25 @@ assert contract['repository_visibility_cycle'] == ['private', 'public', 'private
 assert contract['public_exposure_reversible'] is False
 assert contract['changes_council_source_repository_visibility'] is False
 assert contract['peer_verification_environment'] == 'separate_disposable'
-assert contract['private_work_requires_finite_slices'] is True
+assert contract['private_work_requires_finite_slices'] is False
+assert contract['step7']['design_status'] == 'DESIGNED'
+assert contract['step7']['runtime_implementation_status'] == 'NOT_STARTED'
+assert contract['step7']['runtime_tests_status'] == 'NOT_RUN'
+assert contract['step7']['no_general_reasoning_deadline'] is True
+assert contract['step7']['budget_exhaustion_not_semantic_readiness'] is True
+assert sum(contract['step7']['suggested_default_budget_allocation_percent'].values()) == 100
+assert contract['step7']['initial_remote_model_call_cap_per_provider'] == 2
+assert contract['step7']['initial_local_inference_concurrency_cap'] == 1
+assert contract['step7']['default_recovery_retries'] == 3
 assert 'sealed_review' in contract['checkpoint_phases']
 assert set(contract['done_requires']) == {'checkpoint_generation', 'processed_message_sequence', 'expected_obligation_version'}
 assert len(contract['separate_outcomes']) == 4
 assert contract['event_ordering'] == 'deployment_transactional_event_clock'
 assert contract['long_term_learning_store'] == 'git_backed_archive'
-assert len({x['id'] for x in contract['requirements']}) == 12
+assert len({x['id'] for x in contract['requirements']}) == len(contract['requirements'])
+assert len(contract['requirements']) >= 13
+assert {'ADR-02', 'ADR-05', 'ADR-13'} <= {x['id'] for x in contract['requirements']}
+assert all(x['design_status'] == 'DESIGNED' for x in contract['requirements'] if x['id'] in {'ADR-02', 'ADR-05'})
 for item in contract['requirements']:
     if item['implementation_status'] == 'IMPLEMENTED':
         assert item['implementation_evidence'], item['id']
@@ -39,7 +51,9 @@ for path in files:
             assert (path.parent / target).exists(), (path.name, link)
 assert 'SEALED_REVIEW' in (root / 'docs/TYPED_INTERACTION_CONTRACTS.md').read_text()
 assert 'NOT STARTED' in (root / 'README.md').read_text()
-print(f'Static specification checks passed: {len(files)} documents and 12 tracked requirements.')
+assert 'Status: DESIGNED' in (root / 'docs/MVP_SCOPE_BY_STEP.txt').read_text(encoding='utf-8').split('STEP 7 -', 1)[1].split('STEP 8 -', 1)[0]
+assert '**Design status:** DESIGNED' in (root / 'docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md').read_text(encoding='utf-8')
+print(f'Static specification checks passed: {len(files)} documents and {len(contract["requirements"])} tracked requirements.')
 print('Scope: documentation/contract consistency only. Runtime tests and comparative evaluations NOT RUN.')
 
 if contract['scope'] == 'specification_only':
