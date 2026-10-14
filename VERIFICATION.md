@@ -53,3 +53,9 @@ Cross-document design assertions checked by connector read-back include: five fi
 The repository's `tools/check_specs.py` was extended to assert these invariants, but this entry **does not claim that the script ran in a complete local checkout**. Connector read-back and static text/JSON consistency are not PostgreSQL migrations, deployed security controls, executed failure-injection tests, live provider requests or an implemented Council runtime.
 
 The October 13 publication blob hashes above refer to the original publication snapshot and are not current content hashes.
+
+## October 14 Step 8.1 design verification boundary
+
+The new `docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md` captures the **owner-approved optional** Karpathy-style experiment cycle inside each Council member's ordinary agentic loop. The Step 8 roadmap, complete app design, handoff, architecture decision ADR-14, machine-readable contract, Part 3 experiment/provenance hooks, README, and agent instructions were aligned. The machine-readable Step 8 status remains **IN_DESIGN**, while Step 8.1's accepted subdecision is recorded separately.
+
+A source/design consistency read-back is documentation verification only; the repository's `tools/check_specs.py` assertions were updated but are **not claimed executed** in a full checkout as part of these remote file edits. No model calls, durable agent experiments, worker execution, benchmark, sealed-review test, token accounting verification, or application implementation was run. **Runtime implementation NOT STARTED; tests NOT RUN.**
