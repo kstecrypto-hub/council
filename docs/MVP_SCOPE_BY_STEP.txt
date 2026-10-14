@@ -258,8 +258,8 @@ Defer until after MVP evidence
 
 
 STEP 7 - MEMBER EXECUTION SCHEDULING, RECOVERY, AND RESOURCE CONTROLS
-Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
-Primary working specification: docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md
+Status: DESIGNED - specification complete; runtime implementation NOT STARTED and acceptance tests NOT RUN
+Primary specification: docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md
 
 Complete product
 ~~~~~~~~~~~~~~~~
@@ -293,11 +293,20 @@ MVP must implement
 - Lease expiry + heartbeat + retry attempt number for Council-controlled operations.
 - Configurable max concurrent model calls.
 - Configurable max concurrent local sandboxes.
+- A failed/BLOCKED member remains a required logical Council seat; no silently reduced five-member barrier.
+- BYOK/local-inference MVP; provider accounts bill users directly. Council-authorized budget gates are not guaranteed provider-invoice limits.
 - Per-run, per-phase, per-member token/cost metering and conservative pre-dispatch reservations.
 - Users approve their run/phase budgets and connect their own remote-provider API credentials (BYOK), or use compatible local models with no remote key; in the MVP providers bill users directly and Council does not run a prepaid token wallet.
 - Raw user API credentials remain in trusted secret storage and only the scoped runtime model bridge may use them; they never enter agent sandboxes, repos, ordinary logs, or client-side persistence.
 - Council budget gates limit authorized requests but do not guarantee provider-invoice caps; report uncertain usage/settlement honestly.
 - Simple hard per-phase/member/run budgets plus a protected checkpoint/review/finalization reserve.
+- User approves every project ceiling and allocation; propose configurable 70% development / 25% protected checkpoint reviews / 5% protected orchestration and finalization, splitting development equally by monetary value across five peers by default; each phase/member also needs an approved token ceiling. No silent top-up.
+- Default remote cap: up to two concurrent requests per provider, further reduced by actual provider limits; initial local inference cap: one job, increased only after measured model/runtime hardware + tool-loop compatibility.
+- Resource admission protects approximately 20% of host RAM as an adjustable initial target, increased when observed OS/Council overhead requires; VRAM is measured separately; under pressure stop admissions then safely quiesce work and confirm resource release.
+- Infrastructure recovery: three default retries with increasing 5s/30s/120s delays; individual tool/provider operations have class-specific timeouts, never a global agent-reasoning deadline.
+- Atomic dispatch: lock the Part 5 event clock first, then run -> spending pool -> member/phase accounts; reserve tokens/cost/resource claim with the durable operation and outbox before external dispatch; settle returned usage or retain uncertain liability.
+- Pause uses QUIESCING_FOR_PAUSE activity and becomes PAUSED only on verified durable suspension; Resume rechecks guards; Stop enters STOPPING and becomes CANCELLED only after sufficient cleanup, otherwise FAILED. Candidate ACCEPT is a separate event/flow.
+
 - Optional non-binding rough overall-project and per-phase token/cost estimate ranges shown with uncertainty and evidence basis; never automatically treated as a quota, top-up, or promise.
 - Restart recovery for unfinished tasks.
 - Safe cancellation/pause.
