@@ -59,6 +59,14 @@ Read docs/ARCHITECTURE_DECISIONS.md and docs/architecture_contract.json alongsid
 A documentation edit can be SPECIFIED without being IMPLEMENTED or VERIFIED. Do not close a runtime step from prose, a generated schema, static checks, mocks, or a successful push. Implementation completion requires code and scoped evidence; verification requires executed tests with recorded environment and results. Existing accepted design sections do not imply that later amendments or application work are complete. No application implementation is authorized merely by this maintenance update.
 
 
+## Accepted Step 8.1 — optional controlled experimentation (October 14, 2026)
+
+Read `docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md` when designing/implementing member execution. Inside the persistent member's ordinary ACT loop, an agent may **optionally** conduct a Karpathy-style `HYPOTHESIS -> CHANGE/ALTERNATIVE -> TEST/CHECK -> OBSERVE -> KEEP/REVISE/DISCARD/INCONCLUSIVE -> RECORD` experiment. This does not add an independent intellectual supervisor, required experiment count, universal score, or fixed reasoning deadline. The member chooses its investigation and authors interpretation/readiness.
+
+Persist hypothesis, exact baseline/change and environment/test inputs, measured or qualitative results, failures/regressions, and member dispositions with Step 6 source/provenance lineage. Agent-created exploratory tests are not a substitute for protected acceptance checks. A worker can perform a parent-authorized experiment under the parent's capabilities, branch and budget, but cannot approve parent readiness or cross-peer changes. During checkpoint `/work`, frozen authoritative candidates remain read-only and only disposable verifier environments execute tests. Failed/inconclusive experiment records survive if code changes are reverted.
+
+**Step 8 remains IN DESIGN** pending worker/delegation/action and final phase gates. This addition does not authorize or claim runtime implementation.
+
 ## October 14, 2026 design-stage closure of Steps 3–5
 
 Steps 3, 4 and 5 have completed **design specifications** (see the October 14 closure sections of docs/POSTGRES_DATA_MODEL.md, docs/TYPED_INTERACTION_CONTRACTS.md and docs/PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md). The Council application, database migrations, provider/host interactions, runtime tests and evaluation results remain NOT STARTED / NOT RUN.
