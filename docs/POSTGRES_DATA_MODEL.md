@@ -488,6 +488,16 @@ Required canonical tables include:
 - `revisions`
 - `coverage_items`
 
+### Step 8.1 optional structured experiment records (accepted October 14; no migrations)
+
+A member can choose to use the Karpathy-style controlled experiment workflow **inside ACT**, but experiments are optional and remain branch-private before checkpoint publication. Store their durable identities/provenance using these versioned canonical records alongside the existing `analysis_steps`, `evidence_items`, `claims`, `assumptions`, `revisions` and operational attempts; do not create a separate experiment database or solver.
+
+- `council_core.experiments`: experiment ID, run/branch/owning logical member, semantic phase, optional delegated worker/task, attributed hypothesis and baseline/alternative references, created event/time, status, relevant assumptions and current disposition reference. A worker cannot become the authoritative parent-member author.
+- `council_core.experiment_attempts`: immutable experiment/attempt number, tool and model operation IDs, exact tested repo/base/change SHAs or source/data/fixture hashes, environment/test versions, measured metrics **with units, evaluation conditions, uncertainty**, or qualitative observations/contradictions, associated outputs/artifact hashes, real execution state (including NOT_RUN/BLOCKED/FAILED), failure/regression evidence and timestamp; UNIQUE(experiment_id, attempt_no).
+- `council_core.experiment_dispositions`: append-only member-authored KEEP | REVISE | DISCARD | INCONCLUSIVE with explanation, evidence/test refs, versioned event and timestamp. A reverted change does not delete its failed/inconclusive experiment record; retention of failed code/artifacts remains permission- and storage-policy-scoped.
+
+These records reference the existing **Step 6 evidence graph** and Step 5 durable operations rather than redefining measured truth or declaring any universal numerical quality score. Agent-owned exploratory tests remain distinguished from protected acceptance/verification definitions which agent sandboxes cannot silently modify. During checkpoint `/work`, experiments may only validate pinned read-only snapshots inside disposable verifier environments. Member-declared CHECKPOINT_READY is independent of the experiment's disposition.
+
 ### council_core.graph_relationships
 Projection edge over canonical records.
 - `id` PK
