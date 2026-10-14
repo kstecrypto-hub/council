@@ -130,7 +130,7 @@ assert '80%' in part7_text and '90%' in part7_text
 assert 'Docker Engine' in part7_text
 assert '### 7.1 Docker storage and process-restart policy' in part7_text
 assert 'Docker restart does not' in step8_spec
-assert 'named Docker volume' in step8_scope
+assert "Docker's **named volumes**" in step8_scope
 assert 'per-worker recovery manager' in step8_scope
 assert '## 4.1 Accepted Step 8.2 policy' in step8_spec
 assert '## 4.2 Accepted Step 8.2 resource monitoring boundary' in step8_spec
