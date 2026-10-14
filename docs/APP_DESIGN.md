@@ -354,13 +354,33 @@ Retain the established loop ideas: bounded work, observable feedback, external p
 
 ### Inner and outer loops
 
-The inner loop performs a coherent investigation: retrieve, inspect, act, delegate, evaluate, and record.
+The **outer Council loop** moves through user-approved, Orchestrator-prepared, outcome-based semantic phases: independent work, member-declared checkpoint arrivals, public pinned snapshots, sealed independent reviews, discussion, private revision, and final evaluation. A **persistent member agentic loop** chooses what to reason about and whether to ACT, DELEGATE, ASK_USER, CONTINUE, CHECKPOINT_READY or BLOCKED; it inspects results and records attributable progress, then repeats. The runtime enforces mechanical permissions and budgets, not intellectual solution selection or readiness.
 
-The outer loop checkpoints work and starts a new session when the current session reaches a safe boundary or approaches its context allowance.
+Inside a member's ACT workflow, an **optional Karpathy-style experiment cycle** may run as described below. This is an embedded method, not another orchestrator, model-supervised judge, mandatory after every action, or universal optimizer. Step 11 starts a fresh model session for the *same* logical member near context limits; that is context continuity, not a new member or a mandatory Council checkpoint.
 
 Each logical agent retains its identity, assignments, workers, findings, and unresolved challenges across sessions.
 
 Fresh sessions are continuations, not additional independent reviewers.
+
+### Optional structured experimentation (accepted Step 8.1)
+
+Each Council member can choose to run a structured experimental cycle within its own agentic work:
+
+```text
+HYPOTHESIS -> CHANGE / ALTERNATIVE -> TEST / CHECK -> OBSERVE
+           -> KEEP | REVISE | DISCARD | INCONCLUSIVE -> RECORD
+           -> return to member reasoning
+```
+
+The Karpathy autoresearch idea contributes **controlled alternatives, tests, feedback, and persistent experiment history**, not its fixed-duration experiment, indefinitely repeated iterations, coding-only assumptions or requirement to optimize one number. Experiments are optional and may be quantitative (reproducible benchmark with units, conditions, baseline and regressions) or qualitative (source comparisons, tests of assumptions, counterexamples, reported uncertainty). No global scalar score judges member solutions; members choose hypotheses and interpret their own findings.
+
+An experiment record retains: authoring member and optional delegated worker/parent task, project phase, hypothesis/assumptions, exact baseline and proposed modification or alternative, source/repo/environment/test versions, associated operation IDs, measured observations or attributed evidence, positive and negative results, limitations, and explicit member disposition KEEP/REVISE/DISCARD/INCONCLUSIVE. A failed or reverted approach still leaves a durable attributed experiment record; storing rejected code/artifacts is subject to project retention and permission rules. Agent-owned exploratory tests are **not** protected acceptance checks; the latter are kept outside members' ability to silently alter.
+
+An authorized worker may perform experiments in its parent's branch scope, consuming the same approved parent phase budget and respecting capability limits. Its results go back to the parent; only the persistent parent member decides whether to apply them or declare CHECKPOINT_READY. Full worker creation, merge and cancellation protocol remains Step 8.2.
+
+During ordinary private development, a member may modify its own candidate. During checkpoint communication, `/work` remains **verification-only** against pinned read-only candidates in separate disposable verifiers; no candidate implementation edits or Git pushes. Peer reviewers can challenge the experiment's evidence and methodology, but cannot force incorporation. Private implementation revisions resume after checkpoint closure.
+
+No fixed number of experiments, model iterations or general reasoning-time deadline is required; only approved phase budgets and operation-specific safety timeouts apply. Experiments and incomplete attempts survive Step 11 session rollovers with exact operation and provenance identity. **Experiment outcomes never automatically count as checkpoint readiness or completed protected tests.** The detailed specification is [Part 8 - member loop and experimentation](PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md); Step 8 overall remains IN DESIGN and not implemented.
 
 ### Continuation packet
 
