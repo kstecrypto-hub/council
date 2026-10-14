@@ -69,7 +69,7 @@ Defer until after MVP evidence
 - Sophisticated host-pressure heuristics.
 - Multiple execution backends beyond the one needed by the MVP.
 - Advanced distributed deployment.
-- Sophisticated priority scoring; bounded slices and deterministic seat rotation are still required in the MVP.
+- Sophisticated priority scoring and arbitrary time-based private-work slices are not required in the MVP; fixed seat admission order, semantic checkpoints, and phase token/cost ceilings are.
 
 
 STEP 2 - REPOSITORY LAYOUT, DEPENDENCIES, AND IMPORT RULES
@@ -268,19 +268,22 @@ Complete product
 - Durable runtime operations, leases, heartbeats, retries, cancellation, reconciliation for Council-controlled work.
 - CPU/RAM/disk/GPU/device reservations.
 - Budget reservations, protected review allowance, retry accounting.
-- Starvation avoidance and resource-aware scheduling.
+- Resource-aware admission and deterministic seat-order scheduling; phase budgets bound authorized inference while a member occupies scarce slots.
 - Recovery across crashes and uncertain side effects.
 
 MVP must implement
 ~~~~~~~~~~~~~~~~~~
 - Configurable active Council-member work-sandbox slots independent of the fixed logical member count.
+- The Orchestrator sets outcome-based semantic phases/checkpoint criteria in the versioned Project Contract; a member, not the runtime, declares CHECKPOINT_READY.
+- Each member has a configurable hard token and cost allowance per phase; consumption by delegated workers and session continuations is included in the applicable scope.
+- Exhaustion of the phase allowance records BUDGET_EXHAUSTED / INCOMPLETE and durably suspends the member without fabricating readiness, /done, or acceptance. An authorized user may allocate more budget.
 - A member that reaches the current checkpoint releases scarce private-work execution capacity and cannot proceed beyond the barrier.
 - Checkpoint review opens only after every required Council member reaches the same semantic checkpoint.
 - Checkpoint participation may be time-sliced across available sandbox slots; inactive members receive durable queued messages/actions when the same sandbox resumes.
 - Quiesce and persist a member sandbox before stopping its execution container to free compute; later reconstruct the same logical sandbox from durable private state.
 - Ephemeral credentials/capabilities are reissued on resume and are not retained merely because sandbox storage persists.
 - A member targeted by a new required checkpoint action must be rescheduled even if it had previously reached /done.
-- Eligible members are scheduled in fixed seat order 1 -> 2 -> 3 -> 4 -> 5, wrapping and skipping members that currently require no execution; seat number conveys no authority.
+- Eligible members are scheduled in fixed seat order 1 -> 2 -> 3 -> 4 -> 5 when slots become available, skipping members that currently require no execution; seat number conveys no authority. No mandatory periodic private-work time slice or reasoning deadline.
 - Step 7 may cap remote/local inference resources but does not control the member's intellectual reasoning loop or decide substantive completion.
 - Each member execution has a revocable execution epoch/bridge session; crash recovery invalidates the old epoch before any restarted member can make new external calls.
 - Known in-flight external calls are cancelled where supported; uncertain outcomes use Part 5 UNKNOWN_PENDING_RECONCILIATION and are reconciled before replay.
@@ -290,8 +293,9 @@ MVP must implement
 - Lease expiry + heartbeat + retry attempt number for Council-controlled operations.
 - Configurable max concurrent model calls.
 - Configurable max concurrent local sandboxes.
-- Per-run token/cost tracking.
-- Simple per-agent/run budget ceiling.
+- Per-run, per-phase, per-member token/cost metering and conservative pre-dispatch reservations.
+- Simple hard per-phase/member/run budgets plus a protected checkpoint/review/finalization reserve.
+- Optional non-binding rough phase token/cost estimate ranges shown with uncertainty and evidence basis; never automatically treated as a quota, top-up, or promise.
 - Restart recovery for unfinished tasks.
 - Safe cancellation/pause.
 
@@ -713,10 +717,10 @@ OCTOBER 13, 2026 - ACCEPTED ARCHITECTURE CORRECTIONS
 The changes below are requirements, not implemented features. Runtime implementation: NOT STARTED. Runtime tests and comparative evaluations: NOT RUN. No implementation step is closed by this update.
 
 1. Five fixed logical members; private -> PUBLIC GitHub repositories at approved checkpoints -> private before new work. Public history/copies cannot be recalled. Publication safety/authorization is mandatory.
-2. Finite private-work slices independent from semantic milestones; deterministic fair rotation; explicit blocked-member/recovery ceilings; no silently reduced Council.
+2. Orchestrator-defined semantic phases, member-declared checkpoint readiness, finite per-member/phase token and cost ceilings, deterministic next-seat admission (no forced private-work time slices); explicit blocked-member/recovery handling; no silently reduced Council.
 3. Separate disposable peer-test environments with protected acceptance definitions and trusted execution provenance.
 4. Operation-specific unknown-outcome policy and old-epoch fencing; safe independent work can resume without guessing consequential effects.
-5. Atomic pre-dispatch budget reservations for every caller; protected review funds; unresolved requests retain accounting; resource-vector admission.
+5. Atomic pre-dispatch budget reservations for every caller; protected review funds; per-phase token/cost allowances and budget-exhaustion-as-incomplete; uncertain planning estimates kept separate from authorized quotas; unresolved requests retain accounting; resource-vector admission.
 6. Commit-safe transactional event clock/outbox/projection watermarks; framework checkpoints subordinate to canonical operations.
 7. Outcome-based milestones, source-linked clarification strength, explicit consequential confirmations, and branch-local Orchestrator context.
 8. All-five sealed independent assessments before shared debate.
