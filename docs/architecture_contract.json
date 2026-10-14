@@ -140,6 +140,14 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-14",
+      "design_status": "ACCEPTED_STEP8_1_FULL_STEP8_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -339,5 +347,49 @@
     "budget": "reserve_before_dispatch_release_only_on_proven_non_dispatch_or_settlement",
     "projections": "committed_event_cursor_consistent_snapshot_authorization_filtered_replay",
     "finalization": "archive_export_and_reference_closure_before_control_db_teardown"
+  },
+  "step8": {
+    "design_status": "IN_DESIGN",
+    "accepted_subdesigns": [
+      "8.1_MEMBER_LOOP_OPTIONAL_KARPATHY_STYLE_EXPERIMENTATION"
+    ],
+    "specification_path": "docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md",
+    "runtime_implementation_status": "NOT_STARTED",
+    "runtime_tests_status": "NOT_RUN",
+    "outer_loop": "Council_semantic_phases_five_independent_members_checkpoint_sealed_review_revision",
+    "member_loop": "member_chooses_reason_act_delegate_ask_user_continue_checkpoint_ready_blocked",
+    "experiment_is_optional_under_act": true,
+    "experiment_stages": [
+      "HYPOTHESIS",
+      "CHANGE_OR_ALTERNATIVE",
+      "TEST_OR_CHECK",
+      "OBSERVE",
+      "KEEP_OR_REVISE_OR_DISCARD_OR_INCONCLUSIVE",
+      "RECORD"
+    ],
+    "experiment_outcomes": [
+      "KEEP",
+      "REVISE",
+      "DISCARD",
+      "INCONCLUSIVE"
+    ],
+    "requires_numeric_benchmark": false,
+    "requires_experiment_every_action": false,
+    "separate_ai_judge_or_experiment_scheduler": false,
+    "records_hypothesis_baseline_versions_test_environment_results_regressions_and_member_decision": true,
+    "retains_failed_and_inconclusive_experiment_records": true,
+    "protected_acceptance_tests_outside_member_write_authority": true,
+    "workers_may_run_parent_scoped_experiments_within_parent_budget": true,
+    "worker_may_declare_parent_checkpoint_ready": false,
+    "checkpoint_work_excursion": "verification_only_disposable_read_only_candidate",
+    "fixed_reasoning_iteration_or_experiment_count": false,
+    "budget_exhaustion_means_completion": false,
+    "pending_design": [
+      "worker_depth_lifecycle_merge_protocol",
+      "complete_action_observation_schema",
+      "phase_and_final_candidate_transitions",
+      "checkpoint_final_review_termination_integration"
+    ],
+    "implementation_and_tests_pending": true
   }
 }
