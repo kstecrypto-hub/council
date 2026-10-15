@@ -67,6 +67,8 @@ On normal closure, atomically fence new review messages, persist the final trans
 
 The persistent gateway process may remain running without any active communication authority. Inactive members receive ordered backlog and current obligations on resumption; they do not receive another member's sealed assessment prematurely.
 
+**October 15 owner-approved Step 2 boundary:** Peer snapshot tree/file/pinned-artifact **read requests** use the same narrow member-facing IRC-inspired checkpoint bridge, but a separate trusted customer-local Git/snapshot service outside all sandboxes holds and authorizes source. The gateway is not a Git server or repository owner. Company-local member Git workspaces remain private, frozen exports are immutable/hash-verified/read-only, and sizeable data travels in bounded verified response streams rather than shared IRC chat or prompt context. Communication permissions and snapshot access close together, with separately verified grant revocation. Precise DTOs and transfers remain IN DESIGN; implementation/tests NOT STARTED / NOT RUN. [Details](STEP_2_CUSTOMER_LOCAL_GIT_CHECKPOINT.md).
+
 ## 4. Communication model
 
 IRC/IRCv3 is the design reference, not the exposed protocol.
