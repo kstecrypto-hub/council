@@ -36,6 +36,10 @@ October 14, 2026 owner decision (ADR-16): rely on ordinary Docker persistent nam
 
 **Redesign amendment — October 14, 2026:** The owner approved local-first native Git/customer-owned source and archive data; optional customer-controlled Forgejo/enterprise backends; frozen read-only checkpoint snapshots without internet-public publication; and no cross-customer lesson export by default. A specific customer may opt in to a reviewed, approved generalized disclosure. The owner also approved **success-first** retrieval: prioritize genuinely applicable working procedures, use failed experiments as conditional warnings/tests, do not blacklist an approach merely because a similar prior task failed. Record exact context, versions, workload, causal confidence and supporting evidence. These newer decisions take precedence over all former PUBLIC GitHub requirements. Integration of Steps 2–5/8/10/11 and tests is pending.
 
+## October 15 — Step 2 customer-owned native Git approval
+
+The owner approved five temporary **company/customer-owned local Git repositories**, immutable selected read-only snapshots at checkpoints, peer file/tree requests through the single IRC-inspired member-facing bridge backed by a separate trusted customer-local snapshot service, bounded artifact transfer, verified joint message/file-access revocation, and company-directed final archive/cleanup. **No Council/vendor Git hosting or unapproved outbound source egress.** See [Step 2 decisions](STEP_2_CUSTOMER_LOCAL_GIT_CHECKPOINT.md). Exact DTO/transfer/dependency and Steps 3–5 integration remain **IN DESIGN**. No application implementation or runtime tests are claimed.
+
 ## Completion policy
 
 SPECIFIED means requirements have been written. IN DESIGN means named design decisions or integration details remain open. IMPLEMENTED requires executable behavior and a code reference. VERIFIED requires actual test execution, scope/environment, and result evidence. A test plan, stub, mock, static documentation check, or successful push cannot by itself complete a runtime step. No row above marks runtime work completed.
