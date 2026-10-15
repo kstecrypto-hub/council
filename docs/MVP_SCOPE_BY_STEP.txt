@@ -389,7 +389,16 @@ Accepted Step 8.2a persistence decision (October 14, 2026)
 - Deliberately stopped/paused/at-checkpoint/budget-exhausted member sandboxes must remain stopped; Docker `restart: always`/`unless-stopped` may not bypass the host scheduler, protected review barrier or reauthorization. Docker/container readable writable layer and tmpfs are **not substitutes for durable mounted storage**.
 - Recreating a sandbox requires reattaching the exact member-owned volume, validating mount/permission/resource/isolation guard, fencing old epoch and reconciling UNKNOWN external effects before member authorization. Archive/retention/verified deletion controls still apply.
 
-Step 8.1, 8.2 and 8.2a are accepted **subdesigns**, but **Step 8 remains IN DESIGN** for precise member action/observation, private-phase/final-candidate states, and checkpoint/finalization transition integration.
+Step 8.1, 8.2, 8.2a and **8.3 policy-level readiness decisions** are accepted subdesigns, but **Step 8 remains IN DESIGN** for precise Step 8.4/8.5 final-review/termination integration and exact affected Step 4/5 contracts.
+
+October 15 owner-approved Step 8.3 policy and Orchestrator library integration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- **Step 8.3:** Member-authored readiness intent is distinct from observed trusted freeze, exact pinned candidate/evidence and safe whole-member suspension. Only mechanically verified arrivals count toward the all-five checkpoint barrier; runtime cannot grade intellectual completion.
+- A member may honestly conclude its investigation without a viable candidate, preserving supported constraints, limitations and negative results; this never becomes a fictitious successful implementation or an automatic five-ready arrival. Final review handling stays Step 8.4 IN DESIGN.
+- Loop repetition is governed by existing idempotency/operation retry, budgets and warnings; no sixth productivity judge, forced model-call count or deadline. Keep worker persistence and the whole-member scheduler unchanged.
+- **Orchestrator checkpoint planning:** consult authorized, versioned curated **development-method library** of common category-specific milestones, dependencies and review evidence; select, adapt or combine applicable patterns without prescribing members' technical solution. If none match, still generate a user-approved semantic checkpoint plan independently from the requirements. Library access does not change Orchestrator authority, five independent members, or member-authored readiness.
+- Reuse shipped/customer-local versioned pattern files and existing Project Contract plan IDs/hashes; Step 11 controls derived project data and no unauthorized company-to-global reuse.
+- See docs/STEP_8_3_MEMBER_PHASE_COMPLETION_AND_READINESS.md and docs/ORCHESTRATOR_DEVELOPMENT_PATTERN_LIBRARY.md. **Only the architecture specification has changed; runtime implementation NOT STARTED, tests NOT RUN.**
 
 Complete product
 ~~~~~~~~~~~~~~~~
