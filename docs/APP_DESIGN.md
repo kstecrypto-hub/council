@@ -420,6 +420,12 @@ Tool outputs and task transitions are persisted continuously. A crash before the
 
 Rollover happens before the context is exhausted, with space reserved for responses and tool results. Uncertain pending actions are reconciled before the new session can repeat them.
 
+### October 15 — owner-approved Step 8.3 member readiness and Orchestrator planning references
+
+[Step 8.3 readiness policy](STEP_8_3_MEMBER_PHASE_COMPLETION_AND_READINESS.md) is approved: the parent member's *authored* readiness intent is distinct from the trusted backend's verified frozen source/evidence identity, safe whole-member suspension and checkpoint arrival. A concluded investigation with no viable candidate is an explicit truthful outcome, never a fabricated working implementation; five distinct members remain required for real peer review. Budget exhaustion, BLOCKED/WAITING and recovery cannot silently force readiness. Existing operation safety/idempotency controls handle repetitive failures without a new quality judge or forced reasoning limit. Exact Step 4/5 DTOs and Step 8.4 final-review integration remain open.
+
+The [Orchestrator development-pattern library](ORCHESTRATOR_DEVELOPMENT_PATTERN_LIBRARY.md) is also owner-approved as an optional neutral checkpoint-planning reference. It contains applicable, sourced *project development methods and demonstrable milestones*, not binding implementation instructions. Consult relevant versioned patterns when available, combine partial matches only where justified, and generate milestones independently from user-approved requirements on no match; the same user approval and all-five member-declared readiness rules remain. This is not new Orchestrator authority or mandatory software-only process. No implementation or tests.
+
 ## 8. Models and provider controls
 
 Model selection is an agent property, not a global architectural assumption.
