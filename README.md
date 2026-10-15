@@ -52,6 +52,8 @@ The full 18-section specification is in `docs/APP_DESIGN.md`. Application implem
 
 No project license has been selected. No upstream implementation is vendored by this revision. Inspect relevant upstream licenses and preserve required notices before any later code reuse.
 
+**October 15 Step 2 owner-approved subdesign:** Generated member Git repos are temporary and **customer/company-owned native local Git**, never vendor-hosted by default. At checkpoints the trusted customer-local snapshot service exposes only selected immutable read-only snapshots via the narrow IRC-inspired checkpoint bridge; larger artifacts use bounded verified transfers, not chat context dumps. Access closes with checkpoint communication and is independently verified revoked. Accepted output goes only to a customer-approved destination; provider/tool egress needs separate authorization. See [Step 2 customer Git and checkpoint record](docs/STEP_2_CUSTOMER_LOCAL_GIT_CHECKPOINT.md). **Step 2 remains IN DESIGN; implementation NOT STARTED, tests NOT RUN.**
+
 ## Architecture review update - October 13, 2026
 
 The approved corrections are integrated into the current design documents. See [decision/status index](docs/ARCHITECTURE_DECISIONS.md) and [machine-readable contract](docs/architecture_contract.json).
