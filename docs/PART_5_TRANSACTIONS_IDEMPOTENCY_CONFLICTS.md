@@ -381,3 +381,12 @@ The new [local-first repository/knowledge design](LOCAL_REPOSITORY_AND_KNOWLEDGE
 Customer-owned long-term archive export and evidence-closure validation must honor the user's retention/deletion rules and remain independent of **optional, specifically approved** general-knowledge disclosure. Any cross-customer pattern export requires an independently idempotent authorization, content review/approved audience, minimal permitted evidence, and proof of *what* actually left the trust boundary. Rejected/unknown consent is never treated as permission. No automatic extraction or uploaded lesson from customer work.
 
 Step 5 design was reopened only for these interfaces; execution/race/side-effect tests **NOT RUN**.
+
+## October 15 proposed Step 2 v1 recovery binding — pending approval
+
+[Step 2 interface proposal §§5–8](STEP_2_CUSTOMER_LOCAL_GIT_CHECKPOINT.md#interface-proposal-v1--october-15-2026) applies existing event-clock-first canonical transactions, scoped receipts, durable operation keys/attempts, resource reservations and post-commit effects to snapshot transfers and revocation. A new read stages no bytes before committed intent; grants, streamed delivery and physical cleanup are external facts observed in later guarded commits. Retransmitted/uncertain bytes remain bounded/accounted; send and recipient hash acknowledgment are distinct receipt dimensions. Saved receipts never override current read authorization.
+
+The proposed CLOSING fence shares checkpoint generation/order with communication; each outbound source chunk rechecks it. A timed-out grant/revoke or lost receipt stays UNKNOWN_PENDING_RECONCILIATION. Stale late responses reconcile the original effect without creating new authority; no private revision or successful closure while source/communication isolation is unknown. Existing outbox replay, lease/epoch, budget and dependency rules stay authoritative; no new coordinator or distributed SQL/filesystem transaction is introduced.
+
+Exact DTO/receipt/fence details and S2-01–S2-16 are **PROPOSED / REQUIRE OWNER APPROVAL**. Step 5 integration remains REOPENED IN DESIGN; no adapters, migrations, runtime or failure-injection tests have been implemented/executed.
+
