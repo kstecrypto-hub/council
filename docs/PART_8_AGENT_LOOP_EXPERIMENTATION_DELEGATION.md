@@ -119,6 +119,19 @@ Member identity, experiment operation IDs, baseline versions, evidence and dispo
 
 **Deferred:** autonomous experiment schedulers; hard-coded numerical optimization targets; additional experiment-only LLM supervisors; automated global winner scoring; elaborate experiment search trees, cross-member shared private experiments and heavy experiment-data infrastructure before measured need.
 
+## 7.1 Owner-approved Step 8.3 — phase/final candidate readiness (October 15)
+
+**Step 8.3 policy decisions APPROVED; exact Step 4/5 DTOs and Step 8.4 integration IN DESIGN.** [Detailed Step 8.3 policy and deployable boundary](STEP_8_3_MEMBER_PHASE_COMPLETION_AND_READINESS.md).
+
+- Record a **member-authored readiness intent** separately from the trusted runtime's **observed, mechanically verified** Git/evidence pin, whole-member quiescence and resource release. Only the second counts toward an ordinary five-member checkpoint arrival; runtime does **not** judge whether the member's proposed solution is good.
+- Preserve an explicit **CONCLUDED_NO_VIABLE_CANDIDATE** member-authored investigation outcome with evidence and limitations. Never claim an implemented working candidate, nor silently satisfy an implementation-required five-member barrier. A feasibility investigation may validly conclude negatively if that is its approved outcome. Step 8.4 must decide final review intake while retaining five real reviewers.
+- Unproductive-operation repetition uses existing idempotency, denial, infrastructure retry/timeouts, approved budgets and observable warnings—not a sixth intellectual supervisor, fixed iteration quota, mandatory completion deadline or forced CHECKPOINT_READY.
+- Reuse the existing parent-only member readiness, candidate, blocker, lifecycle, event and Step 7 scheduling infrastructure; no new service or agent-worker recovery manager. Awaiting the other members never allows an early-ready member to enter the next private revision phase.
+
+The owner's newly approved [Orchestrator development-pattern library](ORCHESTRATOR_DEVELOPMENT_PATTERN_LIBRARY.md) informs **only the prior, user-approved semantic milestone plan** with relevant development-method examples; no library match still yields a plan. It does not alter member self-declared readiness or determine implementation strategies.
+
+**Step 8 remains IN DESIGN** for full 8.4/8.5. Implementation NOT STARTED, tests NOT RUN.
+
 ## 8. Remaining Step 8 design questions
 
 - 8.2 accepted: no fixed worker count/depth or worker scheduler, trusted Docker/cgroups resource monitoring, and **Docker-mounted persistent workspace with member-owned local worker resume**; no separate Council worker-recovery service. Remaining Step 8 work is the **member action/observation protocol**, externally significant result/provenance boundaries, phase transitions and checkpoint/finalization integration.
