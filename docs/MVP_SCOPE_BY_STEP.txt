@@ -80,7 +80,7 @@ Status: REOPENED IN DESIGN - older public-GitHub baseline superseded by local-fi
 Complete product
 ~~~~~~~~~~~~~~~~
 - Each Council member has a distinct **customer-owned local Git repository/workspace** boundary, not a mandatory external account.
-- Private independent work until checkpoint policy allows publication.
+- Private independent work until checkpoint policy allows customer-authorized scoped local snapshot sharing.
 - At approved checkpoints, the trusted **local gateway** shares only selected frozen read-only snapshots with authorized peers inside the customer trust boundary; **no internet-public repository is the default**. Optional external publication requires separate explicit authorization.
 - Prior accepted projects may be copied/reused as bases or references.
 - Accepted output is migrated/retained; disposable run state is removed.
@@ -89,7 +89,7 @@ Complete product
 MVP must implement
 ~~~~~~~~~~~~~~~~~~
 - One repository/worktree per council member candidate.
-- Strong branch/repository separation before publication checkpoints.
+- Strong branch/repository separation before scoped local snapshot-sharing checkpoints.
 - A deterministic location for backend, runtime, UI, tests, migrations, and
   shared schemas/contracts.
 - No circular dependency architecture.
@@ -135,7 +135,7 @@ MVP must implement
 - Tasks, leases, operations, events, model calls.
 - Context manifests + continuation packets.
 - Artifact metadata/pointers instead of storing large artifacts in PostgreSQL.
-- Explicit per-seat checkpoint-arrival SHA records; public repository approved-history manifests and desired/observed transitions; five sealed reviewer assessments and atomic reveal.
+- Explicit per-seat checkpoint-arrival commit/tree records; selected customer-authorized local snapshot manifests, hashes and desired/observed read-only grant/revocation operations; five sealed reviewer assessments and atomic reveal.
 - Durable full checkpoint messages/peer-action obligations, processed-message frontiers, version-bound DONE certificates, verifier/closeout/return-packet references.
 - Source-linked branch-local versus project-wide clarification lineage, scoped command receipts, transactional committed event-clock, budget reservations and reconciliation attempts.
 - Five-seat and cross-run referential constraints, branch/RLS privacy, verified Git archive/evidence-reference closure before deleting temporary Council PostgreSQL.
@@ -175,7 +175,7 @@ MVP must implement
   * create/complete/fail task;
   * create worker;
   * export and authorize **private local checkpoint snapshots**, verify hashes/read-only access and collect five sealed reviews;
-  * record opening/closing commits and confirm private visibility before private work resumes;
+  * record local snapshot export/grant/revocation intents and observations and verify access isolation before private work resumes;
   * create/disposition structured peer actions;
   * request requirement clarification/checkpoint;
   * model call request/result;
@@ -187,7 +187,7 @@ MVP must implement
 - Implement idempotent/stale-safe interaction responses and reconnect-safe Interaction Center behavior.
 - Schema validation at every API/runtime boundary.
 - Command idempotency is checked before stale-target/transition guards for authenticated same-scope replays; same key/changed request hash fails with IDEMPOTENCY_CONFLICT.
-- Define actor/authority and exact revision/frontier guards for member-emitted CHECKPOINT_READY, public repo publication, all-five SEALED_REVIEW reveal, peer messages/actions, version-bound /done and forced-incomplete closure.
+- Define actor/authority and exact revision/frontier guards for member-emitted CHECKPOINT_READY, customer-local snapshot export/grants/revocation, all-five SEALED_REVIEW reveal, peer messages/actions, version-bound /done and forced-incomplete closure.
 - Run PAUSE/RESUME/STOP, approved budget pools/phase ceilings, BYOK secret references, unknown provider outcomes and explicit candidate acceptance have distinct typed results/events and UI effects.
 - No raw user answers to members; Orchestrator processes faithful branch-scoped clarifications and does not judge solutions or select winners.
 - Step 4 design registry and transition examples are specified; executable DTOs, UI and state-machine tests are not claimed complete.
@@ -229,7 +229,7 @@ MVP must implement
 - Deployment event-clock row allocated in the committing transaction before aggregate/budget locks; no PostgreSQL sequence/IDENTITY presumed to represent committed event order.
 - Scoped command receipts + canonical hash deduplicate before version/transition validation; model/local snapshot/external Git (if explicitly authorized)/sandbox effects use durable logical operations and append-only attempts with stale epoch/lease fencing.
 - Budget/resource reservations for each request commit with canonical event/outbox before external dispatch; reconcile late/unknown usage without falsely releasing protected review funds.
-- Checkpoint READY and sealed-review reveal are local atomic guards; public/private repository transitions and cleanup require separately verified external observations before successful state transitions.
+- Checkpoint READY and sealed-review reveal are local atomic guards; customer-local immutable snapshot exports, temporary peer read grants, revocations and cleanup require separately verified storage/access observations before successful state transitions.
 - SSE/canonical snapshots use a consistent committed event watermark; outbox retries unpublished rows and projections expose lag rather than skipping lower unprocessed events.
 - Step 5 design is specified; SQL migrations, concurrency/failure-injection, external adapters and runtime tests are not claimed complete.
 
