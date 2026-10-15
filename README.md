@@ -58,6 +58,8 @@ No project license has been selected. No upstream implementation is vendored by 
 
 > **Correction ADR-22:** Use hosted [OpenAI Moderation API](docs/OPENAI_MODERATION_API_CORRECTION.md), **not** a local GPT-OSS safeguard. The free API requires credentials/internet and company-approved data egress; deterministic permission and sandbox controls remain mandatory. This later correction supersedes any inconsistent older safeguard wording. No implementation or testing.
 
+**October 15 ADR-23/24 approved:** [Step 8.3 member completion](docs/STEP_8_3_MEMBER_PHASE_COMPLETION_AND_READINESS.md) specifies authored readiness versus independently verified frozen candidate/whole-member suspension, truthful no-viable-candidate outcomes and existing-budget/idempotency loop controls (no hidden AI judge). The [Orchestrator development-pattern library](docs/ORCHESTRATOR_DEVELOPMENT_PATTERN_LIBRARY.md) provides versioned, permitted project-development pattern references to improve **user-approved outcome-based semantic checkpoint planning**; no-match fallback is required, and members' technical approaches/readiness remain independent. These are architecture-only decisions: **Step 8.3 policy approved, full Step 8/8.4 still IN DESIGN, runtime NOT STARTED and tests NOT RUN**.
+
 ## Architecture review update - October 13, 2026
 
 The approved corrections are integrated into the current design documents. See [decision/status index](docs/ARCHITECTURE_DECISIONS.md) and [machine-readable contract](docs/architecture_contract.json).
