@@ -44,14 +44,14 @@ Step 7 is DESIGNED as a specification (approved October 14): initial configurabl
 
 **Scope note:** Marking the Step 7 design complete does not mean that its 70/25/5 and operation timeout recommendations are empirically validated; they are configurable starting defaults. User approvals remain authoritative. The Step 7 implementation still depends on Step 9/10 runtime adapters and independent tests.
 
-**Step 3–5 design closure:** The authoritative specifications are [PostgreSQL data model](POSTGRES_DATA_MODEL.md) Section 20, [typed interaction/state contracts](TYPED_INTERACTION_CONTRACTS.md) Section 26, and [Part 5 transactions](PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md) Section 16. No design document or commit satisfies the executable implementation/test gates.
+**Historical Step 3–5 design closure (affected interfaces reopened by ADR-17):** The authoritative specifications are [PostgreSQL data model](POSTGRES_DATA_MODEL.md) Section 20, [typed interaction/state contracts](TYPED_INTERACTION_CONTRACTS.md) Section 26, and [Part 5 transactions](PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md) Section 16. No design document or commit satisfies the executable implementation/test gates.
 
 ## Required runtime evidence (all pending)
 
 - [ ] A one-slot execution admits the next eligible member once the current member reaches the milestone, blocks, safely yields, or exhausts its authorized phase budget; exhaustion never implies checkpoint readiness. No mandatory periodic private-work rotation is required.
 - [ ] Phase token estimates are displayed only as uncertain forecasts, separately from user-approved quotas and metered usage; they never silently adjust the hard budget.
 - [ ] Missing/failed members cannot silently shrink Council or pass either arrival or sealed-review barriers.
-- [ ] Public opening checks all exposed refs/history/surfaces; partial/unknown transitions remain guarded; failed private closure prevents new unpublished commits; prior exposure is never claimed erased.
+- [ ] Local opening validates selected snapshot scope/hashes and proves recipient read-only access without exposing unauthorized history; partial/UNKNOWN exports or grants remain guarded. Failed revocation/cleanup blocks the next private revision phase; previously delivered peer knowledge cannot be erased. Separately approved external-publication operations require additional exposure/history checks.
 - [ ] Sealed reviews do not leak via repository commits, gateway, retrieval, caches, or member context before reveal.
 - [ ] Peer test code cannot write another persistent workspace, continuation state, credentials, or protected acceptance definitions.
 - [ ] Unknown inference allows safe unrelated progress with retained accounting; unknown writes are not blindly repeated; uncertain authority fails closed.
