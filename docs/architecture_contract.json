@@ -212,6 +212,22 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-23",
+      "design_status": "APPROVED_STEP_8_3_MEMBER_READINESS_AND_INCOMPLETE_OUTCOMES_SPEC_ONLY",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-24",
+      "design_status": "APPROVED_ORCHESTRATOR_DEVELOPMENT_PATTERN_LIBRARY_FOR_CHECKPOINT_PLANNING_SPEC_ONLY",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -439,7 +455,10 @@
     "accepted_subdesigns": [
       "8.1_MEMBER_LOOP_OPTIONAL_KARPATHY_STYLE_EXPERIMENTATION",
       "8.2_SANDBOX_LOCAL_WORKER_AUTONOMY_AND_TRUSTED_DOCKER_MONITORING",
-      "8.2A_DOCKER_PERSISTENT_VOLUME_MEMBER_MANAGED_WORKER_RESUME"
+      "8.2A_DOCKER_PERSISTENT_VOLUME_MEMBER_MANAGED_WORKER_RESUME",
+      "8.3_MEMBER_AUTHORED_READINESS_INTENT_AND_TRUSTED_VERIFIED_FREEZE",
+      "8.3_CONCLUDED_NO_VIABLE_CANDIDATE_SCOPED_HONEST_OUTCOME",
+      "8.3_EXISTING_OPERATION_LOOP_PROTECTIONS_NO_INTELLECTUAL_JUDGE"
     ],
     "specification_path": "docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md",
     "runtime_implementation_status": "NOT_STARTED",
@@ -474,8 +493,9 @@
     "budget_exhaustion_means_completion": false,
     "pending_design": [
       "complete_action_observation_schema",
-      "phase_and_final_candidate_transitions",
-      "checkpoint_final_review_termination_integration"
+      "step8_3_exact_step4_and_step5_event_operation_integration",
+      "step8_4_final_review_nonviable_candidate_intake_and_termination",
+      "step8_5_cross_step_interface_acceptance_scenarios"
     ],
     "implementation_and_tests_pending": true,
     "member_controls_local_worker_count_and_depth": true,
@@ -528,7 +548,19 @@
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN"
     },
-    "checkpoint_publication": "customer_local_frozen_snapshot_only_by_default"
+    "checkpoint_publication": "customer_local_frozen_snapshot_only_by_default",
+    "step8_3": {
+      "status": "POLICY_OWNER_APPROVED_STILL_DTO_AND_8_4_INTEGRATION_OPEN",
+      "specification_path": "docs/STEP_8_3_MEMBER_PHASE_COMPLETION_AND_READINESS.md",
+      "authored_intent_distinct_from_mechanically_verified_arrival": true,
+      "checkpoint_arrival_requires_verified_pinned_candidate_and_suspension": true,
+      "member_controls_intellectual_ready": true,
+      "nonviable_candidate_scoped_outcome": "CONCLUDED_NO_VIABLE_CANDIDATE_NOT_IMPLEMENTATION_SUCCESS_NOT_AUTOMATIC_FIVE_READY",
+      "repeat_loop_controls": "EXISTING_IDEMPOTENCY_INFRA_RETRY_BUDGET_WARNING_NO_AI_JUDGE",
+      "member_worker_recovery_unchanged": true,
+      "runtime_implementation_status": "NOT_STARTED",
+      "runtime_tests_status": "NOT_RUN"
+    }
   },
   "checkpoint_public_github_default": false,
   "local_first_repository_specification": "docs/LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md",
@@ -630,5 +662,23 @@
     "moderation_api_free_but_rate_limited": true,
     "moderation_api_not_custom_prompt_policy": true,
     "corrected_by": "docs/OPENAI_MODERATION_API_CORRECTION.md"
+  },
+  "orchestrator_planning_library": {
+    "status": "OWNER_APPROVED_DESIGN_DIRECTION_SCHEMAS_RETRIEVAL_IN_DESIGN",
+    "specification_path": "docs/ORCHESTRATOR_DEVELOPMENT_PATTERN_LIBRARY.md",
+    "purpose": "INFORM_NEUTRAL_OUTCOME_BASED_SEMANTIC_CHECKPOINT_PLANNING",
+    "sources": "VERSIONED_CURATED_GENERIC_CUSTOMER_LOCAL_AUTHORIZED_PATTERNS",
+    "storage": "PRODUCT_BUNDLED_AND_CUSTOMER_LOCAL_FILES",
+    "project_record": "EXISTING_PROJECT_CONTRACT_CHECKPOINT_PLAN_VERSIONED_PATTERN_ID_HASH_PROVENANCE",
+    "matching": "TAG_METADATA_FULLTEXT_DEFAULT_SEMANTIC_OPTIONAL",
+    "no_match_behavior": "REQUIREMENTS_DERIVED_CHECKPOINT_PLAN_ANYWAY",
+    "partial_match_behavior": "ADAPT_APPLICABLE_ONLY",
+    "user_approval_still_required": true,
+    "may_direct_member_implementation": false,
+    "may_access_private_member_reasoning": false,
+    "may_force_readiness_or_time_deadline": false,
+    "customer_derived_global_reuse_default": false,
+    "implementation_status": "NOT_STARTED",
+    "runtime_tests_status": "NOT_RUN"
   }
 }
