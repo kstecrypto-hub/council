@@ -123,6 +123,14 @@ All source, proprietary project reconstruction packages and customer-specific re
 Steps 2–5 had prior design-closed status **only under the now-superseded publication policy**, so their local snapshot/permission/retention integration is REOPENED IN DESIGN. Step 11 ranking policy is still IN DESIGN; no actual Git gateway, storage migrations, source processing, customer-data export, cross-customer knowledge system or runtime tests have been performed.
 
 
+## October 15 accepted Step 8.3 and Orchestrator planning library (ADR-23/24)
+
+Before changing the runtime agent-loop architecture, consult [Step 8.3 completion/readiness](docs/STEP_8_3_MEMBER_PHASE_COMPLETION_AND_READINESS.md): member-authored readiness intent is **not** a mechanically verified checkpoint arrival; the trusted runtime must separately observe pinned candidate/evidence, safe freeze/suspension and resource release. A truthful member conclusion with no viable candidate does not mean successful implementation or automatically satisfy the all-five ready barrier. No hidden sixth intellectual judge, arbitrary reasoning deadline, worker scheduler or forced readiness. Preserve all approved prior Step 7/8 subdesigns.
+
+[Orchestrator development-method library](docs/ORCHESTRATOR_DEVELOPMENT_PATTERN_LIBRARY.md) provides **optional, source-tagged, versioned local patterns** to propose better user-approved *semantic* checkpoint outcomes. No match means requirements-derived planning, never fabricated references or blocked project setup. Do not use it to mandate implementation details, choose peer solutions, change intellectual authority, absorb private branch reasoning or bypass Step 11 retention/opt-in. Reuse existing plan/contract records and application components.
+
+**Status:** ADR-23 Step 8.3 owner-approved policy, ADR-24 planning-library owner-approved design direction. Step 8.4/8.5 and exact wire DTOs still IN DESIGN. Runtime NOT IMPLEMENTED, tests NOT RUN.
+
 ## October 15 owner correction ADR-22: OpenAI Moderation API is hosted
 
 **Authoritative:** [docs/OPENAI_MODERATION_API_CORRECTION.md](docs/OPENAI_MODERATION_API_CORRECTION.md) supersedes all earlier local-model/OpenAI safeguard assumptions. Use `omni-moderation-latest` through OpenAI's hosted `/v1/moderations` only after the customer's *specific data-category/endpoint egress permission*. No local GPU/weights, no custom guard model, no unapproved upload of company code, and do not use moderation as deterministic authorization, DLP, prompt-injection defense or file scanner. No silent fail-open. Keep unified trust, five member autonomy, command-only file results, checkpoint consent/revocation, truthful design-only status. No implementation/tests.
