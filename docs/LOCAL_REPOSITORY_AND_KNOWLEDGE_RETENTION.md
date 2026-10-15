@@ -4,6 +4,18 @@
 
 **Design status:** APPROVED DIRECTION / IN DESIGN for integration across existing Steps 2–5, 8, 10, 11, 12. **Runtime implementation:** NOT STARTED. **Tests:** NOT RUN. This file supersedes the *former default public-GitHub checkpoint and centrally reusable customer-derived knowledge* assumptions in older specifications. It does not assert an implemented local Git gateway or a completed Step 11 memory-ranking policy.
 
+## October 15 approved Step 2 subdesign: company-local Git and read-only IRC-gateway access
+
+**The owner accepted the Step 2 repository and peer-read architecture; this is a design approval, not implementation or full Step 2 design closure.** See [the dedicated Step 2 design record](STEP_2_CUSTOMER_LOCAL_GIT_CHECKPOINT.md).
+
+- Five project-lifetime member repositories use **native local Git on the customer/company-controlled machine or approved private infrastructure**. No Council/vendor-hosted Git, GitHub account or third-party source transfer is necessary or authorized by default.
+- On a legitimate checkpoint, freeze the members' selected commits and produce content-hashed read-only file-tree snapshots, without exporting full history or unreleased work by default.
+- Members can read other members' authorized frozen snapshots via the existing **IRC-inspired Council checkpoint bridge**. A separate trusted customer-local snapshot service stores/authorizes them; large file responses use bounded artifact transfer, not group-chat messages or automatic model-context loading.
+- Read access and communication share a checkpoint lifecycle, with independently verified revocation before the next private phase. Sealed review and verification-only `/work` remain intact.
+- Source ownership, temporary repository cleanup, final customer-selected export, dependency/LFS/large-artifact inclusion, and any remote model/tool data egress are governed by **explicit company policy**, not vendor defaults.
+
+**Open:** exact protocol DTOs, mount/export/import policy, partial/UNKNOWN transfer and revoke recovery, and integration into Steps 3-5 and 8. Step 2 remains **IN DESIGN**; application implementation and runtime tests remain **NOT STARTED / NOT RUN**.
+
 ## 1. Nonnegotiable data-ownership and deployment boundaries
 
 - **Default:** a Council deployment and the five isolated member sandboxes operate on the **customer's own workstation/server or an explicitly customer-approved private deployment**. The customer controls code, checkpoint snapshots, logs, credentials, intermediate artifacts and retention.
