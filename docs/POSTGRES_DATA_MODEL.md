@@ -1037,6 +1037,14 @@ Required normalized record groups to finish designing: immutable *customer/run e
 
 Retain all preexisting canonical project/contract/five-member/checkpoint/sealed review/evidence/source lineage/budget/event-clock/UNKNOWN/return packet groups. Keep model reasoning and raw customer code out of uncontrolled central logs. Physical DDL, migrations, indexes, constraints and Step 4–5 interface reconciliation are **IN DESIGN**; implementation and runtime tests **NOT STARTED / NOT RUN**. No test or build is authorized by this design record.
 
+## October 15 approved Step 8.3 and Orchestrator library data integration (design only)
+
+Extend the **existing** project contract/checkpoint-plan revision lineage with Orchestrator-retrieved **authorized planning-pattern ID, version/content hash, applicability explanation, source/provenance and no-match fallback marker**. Curated general patterns ship as installation/local files; private company extension rights follow Step 11 and are not silently copied to a vendor database. An absent planning pattern never blocks an otherwise valid requirements-derived plan.
+
+Extend existing branch/member phase/candidate/operation records to distinguish **member-authored readiness intent** from a **trusted mechanically observed** pinned revision, immutable evidence manifest, confirmed safe whole-member freeze/stop and verified slot release. Unique current member/phase/generation authoring, immutable declared target version, required evidence identities, latest epoch and idempotent event receipts constrain ready-counting. Ordinary budget exhaustion or BLOCKED are not CHECKPOINT_READY. A distinct member conclusion `CONCLUDED_NO_VIABLE_CANDIDATE` retains evidence, constraints and limitations, but does **not** imply a successful implementation or automatically satisfy the five-ready barrier. Final five-member review intake remains Step 8.4 IN DESIGN.
+
+Use the existing canonical events, operations/attempts and outbox; no additional SQL store or new completion worker. Physical SQL constraints/migrations and runtime tests NOT STARTED/NOT RUN. See [Step 8.3](STEP_8_3_MEMBER_PHASE_COMPLETION_AND_READINESS.md) and [library](ORCHESTRATOR_DEVELOPMENT_PATTERN_LIBRARY.md).
+
 ## 21. ADR-17/18 local checkpoint and contextual knowledge integration — DESIGN REOPENED
 
 **Authoritative redesign:** [LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md](LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md). Existing public-GitHub/default historical fields are *not* permission to publish source externally; the new local snapshot manifest/grant lifecycle replaces them for the MVP. The control PostgreSQL remains temporary inside customer infrastructure. An optional retained Git project archive is **customer-owned**. A separate general knowledge library must never be populated from customer's work without specific informed approval and an appropriate IP/privacy/license review.
