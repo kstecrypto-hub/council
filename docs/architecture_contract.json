@@ -180,6 +180,30 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-19",
+      "design_status": "OWNER_APPROVED_UNIFIED_TRUST_STEP3_TO5_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-20",
+      "design_status": "OWNER_APPROVED_GPT_OSS_SAFEGUARD_POLICY_STEP3_TO5_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-21",
+      "design_status": "OWNER_APPROVED_COMMAND_ONLY_PEER_EXCHANGE_STEP3_TO5_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -314,8 +338,11 @@
     "budget_db_records": "approved_policy_accounts_reservations_resource_admissions_recovery",
     "archive_deletion_guard": "fresh_checkout_reference_closure_and_verified_accepted_project_restore",
     "baseline_design_status": "DESIGNED_UNDER_SUPERSEDED_PUBLIC_GITHUB_POLICY",
-    "pending_redesign": "LOCAL_GIT_CHECKPOINT_SNAPSHOT_AND_TENANT_PRIVATE_ARCHIVE_INTEGRATION",
-    "checkpoint_sharing": "local_customer_private_export_manifest_grants_observed_access_revoke"
+    "pending_redesign": "LOCAL_GIT_SAFEGUARD_UNIFIED_CONTROL_TYPED_TRANSFER_AND_RETENTION_INTEGRATION",
+    "checkpoint_sharing": "local_customer_private_export_manifest_grants_observed_access_revoke",
+    "unified_control_subdesign": "OWNER_APPROVED_DIRECTION_SCHEMA_IN_DESIGN",
+    "semantic_policy_records": "VERSIONED_LOCAL_GPT_OSS_GUARD_RECEIPTS_SCOPED_TO_CONTENT_HASH_AND_POLICY",
+    "peer_artifact_state": "OPAQUE_MANIFEST_OBJECTS_READ_GRANTS_TRANSFER_RECEIPTS"
   },
   "step4": {
     "design_status": "REOPENED_IN_DESIGN",
@@ -356,7 +383,11 @@
     "pause_state": "ACTIVE_with_QUIESCING_FOR_PAUSE_then_PAUSED_after_guards",
     "stop_state": "STOPPING_then_CANCELLED_or_FAILED_cleanup_incomplete",
     "baseline_design_status": "DESIGNED_UNDER_SUPERSEDED_PUBLIC_GITHUB_POLICY",
-    "pending_redesign": "LOCAL_GIT_CHECKPOINT_SNAPSHOT_AND_TENANT_PRIVATE_ARCHIVE_INTEGRATION"
+    "pending_redesign": "LOCAL_GIT_GUARD_COMMAND_ONLY_CONTENT_PROTOCOL_INTEGRATION",
+    "unified_control_subdesign": "OWNER_APPROVED_DIRECTION_COMMAND_DTO_IN_DESIGN",
+    "agent_file_transfer": "REQUEST_ONLY_SERVER_RESOLVED_APPROVED_CONTENT_NO_SEND_FILE_ATTACHMENTS",
+    "file_message_binding": "NO_AUTOMATIC_OR_INLINE_FOLLOWUP_CHAT",
+    "guard_enforcement": "LOCAL_GPT_OSS_POLICY_CLASSIFIER_PLUS_DETERMINISTIC_AUTHORITY"
   },
   "step5": {
     "design_status": "REOPENED_IN_DESIGN",
@@ -390,7 +421,10 @@
     "projections": "committed_event_cursor_consistent_snapshot_authorization_filtered_replay",
     "finalization": "authorized_customer_owned_archive_export_and_restore_validation_before_control_db_teardown",
     "baseline_design_status": "DESIGNED_UNDER_SUPERSEDED_PUBLIC_GITHUB_POLICY",
-    "pending_redesign": "LOCAL_GIT_CHECKPOINT_SNAPSHOT_AND_TENANT_PRIVATE_ARCHIVE_INTEGRATION"
+    "pending_redesign": "LOCAL_SNAPSHOT_GUARD_EGRESS_TRANSFERS_REVOKE_UNKNOWN_INTEGRATION",
+    "unified_control_subdesign": "OWNER_APPROVED_DIRECTION_RECOVERY_CONTRACTS_IN_DESIGN",
+    "guard_operational_effect": "MANDATORY_CLASSIFICATION_AT_SEMANTIC_BOUNDARY_FAIL_CLOSED_FOR_NEW_ACTIONS",
+    "file_transfer": "CONTENT_HASH_GENERATION_POLICY_BOUND_SERVER_DELIVERY_RECEIPTS"
   },
   "step8": {
     "design_status": "IN_DESIGN",
@@ -546,6 +580,39 @@
     "retrieval_order": "success_first_then_context_specific_failure_risks_and_tests",
     "negative_exclusion_policy": "no_universal_blacklist_or_silent_filter_based_on_prior_failure",
     "runtime_implementation_status": "NOT_STARTED",
+    "runtime_tests_status": "NOT_RUN"
+  },
+  "unified_trust_control": {
+    "decision_date": "2026-10-15",
+    "design_status": "OWNER_APPROVED_DIRECTION_STEPS_3_TO_5_IN_DESIGN",
+    "deployment": "CUSTOMER_CONTROLLED_MODULAR_MONOLITH",
+    "components": [
+      "command_processor",
+      "authorization_policy",
+      "orchestrator_contracts",
+      "checkpoint_coordinator",
+      "postgres_control_db",
+      "operation_outbox",
+      "communication_bridge",
+      "customer_local_git_snapshot_service",
+      "local_guardrail_inference_worker"
+    ],
+    "privileged_docker_broker_separate_security_boundary": true,
+    "member_sandboxes_independent": 5,
+    "guard_model": "openai/gpt-oss-safeguard-20b",
+    "guard_model_local_to_customer_boundary": true,
+    "guard_role": "SEMANTIC_CLASSIFICATION_NOT_AUTHORIZATION",
+    "mandatory_deterministic_capability_and_egress_checks": true,
+    "guard_unavailable": "BLOCK_NEW_AFFECTED_SEMANTIC_ACTIONS_PENDING_REVIEW",
+    "model_runtime_capacity": "IN_DESIGN_20B_NOMINAL_16GB_GPU_VRAM",
+    "member_communication": "TYPED_COMMAND_ONLY",
+    "member_can_arbitarily_send_or_attach_peer_files": false,
+    "server_resolves_and_delivers_approved_immutable_snapshot_objects": true,
+    "file_payload_can_include_automatic_chat_message": false,
+    "filesystem_or_network_peer_connection": false,
+    "post_file_separate_chat": "SEPARATE_AUTHORIZED_COMMAND_ONLY;TEMPORAL_BAN_INTERPRETATION_OPEN",
+    "specification_path": "docs/STEPS_3_TO_5_DEPLOYABLE_ARCHITECTURE_2026_10_15.md",
+    "implementation_status": "NOT_STARTED",
     "runtime_tests_status": "NOT_RUN"
   }
 }
