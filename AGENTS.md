@@ -104,6 +104,16 @@ Steps 3, 4 and 5 have completed **design specifications** (see the October 14 cl
 
 Implementation completion requires code references and actual test evidence. A documentation update alone may only say DESIGNED.
 
+## October 15 owner-approved Steps 3–5 unified trust and command-only safeguard (ADR-19/20/21; design only)
+
+Read [docs/STEPS_3_TO_5_DEPLOYABLE_ARCHITECTURE_2026_10_15.md](docs/STEPS_3_TO_5_DEPLOYABLE_ARCHITECTURE_2026_10_15.md) before changing Step 3–5 schema, commands, checkpoints, IRC protocol, file transfer, data egress or host isolation. The customer approved one unified logical trusted Council control application, but host Docker authority, data/database/secret access and member sandboxes MUST have separate enforceable security boundaries.
+
+Local **OpenAI gpt-oss-safeguard** policy reasoning is a **mandatory semantic policy inspection layer** for content exchanged through approved gateway boundaries, while deterministic identity/capability/recipient/manifest/network/egress/budget checks retain final authorization. A classifier ALLOW cannot override denied authority; classification failure blocks new affected semantic boundary operations. Guard capacity on customer hardware remains a design/deployment admission question. No silent model bypass, claim that binary content is examined by text-only models, or assertion that model moderation guarantees security.
+
+Members only ask for/receive approved peer content via narrow **typed commands**; they cannot select arbitrary files from host filesystems and push/send/upload/attach them to other members. The trusted gateway resolves opaque selected snapshot object IDs, authorizes and returns bounded content. File/artifact transfers must be distinct from chat messages and never automatically include/trigger follow-up text messages. Later commentary, if permitted, is a new independently authorized chat command. Keep sealed reviews and immutable checkpoints. No direct agent-to-agent network or other member volume mounts.
+
+**These are design-only changes** for the full Council method (five independent candidates, sealed evidence-grounded reviews, structured challenges, trusted verification, source provenance/graph, contextual lessons, honest blockers); no SQL migrations, implementation, runtime tests or benchmark/evaluation runs are authorized by this edit. Steps 2–5/8/10/11 remain in design where pending.
+
 ## October 14 owner supersession: local Git and contextual failures (ADR-17/18)
 
 **Read** [docs/LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md](docs/LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md) before planning ANY repository/checkpoint/retention/reuse implementation. The owner's newer policy **replaces** prior default GitHub PUBLIC checkpoint and cross-customer learning assumptions. Each Council member owns its sandbox-local Git; the trusted host gateway shares only approved selected read-only frozen snapshots with peers during authorized checkpoints. No external source hosting or public publication is mandatory. Keep existing sealed reviews, five-member barrier, branch isolation, Docker worker autonomy, budget/UNKNOWN operation semantics and approved source permissions.
