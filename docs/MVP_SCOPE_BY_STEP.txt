@@ -104,11 +104,11 @@ Defer until after MVP evidence
 - Elaborate monorepo/package governance if the MVP does not require it.
 
 
-OCTOBER 15 OWNER APPROVAL: UNIFIED TRUST + GPT-OSS SAFEGUARD + COMMAND-ONLY PEER CONTENT
+OCTOBER 15 OWNER APPROVAL: UNIFIED TRUST + OpenAI Moderation SAFEGUARD + COMMAND-ONLY PEER CONTENT
 Status: APPROVED ARCHITECTURE DIRECTION; Steps 2-5 remain IN DESIGN. Implementation/tests NOT STARTED/NOT RUN.
 Primary specification: docs/STEPS_3_TO_5_DEPLOYABLE_ARCHITECTURE_2026_10_15.md
 - Deploy a modular unified trusted Council control application on customer infrastructure, with separate physical Docker host privilege, member sandbox, DB and native Git/snapshot boundaries.
-- Invoke local open-weight gpt-oss-safeguard on relevant semantic ingress/egress through approved gateways; deterministic identity, read-grant, file scope, egress, budget and epoch guards always enforce capability. Fail closed for new affected guarded work on model unavailability; guard deployment hardware/capacity is an open design task.
+- Invoke local open-weight OpenAI Moderation API on relevant semantic ingress/egress through approved gateways; deterministic identity, read-grant, file scope, egress, budget and epoch guards always enforce capability. Fail closed for new affected guarded work on model unavailability; guard deployment hardware/capacity is an open design task.
 - Peer member interfaces offer typed requests to list/read server-selected immutable checkpoint objects, text-only messages and structured peer actions. No arbitrary agent SendFile/upload/attachment or direct peer-to-peer Git or network path; server alone resolves and delivers authorized content. Artifact responses do not bundle or auto-follow with chat messages.
 - Distinguish Council from a generic agent swarm: five private independent candidates, semantic member-declared arrivals, sealed reviews before reveal, evidence-linked peer challenges and reproducible verification-only work, honest incomplete outcomes, source/provenance graph and permitted customer-owned archival.
 - Preserve the prior Step 3 canonical data, Step 4 state/authority and Step 5 transactional UNKNOWN commitments. No test/build now; finish exact schema/DTO/transfer/guard/recovery design before separately authorized implementation.
@@ -817,3 +817,5 @@ The changes below are requirements, not implemented features. Runtime implementa
 12. One machine-readable architecture contract and explicit specification/implementation/test status.
 
 Still open: Step 7 concrete limits/provider adapters/accounting schema/state wiring; Step 8 complete agent-loop and termination design; Step 10 containment technology and integration; Step 11 selection/promotion/archive validation details; all executable runtime acceptance tests and repeated evaluations. See docs/ARCHITECTURE_DECISIONS.md.
+
+OCTOBER 15 ADR-22 LATER OWNER CORRECTION: OpenAI Moderation is a hosted HTTPS API call (`omni-moderation-latest`), NOT a local/open-weight guard model. Any contrary early October 15 text is SUPERSEDED. Company permission must authorize outgoing moderation payload/endpoint before dispatch. The endpoint supports text/images and returns categories/flagged; deterministic permissions/source/egress and unsupported file-type checks remain distinct. Free but rate limited and requires API access. Steps 2-5 still IN DESIGN, implementation NOT STARTED, tests NOT RUN. See docs/OPENAI_MODERATION_API_CORRECTION.md.
