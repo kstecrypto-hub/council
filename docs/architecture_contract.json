@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "decision_date": "2026-10-14",
+  "decision_date": "2026-10-15",
   "scope": "specification_only",
   "logical_member_count": 5,
   "member_count_changes_require_explicit_revision": true,
@@ -519,7 +519,20 @@
     "source_ownership": "customer",
     "checkpoint_access": "selected_immutable_read_only_local_snapshot",
     "runtime_implementation_status": "NOT_STARTED",
-    "runtime_tests_status": "NOT_RUN"
+    "runtime_tests_status": "NOT_RUN",
+    "owner_approved_subdesign_date": "2026-10-15",
+    "repo_host": "customer_controlled_native_local_git",
+    "member_repo_count": 5,
+    "peer_access": "read_only_selected_immutable_snapshot_via_checkpoint_bridge",
+    "snapshot_service": "separate_trusted_customer_local",
+    "transfer": "bounded_hash_verified_no_default_chat_context_dump",
+    "read_grants_revoked_with_checkpoint": true,
+    "revocation_independently_verified": true,
+    "final_export": "customer_approved_destination_only",
+    "remote_source_egress": "requires_separate_permission",
+    "remaining_design": "protocol_artifacts_dependencies_recovery_steps3_to5",
+    "specification_path": "docs/STEP_2_CUSTOMER_LOCAL_GIT_CHECKPOINT.md",
+    "implementation_status": "NOT_STARTED"
   },
   "step11": {
     "design_status": "IN_DESIGN",
