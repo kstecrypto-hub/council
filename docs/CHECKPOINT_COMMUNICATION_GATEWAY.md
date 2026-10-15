@@ -47,7 +47,7 @@ Checkpoint closure invalidates/removes these conditions.
 
 ## 3. Checkpoint lifecycle integration
 
-All five members reach an outcome-based semantic barrier. Early arrivals freeze their candidate and release execution capacity; finite private-work slices also release capacity before readiness. No failed/blocked member is silently excluded. A one-slot deployment rotates the same five logical agents through all stages.
+All five members reach an outcome-based semantic barrier. Early arrivals freeze their candidate and release execution capacity; blocked, intentionally paused or budget-exhausted members release capacity under the whole-member scheduler without being counted as ready. No mandatory periodic private-work slices exist. No failed/blocked member is silently excluded. A one-slot deployment rotates the same five logical agents through all stages.
 
 Each member owns its own **customer-controlled local Git repository** in its sandbox storage. A trusted local repository/snapshot gateway—not public GitHub—creates a content-hashed, selected, frozen, read-only checkpoint export. At the approved semantic milestone, the gateway grants each authorized reviewer **only the approved frozen snapshot**, not the member's full Git history or writable/private workspace. Verified snapshot content, approved source/data scope, exact source/tree hash and recipient read grants are distinct canonical records. See [local repository and memory architecture](LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md).
 
@@ -63,7 +63,7 @@ Executable peer tests use a separate disposable verification environment, never 
 
 Runtime creates checkpoint-scoped gateway membership/credentials during opening, but shared send/replay is gated off during SEALED_REVIEW. SubmitIndependentCheckpointReview records a private immutable assessment. RevealCheckpointReviews publishes those records to all five participants atomically only after all required submissions exist; shared discussion then begins.
 
-On normal closure, atomically fence new review messages, persist the final transcript/closeouts and completion frontier, terminate work excursions and checkpoint authority/routes, make repositories private, verify external visibility/isolation, create deterministic return packets, and emit CheckpointClosed. Each external operation remains recoverable rather than hidden inside a SQL transaction. Forced closure preserves its reason and unperformed work and never masquerades as full review.
+On normal closure, atomically fence new review messages, persist the final transcript/closeouts and completion frontier, terminate work excursions and checkpoint authority/routes, revoke temporary customer-local peer snapshot grants, verify observed grant/route isolation, create deterministic return packets, and emit CheckpointClosed. Each external operation remains recoverable rather than hidden inside a SQL transaction. Forced closure preserves its reason and unperformed work and never masquerades as full review.
 
 The persistent gateway process may remain running without any active communication authority. Inactive members receive ordered backlog and current obligations on resumption; they do not receive another member's sealed assessment prematurely.
 
@@ -419,14 +419,14 @@ This gives the overall project loop:
 ```text
 private independent work
 -> semantic checkpoint reached
--> freeze snapshots and pass publication approval/safety checks
--> confirm member repositories public
+-> pin candidate versions and validate customer-authorized snapshot manifests
+-> verify selected immutable read-only local peer snapshot grants
 -> sealed independent review by all five members
 -> reveal assessments and open shared discussion
 -> verification-only /work as needed
 -> all members done
 -> agent-authored closeouts
--> close communication and confirm repositories private
+-> close communication, revoke local snapshot grants/routes and verify isolation
 -> deterministic return packets
 -> private revision
 -> next semantic checkpoint
