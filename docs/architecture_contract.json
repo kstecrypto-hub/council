@@ -191,7 +191,7 @@
     },
     {
       "id": "ADR-20",
-      "design_status": "OWNER_APPROVED_GPT_OSS_SAFEGUARD_POLICY_STEP3_TO5_IN_DESIGN",
+      "design_status": "SUPERSEDED_BY_ADR_22_OPENAI_MODERATION_API",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -200,6 +200,14 @@
     {
       "id": "ADR-21",
       "design_status": "OWNER_APPROVED_COMMAND_ONLY_PEER_EXCHANGE_STEP3_TO5_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-22",
+      "design_status": "OWNER_APPROVED_OPENAI_HOSTED_MODERATION_API_CORRECTION_IN_DESIGN",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -341,7 +349,7 @@
     "pending_redesign": "LOCAL_GIT_SAFEGUARD_UNIFIED_CONTROL_TYPED_TRANSFER_AND_RETENTION_INTEGRATION",
     "checkpoint_sharing": "local_customer_private_export_manifest_grants_observed_access_revoke",
     "unified_control_subdesign": "OWNER_APPROVED_DIRECTION_SCHEMA_IN_DESIGN",
-    "semantic_policy_records": "VERSIONED_LOCAL_GPT_OSS_GUARD_RECEIPTS_SCOPED_TO_CONTENT_HASH_AND_POLICY",
+    "semantic_policy_records": "VERSIONED_HOSTED_OPENAI_MODERATION_CATEGORIES_AND_CONSENT_RECEIPTS",
     "peer_artifact_state": "OPAQUE_MANIFEST_OBJECTS_READ_GRANTS_TRANSFER_RECEIPTS"
   },
   "step4": {
@@ -387,7 +395,7 @@
     "unified_control_subdesign": "OWNER_APPROVED_DIRECTION_COMMAND_DTO_IN_DESIGN",
     "agent_file_transfer": "REQUEST_ONLY_SERVER_RESOLVED_APPROVED_CONTENT_NO_SEND_FILE_ATTACHMENTS",
     "file_message_binding": "NO_AUTOMATIC_OR_INLINE_FOLLOWUP_CHAT",
-    "guard_enforcement": "LOCAL_GPT_OSS_POLICY_CLASSIFIER_PLUS_DETERMINISTIC_AUTHORITY"
+    "guard_enforcement": "REMOTE_OPENAI_MODERATION_PLUS_DETERMINISTIC_LOCAL_AUTHORITY_AND_EGRESS_POLICY"
   },
   "step5": {
     "design_status": "REOPENED_IN_DESIGN",
@@ -423,7 +431,7 @@
     "baseline_design_status": "DESIGNED_UNDER_SUPERSEDED_PUBLIC_GITHUB_POLICY",
     "pending_redesign": "LOCAL_SNAPSHOT_GUARD_EGRESS_TRANSFERS_REVOKE_UNKNOWN_INTEGRATION",
     "unified_control_subdesign": "OWNER_APPROVED_DIRECTION_RECOVERY_CONTRACTS_IN_DESIGN",
-    "guard_operational_effect": "MANDATORY_CLASSIFICATION_AT_SEMANTIC_BOUNDARY_FAIL_CLOSED_FOR_NEW_ACTIONS",
+    "guard_operational_effect": "REQUIRED_HOSTED_MODERATION_IF_AUTHORIZED_AND_ELIGIBLE_NO_SILENT_BYPASS",
     "file_transfer": "CONTENT_HASH_GENERATION_POLICY_BOUND_SERVER_DELIVERY_RECEIPTS"
   },
   "step8": {
@@ -595,16 +603,16 @@
       "operation_outbox",
       "communication_bridge",
       "customer_local_git_snapshot_service",
-      "local_guardrail_inference_worker"
+      "hosted_openai_moderation_adapter"
     ],
     "privileged_docker_broker_separate_security_boundary": true,
     "member_sandboxes_independent": 5,
-    "guard_model": "openai/gpt-oss-safeguard-20b",
-    "guard_model_local_to_customer_boundary": true,
-    "guard_role": "SEMANTIC_CLASSIFICATION_NOT_AUTHORIZATION",
+    "guard_model": "openai/omni-moderation-latest",
+    "guard_model_local_to_customer_boundary": false,
+    "guard_role": "HOSTED_CONTENT_MODERATION_NOT_PERMISSION_OR_INJECTION_DLP",
     "mandatory_deterministic_capability_and_egress_checks": true,
     "guard_unavailable": "BLOCK_NEW_AFFECTED_SEMANTIC_ACTIONS_PENDING_REVIEW",
-    "model_runtime_capacity": "IN_DESIGN_20B_NOMINAL_16GB_GPU_VRAM",
+    "model_runtime_capacity": "REMOTE_API_KEY_INTERNET_RATE_LIMITS_AND_CUSTOMER_EGRESS_APPROVAL",
     "member_communication": "TYPED_COMMAND_ONLY",
     "member_can_arbitarily_send_or_attach_peer_files": false,
     "server_resolves_and_delivers_approved_immutable_snapshot_objects": true,
@@ -613,6 +621,14 @@
     "post_file_separate_chat": "SEPARATE_AUTHORIZED_COMMAND_ONLY;TEMPORAL_BAN_INTERPRETATION_OPEN",
     "specification_path": "docs/STEPS_3_TO_5_DEPLOYABLE_ARCHITECTURE_2026_10_15.md",
     "implementation_status": "NOT_STARTED",
-    "runtime_tests_status": "NOT_RUN"
+    "runtime_tests_status": "NOT_RUN",
+    "moderation_api_requires_explicit_customer_egress_authorization": true,
+    "moderation_api_supported_inputs": [
+      "text",
+      "image"
+    ],
+    "moderation_api_free_but_rate_limited": true,
+    "moderation_api_not_custom_prompt_policy": true,
+    "corrected_by": "docs/OPENAI_MODERATION_API_CORRECTION.md"
   }
 }
