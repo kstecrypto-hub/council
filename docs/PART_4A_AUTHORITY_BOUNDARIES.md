@@ -47,6 +47,14 @@ The Orchestrator is not:
 
 Checkpoint planning is a legitimate Orchestrator responsibility because checkpoints are project-specific semantic milestones. The Orchestrator decomposes the project into review stages from the canonical project prompt, but this does not give it authority over Council reasoning, solution choice, or branch implementation.
 
+### 2.0 Owner-approved development-pattern library for checkpoint design (October 15)
+
+The Orchestrator may consult an **authorized, versioned development-method pattern library** to make its **outcome-based semantic checkpoint proposal more accurate**, not to prescribe member implementation strategy or become a Council lead. Store shipped curated generic patterns as versioned installation/local files, customer-approved private extensions in customer-owned storage, and pinned library IDs/versions/content hashes in the existing Project Contract/checkpoint-plan revision records. Prefer metadata/full-text matching before any new retrieval infrastructure.
+
+It should search for patterns applicable to the actual project category, dependencies, risks, verification evidence and integration milestones. It can adapt a strong match, combine justified partial matches or, when none exist, **create checkpoints independently from the approved requirements** without fabricating reference material. The user still approves the resulting project-specific plan. Source evidence, restrictions, licensing/retention and project-private vs public scope follow the existing Step 11/customer knowledge policies.
+
+**No new intellectual authority:** this is a planning *reference*, not a sixth agent, hidden technical winner selector, global fixed phase template, automatic implementation task list, mandate to use a particular framework, deadline, or a cause for the Orchestrator to read unpublished peer reasoning. Full record: [ORCHESTRATOR_DEVELOPMENT_PATTERN_LIBRARY.md](ORCHESTRATOR_DEVELOPMENT_PATTERN_LIBRARY.md). Architecture-approved direction only; implementation/tests NOT STARTED/NOT RUN.
+
 ### 2.1 Small Orchestrator memory
 
 The Orchestrator retains only the context required to keep prompting and clarification consistent, for example:
