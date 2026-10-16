@@ -283,6 +283,12 @@ A separate Final Integrator execution authority must be admitted only after **it
 
 This is an **approved architecture specification only**. Neither budgets nor schedulers have been implemented/tested. [Detailed Step 8.4 §9](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md).
 
+### October 16 Step 8.5B — stable Integrator identity, whole-agent admission and protected review reserve
+
+The **one non-voting Final Integrator** is a stable logical execution identity in the trusted run, with isolated durable customer-owned workspace/artifact namespace across model calls and authorized whole-agent Docker container restart/recreation. **No in-memory process or worker stack is restored** on recreation. The existing Step 7 whole-agent resource-vector scheduler may run/suspend/recover it, but not convert it to a sixth Council reviewer or install a per-worker central resurrection manager. Its internal work/worker calls charge its **separate user-approved integration pool** and inherit its current epoch/permissions. Before admitting integration/revision, verify the exact executable frozen Blueprint, new source grants, user-approved model/egress/sandbox permissions, cost limits and **protected post-integration five-member review/premortem allowance**. Host-resource pressure, incomplete suspension, unsafe restart and unknown effects block admission conservatively.
+
+Integrator-authored output intent yields **no** resource-release or review-ready proof by itself. The trusted runtime externally verifies quiescence, exact immutable candidate/artifact hash, outstanding effect reconciliation and whole-agent resource release before the actual reviewed output is eligible. Crashes safely preserve its workspace, stable identity and action history, fence old epochs, and require Step 5 operation-class reconciliation before retrying consequential effects. Running out of money yields **INCOMPLETE**, not ready or borrowed reviewer funds. [Full Step 8.5B](STEP_8_5B_FINAL_INTEGRATOR_EXECUTION_AND_RECOVERY.md). Design only; no scheduler, migration or tests implemented.
+
 ### 14.2 Inference concurrency and resource admission
 
 - Remote API inference starts at **up to two concurrent requests per provider**, reduced further by actual provider/account limits, request-token and output-token budgets, rate-limit headers, and retry-after signals. Concurrency may increase only after measured/verified capacity and user configuration. Different providers may have different caps.
