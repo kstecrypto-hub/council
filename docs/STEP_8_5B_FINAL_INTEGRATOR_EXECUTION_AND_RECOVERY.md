@@ -1,0 +1,118 @@
+# Step 8.5B — Persistent Final Integrator, verified output and five-member review handoff
+
+**Owner approval:** October 16, 2026, by approving/pushing the four previously proposed Step 8.5B policies. **Design status:** STEP 8.5B FOUR POLICIES OWNER-APPROVED; exact Step 3/4/5 DTOs, relational constraints, external-operation retry state machine and test implementations remain **IN DESIGN / NOT STARTED**. **Application implementation:** NOT STARTED. **Runtime/security/comparative tests:** NOT RUN.
+
+**This document records approved design choices, not executable code.** Read alongside [Step 8.5A Council-authored Blueprint handoff](STEP_8_5_STRUCTURED_COUNCIL_BLUEPRINT_HANDOFF.md), [Step 8.4 collective integration](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md), [Step 8.3 readiness boundary](STEP_8_3_MEMBER_PHASE_COMPLETION_AND_READINESS.md), [Step 7 scheduling](PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md), [Step 5 idempotent effects](PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md), [local source/knowledge rules](LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md) and [command/state contracts](TYPED_INTERACTION_CONTRACTS.md).
+
+## 1. Four owner-approved Step 8.5B policies
+
+**ADR-32 — One persistent logical Final Integrator.** The integrator has a stable, separately authenticated *execution* identity and customer-owned durable workspace/artifact namespace. Model sessions and whole-agent sandbox/container restarts may change; **the logical Integrator, accepted frozen Blueprint version, integration history, workspace and current obligations persist**. It may use approved tool/worker calls within its own scope and protected integration budget, without becoming a sixth peer, acquiring permanent peer repository writes, or introducing a new per-worker recovery scheduler.
+
+**ADR-33 — Two-stage Integrator output readiness.** The Integrator authors a version-bound **output readiness intent** identifying its proposed deliverable, limitations, source/evidence manifest, configuration and unresolved relevant effects. The trusted backend then **separately** confirms safe quiescence and exact pinned content/hash/reconstructibility/authorized export scope, reconciles relevant operations, suspends/fences integration writes and records an **observed verified output**. A model declaration is never a passed verification or an actual frozen candidate. This reuses Step 8.3's general readiness separation, with a **different actor/outcome** from the five member checkpoint-ready states.
+
+**ADR-34 — Crash-safe integration continuation.** Preserve durable integrator progress and source/evidence lineage; after a crash/timeout/host pressure/permission loss, fence stale epochs, check actual workspace/container/external-effect states and reconcile known/UNKNOWN outcomes. Resume **the same logical Integrator** from preserved state only with renewed authorized admission, budget, grants and model access. Do not blindly duplicate provisioning, Git writes, paid provider calls, irreversible tooling or outputs, and do not presume Docker preserves running process memory. Budget exhaustion and unresolved consequential operations remain explicitly **INCOMPLETE/BLOCKED**, not READY, successful, free or cancelled.
+
+**ADR-35 — Handoff only the exact verified integrated artifact to the original five.** Following verified pinning and source/permission checks, the trusted runtime creates a **new read-only post-integration review generation** over a single immutable integrated artifact/evidence manifest, not the mutable integration workspace. **All five original Council members** independently submit sealed reviews against that identical version; the non-voting Integrator cannot review in a seat, substitute for a missing member, reveal reviews early or edit the artifact while under review. Material later revisions get an appropriately version-bound **five-person delta or full** re-review under approved ADR-28; actual premortems follow approved ADR-29.
+
+The four policies apply equally to software, scientific and academic research, engineering/design, analysis, business strategy and other Project Contract deliverables. Non-code artifact manifests use approved content hashes and provenance rather than inventing a Git SHA.
+
+## 2. Scope and the unchanged intellectual boundary
+
+- **The original five members select the evidence-backed recommended direction** and author the Council Decision Register, initially independently and then after discussion. Its executable Blueprint is admitted only following **Step 8.5A genuine five-member closeout and verified local snapshot grant revocation**. The Integrator follows that direction by default.
+- Integrator discretion is **bounded execution judgment**, with material evidence-based deviations recorded and exposed to five-member post-integration review. An Integrator cannot secretly promote its own model preference over the Blueprint, judge five members, alter accepted contractual scope, loosen security, grant itself access, invent source evidence or request/spend more money without user authorization.
+- The Integrator is **one logical execution role**, not the fixed Council's sixth logical review seat. It can have multiple calls/sessions and authorized internal workers, all parent-scoped to the Integrator's budget and tool permissions. The trusted runtime schedules/observes the **whole Integrator environment**, not every nested worker.
+- Do **not** conflate `/done` in peer communication, a member-authored `CHECKPOINT_READY`, Integrator-authored `OUTPUT_READY_INTENT`, observed `INTEGRATED_OUTPUT_VERIFIED`, a review verdict, a passing test, user acceptance and verified customer archive/delivery.
+- Step 7's five separately protected **project-specific, user-approved** spend pools apply: integrator execution costs cannot consume reserved five-member validation/premortem allowance; uncertain provider charges remain reserved as required.
+
+## 3. Proposed activity projection and authorities (no new global state machine)
+
+Use the existing canonical run/phase, action/event and operations state. The names below are **illustrative Step 8.5B activities**, not a new parallel global run lifecycle or implemented enum:
+
+| Phase projection | Entered/observed by | Meaning and admission guard |
+| --- | --- | --- |
+| `INTEGRATOR_PENDING_ADMISSION` | Trusted backend | Step 8.5A executable Blueprint verified, but independent source-grant, budget, model/provider, sandbox/security or resource checks not yet satisfied. No Integrator tool authority. |
+| `INTEGRATOR_PROVISIONING` | Trusted broker after committed intent | Exactly one current logical Integrator workspace/epoch for the authorized generation; reconcile durable volume/artifact identity before recording it provisioned. |
+| `INTEGRATOR_ACTIVE` | Trusted lifecycle controller | Existing current epoch, allowed read-grant contents, user-approved contract/Blueprint and remaining separate integration resource/budget authority. Integrator controls ordinary technical work. |
+| `INTEGRATOR_WAITING_DEPENDENCY` / `INTEGRATOR_BLOCKED` | Integrator declaration or trusted observation | Persist exact unresolved condition, dependency owner, operation status and source scope; suspend/release resources safely; no implied success. |
+| `INTEGRATOR_BUDGET_EXHAUSTED_INCOMPLETE` | Trusted budget controller | No new chargeable work until user-approved policy change; persist progress and outstanding UNKNOWN liabilities; do not infer readiness. |
+| `INTEGRATOR_OUTPUT_READY_INTENT` | Integrator | Authored exact candidate/evidence target and limitations. **Does not count as verified output or review entry.** |
+| `INTEGRATOR_OUTPUT_FREEZING` | Trusted runtime | Fence new integration writes/tool operations, quiesce the whole logical environment, verify and pin exact authorized source and artifact closure, reconcile pending consequential operations. |
+| `INTEGRATED_OUTPUT_VERIFIED` / `INTEGRATOR_SUSPENDED_FOR_REVIEW` | Trusted runtime after external observation | Immutable reviewed target exists; writes are safely fenced/suspended, host slot release and selected snapshot validity observed. This is **not** a test PASS or Council acceptance. |
+| `INTEGRATOR_RECOVERING` | Trusted runtime | Reconcile identity, grants, workspace, operation ledger and epoch after interruption; no unaudited retries. |
+| `INTEGRATOR_REVISION_AUTHORIZED` | Trusted controller after reviewed correction/closed review | Only new authorized integration revision on a separate current generation may reopen its writable workspace; old reviewed hash remains immutable. |
+
+Canonical PostgreSQL, outbox, operation attempts and artifact identities govern transitions. Projection changes must be tied to actual causes, actor authority, epoch, version and event position. Incomplete stop/UNKNOWN external operations may delay transitions without lying about their status. **Exact database design is pending.**
+
+## 4. Durable identity, workspace, continuation and permissions
+
+**Canonical stable fields (specification, not fixed DTO):** deployment/customer/run, integration logical identity and phase/revision generation; exact frozen executable Blueprint ID/content hash, approved Project Contract and source manifest versions; separately approved scoped read grants; isolated writable workspace/volume ID and current observed identity; current execution epoch/lease; tool/model/provider policy, consent/egress; reserved/settled/UNKNOWN costs and protected next-review reserve; artifact/export output versions; original integration decisions/deviations, pending requests and outstanding operations, continuation and next steps.
+
+Use an isolated persistent Docker named volume or authorized persistent mount **for software** and the existing customer-owned versioned artifact/evidence workspace for research/design/non-code as appropriate. Integrator work *must not write any of the five member-native repos or their checkpoint snapshots*. A new container/process on restart does **not** restore live LLM context, in-memory workers or their execution stacks. The integrator uses its own saved artifacts, logs and bounded continuations to decide how to resume unfinished work. Do not create a new central worker rehydration service.
+
+Never persist raw model API credentials, privileged Docker socket access, old execution tokens, short-lived snapshot grants or temporary routes inside the integrator's workspace. The trusted provider/host brokers deliver narrowly scoped fresh authorization; all tool and nested worker calls inherit the Integrator's current permissions and separate approved integration cost/resource pool. Any provider or remote source egress requires its actual user-approved scope—not inferred from having a local read grant.
+
+## 5. Exact two-stage readiness boundary
+
+**Stage A: integrator-authored readiness intent.** The authenticated logical Integrator proposes a final version for the current integration generation with:
+- current Blueprint/Project Contract/source-set revision; candidate Git revision **or** content-hashed non-code artifact manifest and allowed dependencies;
+- input contribution/provenance lineage, produced claims or features, actual verified checks/observations versus NOT_RUN/FAILED/BLOCKED evidence, user requirements coverage, limitations, deviations and open relevant operations;
+- expected target version/idempotency, durable workspace reference and current integration epoch.
+
+Stage A records an idempotent, **immutable readiness-intent version** under the existing typed gateway. Workers cannot submit readiness in their parent's place and the trusted runtime cannot author a positive intellectual completion declaration on behalf of a model.
+
+**Stage B: trusted mechanical verification.** Only after Stage A, the existing trusted control plane/broker:
+1. **Fences ordinary integration write admission** for the current generation, retaining only safe reconciliation/cleanup authority. Stop the whole Integrator's work at a safe boundary; confirm internal authorized workers can no longer write or launch new effects.
+2. Reconcile actual outstanding provider/tool/Git/export operations. Consequential `UNKNOWN` results stay UNKNOWN with operation-specific dependency guards; do not assume a crashed call was free, cancelled or ineffective. Prove which pending effects can or cannot change the intended pinned result.
+3. Observe the **exact proposed** source Git tree/commit for software, or the relevant permitted content-hashed artifact package for non-code. Verify provenance, named dependencies, snapshot/export scope, file/attachment permissions, artifact integrity and **required reconstruction/reference closure** under the approved Project Contract; no implicit publishing of a dirty worktree, secrets or unauthorized source. Record missing or unverified conditions as blockers, **not** passed tests.
+4. Confirm verified immutable target is independent of writable integration workspace, quiescence/suspension/fencing and resource release. Atomic SQL records pin the **observed result identity and readiness event** only after relevant external observations; SQL is not assumed atomic with Docker, Git, filesystem or a provider.
+5. The exact verified immutable artifact/evidence ID and its read-only scope become eligible for a **new** authorized five-member review generation. A review cannot start from Stage A alone or from files still writable by the Integrator.
+
+A verified artifact does **not** mean the final deliverable is empirically correct, fully tested, approved by members, user-accepted, deployed or archived. Domain-specific content validity and actual substantive success remain matters of evidence, contract acceptance tests and the five independent member assessments.
+
+**If verification fails**, preserve the authored intent and exact reason; keep the result not-ready or blocked. If a safe correction requires new output content, a genuinely new Integrator-authored candidate version is required under a safely re-admitted integration generation. Never rewrite the frozen candidate ID in place.
+
+## 6. Crash recovery and idempotency: continuation, not a fresh sixth agent
+
+For interruption, pause or timeout:
+- Commit operation/admission intent **before** external effects using existing Step 5 durable command receipts/outbox and event clock; distinguish `REQUESTED`, `DISPATCHED`, `OBSERVED`, `UNKNOWN`, `FAILED` and `VERIFIED` according to operation class. The exact v1 event names remain to design.
+- On recovery fence old bridge epochs and stop unsafe admission. Check actual workspace/volume/container identities, pending Git commits/output hashes, local artifact store, model/provider calls and grants; reconcile outcomes per operation class before considering retry. A provider timeout may have incurred cost; a Git/output write may have succeeded although receipt was lost.
+- If a confirmed safe continuation exists, reconstruct/authorize the **same logical Integrator** with stable workspace/evidence and a new epoch. Recheck Blueprint/Project Contract versions, user permissions/data egress, source read grants, provider key availability, allowed spend and **protected review/premortem reserve**, local host/container isolation and resource headroom. Use reconstructible logs/notes/manifest, never assume live worker processes resumed.
+- Proven no-dispatch or safe idempotent requests may be retried under the same or an appropriately versioned key. An `UNKNOWN` consequential effect is never blindly repeated or given an optimistic PASS. Preserve the original attempt, cost reservations and dependency gates until actual reconciliation.
+- Crashes during Stage A intent, export/pin, write fencing or reviewer-grant provisioning retain **exact versions and observed proof**; the canonical source of truth is the existing database+verified external state, not a model's stale internal narrative. Avoid duplicate Integrator identities/workspaces and duplicate reviewed artifact publication.
+- User-approved Stop/Pause and required teardown inherit existing reliable lifecycle. **A budget-exhausted Integrator can persist incomplete work and safely release its slot without declaring output READY**. A genuinely blocked or permanently infeasible integration is reported honestly with evidence, not substituted by the final product of one of the five without authorization.
+
+| Failure scenario | Required conservative behavior |
+| --- | --- |
+| Crash after committed provision request, before acknowledgement | Compare persisted logical workspace identity with actual volume/container; reuse verified existing resource, no uncontrolled duplicate provisioning. |
+| Provider inference/tool request times out after dispatch | Mark effect/charge UNKNOWN as applicable, preserve possible cost and dependencies, reconcile; do not retry blindly. |
+| Host/Docker restart kills active internal workers | Recover stable Integrator identity and durable agent-written files; integrator decides fresh worker actions, not a Council per-worker revival manager. |
+| Integrator source grant expired/revoked | Stop dependent source reads; reauthorize exact permitted immutable scope through trusted broker and current user data-egress policy. |
+| Output intent recorded, freeze/verification interrupted | Recover intent and exact target ID; confirm fenced writes/pin/hash/export/operation dependency and workspace suspension before emitting verified output. |
+| Changed artifact while pending verification/review | Reject stale target/generation; never mutate previously reviewed immutable artifact or assign old review results to a new version. |
+| Integration allowance exhausted before result | Preserve incomplete workspace/obligations/UNKNOWN liability; request user-approved budget revision or stop. |
+| Missing one original reviewer or review budget | Keep review incomplete/sealed; do not replace the fifth seat with the Integrator or fabricated submission. |
+
+## 7. Exact five-member post-integration review handoff
+
+1. Stage B establishes an **immutable, verified integrated output identity** and approved source/provenance/evidence manifest; relevant frozen artifact read rights are individually authorized for the five original Council seats by the existing trusted snapshot/artifact broker.
+2. Create **one current version-bound review generation**, including approved full or evidenced-delta review scope and all five original seat identities. Initial actual integrated-result review is **full for five**. Future material versions use ADR-28 five-member delta if defensible localized impact, otherwise five-member full review; validated non-substantive equivalence only preserves genuinely applicable earlier evidence.
+3. Confirm the integrator cannot write to the reviewed target and its ordinary execution privileges/active workers are suspended/fenced. Review sessions cannot access its mutable continuation or hidden credentials and cannot directly write its integration workspace.
+4. Five authentic original members submit sealed independent evaluations against **the same exact verified target and generation** before any partial reveal. Evidence/testing via `/work` occurs only in the separate disposable verification environment and **never writes the authoritative output**. The trusted runtime's atomic all-five reveal has the same privacy, ordering and missing-member handling as ordinary checkpoints.
+5. Council's final peer discussion creates attributable issues and correction/deviation assessments; an actual material correction goes back to the **same logical Integrator** under a newly authorized revision after normal review closure and read-grant revocation, never as an unreviewed direct edit inside shared review. A revised artifact receives a new hash and appropriate new five-seat review generation.
+6. The existing sealed six-month-plus premortem reviews the final **frozen integrated artifact + provisional report version pair**, with five genuine submitted scenarios before atomic reveal. Explicit user acceptance and separately verified archive/cleanup remain later, distinct gates.
+
+**One target, not five winners:** final user review concerns a single integrated deliverable produced from the Council-recommended Blueprint, with original five alternatives/negative findings preserved as authorized historical evidence. A member's previous no-viable-candidate investigation remains a legitimate independent review seat and may contribute risk evidence; its lack of working code is never reclassified as successful implementation.
+
+## 8. Existing system integration and still-open implementation contracts
+
+- **Step 3:** use existing project/run/integrator actor, workspace, candidate/artifact, read-grant, review-generation, source/evidence lineage and operation/attempt event tables/records; define physical constraints for one current logical Integrator identity/generation, exact target version, durable intent vs observed freeze, source grant revocation, five reviewers and domain-specific artifact manifest reference closure.
+- **Step 4:** existing authenticated envelope and bridge routes; illustrate typed commands `AdmitFinalIntegrator`, `RecordIntegratorDependency`, `RecordIntegratorOutputReadyIntent`, `VerifyIntegratedOutputFreeze`, `OpenIntegratedOutputReview`, `RequestIntegratedRevision` and `RecordIntegratorRecovery`. All new names are *design-level candidates*, not implemented DTOs. Actor identity, auth/epoch, source/evidence hashes, contract version, expected state, idempotency key, budgets and status/error semantics remain to specify.
+- **Step 5:** persist intent/outbox before Docker/model/Git/artifact effects; reconcile provider billing and UNKNOWN outcomes, resource publication, source grants/revocation and versioned output pin before separately recording observations. No false distributed transaction.
+- **Step 6:** record exact Council decision -> Blueprint -> Integrator action/deviation -> output version -> actual verification -> five independent review findings -> premortem lineage; no implication that all authored model claims are proven.
+- **Step 7:** schedule the whole Integrator without worker-by-worker orchestration and no reasoning timeout; preserve dedicated approved integration budget and required following five-member review reserve, resource vector, stable workspace and safe suspension. All child provider calls charge the integrator parent pool.
+- **Step 10/11:** customer-local container/artifact isolation, egress/no raw keys/verified snapshot grants, bounded continuation and source/retention/consent policy for any integrated knowledge; no private customer code publicly published by default.
+- **Existing frontend:** separate labels for integrator's authored readiness intent, actual immutable verified output, required five-peer review coverage, substantive test results, premortem, user acceptance and verified delivery.
+
+**Open follow-on details:** precise v1 command/schema names and check constraints, exact admission/freeze/epoch transition transaction order, source dependency closure across artifact formats, partial unknown model/tool effects, post-integration review race handling, failure-injection and security test plans, and final report/acceptance-to-archive integration. These are **not marked implemented** by approval or this Git push.
+
+**Approved Step 8.5B:** four policies ADR-32 through ADR-35 above, compatible with all approved earlier Step 8 decisions. **Step 8 overall remains IN DESIGN**, not DESIGN COMPLETED. **No executable implementation, migrations, deployments, runtime tests, security tests or comparative evaluations have occurred.**
