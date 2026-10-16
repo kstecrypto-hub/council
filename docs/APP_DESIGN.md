@@ -679,6 +679,18 @@ The final snapshot includes the objective, source scope, findings, limitations, 
 
 Later evidence creates a new revision or follow-up run. It does not rewrite what the earlier run concluded.
 
+### October 16 approved Step 8.4 integration-interface policies (ADR-26–29)
+
+**Integrator discretion:** Final Integrator is a non-voting execution role and may make **attributable bounded technical/research synthesis choices** within the versioned Integration Blueprint, user-approved acceptance scope and priorities. Track alternatives, evidence/compatibility, chosen trade-off, reversible uncertainty, actual output version and deviations. Material scope, data egress, permissions or budget changes require **explicit user approval**; member majority votes do not prove technical correctness.
+
+**Updated budget default:** the older suggested **70% development / 25% review / 5% orchestration/finalization** must no longer be shown as Council's default for mandatory final synthesis. Show **five independently protected categories**—five-member development, checkpoint comparison, Final Integrator execution, post-integration five-member validation/premortem, and overhead/report/export—each proposed according to the actual Project Contract and explicitly approved by the user. No automatic fixed replacement percentage, no cross-pool borrowing; require protected minimally viable next-stage review capacity before admitting integration and preserve UNKNOWN liabilities.
+
+**Review after integration:** the initial actual integrated artifact receives **five independently sealed original-member reviews**. Demonstrably equivalent non-substantive revisions may preserve only well-evidenced applicability; localized substantive updates require five **fresh independent sealed delta reviews** of the new pinned revision and impacted dependencies; foundational/high-risk/uncertain impacts require **full five-member re-review**. Earlier passing tests and review dispositions stay historical, not automatically applicable to changed material. Reviewers missing/blocked/exhausted remain unsubmitted.
+
+**Six-month-plus premortem:** five original members independently review the exact same **frozen integrated result + provisional report** in a distinct **sealed** round; reveal their hypothetical risk analyses atomically only after five genuine valid submissions. New substantive versions require impact-aware premortem reconsideration, not fabricated future facts. Existing user acceptance and verified customer-owned archive/cleanup remain authoritative.
+
+This is an architecture-only refinement to [Step 8.4 §§9.1–9.5](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md). Exact DTOs/DDL/races remain IN DESIGN. Implementation NOT STARTED; tests NOT RUN.
+
 ## 13. Backend and storage design
 
 ### Recommended foundation
