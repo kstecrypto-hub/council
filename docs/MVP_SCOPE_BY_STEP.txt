@@ -490,6 +490,14 @@ OCTOBER 16 — APPROVED STEP 8.5A BLUEPRINT HANDOFF RULES (ADR-30/31)
 - Valid unresolved/disputed research/technical conclusions remain disclosed; new project/permission/egress/budget authority requires existing user approval. Final Integrator admission additionally uses separate source grants, workspace and protected integration and five-review budgets.
 - Full specification: docs/STEP_8_5_STRUCTURED_COUNCIL_BLUEPRINT_HANDOFF.md. 8.5A two policies approved; exact DTO/DDL/transaction handling and other Step 8.5 design still OPEN. No runtime implementation or tests.
 
+OCTOBER 16 — APPROVED STEP 8.5B INTEGRATOR LIFECYCLE AND REVIEW POLICIES (ADR-32 THROUGH 35)
+- ADR-32: ONE stable non-voting logical Final Integrator, distinct from five peer seats, with isolated customer-owned persistent workspace/evidence across provider calls and authorized whole-container restarts; no process-memory or per-worker resurrection promise.
+- ADR-33: Integrator-authored exact output-ready INTENT differs from trusted, mechanically VERIFIED pinned immutable integrated artifact. Observe actual hash/evidence/scope/reconstruction, fence writes, quiesce whole environment, reconcile relevant consequential operations and resource release before exposing to review. Not equivalent to tested success.
+- ADR-34: On timeout/crash/host failure/exhaustion/expired source grant, fence stale epochs, preserve same logical Integrator's work, reconcile actual provider/Git/Docker/artifact/UNKNOWN charges and user-approved budget/permissions; no blind retry, fabricated READY, or automatically borrowed post-integration five-review reserve.
+- ADR-35: ONLY exact verified integrated result version enters new READ-ONLY review scope for the ORIGINAL five Council members. Five authentic independent sealed assessments and existing atomic reveal required; Integrator never supplies a seat, nor edits reviewed result. Material changed output goes through new five-person delta/full review and required premortem.
+- Applies to research and other non-code artifacts with approved content-hashed manifests, not only software Git commits.
+- Detailed design: docs/STEP_8_5B_FINAL_INTEGRATOR_EXECUTION_AND_RECOVERY.md. Policies APPROVED; exact Step 3/4/5 DTO/DDL/transaction code and runtime tests still IN DESIGN/NOT STARTED.
+
 STEP 9 - PROVIDER ADAPTERS AND MODEL SWITCHING
 Status: TO DESIGN / IMPLEMENT
 
