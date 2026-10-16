@@ -236,6 +236,38 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-26",
+      "design_status": "OWNER_APPROVED_STEP8_4_INTERFACE_POLICY_EXACT_DTO_DDL_RUNTIME_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-27",
+      "design_status": "OWNER_APPROVED_STEP8_4_INTERFACE_POLICY_EXACT_DTO_DDL_RUNTIME_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-28",
+      "design_status": "OWNER_APPROVED_STEP8_4_INTERFACE_POLICY_EXACT_DTO_DDL_RUNTIME_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-29",
+      "design_status": "OWNER_APPROVED_STEP8_4_INTERFACE_POLICY_EXACT_DTO_DDL_RUNTIME_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -468,7 +500,11 @@
       "8.3_CONCLUDED_NO_VIABLE_CANDIDATE_SCOPED_HONEST_OUTCOME",
       "8.3_EXISTING_OPERATION_LOOP_PROTECTIONS_NO_INTELLECTUAL_JUDGE",
       "8.4_FIVE_INDEPENDENT_REVIEW_ONE_NONVOTING_INTEGRATOR_ONE_DOMAIN_NEUTRAL_RESULT",
-      "8.4_SAME_FIVE_SEALED_POST_INTEGRATION_REVIEWS_AND_PREMORTEM"
+      "8.4_SAME_FIVE_SEALED_POST_INTEGRATION_REVIEWS_AND_PREMORTEM",
+      "8.4_ADR26_BOUNDED_INTEGRATOR_DISCRETION",
+      "8.4_ADR27_FIVE_PROTECTED_APPROVED_BUDGET_POOLS_NO_DEFAULT_PERCENTAGE",
+      "8.4_ADR28_FIVE_VERSION_BOUND_SEALED_DELTA_OR_FULL_REVIEWS",
+      "8.4_ADR29_FIVE_INDEPENDENT_SEALED_PREMORTEMS_AGAINST_ONE_VERSION_PAIR"
     ],
     "specification_path": "docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md",
     "runtime_implementation_status": "NOT_STARTED",
@@ -575,7 +611,7 @@
       "runtime_tests_status": "NOT_RUN"
     },
     "step8_4": {
-      "design_status": "OWNER_APPROVED_CORE_ARCHITECTURE_EXACT_DTO_SCHEMA_RECOVERY_IN_DESIGN",
+      "design_status": "OWNER_APPROVED_CORE_AND_FOUR_INTERFACE_POLICIES_PRECISE_DTO_DDL_OPERATION_GUARDS_IN_DESIGN",
       "specification_path": "docs/STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md",
       "all_five_independent_investigations": true,
       "requires_five_production_complete_versions": false,
@@ -605,7 +641,48 @@
       "concluded_negative_investigation_may_contribute_without_successful_candidate": true,
       "blocked_or_budget_exhausted_member_not_a_concluded_final_submission": true,
       "implementation_status": "NOT_STARTED",
-      "runtime_tests_status": "NOT_RUN"
+      "runtime_tests_status": "NOT_RUN",
+      "integrator_authority": {
+        "bounded_technical_decisions": true,
+        "approved_contract_and_blueprint_only": true,
+        "provisional_reversible_choices_recorded": true,
+        "alternative_evidence_and_tradeoffs_recorded": true,
+        "material_scope_permission_budget_egress_changes_require_user_approval": true,
+        "no_sixth_vote": true
+      },
+      "budgets": {
+        "former_default_70_25_5": "SUPERSEDED_FOR_MANDATORY_INTEGRATED_FINAL_OUTPUT",
+        "universal_replacement_percentages": "NONE_APPROVED",
+        "five_protected_scopes": [
+          "MEMBER_DEVELOPMENT",
+          "CHECKPOINT_COMPARISON",
+          "INTEGRATION_EXECUTION",
+          "POST_INTEGRATION_FIVE_MEMBER_REVIEW_AND_PREMORTEM",
+          "ORCHESTRATION_REPORT_ARCHIVAL"
+        ],
+        "distribution": "PROJECT_SPECIFIC_USER_APPROVED",
+        "integration_admission_requires_protected_next_review_budget": true,
+        "no_silent_reallocation": true,
+        "existing_transactional_reservation_and_unknown_liability": true
+      },
+      "re_review": {
+        "initial_version": "FIVE_INDEPENDENT_SEALED_ACTUAL_OUTPUT_ASSESSMENTS",
+        "demonstrably_equivalent_non_substantive": "PRESERVE_ONLY_EVIDENCE_SUPPORTED_PRIOR_APPLICABILITY",
+        "localized_substantive": "FIVE_NEW_INDEPENDENT_SEALED_DELTA_ASSESSMENTS",
+        "foundational_high_risk_unknown_impact": "FIVE_NEW_INDEPENDENT_SEALED_FULL_ASSESSMENTS",
+        "review_generation_exact_artifact_version": true,
+        "prior_test_pass_not_auto_inherited": true,
+        "missing_fifth_does_not_pass": true
+      },
+      "premortem_policy": {
+        "reviewers": "SAME_FIVE_ORIGINAL_COUNCIL_MEMBERS",
+        "round": "SEPARATE_SEALED_PREMORTEM",
+        "target": "EXACT_FROZEN_INTEGRATED_ARTIFACT_AND_PROVISIONAL_REPORT_VERSIONS",
+        "atomic_reveal_only_after_five_genuine_submissions": true,
+        "hypothetical_future_failure_not_observed_fact": true,
+        "material_revision_triggers_scope_appropriate_five_member_reassessment": true
+      },
+      "policy_approved_date": "2026-10-16"
     }
   },
   "checkpoint_public_github_default": false,
@@ -741,6 +818,15 @@
     "owner_approved_date": "2026-10-16",
     "specification_path": "docs/STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md",
     "implementation_status": "NOT_STARTED",
-    "test_status": "NOT_RUN"
+    "test_status": "NOT_RUN",
+    "approved_interface_refinements": [
+      "ADR-26",
+      "ADR-27",
+      "ADR-28",
+      "ADR-29"
+    ],
+    "default_budget": "PROJECT_SPECIFIC_FIVE_PROTECTED_POOLS_WITH_USER_APPROVAL",
+    "post_integrator_review": "EXACT_VERSION_FIVE_INDEPENDENT_SEALED_DELTA_OR_FULL_DEPENDING_ON_EVIDENCED_IMPACT",
+    "premortem": "FIVE_INDEPENDENT_SEALED_HYPOTHETICAL_FAILURE_ANALYSES_ON_FROZEN_INTEGRATED_RESULT_AND_REPORT"
   }
 }
