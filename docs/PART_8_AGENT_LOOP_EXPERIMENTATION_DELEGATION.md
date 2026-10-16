@@ -153,6 +153,10 @@ The owner's newly approved [Orchestrator development-pattern library](ORCHESTRAT
 
 **Only these two Step 8.5A policies are approved.** Full command DTO, exact DDL and physical-operation recovery still IN DESIGN. Implementation NOT STARTED, tests NOT RUN.
 
+## 7.4 Owner-approved Step 8.5B — integrator continuity, real output and post-integration review (October 16)
+
+[Step 8.5B detailed design](STEP_8_5B_FINAL_INTEGRATOR_EXECUTION_AND_RECOVERY.md) approves: **ADR-32** a persistent logical Final Integrator with customer-owned isolated durable workspace and no sixth seat; **ADR-33** Integrator-authored output readiness intent **separate from** trusted observed freeze/pinning, safe whole-agent quiescence, exact artifact/evidence manifest and resource release; **ADR-34** crash/timeout/budget/UNKNOWN recovery reuses existing stable agent identity, epochs, Part 5 operation ledger and Step 7 whole-agent scheduling without naive retries or false success; **ADR-35** only mechanically verified immutable integrated result versions enter a new **five original-member sealed review**, never an Integrator substitute review, and revisions follow existing ADR-28/29 and user acceptance. Applies to research and any non-code deliverable with content-hashed artifacts as well as code. **Design direction approved, exact v1 DTO/DDL/transactions and tests still NOT STARTED / IN DESIGN.**
+
 ## 8. Remaining Step 8 design questions
 
 - 8.2 accepted: no fixed worker count/depth or worker scheduler, trusted Docker/cgroups resource monitoring, and **Docker-mounted persistent workspace with member-owned local worker resume**; no separate Council worker-recovery service. Remaining Step 8 work is the **member action/observation protocol**, externally significant result/provenance boundaries, phase transitions and checkpoint/finalization integration.
