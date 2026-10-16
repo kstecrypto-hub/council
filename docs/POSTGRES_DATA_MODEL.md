@@ -1053,6 +1053,18 @@ No original member code or evidence is overwritten, no unperformed test inherits
 
 [Full Step 8.4 design](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md). **Architecture approved at the policy level; normalized DDL, migration, DTO and runtime verification still NOT STARTED/IN DESIGN.**
 
+## October 16 approved Step 8.4 bounded Integrator, protected funds, review and premortem records (ADR-26–29)
+
+Augment **existing** project/run/customer-scoped PostgreSQL records—no new database—with:
+- append-only, exact **Blueprint-version-bound IntegratorDecision** and **Deviation** records: allowed alternative(s), sourced evidence, compatible/incompatible assumptions, priority, provisional or evidenced rationale, approved scope, linked integrated-result version and reviewer-visible disagreement;
+- five **separately protected and versioned user-approved budget accounts/scopes** (independent development, checkpoint comparison, integration execution, post-integration five-member validation + premortem, and orchestration/report/export), with prior 70/25/5 now superseded as the default and no newly fixed percentages;
+- immutable integrated **artifact/result versions**, changed-unit manifests, mechanical source/claim dependency lineage, explicit applicability/impact review and evidence-backed semantic-equivalence status; uncertain or missing dependency closure means broader review;
+- current exact integrated-version review generation, reviewer seat/actor, sealed five independent assessments, proposed scope type DELTA/FULL, fresh status and atomic reveal frontier—never replay prior-version reviews as new submissions;
+- a distinct premortem round bound to exact **integrated artifact version + frozen provisional report version**, with five reviewer-private versioned submissions before atomic reveal, hypothetical scenario/claim/evidence refs, disposition and invalidation links;
+- any relevant external attempt/UNKNOWN, frozen grant/revoke, user authorization and retention linkage.
+
+All records stay governed by the existing event clock, idempotency, RLS/branch scope, runtime operation ledger, cost reservations and customer-controlled archival policy. Full DDL, constraints, triggers and DTO integration are IN DESIGN; no migrations, implementation or tests run. [Step 8.4 §9](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md).
+
 ## 21. ADR-17/18 local checkpoint and contextual knowledge integration — DESIGN REOPENED
 
 **Authoritative redesign:** [LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md](LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md). Existing public-GitHub/default historical fields are *not* permission to publish source externally; the new local snapshot manifest/grant lifecycle replaces them for the MVP. The control PostgreSQL remains temporary inside customer infrastructure. An optional retained Git project archive is **customer-owned**. A separate general knowledge library must never be populated from customer's work without specific informed approval and an appropriate IP/privacy/license review.
