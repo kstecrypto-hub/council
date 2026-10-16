@@ -147,6 +147,12 @@ The owner's newly approved [Orchestrator development-pattern library](ORCHESTRAT
 
 **No implementation, migrations or runtime tests.** Step 8.4 exact integration commands and Step 8.5 closure sequencing still IN DESIGN.
 
+## 7.3 Owner-approved Step 8.5A — structured decisions and verified Blueprint handoff (October 16)
+
+[ADR-30/31 Step 8.5A design contract](STEP_8_5_STRUCTURED_COUNCIL_BLUEPRINT_HANDOFF.md) specifies: five original members author material positions, objections, changes and recommendations through the **existing checkpoint's authenticated structured actions**; trusted backend records complete attribution into the versioned Council Decision Register/Blueprint and cannot manufacture post-hoc consensus from conversation. A Blueprint draft is not execution authority. Its exact source/contract/evidence version must be **mechanically frozen**, then an **executable handoff** requires all five genuine current frontier /done/closeout/obligation gates and **independently observed checkpoint grant/route revocation**, followed by a *separately authorized* Integrator admission. No unanimous technical vote required; supported DISPUTED/DEFERRED items remain honestly disclosed, while missing/failing/incomplete procedural closure blocks execution.
+
+**Only these two Step 8.5A policies are approved.** Full command DTO, exact DDL and physical-operation recovery still IN DESIGN. Implementation NOT STARTED, tests NOT RUN.
+
 ## 8. Remaining Step 8 design questions
 
 - 8.2 accepted: no fixed worker count/depth or worker scheduler, trusted Docker/cgroups resource monitoring, and **Docker-mounted persistent workspace with member-owned local worker resume**; no separate Council worker-recovery service. Remaining Step 8 work is the **member action/observation protocol**, externally significant result/provenance boundaries, phase transitions and checkpoint/finalization integration.
