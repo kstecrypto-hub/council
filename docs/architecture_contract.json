@@ -504,7 +504,8 @@
       "8.4_ADR26_BOUNDED_INTEGRATOR_DISCRETION",
       "8.4_ADR27_FIVE_PROTECTED_APPROVED_BUDGET_POOLS_NO_DEFAULT_PERCENTAGE",
       "8.4_ADR28_FIVE_VERSION_BOUND_SEALED_DELTA_OR_FULL_REVIEWS",
-      "8.4_ADR29_FIVE_INDEPENDENT_SEALED_PREMORTEMS_AGAINST_ONE_VERSION_PAIR"
+      "8.4_ADR29_FIVE_INDEPENDENT_SEALED_PREMORTEMS_AGAINST_ONE_VERSION_PAIR",
+      "8.4_ADR26_COUNCIL_EVIDENCE_WEIGHTED_INTELLECTUAL_DIRECTION_INTEGRATOR_BOUNDED_EXECUTION"
     ],
     "specification_path": "docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md",
     "runtime_implementation_status": "NOT_STARTED",
@@ -648,7 +649,26 @@
         "provisional_reversible_choices_recorded": true,
         "alternative_evidence_and_tradeoffs_recorded": true,
         "material_scope_permission_budget_egress_changes_require_user_approval": true,
-        "no_sixth_vote": true
+        "no_sixth_vote": true,
+        "primary_intellectual_direction": "FIVE_ORIGINAL_COUNCIL_MEMBERS_EVIDENCE_BACKED_BLUEPRINT_RECOMMENDATION",
+        "council_recommendation_default": true,
+        "member_convergence": "REBUTTABLE_QUALITATIVE_SIGNAL_NOT_TRUTH_OR_FIXED_WEIGHT",
+        "minority_verified_counterexample_can_outweigh_majority": true,
+        "material_departure_requires_attributed_evidence_based_deviation_record_and_five_member_review": true,
+        "independent_integrator_high_level_reselection_allowed_by_model_preference": false,
+        "council_decision_register": {
+          "container": "EXISTING_VERSIONED_INTEGRATION_BLUEPRINT",
+          "each_material_choice": [
+            "ALTERNATIVES_AND_APPLICABILITY",
+            "AUTHENTIC_PRE_DISCUSSION_SEALED_POSITIONS_WHEN_AVAILABLE",
+            "POST_DISCUSSION_POSITIONS_AND_CHANGES_WITH_REASONS",
+            "SUPPORT_AND_COUNTEREVIDENCE_WITH_SOURCE_OVERLAP",
+            "COUNCIL_RECOMMENDED_DIRECTION",
+            "MINORITY_OBJECTIONS_AND_UNRESOLVED_CONDITIONS"
+          ],
+          "may_fabricate_initial_positions": false,
+          "requires_new_service": false
+        }
       },
       "budgets": {
         "former_default_70_25_5": "SUPERSEDED_FOR_MANDATORY_INTEGRATED_FINAL_OUTPUT",
@@ -682,7 +702,8 @@
         "hypothetical_future_failure_not_observed_fact": true,
         "material_revision_triggers_scope_appropriate_five_member_reassessment": true
       },
-      "policy_approved_date": "2026-10-16"
+      "policy_approved_date": "2026-10-16",
+      "adr26_refinement_status": "OWNER_APPROVED_2026_10_16_DESIGN_ONLY"
     }
   },
   "checkpoint_public_github_default": false,
@@ -827,6 +848,10 @@
     ],
     "default_budget": "PROJECT_SPECIFIC_FIVE_PROTECTED_POOLS_WITH_USER_APPROVAL",
     "post_integrator_review": "EXACT_VERSION_FIVE_INDEPENDENT_SEALED_DELTA_OR_FULL_DEPENDING_ON_EVIDENCED_IMPACT",
-    "premortem": "FIVE_INDEPENDENT_SEALED_HYPOTHETICAL_FAILURE_ANALYSES_ON_FROZEN_INTEGRATED_RESULT_AND_REPORT"
+    "premortem": "FIVE_INDEPENDENT_SEALED_HYPOTHETICAL_FAILURE_ANALYSES_ON_FROZEN_INTEGRATED_RESULT_AND_REPORT",
+    "intellectual_direction_authority": "ORIGINAL_FIVE_COUNCIL_MEMBERS",
+    "integrator_must_follow_council_blueprint_default": true,
+    "consensus_weight": "MEANINGFUL_NONDETERMINISTIC_REBUTTABLE_EVIDENCE_DEPENDENT",
+    "council_decision_register": true
   }
 }
