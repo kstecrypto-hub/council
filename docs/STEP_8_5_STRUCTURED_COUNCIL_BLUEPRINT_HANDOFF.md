@@ -73,6 +73,10 @@ Three different durable facts must not be collapsed into one boolean:
 
 The owner approved [Step 8.5B integrator execution/recovery](STEP_8_5B_FINAL_INTEGRATOR_EXECUTION_AND_RECOVERY.md) as a **design-only** continuation of this verified Blueprint handoff. Following a genuinely executable Step 8.5A Blueprint, a **single persistent logical non-voting Integrator** receives new scoped source grants, customer-controlled durable workspace and separate approved budget; its model session/container can restart without changing the logical identity. Its **authored result-ready intent** is separate from a **trusted mechanically verified pinned result, safe whole-agent suspension and actual operation reconciliation**. Recovery fences old epochs, preserves progress, reconciles UNKNOWN side effects and never fabricates output readiness. Only the exact verified integrated artifact, under a new read-only review scope, enters **five real original-member sealed evaluations**; integrator never supplies the fifth review. Exact DTOs/DDL and tests still IN DESIGN / NOT RUN; no implementation.
 
+## October 16 — coupled Step 8.5C+D command and recovery policy (ADR-36–40)
+
+[Combined Step 8.5C+D specification](STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md) governs exact Blueprint, Integrator and final package generations and corresponding trusted transactions. The owner's **small keyed internal API queues** serialize processing of conflicting current-checkpoint/Blueprint transitions; queues do **not** replace committed event ordering, five-member frontier locks or physically observed read-grant revocation. There is no arbitrary delay to prevent equal wall-clock arrival times. No implementation or tests.
+
 ## 4. Status and next design boundary
 
 **Approved on October 16, 2026:** (A) structured Council-authored material conclusions with no AI-inferred consensus, and (B) immutable validated Blueprint execution handoff **only after genuine five-member closure and independently verified access revocation**. These are policy contracts and refine rather than replace ADR-26/ADR-25 and existing checkpoint mechanics.
