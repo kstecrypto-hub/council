@@ -132,6 +132,21 @@ The owner's newly approved [Orchestrator development-pattern library](ORCHESTRAT
 
 **Step 8 remains IN DESIGN** for full 8.4/8.5. Implementation NOT STARTED, tests NOT RUN.
 
+## 7.2 Owner-approved Step 8.4 — collective synthesis and integrated output (October 16)
+
+**Step 8.4 core direction APPROVED; precise DTO/DDL/revision gates still IN DESIGN.** Read [full domain-agnostic integration design](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md).
+
+- Council is **not** primarily a five-version winner-selection workflow. Five private members independently investigate/build; the final checkpoint compares **which aspects of each approach are best supported, why, and whether they combine**.
+- The five-member discussion produces an attributable, versioned **Integration/Synthesis Blueprint** containing relevant source and evidence versions, favored complementary components/methods, compatibility constraints, rejected/contested decisions, and outstanding risks; **not** a mandatory contribution from every member or unsupported majority verdict.
+- A **dedicated non-voting Final Integration/Synthesis LLM** then builds **one coherent final deliverable** using a separate customer-controlled authorized workspace and existing trusted model/tool/resource/budget infrastructure. Software results are integrated code/products; research results are one evidence-grounded report/analysis/protocol; other domain outputs follow the Project Contract. Do not force five production-complete apps or software-style Git for non-code work.
+- **The same five original members independently review the actual frozen integrated deliverable again**, using sealed assessments, real evidence and the existing checkpoint/verification-only rules. New integration revisions need appropriate new version-bound verification; old tests are not silently transferred to new code/output.
+- The existing future-failure **six-month-plus premortem** examines the actual integrated result and provisional report, not only the blueprint, before user acceptance; retain dissent, limitations and honest inconclusive results.
+- Existing project/user authority, domain-neutral Orchestrator, private local Git and snapshot grants, typed command-only peer exchange, Part 5/7 safeguards and explicit acceptance/archive remain mandatory. **A dedicated integration budget requires user-approved allocation; the earlier suggested 70/25/5 budget is not presumed sufficient for integration.**
+- Step 8.3 `CONCLUDED_NO_VIABLE_CANDIDATE` means truthful completed investigation, not a fabricated working build: it can contribute evidence and a real fifth reviewer to this **distinct final investigation submission barrier**, never silently satisfy an earlier ordinary implementation checkpoint.
+- Integration Agent is an **execution/synthesis role, not a sixth Council seat, hidden solution judge, or substitute peer reviewer**.
+
+**No implementation, migrations or runtime tests.** Step 8.4 exact integration commands and Step 8.5 closure sequencing still IN DESIGN.
+
 ## 8. Remaining Step 8 design questions
 
 - 8.2 accepted: no fixed worker count/depth or worker scheduler, trusted Docker/cgroups resource monitoring, and **Docker-mounted persistent workspace with member-owned local worker resume**; no separate Council worker-recovery service. Remaining Step 8 work is the **member action/observation protocol**, externally significant result/provenance boundaries, phase transitions and checkpoint/finalization integration.
