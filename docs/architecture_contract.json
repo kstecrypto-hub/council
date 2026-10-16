@@ -284,6 +284,38 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-32",
+      "design_status": "OWNER_APPROVED_STEP8_5B_POLICY_EXACT_DTO_DDL_OPERATION_AND_TESTS_PENDING",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-33",
+      "design_status": "OWNER_APPROVED_STEP8_5B_POLICY_EXACT_DTO_DDL_OPERATION_AND_TESTS_PENDING",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-34",
+      "design_status": "OWNER_APPROVED_STEP8_5B_POLICY_EXACT_DTO_DDL_OPERATION_AND_TESTS_PENDING",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-35",
+      "design_status": "OWNER_APPROVED_STEP8_5B_POLICY_EXACT_DTO_DDL_OPERATION_AND_TESTS_PENDING",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -523,7 +555,11 @@
       "8.4_ADR29_FIVE_INDEPENDENT_SEALED_PREMORTEMS_AGAINST_ONE_VERSION_PAIR",
       "8.4_ADR26_COUNCIL_EVIDENCE_WEIGHTED_INTELLECTUAL_DIRECTION_INTEGRATOR_BOUNDED_EXECUTION",
       "8.5A_ADR30_COUNCIL_AUTHORED_STRUCTURED_DECISIONS_NO_INFERRED_CONSENSUS",
-      "8.5A_ADR31_BLUEPRINT_FROZEN_SEPARATE_FROM_VERIFIED_EXECUTABLE_HANDOFF"
+      "8.5A_ADR31_BLUEPRINT_FROZEN_SEPARATE_FROM_VERIFIED_EXECUTABLE_HANDOFF",
+      "8.5B_ADR32_PERSISTENT_NONVOTING_LOGICAL_FINAL_INTEGRATOR",
+      "8.5B_ADR33_INTEGRATOR_AUTHORED_OUTPUT_INTENT_VERSUS_TRUSTED_VERIFIED_PIN",
+      "8.5B_ADR34_CRASH_SAFE_SAME_LOGICAL_INTEGRATOR_RECONCILE_UNKNOWN",
+      "8.5B_ADR35_EXACT_VERIFIED_ARTIFACT_FIVE_ORIGINAL_SEALED_REVIEW"
     ],
     "specification_path": "docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md",
     "runtime_implementation_status": "NOT_STARTED",
@@ -567,7 +603,10 @@
       "step8_5_exact_member_decision_authorship_payloads_and_blueprint_freeze_commands",
       "step8_5_checkpoint_frontier_and_revocation_race_transaction_reconciliation",
       "step8_5_persistent_integrator_lifecycle_recovery",
-      "step8_5_post_integration_review_premortem_exact_states"
+      "step8_5_post_integration_review_premortem_exact_states",
+      "step8_5b_exact_integrator_actor_and_output_intent_verified_observation_DTOs",
+      "step8_5b_workspace_identity_provision_and_unknown_effect_recovery",
+      "step8_5b_integrated_output_review_generation_closeout_and_revision_transaction_guards"
     ],
     "implementation_and_tests_pending": true,
     "member_controls_local_worker_count_and_depth": true,
@@ -753,6 +792,50 @@
       ],
       "force_incomplete_closeout_executable": false,
       "integrator_source_grants": "NEW_SEPARATE_APPROVED_SCOPE_AFTER_OBSERVED_CHECKPOINT_CLOSURE",
+      "implementation_status": "NOT_STARTED",
+      "runtime_tests_status": "NOT_RUN"
+    },
+    "step8_5b": {
+      "status": "OWNER_APPROVED_FOUR_EXECUTION_POLICIES_EXACT_STEP3_4_5_DTO_DDL_TRANSACTIONS_IN_DESIGN",
+      "specification_path": "docs/STEP_8_5B_FINAL_INTEGRATOR_EXECUTION_AND_RECOVERY.md",
+      "integrator_identity": "SINGLE_PERSISTENT_LOGICAL_NON_VOTING_EXECUTION_ACTOR_NOT_COUNCIL_SEAT",
+      "persistent_workspace": "CUSTOMER_OWNED_ISOLATED_DURABLE_WORKSPACE_ACROSS_AUTHORIZED_RESTARTS",
+      "integrator_workers": "PARENT_SCOPED_EXISTING_RESOURCE_BUDGET_GUARDS_NO_PER_WORKER_RECOVERY_SERVICE",
+      "docker_process_memory_restored": false,
+      "blueprint_admission": "ONLY_AFTER_STEP8_5A_EXECUTABLE_HANDOFF_VERIFIED_SEPARATE_USER_APPROVED_GRANTS_AND_BUDGET",
+      "readiness": {
+        "authored_intent_is_not_verified_result": true,
+        "authored_by": "INTEGRATOR_ONLY",
+        "verification_by": "TRUSTED_RUNTIME_AFTER_EXTERNAL_OBSERVATIONS",
+        "requires": [
+          "EXACT_PINNED_CODE_OR_CONTENT_HASHED_ARTIFACT_MANIFEST",
+          "AUTHORIZED_INPUT_SCOPE_AND_PROVENANCE",
+          "RECONCILED_CONSEQUENTIAL_OPERATION_DEPENDENCIES",
+          "FENCED_WRITES_AND_SAFE_WHOLE_INTEGRATOR_SUSPENSION",
+          "OBSERVED_RESOURCE_RELEASE_AND_REFERENCE_INTEGRITY"
+        ],
+        "ready_intent_cannot_mark_tests_passed": true
+      },
+      "recovery": {
+        "same_logical_integrator": true,
+        "stale_epoch_fencing": true,
+        "reconcile_docker_git_artifact_model_external_unknown_before_retry": true,
+        "preserve_unknown_cost_liability": true,
+        "budget_exhaustion_means_incomplete": true,
+        "no_automatic_provider_retry_on_unknown": true
+      },
+      "post_integration_review": {
+        "one_exact_immutable_verified_artifact_revision": true,
+        "new_read_only_review_generation": true,
+        "reviewers": "EXACT_SAME_FIVE_ORIGINAL_COUNCIL_MEMBER_SEATS",
+        "initial_review": "FIVE_INDEPENDENT_SEALED_FULL_REVIEWS",
+        "integrator_cannot_fill_sixth_or_missing_seat": true,
+        "review_cannot_modify_integrated_artifact": true,
+        "revisions_after_verified_closeout_and_new_authorized_integrator_generation": true,
+        "material_revisions": "ADR28_FIVE_SEALED_DELTA_OR_FULL_REVIEW",
+        "premortem": "ADR29_SEALED_FIVE_MEMBER_FROZEN_ARTIFACT_REPORT_PAIR"
+      },
+      "cross_domain": true,
       "implementation_status": "NOT_STARTED",
       "runtime_tests_status": "NOT_RUN"
     }
