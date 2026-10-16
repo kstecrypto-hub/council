@@ -461,6 +461,12 @@ A remote relay must not change:
 
 Multi-tenant hosting, if ever implemented, is an infrastructure optimization rather than the security model. The protocol must behave as though each Council deployment owns an isolated communication authority.
 
+## October 16 — Step 8.4 final comparison and post-integration five-member review
+
+The owner approved **one final integrated deliverable** rather than a default vote for the best of five unrelated outputs. The existing IRC-inspired **typed command-only** gateway remains the only member communication and approved peer-object request surface for (1) final five-investigation comparison, then (2) **five original members independently reviewing the actual integrated version** in a later separated frozen review. Each phase retains five genuine sealed assessments/atomic reveal, full messages/actions, verification-only `/work`, current generation and /done frontiers, faithful closeouts, actual verified snapshot access revocation and no file+chat bundling. A member who concluded a negative investigation participates as a reviewer without being represented as having built a working candidate.
+
+The Integrator is a separate non-voting *execution* identity, not an IRC sixth member; it receives server-resolved authorized immutable source/evidence objects only under a **new explicit integration grant** after comparison checkpoint closure and cannot send agent-controlled files or mount other member workspaces. The integration result gets a **new pinned artifact identity** and post-integration review scope; material revisions do not inherit the old five reviews automatically. The same scheme applies to research/docs/engineering designs via approved non-code artifact types. Detailed v1 framing, transfer/snapshot grant and re-review generation contracts still IN DESIGN; no implementation/tests. [Details](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md).
+
 ## 12. Still to decide
 
 The next design pass must decide:
