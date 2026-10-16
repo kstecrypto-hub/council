@@ -691,6 +691,12 @@ Later evidence creates a new revision or follow-up run. It does not rewrite what
 
 This is an architecture-only refinement to [Step 8.4 §§9.1–9.5](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md). Exact DTOs/DDL/races remain IN DESIGN. Implementation NOT STARTED; tests NOT RUN.
 
+### October 16 — owner-refined ADR-26: Council directs, Integrator builds
+
+The **five original Council members determine the evidence-backed recommended integration direction**, and their final discussion records **why** alternatives are stronger or weaker. Embed a **Council Decision Register** in the immutable Blueprint: all material options and source/evidence refs, authentic sealed pre-discussion recommendations when available, final post-discussion positions/changes and reasons, convergence with source-overlap caveats, the Council-recommended approach, meaningful minority counterevidence and unresolved choices. More member support is useful as a **qualitative, rebuttable tie-break**, not automatic majority truth: one demonstrated security flaw or contrary result outweighs unsupported four-member preference.
+
+The separate non-voting Integrator **follows Council direction by default**, uses bounded execution discretion for integration mechanics, and records any material evidence- or compatibility-justified departure for subsequent review by the original five. Different model training is not a reason to silently relitigate Council's high-level intellectual recommendation; no new central winner-selecting agent is introduced. Hard contract/permissions/budget changes require existing user approval. This policy applies to research evidence synthesis as well as software and every other supported domain. [Step 8.4 ADR-26 clarification](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md#91-adr-26--bounded-intellectual-discretion-for-the-final-integrator). Design only.
+
 ## 13. Backend and storage design
 
 ### Recommended foundation
