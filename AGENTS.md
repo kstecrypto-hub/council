@@ -169,6 +169,14 @@ Integrator `OUTPUT_READY_INTENT` is **model-authored**; trusted backend separate
 
 No implementations, migrations, evaluations or runtime tests have occurred. Step 8 still IN DESIGN.
 
+## October 16 approved combined Step 8.5C+D and lightweight API submission lanes (ADR-36–40)
+
+Read [joint 8.5C+D source of truth](docs/STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md) before changing final-stage transitions. Use ONE existing trusted typed command/event/state mechanism with exact Blueprint, output, five-member sealed review, frozen artifact/report premortem, final package/acceptance and observed archive/teardown version identities. Maintain original Council's five seats and integrator's non-voting execution-only role. Do not conflate report drafting, authored ready intent, mechanically verified artifact, protected test PASSED, completed peer review, user acceptance or delivered `RunCompleted`.
+
+**Owner-added queues:** implement only when application build is expressly authorized: small bounded keyed queue lanes **inside existing internal trusted API** to serialize same-aggregate simultaneous submissions. Never sleep to avoid matching timestamps; independent seats' submissions remain separate. The queue is not a security, durable acknowledgment, cross-instance locking or committed-order authority; **existing** canonical PostgreSQL lock/event-clock/idempotency/expected-version/seat-uniqueness rules hold and no new Redis/third-party queue or global bottleneck is required. Do not acknowledge an in-memory-only queue entry as durable. Keep protected budgets, operation-class-specific UNKNOWN effects, stale epochs, honest blockers and verified customer-local archive/ref cleanup.
+
+**Approved SPECIFICATIONS ONLY** — Step 8.5C/D policy approved, precise executable DTO/DDL/transaction/queue runtime and fault-test work IN DESIGN, no implementation/test run.
+
 ## October 15 owner correction ADR-22: OpenAI Moderation API is hosted
 
 **Authoritative:** [docs/OPENAI_MODERATION_API_CORRECTION.md](docs/OPENAI_MODERATION_API_CORRECTION.md) supersedes all earlier local-model/OpenAI safeguard assumptions. Use `omni-moderation-latest` through OpenAI's hosted `/v1/moderations` only after the customer's *specific data-category/endpoint egress permission*. No local GPU/weights, no custom guard model, no unapproved upload of company code, and do not use moderation as deterministic authorization, DLP, prompt-injection defense or file scanner. No silent fail-open. Keep unified trust, five member autonomy, command-only file results, checkpoint consent/revocation, truthful design-only status. No implementation/tests.
