@@ -1,6 +1,6 @@
 # Step 8.4 — Collective synthesis, final integration, independent verification and termination
 
-**Owner approval:** October 16, 2026. **Status:** CORE STEP 8.4 ARCHITECTURE APPROVED; exact Step 3/4/5 DTOs, transaction guards, budgets and some failure-handling details remain IN DESIGN. **Runtime implementation:** NOT STARTED. **Runtime, security and comparative tests:** NOT RUN. No application implementation or tests authorized.
+**Owner approvals:** October 16, 2026 (core Step 8.4 and four later interface refinements: bounded integrator choices, separately protected project-specific synthesis/review budgets, version-aware five-member re-review, and sealed independent premortems). **Status:** STEP 8.4 CORE + FOUR INTERFACE POLICIES APPROVED; exact Step 3/4/5 DTOs, transaction guards, impact-propagation mechanics and failure-handling details remain IN DESIGN. **Runtime implementation:** NOT STARTED. **Runtime, security and comparative tests:** NOT RUN. No application implementation or tests authorized.
 
 **Owner's defining correction:** Council should **not** ordinarily end by presenting five independently built alternatives and asking the user to pick the best one. The final collective discussion must identify **what each member did better and why**, reconcile compatibility/evidence, and convey those findings to a **dedicated final Integration/Synthesis LLM**. That execution agent produces **one integrated final deliverable** drawing on the strongest defensible contributions across the five investigations. **The original five members independently review the actual integrated deliverable again** before the existing premortem, report and user-acceptance boundaries. This same process must be **domain-agnostic**: software, research, scientific investigation, product design, engineering, reports and other user-approved deliverables.
 
@@ -64,7 +64,7 @@ The Integration/Synthesis Agent may choose ordinary mechanical implementation de
 
 ### Protected integration budget
 
-The previously suggested **70% development / 25% review / 5% orchestration/finalization** split was an *editable recommendation*, **not a guarantee that 5% can build the final result**. A **separately approved integration/synthesis allowance** (token/cost/resource allocation) must be included in or added via a versioned user-approved Project Contract/budget policy before the Final Integrator is admitted. Account for five-member *post-integration* review and premortem, as well as possible revisions, without borrowing protected pools silently. No prescribed universal percentage; show honest estimates and block if the approved allowance cannot support the intended action. Under BYOK providers charge the customer's API account, while Council enforces its own reservations and uncertain liabilities as already designed.
+The formerly recommended **70% development / 25% review / 5% orchestration/finalization** split is **superseded as Council's default allocation proposal for an integrated final deliverable**: the 5% cannot be presumed sufficient to build or research-synthesize the final product. No universal replacement percentages are approved. A five-pool, project-specific allocation described in Section 9 below is the approved planning policy. A **separately approved integration/synthesis allowance** (token/cost/resource allocation) must be included in or added via a versioned user-approved Project Contract/budget policy before the Final Integrator is admitted. Account for five-member *post-integration* review and premortem, as well as possible revisions, without borrowing protected pools silently. No prescribed universal percentage; show honest estimates and block if the approved allowance cannot support the intended action. Under BYOK providers charge the customer's API account, while Council enforces its own reservations and uncertain liabilities as already designed.
 
 ### No unsafe reuse of checkpoint authority
 
@@ -80,7 +80,7 @@ The integrated output is **not validated by tests run only on the five precursor
 
 ## 6. Existing six-month-plus premortem, now targeting the integrated result
 
-After a provisional integrated artifact and report version are available and reviewed as required, the five original members each independently examine the *same frozen integrated result and report* under the existing hypothetical premise: a careful investigation at least six months later finds material error/incompleteness. Each records **affected integrated artifact/claim revisions, assumptions, causal mechanism, present-day testable checks, future-dependent observations and confidence limitations**. They do not claim to have witnessed future events. Whether submissions use a separately sealed premortem round and its exact disclosure sequencing is an interface refinement to reconcile with the existing sealed-review primitive; no new intellectual judge is authorized.
+After a provisional integrated artifact and report version are available and reviewed as required, the five original members each independently examine the *same frozen integrated result and report* under the existing hypothetical premise: a careful investigation at least six months later finds material error/incompleteness. Each records **affected integrated artifact/claim revisions, assumptions, causal mechanism, present-day testable checks, future-dependent observations and confidence limitations**. They do not claim to have witnessed future events. **Approved:** the premortem is a distinct independent SEALED review round. All five authentic original-member hypothetical failure analyses target the same pinned integrated deliverable and provisional report revisions and remain reviewer-private until five submissions exist and the trusted runtime atomically reveals them. No new intellectual judge or sixth reviewer is authorized.
 
 Material premortem findings can reopen **affected integration changes/verification/review** only under the already approved budget, scope and user gates; untestable risks remain clearly labeled limitations/reassessment triggers. A materially revised integrated artifact invalidates version-dependent premortem statements until reviewed against the correct version. Do not claim all concerns were resolved merely because a report was drafted.
 
@@ -111,3 +111,90 @@ Accepted does not imply delivered: archive only authorized source/artifacts to t
 **Unresolved details for subsequent design:** physical DTO/DDL and review event sequencing; precise method to produce an actionable blueprint when the five genuinely disagree on architecture; how changes to the blueprint/selection policy gain explicit approval when materially relevant; which impacted verification/review/premortem rounds must repeat per version; default integration token budget estimate and distribution of review reserve; non-software artifact formats and source requirements under particular Project Contracts. **These are implementation-interface refinements, not permission to reconsider the approved collective synthesis objective.**
 
 **Owner-approved policy boundary:** one final synthesized/integrated output formed from five independent contributions; a dedicated, non-voting Final Integration/Synthesis LLM implements it in isolated scope; **the original five independently review the result again**; apply to all Council domains rather than software only. Preserve the six-month-plus premortem, attributable full reasoning/evidence record, explicit user acceptance and verified customer-owned final delivery. **No application code, migrations, deployment, tests or model evaluation have been run.**
+
+## 9. October 16 owner-approved Step 8.4 interface decisions (ADR-26 through ADR-29)
+
+These four owner-approved refinements **complete the main policy choices** for the existing one-integrated-result workflow; they do **not** approve application implementation, a new sixth peer, new microservices, new user approvals for ordinary implementation details, or any runtime testing. Exact executable schemas and race/recovery definitions still require a subsequent design-only contract reconciliation.
+
+### 9.1 ADR-26 — Bounded intellectual discretion for the Final Integrator
+
+The five original members own investigation and comparative evidence/objections. The versioned Blueprint is the binding handoff of findings, constraints, trade-offs and source/evidence references. It is not a list of five mandatory code fragments to paste; techniques that work separately can be mutually incompatible.
+
+**Within the existing user-approved Project Contract and synthesis scope,** the Integrator may resolve a real architectural/methodological ambiguity, choose an implementation baseline or integration technique, and make ordinary technical/design decisions. It is an authorized **execution decision**, not a Council vote, a finding automatically proven true, or permission to change approved user requirements. It must write an attributed **Integration Decision Record** referencing:
+- its exact Blueprint revision, contested contribution options/member positions and underlying evidence/compatibility conditions;
+- whether the choice used stronger applicable verification, a contract priority/trade-off, or an explicitly labeled *provisional/reversible* judgment where evidence is insufficient;
+- the chosen method, known alternative(s), expected impact/limitations, proof or absence of proof, and required subsequent verification;
+- exact integration output revision(s) caused, exposed blueprint deviation, and the originating operation/attempt IDs.
+
+**Decision policy, without consensus or majority-as-truth:**
+1. **One option has more relevant evidence in the actual target context:** the integrator may select it with supporting record. A numerical vote is not evidence of correctness.
+2. **Multiple permissible choices involve trade-offs:** the integrator may select against *already approved user priorities*, disclose the trade-off and preserve opposing reviews for five-member post-integration challenge.
+3. **Evidence insufficient but risk bounded and choice reversible:** the integrator may record a provisional choice, attach an investigation/verification obligation and continue within its reserved allowance, without calling it PROVEN.
+4. **Irreversible, safety-critical or material uncertainty without approved choice policy:** request faithful clarification/user decision through the **existing Orchestrator** and keep dependent work blocked. Neither the integrator nor Orchestrator may invent user priorities.
+5. **Violates a hard requirement, permission, provider-egress scope, protected acceptance definition or integration budget:** deterministic trusted gateway **DENIES** the operation. Escalate a proposed Project Contract/permission/budget revision for *explicit user approval*, never silently broaden scope.
+6. **Unexpected evidence or incompatibility found while integrating:** record deviation/objection; do not invent missing methods, measurements, data, peer agreement or source licensing. A substantive blueprint departure that remains allowed must be visible in the final five-member review. If the departure would change approved acceptance requirements or source authority, stop pending user approval.
+
+The integration agent has **no peer vote, no authority to rewrite a member's historical reasoning, no default right to directly send files or mount peer workspaces**, and is not a new supervisor. Its operational decisions are always subsequently reviewable by the fixed five peers.
+
+### 9.2 ADR-27 — Five separately protected and user-approved budget scopes
+
+Council's setup/Project Contract and Step 7 budget records must propose and obtain **project-specific token/cost/resource ceilings** for the following **distinct chargeability scopes** (no fixed default percentages):
+1. **Independent member work:** all five member workspaces and their delegated workers.
+2. **Checkpoint peer comparison:** sealed assessments, IRC gateway discussion, ordinary checkpoint `/work` and synthesis-blueprint examination.
+3. **Final Integration/Synthesis execution:** dedicated integrator model calls, workspace operations, tool work, revision attempts and its internal workers.
+4. **Post-integration validation and premortem:** five independent integrated-product reviews, re-review allowances, supported verification, five hypothetical failure reviews and required follow-up.
+5. **Orchestration/final report/archival overhead:** approved contract/clarifications, report drafting, accepted-deliverable export and operational execution where chargeable.
+
+**No prior 70/25/5 or illustrative 45/15/20/15/5 split becomes the universal default.** A reasonable candidate distribution and uncertainty range can be displayed based on project type, evidence and selected providers, but **only the user's versioned approval makes a spend cap authoritative**. The same principle applies to research synthesis and non-software deliverables; costs need not match software build ratios.
+
+**Funding gates:**
+- Before admitting the Final Integrator, reserve/admit against its **own protected integration scope**, and check that a user-approved **post-integration review/premortem scope exists with sufficient allowance for the minimum authorized next required operations**; a mere estimated sufficiency is not a promise to finish.
+- The operation processor transactionally checks **total run + relevant member/parent/worker + phase + integration/review scope**, explicit currency/token ceilings and conservative unknown-provider/pricing liability **before each dispatch** as Step 5/7 already require.
+- One call debits **exactly one chargeability scope** while concurrently enforcing all higher-level ceilings; avoid double counting and concurrent overcommit.
+- The Integrator cannot spend the five reviewers' protected allowance, and review agents cannot consume the integrator's remaining balance by convention. Redistribution/top-up is an **explicit user-approved immutable budget policy revision**, not a smart suggestion silently applied.
+- Exhaustion suspends only affected new admissions with preserved progress and actual pending/UNKNOWN liabilities; it **never** becomes a passing integrated-review certificate, automatic budget transfer or implicit project acceptance.
+- On resumption, recheck model access, data egress, contract, approved policy revision, host resources, idempotent pending effects and current source versions.
+
+Any sample numerical allocation is **illustrative, not approved policy or an empirical forecast**. The original editable 70/25/5 planning suggestion is historical for this new mandatory integration architecture, not the setup default.
+
+### 9.3 ADR-28 — Version-aware review invalidation with five genuine reviewers
+
+The initial integrated deliverable always receives **five real sealed independent assessments** against the **same exact pinned content/manifest version** before reveal. This remains mandatory for software, research, engineering, documents and other domains.
+
+Any later Integrator revision produces a **new immutable integrated-result version**, with a content hash, exact changed artifact/evidence/claim references, a separate authorized review generation where substantive change is present, and explicit prior-review applicability status. The impact calculation follows the Step 6 typed evidence/dependency graph, file/manifest dependencies and approved tests, **but an absent edge is not proof of no dependency**.
+
+Three categories govern the next action:
+
+| Change classification | Required effect |
+| --- | --- |
+| **Demonstrably non-substantive/equivalent** (e.g. pure formatting with defensible verification of relevant semantic equivalence) | New version and documented equivalence/impact evidence, without inheriting unsupported verification. Previously valid claim-specific dispositions may remain *applicable to unchanged conditions*; user-visible final artifact version must still be exact. If evidence cannot prove equivalence, escalate classification. |
+| **Localized substantive change with defensible dependency closure** | Fresh **five-member independent SEALED delta assessments** of the same new pinned version, changed units, relevant dependencies, updated required verification and previously disputed obligations. Each of five actually submits anew, even if it accepts some attributable *unchanged* prior conclusions. Scoped review is not a single reviewer certifying all five. |
+| **Foundational/widespread/high-risk/uncertain impact** | **Full fresh five-member sealed review** and applicable re-execution/revalidation of required checks against the new pinned version; no ungrounded applicability inheritance. |
+
+When an impact classifier cannot determine whether a modification affects prior conclusions, choose the **broader review**; security-sensitive changes, broad data model/assumption shifts and altered acceptance criteria cannot automatically be treated as local.
+
+**Safe state transitions:** the integrator only modifies its integration workspace **outside** active read-only peer reviews, after trusted checkpoint closure, fencing and access revocation. The trusted runtime records each review scope/generation, source/artifact hash, five distinct reviewer-seat submissions, independent private assessments and atomic reveal. A late submission for an older revision is rejected as stale for the new round but retained as historical evidence. A prior PASS at a previous revision remains an accurately scoped **historical result**; affected claims/checks become `STALE / REASSESSMENT_REQUIRED` until actually rerun or explicitly evidenced as applicable. A bad new implementation cannot inherit an old passing build, study verification or assessment.
+
+**Failure/recovery:** any member missing, blocked or exhausted during required five-peer re-review leaves that round INCOMPLETE rather than fabricating five verdicts. Re-run model calls and re-review consume the approved post-integration validation allowance; no unconstrained loop or forced consensus. The user may authorize more resources, revision, or a truthful partial/inconclusive stop via existing user controls.
+
+### 9.4 ADR-29 — Independently sealed six-month-plus premortems
+
+After an independently reviewed **frozen integrated artifact version** and **frozen provisional report version** exist, the runtime opens a **distinct, version-bound SEALED_PREMORTEM round** for the **same five original Council members**, not the Integrator.
+
+Each reviewer sees the exact same authorized integrated deliverable/report versions and, **without access to other members' premortem text**, produces a hypothetical account of plausible failures discovered at least six months later. Required minimum fields: reviewer seat, target artifact/report hashes, affected claim/assumption versions, plausible mechanism and evidential status, what can be checked now, what requires later observation, potential impact and limitations. Hypothetical future scenarios are never recorded as observed empirical evidence.
+
+**Atomic reveal:** all five genuine current-round submissions must exist and refer to the same frozen version pair before the existing trusted sealed-review barrier can reveal them. Missing or unreachable reviewers, unapproved spend or invalid target versions produce an explicitly incomplete round; no fake fifth assessment, automatic agree/disagree result or substituted integrator review.
+
+After all-five reveal, existing peer action/challenge and **verification-only `/work`** protocols address testable concerns. Material findings that require modifying the deliverable must go through the separate integrator revision path and **invalidate affected review/premortem claims according to their actual version dependencies**. The relevant affected premortem must be reconsidered against the new artifact/report version, while intact historical premortem scenarios remain attributable evidence. If dependency impact cannot safely be scoped, rerun the full five-member premortem against the new frozen version pair. Untestable future contingencies remain explicitly labeled limitation/reassessment triggers. There is no promised automatic wake-up after six months.
+
+### 9.5 Integration interfaces to reconcile (still design, not implemented)
+
+Use **existing** Unified Trust command processor, PostgreSQL canonical event clock/outbox, trusted snapshot provider, existing members and reviewers, Step 6 graph, Step 7 budget system and current UI. No new database, custom prompt-based moderation judge, per-worker lifecycle service or new voting seat.
+
+**Step 3 tables/records to refine:** blueprint choice/deviation/version refs; applicable contract priorities; budget policy version and five separate protected allowance accounts; integrator decision/event/attempt refs; artifact-to-dependency impact manifests and equivalence evidence; review generation/scopes and five independent reviewer submissions; sealed premortem round (target artifact + report versions) and five genuine scenario submissions; disposition/invalidation and audience/retention controls.
+
+**Step 4 typed command/events:** IntegratorDecisionRecorded, IntegratorDeviationReported, IntegrationAllowanceApproved/Reserved, IntegratedRevisionPublished, IntegratedReviewImpactDeclared/Observed, IntegratedDeltaReviewSubmitted, IntegratedFullReviewSubmitted, FiveIntegratedReviewsRevealed, PremortemSealedSubmissionRecorded, FivePremortemsRevealed, AffectedReviewReassessmentRequired. These are **illustrative event families**, not additions to a running API or final v1 DTO authorization. Every event needs actor, authentication/epoch, target exact version, scope, idempotency key, required approval and actual observed-state semantics.
+
+**Step 5 external boundaries:** persist intent and policy before the external model or broker call; reconcile provider cost timeouts, source grant/revocation UNKNOWN, integrating output export crash and review-generation conflict. A change to the target pair while a sealed premortem is pending must **not** reveal mixed-version assessments; create a new round and preserve prior attempts.
+
+**Open implementation-level design only:** choose exact versioned DTO names, relational constraints, source dependency/impact proof criteria, minimum viable review reserve admission method for different domain/model profiles and precise state-transition/cancellation behavior. Architecture policy was owner-approved October 16; no application code, database migration, runtime tests, security tests or model-comparison evaluations have been executed.
