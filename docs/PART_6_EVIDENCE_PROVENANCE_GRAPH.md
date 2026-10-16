@@ -264,6 +264,10 @@ For integrated revisions, affected claims, protected checks, source dependencies
 
 A frozen integrated deliverable/report pair is the exact subject of **five independently sealed six-month-plus premortem submissions**. Hypothetical risk mechanisms, present-day suggested tests and later reassessment triggers remain separate from observed evidence. Material changes invalidate affected current applicability without rewriting history. No automatic general-purpose truth scores, no fifth reviewer substitution, no fabricated studies or tests. [Full policy](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md). **Design only; not implemented or tested.**
 
+## October 16 — ADR-26 Council Decision Register: convergence, independent evidence and dissent
+
+Per material synthesis choice, preserve the five original member positions before public discussion *where genuinely captured in independent sealed review*, their final post-discussion positions, supported reasons for revision, their underlying evidence and possible common data/training/source overlap. The versioned Blueprint's **Council Decision Register** records the recommended approach and counterexamples/limiting conditions. A 4/5 or 5/5 consensus can be a meaningful **rebuttable qualitative preference signal** when evidence is tied, but is not independently replicated proof, a fixed weighted vote, or license to erase a minority member's reproducible defect observation. The Integrator follows the Council's evidence-backed recommendation by default. Any material deviation attaches attributed evidence/compatibility causes to the original choice and the exact updated final artifact revision for five-member re-review, not hidden model preference. This uses existing provenance graph and sealed-review infrastructure, not a sixth selector. [Detailed ADR-26 refinement](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md). Architecture only; implementation/tests NOT STARTED / NOT RUN.
+
 ## 16. Completion boundary
 
 Part 6 is DESIGNED because the product-level behavior is fixed for:
