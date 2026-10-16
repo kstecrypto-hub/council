@@ -268,6 +268,22 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-30",
+      "design_status": "OWNER_APPROVED_STEP8_5A_HANDOFF_POLICY_EXACT_STEP3_STEP4_STEP5_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-31",
+      "design_status": "OWNER_APPROVED_STEP8_5A_HANDOFF_POLICY_EXACT_STEP3_STEP4_STEP5_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -505,7 +521,9 @@
       "8.4_ADR27_FIVE_PROTECTED_APPROVED_BUDGET_POOLS_NO_DEFAULT_PERCENTAGE",
       "8.4_ADR28_FIVE_VERSION_BOUND_SEALED_DELTA_OR_FULL_REVIEWS",
       "8.4_ADR29_FIVE_INDEPENDENT_SEALED_PREMORTEMS_AGAINST_ONE_VERSION_PAIR",
-      "8.4_ADR26_COUNCIL_EVIDENCE_WEIGHTED_INTELLECTUAL_DIRECTION_INTEGRATOR_BOUNDED_EXECUTION"
+      "8.4_ADR26_COUNCIL_EVIDENCE_WEIGHTED_INTELLECTUAL_DIRECTION_INTEGRATOR_BOUNDED_EXECUTION",
+      "8.5A_ADR30_COUNCIL_AUTHORED_STRUCTURED_DECISIONS_NO_INFERRED_CONSENSUS",
+      "8.5A_ADR31_BLUEPRINT_FROZEN_SEPARATE_FROM_VERIFIED_EXECUTABLE_HANDOFF"
     ],
     "specification_path": "docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md",
     "runtime_implementation_status": "NOT_STARTED",
@@ -545,7 +563,11 @@
       "step8_4_exact_blueprint_dto_and_conflict_governance",
       "step8_4_integration_budget_revision_and_permissions",
       "step8_4_five_sealed_post_integration_review_generation",
-      "step8_4_premortem_final_report_version_binding"
+      "step8_4_premortem_final_report_version_binding",
+      "step8_5_exact_member_decision_authorship_payloads_and_blueprint_freeze_commands",
+      "step8_5_checkpoint_frontier_and_revocation_race_transaction_reconciliation",
+      "step8_5_persistent_integrator_lifecycle_recovery",
+      "step8_5_post_integration_review_premortem_exact_states"
     ],
     "implementation_and_tests_pending": true,
     "member_controls_local_worker_count_and_depth": true,
@@ -704,6 +726,35 @@
       },
       "policy_approved_date": "2026-10-16",
       "adr26_refinement_status": "OWNER_APPROVED_2026_10_16_DESIGN_ONLY"
+    },
+    "step8_5a": {
+      "status": "OWNER_APPROVED_TWO_HANDOFF_POLICIES_DTO_DDL_EXTERNAL_RECOVERY_IN_DESIGN",
+      "specification_path": "docs/STEP_8_5_STRUCTURED_COUNCIL_BLUEPRINT_HANDOFF.md",
+      "council_decisions": {
+        "authorship": "AUTHENTIC_ORIGINAL_FIVE_MEMBER_ACTIONS_ONLY",
+        "assembly": "DETERMINISTIC_SOURCE_ATTRIBUTED_BACKEND_BLUEPRINT_PROJECTION",
+        "invent_missing_member_stance": false,
+        "retroactively_infer_consensus": false,
+        "retain_minority_disputed_deferred": true,
+        "member_unanimity_required": false
+      },
+      "blueprint_stages": [
+        "DRAFT",
+        "IMMUTABLE_MECHANICALLY_FROZEN",
+        "EXECUTABLE_HANDOFF_VERIFIED",
+        "INTEGRATOR_SEPARATELY_ADMITTED"
+      ],
+      "freeze_required": "EXACT_APPROVED_CONTRACT_MEMBER_POSITIONS_EVIDENCE_AND_DISCUSSION_FRONTIER",
+      "executable_requires": [
+        "FIVE_VALID_SEALED_REVIEWS_REVEALED",
+        "FIVE_NORMAL_CURRENT_FRONTIER_DONE_CERTIFICATES_AND_CLOSEOUTS",
+        "NO_ACTIVE_REQUIRED_VERIFICATION_OR_COMMUNICATION_OBLIGATIONS",
+        "CHECKPOINT_CLOSED_AND_SNAPSHOT_GRANTS_ROUTES_REVOCATION_PHYSICALLY_OBSERVED"
+      ],
+      "force_incomplete_closeout_executable": false,
+      "integrator_source_grants": "NEW_SEPARATE_APPROVED_SCOPE_AFTER_OBSERVED_CHECKPOINT_CLOSURE",
+      "implementation_status": "NOT_STARTED",
+      "runtime_tests_status": "NOT_RUN"
     }
   },
   "checkpoint_public_github_default": false,
