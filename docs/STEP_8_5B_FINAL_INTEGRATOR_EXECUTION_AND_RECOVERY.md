@@ -103,6 +103,10 @@ For interruption, pause or timeout:
 
 **One target, not five winners:** final user review concerns a single integrated deliverable produced from the Council-recommended Blueprint, with original five alternatives/negative findings preserved as authorized historical evidence. A member's previous no-viable-candidate investigation remains a legitimate independent review seat and may contribute risk evidence; its lack of working code is never reclassified as successful implementation.
 
+## October 16 — approved coupled Step 8.5C+D execution and API-queue extension (ADR-36–40)
+
+The owner approved [one combined Step 8.5C+D command/state/recovery/finalization specification](STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md), including **small per-conflict-key internal-API submission queues**. The existing PostgreSQL event-clock/lock/idempotency/version guards remain authoritative: simultaneous member submissions can both succeed when genuinely from distinct seats, while same-target mutable transitions serialize. Do not use fixed sleeps, timestamp order, a single global queue or a new broker. The Integrator output readiness/verified pin and five-seat post-integration review/premortem rules remain unchanged. **Approved policy only; no queue/application implementation or tests.**
+
 ## 8. Existing system integration and still-open implementation contracts
 
 - **Step 3:** use existing project/run/integrator actor, workspace, candidate/artifact, read-grant, review-generation, source/evidence lineage and operation/attempt event tables/records; define physical constraints for one current logical Integrator identity/generation, exact target version, durable intent vs observed freeze, source grant revocation, five reviewers and domain-specific artifact manifest reference closure.
