@@ -456,7 +456,21 @@ MVP must implement
 - No direct user-to-agent natural-language guidance.
 - Final candidate(s) preserved for evaluation.
 
+October 16 approved Step 8.4 — one collective integrated output in ALL fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Five Council members pursue independent candidates, prototypes, research findings, design alternatives, or analyses. Five fully completed products are optional when approved phase outcomes support meaningful comparison; never fabricate uncompleted work.
+- At final comparison, each authentic concluded member outcome is admitted as a research/contribution result (viable candidate or honest concluded-no-viable), not as a claim of five successful builds; BLOCKED/BUDGET_EXHAUSTED is not a completed result.
+- Run the existing sealed five-member comparison and full peer discussion to identify which parts/claims/methods of each approach are supported, most useful and compatible; retain genuine disagreement and provenance.
+- Produce a versioned evidence- and source-bound Integration/Synthesis Blueprint with explicit selected/rejected/conditional contributions, compatibility and required validation.
+- One separately authorized **non-voting final Integration/Synthesis LLM**, within user-approved integration budget and its own isolated customer-owned workspace, constructs **ONE final integrated result** (code/application, evidence-grounded research synthesis, design, investigation report or other contract-driven artifact).
+- SAME original five members independently review the ACTUAL pinned integrated output again; five sealed submissions before reveal, verified evidence and new version-bound checks for material modifications. No integrator vote; no inherited passes from prior candidate versions.
+- Run the existing six-month-plus hypothetical premortem on the integrated result/provisional report, keep limitations and dissent, then explicitly present the ONE result for user acceptance. Verified customer-owned export/cleanup is required to call finalization complete.
+- Existing 70/25/5 budget is only a suggested configurable starting split; integration and post-integration review require separately approved allowances, never an implicit 5% assumption.
+- Full design: docs/STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md. Core policy APPROVED, exact integration DTO/schema/atomic effects IN DESIGN. Implementation NOT STARTED; tests NOT RUN.
+
 Defer until after MVP evidence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Sophisticated adaptive-checkpoint replanningDefer until after MVP evidence
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Sophisticated adaptive-checkpoint replanning beyond the initial project-specific milestone plan.
 - Complex voting/agenda machinery.
