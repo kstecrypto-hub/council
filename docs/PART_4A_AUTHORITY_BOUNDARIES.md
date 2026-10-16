@@ -352,6 +352,12 @@ The rest of Part 4 must preserve these rules:
 14. The Auditor verifies protocol; it does not govern Council reasoning.
 15. User intent and final acceptance remain user authority.
 
+## October 16 — Approved final synthesis authority (Step 8.4)
+
+The **five equal Council members** alone own their independent investigations, collective comparative challenges and independent **post-integration** evaluation. A **dedicated Final Integration/Synthesis LLM** is a **non-voting execution role**, not a sixth Council member, replacement Orchestrator, shared intellectual commander or final accepted-solution arbiter. It receives a versioned evidence- and source-bound Integration/Synthesis Blueprint after the five-member comparison checkpoint has securely closed; the trusted system allocates separate customer-approved source read capabilities, workspace, execution epoch and integration budget. It constructs **one integrated result** with attributable modifications/analytical choices; the same five Council members independently review what was actually produced. Material blueprint departures must be recorded and reviewed, and new permissions/scope/spending must be approved by the user. The Orchestrator remains a neutral checkpoint-planning/clarification layer, not the integrator.
+
+This applies equally to **software integration, academic/research synthesis, design/engineering synthesis, strategy and other user-approved Council deliverables**. The integration agent may not invent empirical data or obscure real disagreement. The user alone accepts final output. See [approved Step 8.4](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md). **Design only; runtime NOT STARTED, tests NOT RUN.**
+
 ## 11. Items intentionally delegated beyond Part 4A
 
 Part 4A remains the authority-boundary specification. Part 4 now defines the checkpoint open/review/close contract and the command/event/error semantics.
