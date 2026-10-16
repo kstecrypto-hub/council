@@ -149,6 +149,12 @@ First integrated version receives five real sealed independent reviews. New *sub
 
 **Design-only change; exact Step 3/4/5 schema and runtime test contracts still IN DESIGN; implementation NOT STARTED, tests NOT RUN.**
 
+## October 16 approved ADR-26 refinement — Council owns integrative choice of direction
+
+**Never delegate high-level approach selection anew to the Final Integrator.** The original five members remain the intellectual authority and produce an evidence-grounded, versioned **Council Decision Register** embedded in their Blueprint. Preserve actual pre-discussion sealed positions when present and final positions, why they changed, source/evidence overlap, selected recommendations, minority objections, and genuinely unresolved cases. Member convergence has **rebuttable extra qualitative weight** as a preference/tie signal but is not mathematical voting correctness, independent proof or a veto. A verified minority counterexample can outweigh majority preference.
+
+Integrator is a separate **non-voting implementation/synthesis execution agent** and **follows the Council recommendation by default**. Material divergence requires explicit evidence/compatibility, versioned IntegratorDeviation record, actual result-version linkage and transparent five-member post-integration review. Model confidence/pretraining alone is not authorization to silently substitute a different plan. Existing User Contract/egress/budget/retention gates and five-member sealed review remain unchanged. [ADR-26](docs/STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md#91-adr-26--bounded-intellectual-discretion-for-the-final-integrator). Still DESIGN only, no implementation/tests.
+
 ## October 15 owner correction ADR-22: OpenAI Moderation API is hosted
 
 **Authoritative:** [docs/OPENAI_MODERATION_API_CORRECTION.md](docs/OPENAI_MODERATION_API_CORRECTION.md) supersedes all earlier local-model/OpenAI safeguard assumptions. Use `omni-moderation-latest` through OpenAI's hosted `/v1/moderations` only after the customer's *specific data-category/endpoint egress permission*. No local GPU/weights, no custom guard model, no unapproved upload of company code, and do not use moderation as deterministic authorization, DLP, prompt-injection defense or file scanner. No silent fail-open. Keep unified trust, five member autonomy, command-only file results, checkpoint consent/revocation, truthful design-only status. No implementation/tests.
