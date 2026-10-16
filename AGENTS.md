@@ -131,6 +131,14 @@ Before changing the runtime agent-loop architecture, consult [Step 8.3 completio
 
 **Status:** ADR-23 Step 8.3 owner-approved policy, ADR-24 planning-library owner-approved design direction. Step 8.4/8.5 and exact wire DTOs still IN DESIGN. Runtime NOT IMPLEMENTED, tests NOT RUN.
 
+## October 16 owner-approved Step 8.4: one final integrated artifact in every domain (ADR-25)
+
+Follow [docs/STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md](docs/STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md). The product goal is **NOT** automatically five final implementations + majority vote/winner selection. Five genuinely independent investigations compare what each did **better and why** in sealed-review/discussion, synthesize one **evidence- and artifact-bound blueprint**, and a **single separate non-voting Integration/Synthesis LLM** produces ONE cohesive final result in its own scoped workspace. The **same five original members independently and sealedly review the actual integrated result again**. This is **domain neutral**: applications/code, research syntheses, experiments, engineering designs, documents and other authorized Project Contract outputs. Do not require five completed products where prototypes/partial investigations suffice, or call a concluded negative result a working candidate.
+
+Do not give the integrator a sixth seat/vote or original members' writable Git access. Its permissions and budget are separately authorized after final comparison checkpoint access revocation. Preserve evidence, source lineage, dissent and version-specific real verification; material changes to integrated result require affected re-review. Premortem is performed on the actual integrated result and frozen provisional report, then user review and verified export/cleanup. No invented citations/data/results, no automatic majority truth, no automatic final user acceptance. The previously proposed 70/25/5 review/finalization split must not silently fund substantial integration; user explicitly approves a suitable budget.
+
+**Architecture only** — owner-approved policy, exact DTO/DDL/transaction/adapters still IN DESIGN, application implementation NOT STARTED, tests NOT RUN.
+
 ## October 15 owner correction ADR-22: OpenAI Moderation API is hosted
 
 **Authoritative:** [docs/OPENAI_MODERATION_API_CORRECTION.md](docs/OPENAI_MODERATION_API_CORRECTION.md) supersedes all earlier local-model/OpenAI safeguard assumptions. Use `omni-moderation-latest` through OpenAI's hosted `/v1/moderations` only after the customer's *specific data-category/endpoint egress permission*. No local GPU/weights, no custom guard model, no unapproved upload of company code, and do not use moderation as deterministic authorization, DLP, prompt-injection defense or file scanner. No silent fail-open. Keep unified trust, five member autonomy, command-only file results, checkpoint consent/revocation, truthful design-only status. No implementation/tests.
