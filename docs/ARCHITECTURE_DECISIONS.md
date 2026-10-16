@@ -117,6 +117,10 @@ These refine approved Step 8.4, not the other Council decisions. [Detailed autho
 
 The owner requested C and D **as one document**, [authoritative joint specification](STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md), instead of separate potentially inconsistent protocols. **Owner-approved policy only; exact runnable DTO/SQL/scheduling and failure-injection tests IN DESIGN/NOT STARTED; Step 8 not marked completed.**
 
+## October 16 — OWNER SUPERSEDES ADR-40 (simplify; avoid duplicate queues)
+
+**Final binding decision:** Earlier ADR-40 per-key **internal API submission queues are SUPERSEDED**, not approved to build. Reuse Step 7's existing **low-resource whole-agent execution queue** for member/Integrator slots, Step 5's **PostgreSQL idempotency/row locks/seat uniqueness/event clock** for genuine simultaneous review submissions and atomic all-five reveal, and Docker named volumes/restarts for infrastructure persistence. The existing trusted runtime continues to enforce contract/budget/epoch/peer permissions and reconcile external UNKNOWN effects; Docker cannot determine the results or charges of lost external API requests or restore in-memory LLM process stacks. No extra queue, per-worker recovery manager, new microservice or arbitrary timestamp staggering. ADR-36–39 remain approved. [Lean authoritative 8.5C+D](STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md). Design only; no code/tests.
+
 ## Completion policy
 
 SPECIFIED means requirements have been written. IN DESIGN means named design decisions or integration details remain open. IMPLEMENTED requires executable behavior and a code reference. VERIFIED requires actual test execution, scope/environment, and result evidence. A test plan, stub, mock, static documentation check, or successful push cannot by itself complete a runtime step. No row above marks runtime work completed.
