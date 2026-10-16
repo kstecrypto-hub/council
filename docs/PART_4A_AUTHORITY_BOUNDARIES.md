@@ -364,6 +364,12 @@ The original five Council members retain **primary intellectual authority over t
 
 The **non-voting** Integrator follows the Council's recommendation **by default**, and uses bounded discretion for ordinary implementation/methodology choices within the approved Contract. Material departure is an explicit versioned evidence/compatibility deviation visible to all five in post-integration review; mere model preference cannot rewrite Council direction. Safety/permission/contract/egress/budget changes require the existing user authorization, never another independent decision-maker. [Step 8.4 ADR-26](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md#91-adr-26--bounded-intellectual-discretion-for-the-final-integrator). **Design only, not implemented/tested.**
 
+## October 16 Step 8.5A approved Council-authored Blueprint authority (ADR-30/31)
+
+Every material Council integration recommendation, change of mind, dissent or counterevidence originates from actual **authenticated five original member** structured peer actions. The neutral trusted control app may **deterministically compile** the existing full message/action/evidence records into a versioned Decision Register and Blueprint, but may not invent agreement, missing initial member stances or suppress dissent. No separate solution-selection model or new intellectual role is created.
+
+Only after mechanically valid Blueprint freezing, legitimately satisfied current-generation **five-member** communication closeout/obligations and independently **verified** existing checkpoint read-access revocation may the Integration Agent receive the frozen Blueprint as executable guidance under **new separate source grants, budget and permissions**. Authored unresolved technical disagreement may remain disclosed; an unauthorized contract/permission change cannot proceed. See [Step 8.5A](STEP_8_5_STRUCTURED_COUNCIL_BLUEPRINT_HANDOFF.md). No code or tests.
+
 ## 11. Items intentionally delegated beyond Part 4A
 
 Part 4A remains the authority-boundary specification. Part 4 now defines the checkpoint open/review/close contract and the command/event/error semantics.
