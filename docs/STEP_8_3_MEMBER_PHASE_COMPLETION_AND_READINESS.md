@@ -76,6 +76,12 @@ A member may also declare **CONCLUDED_NO_VIABLE_CANDIDATE**, with actual investi
 
 **Step 8.4 remains open:** final review/coverage, sealed review/checkpoint integration, mandatory six-month-plus premortem, report editorial versus adjudicative authority, real user choice and termination/archival conditions. Do not mark Step 8 fully DESIGNED or implement the finalization engine from this Step 8.3 approval.
 
+## October 16 approved Step 8.4 handoff clarification — domain-general synthesis
+
+The owner clarified that **Step 8.4 culminates in ONE final integrated result**, not a user default choice between five independent candidates. Five authentic concluded investigations—including a truthful scoped `CONCLUDED_NO_VIABLE_CANDIDATE` that did not yield viable code—feed the **final comparison/synthesis checkpoint** when mechanically verified; an incomplete BLOCKED/BUDGET_EXHAUSTED member does not. The original five independently review each other's findings and construct a source/evidence-backed blueprint. A separate **non-voting Integration/Synthesis Agent** executes that plan in a separately authorized workspace; the same five original members then perform a **fresh sealed review of the actual integrated output**, before the existing premortem, report and explicit user acceptance. Applies to research, science, hardware, business analysis, documents and software; non-code outputs use evidence/artifact snapshots rather than fake required Git builds. No change to ordinary earlier all-five semantic implementation checkpoints or the approved Step 8.3 readiness intent/freeze separation. See [Step 8.4](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md).
+
+This is **approved Step 8.4 design direction**; exact DTO/integration contracts and completion tests remain IN DESIGN / NOT RUN.
+
 ## 7. Storage, integration and precise status
 
 Implement with **existing components** when build is later authorized: parent member + command gateway (authorial declarations), Part 3 PostgreSQL phase/arrival/candidate/evidence records, Part 5 durable operations and idempotency/event clock, trusted customer-local Git/snapshot service, existing Step 7 whole-member lifecycle controller/scheduler, Step 10 sandbox checker, and Step 11 bounded continuation. No separate phase completion daemon, no per-worker recovery manager, no new model assessor and no new storage database.
