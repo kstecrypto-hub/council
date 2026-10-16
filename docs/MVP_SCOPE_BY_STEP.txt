@@ -484,6 +484,12 @@ OCTOBER 16 — APPROVED FOUR STEP 8.4 INTERFACE POLICIES (ADR-26 TO ADR-29)
 - Six-month-plus premortem runs as its own SEALED round for five real original members on an exact frozen pair of integrated artifact version + provisional report version. Reveal atomically after five real submissions. Material later changes invalidate affected prior conclusions and cause appropriately scoped five-member reconsideration. Scenarios are HYPOTHETICAL, not future observations.
 - Detailed approved architecture: docs/STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md Section 9. Policies approved, exact Step 3/4/5 DTOs and transactional mechanics IN DESIGN. Runtime NOT STARTED, tests NOT RUN.
 
+OCTOBER 16 — APPROVED STEP 8.5A BLUEPRINT HANDOFF RULES (ADR-30/31)
+- Council members author material recommendations, counterevidence, changes of position, unresolved objections and direction as authenticated STRUCTURED existing checkpoint actions. Blueprint/Decision Register is assembled from source records, not a new LLM retroactively inferring member consensus or inventing silent agreement.
+- Distinguish Blueprint DRAFT, mechanically validated immutable FROZEN revision and EXECUTABLE HANDOFF. All-five current authentic member dialogue obligations + normal /done and closeouts, completed verifier work and independently OBSERVED local snapshot-grant revocation are required before Executable. Forced-incomplete closeout, missing fifth review, unsupported source, stale generation or unknown revocation cannot mark it executable.
+- Valid unresolved/disputed research/technical conclusions remain disclosed; new project/permission/egress/budget authority requires existing user approval. Final Integrator admission additionally uses separate source grants, workspace and protected integration and five-review budgets.
+- Full specification: docs/STEP_8_5_STRUCTURED_COUNCIL_BLUEPRINT_HANDOFF.md. 8.5A two policies approved; exact DTO/DDL/transaction handling and other Step 8.5 design still OPEN. No runtime implementation or tests.
+
 STEP 9 - PROVIDER ADAPTERS AND MODEL SWITCHING
 Status: TO DESIGN / IMPLEMENT
 
