@@ -485,6 +485,10 @@ After [Step 8.5A](STEP_8_5_STRUCTURED_COUNCIL_BLUEPRINT_HANDOFF.md) genuine veri
 
 A material new integrated revision is authored in the same logical Integrator's own reopened execution interval after current review closes and grant revocation is observed. Revised artifact identity is new; old reviewed hashes and passing checks remain historical. The new five-member review follows approved ADR-28 delta/full impact scopes, and frozen-integrated-report premortem follows ADR-29. Backend crash/replay preserves exact review target/generation and does not reveal partial assessments or duplicate reviewed output. [Step 8.5B](STEP_8_5B_FINAL_INTEGRATOR_EXECUTION_AND_RECOVERY.md). No implementation or tests.
 
+## October 16 — approved 8.5C+D simultaneous-submission protocol (ADR-36–40)
+
+[Combined Step 8.5C+D contract](STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md) approves lightweight bounded **per-current-checkpoint/review/premortem-generation internal API dispatch queues** to serialize conflicting submissions without forcing artificial arrival-time separation. The original five members can submit simultaneously: each authenticated seat's immutable sealed assessment is preserved, with one private row/seat/generation and existing **atomic all-five reveal only after the fifth genuine committed submission**. API queues improve contention but cannot replace PostgreSQL current message/obligation frontier locks, canonical event-clock ordering, idempotency, generation guards, cross-instance concurrency safety, private graph/UI/transport scopes or verified external read-grant revocation. In-memory queue ACKs are not durable acceptance. Revision and premortem scopes stay bound to immutable artifact/report hashes; no sixth integrator seat or additional gateway/microservice. Spec only, no implemented queues or tests.
+
 ## 12. Still to decide
 
 The next design pass must decide:
