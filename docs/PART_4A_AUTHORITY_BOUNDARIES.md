@@ -358,6 +358,12 @@ The **five equal Council members** alone own their independent investigations, c
 
 This applies equally to **software integration, academic/research synthesis, design/engineering synthesis, strategy and other user-approved Council deliverables**. The integration agent may not invent empirical data or obscure real disagreement. The user alone accepts final output. See [approved Step 8.4](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md). **Design only; runtime NOT STARTED, tests NOT RUN.**
 
+## October 16 — ADR-26 clarification: five-member intellectual direction precedes Integrator preference
+
+The original five Council members retain **primary intellectual authority over the evidence-backed integration direction**. The collective versioned Integration Blueprint carries a Council Decision Register of material alternatives, genuine sealed pre-discussion stances (when available), final post-discussion positions and changes of mind, evidence/source dependency, recommended approach, uncertainties and minority objections. Independent convergence is meaningful but rebuttable, not five proofs, automatic majority truth or a calibrated weighting algorithm. One member's verified contradiction can override many unsupported preferences.
+
+The **non-voting** Integrator follows the Council's recommendation **by default**, and uses bounded discretion for ordinary implementation/methodology choices within the approved Contract. Material departure is an explicit versioned evidence/compatibility deviation visible to all five in post-integration review; mere model preference cannot rewrite Council direction. Safety/permission/contract/egress/budget changes require the existing user authorization, never another independent decision-maker. [Step 8.4 ADR-26](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md#91-adr-26--bounded-intellectual-discretion-for-the-final-integrator). **Design only, not implemented/tested.**
+
 ## 11. Items intentionally delegated beyond Part 4A
 
 Part 4A remains the authority-boundary specification. Part 4 now defines the checkpoint open/review/close contract and the command/event/error semantics.
