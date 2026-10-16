@@ -498,6 +498,15 @@ OCTOBER 16 — APPROVED STEP 8.5B INTEGRATOR LIFECYCLE AND REVIEW POLICIES (ADR-
 - Applies to research and other non-code artifacts with approved content-hashed manifests, not only software Git commits.
 - Detailed design: docs/STEP_8_5B_FINAL_INTEGRATOR_EXECUTION_AND_RECOVERY.md. Policies APPROVED; exact Step 3/4/5 DTO/DDL/transaction code and runtime tests still IN DESIGN/NOT STARTED.
 
+OCTOBER 16 — APPROVED JOINT STEP 8.5C+D, EXACT-TIME SUBMISSION QUEUES (ADR-36 THROUGH 40)
+- One typed, versioned actor-authorized Blueprint -> Integrator -> verified integrated output -> five genuine original-member sealed review -> sealed premortem -> exact final report/package -> explicit user acceptance -> verified customer archive and cleanup lifecycle.
+- All artifacts, reviews, premortems and acceptance packages bind exact immutable hashes/generations; stale or mixed versions cannot count. Actual review completion is independent of domain/test correctness and user approval/delivery.
+- External effects follow existing durable PostgreSQL intent/outbox, committed event order, epoch fencing, correct budget reservations and UNKNOWN reconciliation. No false atomicity across PostgreSQL, Docker, provider, Git and artifact store.
+- OWNER REQUEST: small bounded per-conflict-aggregate queues WITHIN THE INTERNAL TRUSTED API to serialize simultaneous incoming commands. No millisecond staggering or sleeps, no new message broker or global queue bottleneck. Queued volatile requests do NOT count as accepted until durably persisted; PG locks, seat-unique constraints, expected generations, idempotency, event clock remain authoritative even across separate API workers.
+- Five original-member independent reviews remain genuinely private and all-five atomic; the final Integrator never counts as a reviewer. Premortem target is pinned integrated artifact + frozen provisional report pair.
+- User acceptance, actual protected checks, archive reconstruction/reference closure and verified cleanup are distinct; only actual required finalization proofs may mark RunCompleted.
+- AUTHORITATIVE docs/STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md. Policy APPROVED. Exact Step 3/4/5 DTO/DDL/migration and fault tests STILL IN DESIGN/NOT STARTED. Implementation/tests NOT RUN.
+
 STEP 9 - PROVIDER ADAPTERS AND MODEL SWITCHING
 Status: TO DESIGN / IMPLEMENT
 
