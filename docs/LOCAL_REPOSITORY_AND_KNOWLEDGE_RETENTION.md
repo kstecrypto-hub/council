@@ -85,6 +85,12 @@ A successful prior approach is a **starting point, not a guarantee**. Absence of
 
 Customer-local projects can reuse their own pinned recipes/code/artifacts when authorized; the generalized library can provide applicable patterns, not proprietary implementations. Measure effects on actual token spend, number of experiments, time and solution quality against a non-memory baseline; savings are a hypothesis, not yet demonstrated.
 
+## October 16 — Final integrated artifact, domain-neutral retention
+
+The owner approved **five independent investigations -> evidence-based collective synthesis -> one Final Integration/Synthesis Agent -> one integrated artifact -> five original-member reviews -> user acceptance**. The integrator creates a distinct customer-owned working repository **for software** or an authorized versioned artifact workspace **for research/design/docs**, never replacing the five original member repos or obtaining writable access to their private branches. Approved immutable source/evidence from closed final comparison checkpoints is shared with the integrator only through a new scoped trusted read grant; original checkpoint grants never leak across phases. References from the final output to each meaningful earlier contribution, exclusions, compatibility choices and changed revisions follow existing source/experiment graph and retention permissions.
+
+The long-term customer archive's *default accepted target* is the **actual versioned integrated deliverable** and authorized evidence/reconstruction manifest, **not** an automatically chosen winner from the five candidates. Original solutions, partial unsuccessful investigations and integration attempts remain attributable; retention/deletion stays separately customer-authorized. Domain-neutral research reports cannot invent data or claim unperformed validation; non-software artifacts do not require Git source. See [Step 8.4](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md). Architecture only; no implementation or tests.
+
 ## 5. Dependencies, status and outstanding decisions
 
 - **Steps 2/3:** change member repository authority and snapshot/export records from public-visibility toggles to local customer-controlled object/scope grants, while retaining optional external-backend metadata when authorized.
