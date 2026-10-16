@@ -69,6 +69,18 @@ A member's completed negative investigation can provide critical evidence and se
 
 [Full Step 8.4 domain-agnostic integration design](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md). **Policy approved, precise Step 3/4/5/8 finalization interfaces still IN DESIGN. Implementation NOT STARTED. Tests NOT RUN.**
 
+## October 16 — ADR-26–29 approved Step 8.4 interface refinements
+
+**ADR-26 — Bounded Integrator discretion.** The non-voting Final Integrator may make evidence-grounded technical or methodological decisions within the approved Blueprint/Project Contract and priorities; records alternatives, compatibility, limitations, source citations, provisional choices, exact produced revisions and any substantive deviation. Majority votes do not establish truth. New requirements, scope, egress, permissions or spending require explicit user approval.
+
+**ADR-27 — Protected project-specific budget pools.** Supersede former setup default **70% development / 25% review / 5% orchestration/finalization** for Council's mandatory integrated result. Propose and obtain user approval for *five distinct protected chargeability scopes*: (1) member development; (2) checkpoint comparison; (3) Final Integrator synthesis/execution; (4) five-member integrated output review/revisions and premortem; (5) orchestration/report/archival overhead. No universal replacement percentages approved, no silent borrowing, and integration admission requires protected minimum subsequent review allowance. Existing reservation/UNKNOWN liability and versioned user top-ups remain.
+
+**ADR-28 — Version-bound re-review.** First integrated product gets five independent sealed real reviews. Proven non-substantive/equivalent edits may preserve only evidenced applicability; localized substantive edits require five new independent **sealed delta reviews** of exact updated version and impacted dependencies; broad/high-risk/uncertain impact triggers five new **full** sealed reviews. Prior PASS never silently transfers to new material; model assertion of equivalence is not proof.
+
+**ADR-29 — Sealed five-member premortem.** All five original members independently evaluate the same pinned integrated deliverable and provisional report revision, withheld until **five actual submissions and atomic reveal** in a separate `SEALED_PREMORTEM` round. Hypothetical six-month-plus failure mechanisms are not observed future evidence. Material changes invalidate affected applicability and require scope-appropriate five-member reconsideration.
+
+These refine approved Step 8.4, not the other Council decisions. [Detailed authoritative design](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md#9-october-16-owner-approved-step-84-interface-decisions-adr-26-through-adr-29). **Architecture approved; exact DTO/DDL/reconciliation IN DESIGN; code NOT STARTED; tests NOT RUN.**
+
 ## Completion policy
 
 SPECIFIED means requirements have been written. IN DESIGN means named design decisions or integration details remain open. IMPLEMENTED requires executable behavior and a code reference. VERIFIED requires actual test execution, scope/environment, and result evidence. A test plan, stub, mock, static documentation check, or successful push cannot by itself complete a runtime step. No row above marks runtime work completed.
