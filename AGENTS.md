@@ -139,6 +139,16 @@ Do not give the integrator a sixth seat/vote or original members' writable Git a
 
 **Architecture only** — owner-approved policy, exact DTO/DDL/transaction/adapters still IN DESIGN, application implementation NOT STARTED, tests NOT RUN.
 
+## October 16 Step 8.4 approved integrator, budget, re-review and sealed premortem (ADR-26–29)
+
+See [Step 8.4 §9](docs/STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md). The non-voting Integrator can make attributed, bounded technical/methodological trade-offs only within the authorized Blueprint/Project Contract; material changes to permissions, scope, data egress, budget or acceptance criteria require user approval. Record alternatives, evidence, dissent, compatibility, rationale, provisional uncertainty and exact output revisions.
+
+The former 70/25/5 **setup default** is superseded for integrated final deliverables. The new default behavior is to **propose** five distinct protected, customer-approved spending scopes—private work, checkpoint comparison, integration/synthesis, five-member post-integration verification + premortem, and orchestration/report/export—without any universal default percentage. Integration requires its own protected scope and minimum protected next-step review capacity. No pool borrowing without approved immutable policy revision.
+
+First integrated version receives five real sealed independent reviews. New *substantive* versions receive five fresh sealed delta reviews when dependency impact is supported as local, otherwise full five-member reviews. Proven non-substantive equivalence may retain only specific justified old applicability, never invent a passed updated test. The six-month-plus premortem is a **separate five-member sealed** round against one frozen integrated artifact and provisional report pair; atomic all-five reveal, no fabricated future facts, material-change impact invalidation. Keep same five original reviewers; integrator has no vote.
+
+**Design-only change; exact Step 3/4/5 schema and runtime test contracts still IN DESIGN; implementation NOT STARTED, tests NOT RUN.**
+
 ## October 15 owner correction ADR-22: OpenAI Moderation API is hosted
 
 **Authoritative:** [docs/OPENAI_MODERATION_API_CORRECTION.md](docs/OPENAI_MODERATION_API_CORRECTION.md) supersedes all earlier local-model/OpenAI safeguard assumptions. Use `omni-moderation-latest` through OpenAI's hosted `/v1/moderations` only after the customer's *specific data-category/endpoint egress permission*. No local GPU/weights, no custom guard model, no unapproved upload of company code, and do not use moderation as deterministic authorization, DLP, prompt-injection defense or file scanner. No silent fail-open. Keep unified trust, five member autonomy, command-only file results, checkpoint consent/revocation, truthful design-only status. No implementation/tests.
