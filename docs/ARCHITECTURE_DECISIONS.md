@@ -103,6 +103,20 @@ These refine approved Step 8.4, not the other Council decisions. [Detailed autho
 
 [Full Step 8.5B specification](STEP_8_5B_FINAL_INTEGRATOR_EXECUTION_AND_RECOVERY.md). These are **owner-approved design policies only**. Step 8 and exact Step 3/4/5 DTO/DDL/transaction/recovery integration remain IN DESIGN. Application code/migrations NOT STARTED; tests NOT RUN.
 
+## October 16 — approved combined Step 8.5C+D, ADR-36–40
+
+**ADR-36** — One existing typed actor/command/event/state/transition lineage, from verified executable Blueprint through one integrated result, five original-member sealed review, premortem, final package, user decision and observed customer delivery. Do not introduce a second global lifecycle, sixth Council seat or independent judge.
+
+**ADR-37** — Immutable exact Blueprint/contract/Integrator-artifact/review-generation/premortem artifact+report/final user package version and hash boundaries. Stale or mixed-version reviews, plans, user acceptance or evidence cannot advance the current result.
+
+**ADR-38** — Committed intent/outbox precedes actual Docker/Git/provider/artifact effects; stale epochs, idempotency, protected budgets and UNKNOWN consequence/cost reconciliation govern retry and recovery. A model assertion, API timeout or request for freeze/cleanup is never the observed effect.
+
+**ADR-39** — Separate factual dimensions for actual artifact existence, protected test coverage, five real review submissions/dispositions, five sealed premortems, exact user acceptance and customer-controlled verified archive/reference closure/cleanup. Only required satisfied observed finalization guards yield `RunCompleted`; a reviewed failure is not successful software delivery.
+
+**ADR-40 (owner-added)** — **Small bounded keyed submission queues managed by the internal trusted API**, so exactly simultaneous commands targeting the same mutable checkpoint, review, premortem, integrator or acceptance aggregate are processed safely in order **without sleeps or artificial time staggering**. The queue is an optimization, **not** the correctness boundary: authoritative PG locks/unique seat/generation constraints, canonical event-clock ordering, scoped idempotency and epoch/version guards still hold across multiple server processes and crashes. Durably acknowledge only a committed canonical request/receipt or durable inbox record; never silently drop previously accepted work. Distinct same-time original-member reviews both count exactly once, with atomic reveal after all five.
+
+The owner requested C and D **as one document**, [authoritative joint specification](STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md), instead of separate potentially inconsistent protocols. **Owner-approved policy only; exact runnable DTO/SQL/scheduling and failure-injection tests IN DESIGN/NOT STARTED; Step 8 not marked completed.**
+
 ## Completion policy
 
 SPECIFIED means requirements have been written. IN DESIGN means named design decisions or integration details remain open. IMPLEMENTED requires executable behavior and a code reference. VERIFIED requires actual test execution, scope/environment, and result evidence. A test plan, stub, mock, static documentation check, or successful push cannot by itself complete a runtime step. No row above marks runtime work completed.
