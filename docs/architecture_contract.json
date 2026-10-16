@@ -316,6 +316,46 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-36",
+      "design_status": "OWNER_APPROVED_STEP8_5CD_POLICY_PHYSICAL_DTO_DDL_API_QUEUE_IMPLEMENTATION_PENDING",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-37",
+      "design_status": "OWNER_APPROVED_STEP8_5CD_POLICY_PHYSICAL_DTO_DDL_API_QUEUE_IMPLEMENTATION_PENDING",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-38",
+      "design_status": "OWNER_APPROVED_STEP8_5CD_POLICY_PHYSICAL_DTO_DDL_API_QUEUE_IMPLEMENTATION_PENDING",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-39",
+      "design_status": "OWNER_APPROVED_STEP8_5CD_POLICY_PHYSICAL_DTO_DDL_API_QUEUE_IMPLEMENTATION_PENDING",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-40",
+      "design_status": "OWNER_APPROVED_STEP8_5CD_POLICY_PHYSICAL_DTO_DDL_API_QUEUE_IMPLEMENTATION_PENDING",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -559,7 +599,12 @@
       "8.5B_ADR32_PERSISTENT_NONVOTING_LOGICAL_FINAL_INTEGRATOR",
       "8.5B_ADR33_INTEGRATOR_AUTHORED_OUTPUT_INTENT_VERSUS_TRUSTED_VERIFIED_PIN",
       "8.5B_ADR34_CRASH_SAFE_SAME_LOGICAL_INTEGRATOR_RECONCILE_UNKNOWN",
-      "8.5B_ADR35_EXACT_VERIFIED_ARTIFACT_FIVE_ORIGINAL_SEALED_REVIEW"
+      "8.5B_ADR35_EXACT_VERIFIED_ARTIFACT_FIVE_ORIGINAL_SEALED_REVIEW",
+      "8.5CD_ADR36_UNIFIED_TYPED_EXECUTION_AND_STATE_TRANSITIONS",
+      "8.5CD_ADR37_IMMUTABLE_EXACT_ARTIFACT_REVIEW_PREMORTEM_USER_GENERATIONS",
+      "8.5CD_ADR38_OUTBOX_UNKNOWN_AND_EPOCH_RECOVERY",
+      "8.5CD_ADR39_USER_ACCEPTANCE_SEPARATE_FROM_VERIFIED_ARCHIVE_CLEANUP",
+      "8.5CD_ADR40_SMALL_KEYED_INTERNAL_API_SUBMISSION_QUEUES_DB_AUTHORITATIVE"
     ],
     "specification_path": "docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md",
     "runtime_implementation_status": "NOT_STARTED",
@@ -606,7 +651,10 @@
       "step8_5_post_integration_review_premortem_exact_states",
       "step8_5b_exact_integrator_actor_and_output_intent_verified_observation_DTOs",
       "step8_5b_workspace_identity_provision_and_unknown_effect_recovery",
-      "step8_5b_integrated_output_review_generation_closeout_and_revision_transaction_guards"
+      "step8_5b_integrated_output_review_generation_closeout_and_revision_transaction_guards",
+      "step8_5cd_exact_typed_commands_finalization_DTO_and_DDL_reconciliation",
+      "step8_5cd_internal_api_keyed_queues_multi_instance_transaction_fault_tests",
+      "step8_5cd_final_package_archive_verified_cleanup_runtime_acceptance_tests"
     ],
     "implementation_and_tests_pending": true,
     "member_controls_local_worker_count_and_depth": true,
@@ -838,6 +886,44 @@
       "cross_domain": true,
       "implementation_status": "NOT_STARTED",
       "runtime_tests_status": "NOT_RUN"
+    },
+    "step8_5cd": {
+      "status": "OWNER_APPROVED_FIVE_POLICY_DECISIONS_EXACT_IMPLEMENTATION_SCHEMAS_AND_TESTS_IN_DESIGN",
+      "specification_path": "docs/STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md",
+      "combined_document_required": true,
+      "one_existing_typed_command_state_machine": true,
+      "precise_bound_versions": [
+        "APPROVED_CONTRACT",
+        "EXECUTABLE_BLUEPRINT",
+        "INTEGRATION_EPOCH_AND_OUTPUT_MANIFEST",
+        "FIVE_MEMBER_SEALED_REVIEW_GENERATION",
+        "FROZEN_ARTIFACT_AND_PROVISIONAL_REPORT_PREMORTEM_PAIR",
+        "FINAL_ACCEPTANCE_PACKAGE",
+        "VERIFIED_CUSTOMER_ARCHIVE_AND_CLEANUP"
+      ],
+      "same_five_original_members_required": true,
+      "integrator_non_voting": true,
+      "crash_recovery": "DURABLE_CANONICAL_INTENT_THEN_OBSERVED_EXTERNAL_EFFECT_UNKNOWN_PRESERVED_AND_STALE_EPOCH_FENCED",
+      "completion_requires": "APPLICABLE_ACTUAL_ACCEPTED_ARTIFACT_CHECKS_AND_USER_CONSENT_PLUS_VERIFIED_CUSTOMER_ARCHIVE_REFERENCE_RESTORATION_AND_CLEANUP",
+      "queue_policy": {
+        "scope": "SMALL_BOUNDED_KEY_PARTITIONED_SUBMISSION_LANES_WITHIN_EXISTING_TRUSTED_INTERNAL_API",
+        "owner_requested": true,
+        "conflict_keys": "CHECKPOINT_BLUEPRINT_INTEGRATION_REVIEW_PREMORTEM_AND_ACCEPTANCE_PER_RUN_AND_GENERATION",
+        "serialize_conflicting_processing": true,
+        "accept_same_time_distinct_seat_submissions": true,
+        "require_artificial_millisecond_staggering": false,
+        "allow_parallel_independent_runs": true,
+        "global_single_fifo": false,
+        "requires_extra_redis_or_kafka": false,
+        "in_memory_queue_is_authoritative": false,
+        "multi_api_correctness_guarantee": "EXISTING_POSTGRES_EVENT_CLOCK_IDEMPOTENCY_LOCKS_AND_GENERATION_SEAT_UNIQUENESS",
+        "durable_ack_requirement": "ACK_ONLY_AFTER_CANONICAL_COMMIT_OR_DURABLE_INBOX_OPERATION_COMMIT",
+        "overflow": "EXPLICIT_BACKPRESSURE_NOT_DROPPED_ACKNOWLEDGED_COMMAND",
+        "five_sealed_review_reveal": "ONE_ATOMIC_EVENT_AFTER_FIVE_AUTHENTIC_CURRENT_SEAT_SUBMISSIONS"
+      },
+      "implementation_status": "NOT_STARTED",
+      "runtime_tests_status": "NOT_RUN",
+      "security_tests_status": "NOT_RUN"
     }
   },
   "checkpoint_public_github_default": false,
