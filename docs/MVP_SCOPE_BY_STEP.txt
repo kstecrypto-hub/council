@@ -465,12 +465,10 @@ October 16 approved Step 8.4 — one collective integrated output in ALL fields
 - One separately authorized **non-voting final Integration/Synthesis LLM**, within user-approved integration budget and its own isolated customer-owned workspace, constructs **ONE final integrated result** (code/application, evidence-grounded research synthesis, design, investigation report or other contract-driven artifact).
 - SAME original five members independently review the ACTUAL pinned integrated output again; five sealed submissions before reveal, verified evidence and new version-bound checks for material modifications. No integrator vote; no inherited passes from prior candidate versions.
 - Run the existing six-month-plus hypothetical premortem on the integrated result/provisional report, keep limitations and dissent, then explicitly present the ONE result for user acceptance. Verified customer-owned export/cleanup is required to call finalization complete.
-- Existing 70/25/5 budget is only a suggested configurable starting split; integration and post-integration review require separately approved allowances, never an implicit 5% assumption.
+- The older 70/25/5 suggestion is SUPERSEDED as a default for mandatory integration. Propose five protected project-specific, user-approved budget scopes with no fixed universal replacement, including independent member development, checkpoint review, integrator, five-person post-integrator review plus premortem, and overhead.
 - Full design: docs/STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md. Core policy APPROVED, exact integration DTO/schema/atomic effects IN DESIGN. Implementation NOT STARTED; tests NOT RUN.
 
 Defer until after MVP evidence
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- Sophisticated adaptive-checkpoint replanningDefer until after MVP evidence
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Sophisticated adaptive-checkpoint replanning beyond the initial project-specific milestone plan.
 - Complex voting/agenda machinery.
@@ -478,6 +476,13 @@ Defer until after MVP evidence
 - Separate experiment optimizers/supervisors, fixed Karpathy time-boxes, global scalar winner-selection metrics, and complex automatic experiment-tree exploration.
 - Every planned review phase if it does not affect the core experiment.
 
+
+OCTOBER 16 — APPROVED FOUR STEP 8.4 INTERFACE POLICIES (ADR-26 TO ADR-29)
+- Final Integrator is a NON-VOTING execution role with BOUNDED independent technical/methodological decisions inside the user-approved Blueprint and Contract. Attribute contested alternatives, actual evidence/compatibility, trade-offs, provisional choices, output revisions and material deviations. For hard requirement, scope, consent, egress or budget changes, require explicit user approval.
+- Former 70/25/5 development/review/overhead proposal is SUPERSEDED as the DEFAULT because one final product must be integrated. Propose FIVE project-adapted user-approved protected allowances: five independent-member development, checkpoint comparison, integration/synthesis execution, five-member post-integration verification and premortem, and orchestration/report/archive overhead. No mandatory replacement percentage; no protected funds silently borrowed. Admit integration only with protected minimum review capacity.
+- Initial integrated artifact gets FIVE independently SEALED actual-output reviews. Every substantive new version requires FIVE genuinely new version-bound sealed reviews, DELTA for defensibly localized impact and FULL for foundational/high-risk/unknown impact. Demonstrably non-substantive equivalence may preserve only appropriately evidenced prior applicability. No old PASS transferred blindly.
+- Six-month-plus premortem runs as its own SEALED round for five real original members on an exact frozen pair of integrated artifact version + provisional report version. Reveal atomically after five real submissions. Material later changes invalidate affected prior conclusions and cause appropriately scoped five-member reconsideration. Scenarios are HYPOTHETICAL, not future observations.
+- Detailed approved architecture: docs/STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md Section 9. Policies approved, exact Step 3/4/5 DTOs and transactional mechanics IN DESIGN. Runtime NOT STARTED, tests NOT RUN.
 
 STEP 9 - PROVIDER ADAPTERS AND MODEL SWITCHING
 Status: TO DESIGN / IMPLEMENT
