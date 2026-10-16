@@ -384,6 +384,14 @@ On checkpoint close: **atomically fence new chat and artifact-read admission und
 
 **STATUS:** approved direction; exact attempt/reconciliation DTOs, atomic guard receipt boundaries, content cache invalidation, transfer cancellation and physical access checks are **IN DESIGN**. No application code, migration, integration test, benchmark, evaluation or production claim.
 
+## October 16 — Step 8.4 integration/synthesis effects (owner-approved policy; precise transactions IN DESIGN)
+
+One verified all-five final investigation set -> normal sealed final-comparison checkpoint -> evidence/version-bound synthesis blueprint -> **observed closure and recipient read-revocation** -> separate trusted integration source grants -> one non-voting integrator produces one content-hashed customer-owned deliverable -> **five sealed post-integration member reviews** -> version-bound premortem/report -> explicit user acceptance -> verified customer archive/cleanup. Every phase is separate durable state/operation intent and observed effect. The integration agent is **not** a sixth member or authority to extend its source permissions, provider egress or spending.
+
+Record each blueprint/artifact generation, exact source hashes, permissible integration read grants, associated provider/host operations, source-to-result provenance, post-integration sealed reviewer submissions, invalidation of obsolete tests/reviews when material revisions occur, and permitted standalone non-code final artifacts. The trusted worker may execute side effects **only after committed intent**, with idempotency, event clock, outbox, execution epochs, per-phase integration budget reservations and UNKNOWN reconciliation. Never copy snapshot grants from the earlier comparison checkpoint to integration by implication. No user acceptance or completed final archive can be inferred from generated source/document text or member votes.
+
+See [owner-approved Step 8.4](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md). Runtime migrations/transactions/tests NOT STARTED/NOT RUN.
+
 ## 17. ADR-17 local-source consent and checkpoint transactions (DESIGN REOPENED)
 
 The new [local-first repository/knowledge design](LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md) is authoritative over former PUBLIC GitHub semantics. `PublishCheckpointSnapshots` commits desired export/grant operation intent and outbox, then verifies local tree snapshot hashes, selected content and scoped read grants outside SQL. Only confirmed observations lead to `CheckpointSnapshotsAvailable`. `RevokeCheckpointSnapshotAccess` separately requests cleanup, and `CheckpointSnapshotAccessRevoked` requires verified scope/route closure. The same committed-event/idempotency/UNKNOWN controls remain. A local read grant does not imply customer permission to send source to remote AI providers or share learning outside the tenant.
