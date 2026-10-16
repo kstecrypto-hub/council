@@ -351,7 +351,7 @@
     },
     {
       "id": "ADR-40",
-      "design_status": "OWNER_APPROVED_STEP8_5CD_POLICY_PHYSICAL_DTO_DDL_API_QUEUE_IMPLEMENTATION_PENDING",
+      "design_status": "SUPERSEDED_BY_OWNER_2026_10_16_NO_NEW_API_QUEUE_REUSE_EXISTING_STEP7_STEP5_DOCKER",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -604,7 +604,7 @@
       "8.5CD_ADR37_IMMUTABLE_EXACT_ARTIFACT_REVIEW_PREMORTEM_USER_GENERATIONS",
       "8.5CD_ADR38_OUTBOX_UNKNOWN_AND_EPOCH_RECOVERY",
       "8.5CD_ADR39_USER_ACCEPTANCE_SEPARATE_FROM_VERIFIED_ARCHIVE_CLEANUP",
-      "8.5CD_ADR40_SMALL_KEYED_INTERNAL_API_SUBMISSION_QUEUES_DB_AUTHORITATIVE"
+      "8.5CD_ADR40_SUPERSEDED_REUSE_STEP7_SCHEDULER_STEP5_POSTGRES_DOCKER"
     ],
     "specification_path": "docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md",
     "runtime_implementation_status": "NOT_STARTED",
@@ -653,7 +653,6 @@
       "step8_5b_workspace_identity_provision_and_unknown_effect_recovery",
       "step8_5b_integrated_output_review_generation_closeout_and_revision_transaction_guards",
       "step8_5cd_exact_typed_commands_finalization_DTO_and_DDL_reconciliation",
-      "step8_5cd_internal_api_keyed_queues_multi_instance_transaction_fault_tests",
       "step8_5cd_final_package_archive_verified_cleanup_runtime_acceptance_tests"
     ],
     "implementation_and_tests_pending": true,
@@ -888,7 +887,7 @@
       "runtime_tests_status": "NOT_RUN"
     },
     "step8_5cd": {
-      "status": "OWNER_APPROVED_FIVE_POLICY_DECISIONS_EXACT_IMPLEMENTATION_SCHEMAS_AND_TESTS_IN_DESIGN",
+      "status": "OWNER_APPROVED_ADR36_39_ADR40_SUPERSEDED_LEAN_EXISTING_SCHEDULER_PG_DOCKER_IMPLEMENTATION_IN_DESIGN",
       "specification_path": "docs/STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md",
       "combined_document_required": true,
       "one_existing_typed_command_state_machine": true,
@@ -906,24 +905,26 @@
       "crash_recovery": "DURABLE_CANONICAL_INTENT_THEN_OBSERVED_EXTERNAL_EFFECT_UNKNOWN_PRESERVED_AND_STALE_EPOCH_FENCED",
       "completion_requires": "APPLICABLE_ACTUAL_ACCEPTED_ARTIFACT_CHECKS_AND_USER_CONSENT_PLUS_VERIFIED_CUSTOMER_ARCHIVE_REFERENCE_RESTORATION_AND_CLEANUP",
       "queue_policy": {
-        "scope": "SMALL_BOUNDED_KEY_PARTITIONED_SUBMISSION_LANES_WITHIN_EXISTING_TRUSTED_INTERNAL_API",
-        "owner_requested": true,
-        "conflict_keys": "CHECKPOINT_BLUEPRINT_INTEGRATION_REVIEW_PREMORTEM_AND_ACCEPTANCE_PER_RUN_AND_GENERATION",
-        "serialize_conflicting_processing": true,
-        "accept_same_time_distinct_seat_submissions": true,
-        "require_artificial_millisecond_staggering": false,
-        "allow_parallel_independent_runs": true,
-        "global_single_fifo": false,
-        "requires_extra_redis_or_kafka": false,
-        "in_memory_queue_is_authoritative": false,
-        "multi_api_correctness_guarantee": "EXISTING_POSTGRES_EVENT_CLOCK_IDEMPOTENCY_LOCKS_AND_GENERATION_SEAT_UNIQUENESS",
-        "durable_ack_requirement": "ACK_ONLY_AFTER_CANONICAL_COMMIT_OR_DURABLE_INBOX_OPERATION_COMMIT",
-        "overflow": "EXPLICIT_BACKPRESSURE_NOT_DROPPED_ACKNOWLEDGED_COMMAND",
-        "five_sealed_review_reveal": "ONE_ATOMIC_EVENT_AFTER_FIVE_AUTHENTIC_CURRENT_SEAT_SUBMISSIONS"
+        "status": "SUPERSEDED_NO_NEW_INTERNAL_API_SUBMISSION_QUEUE",
+        "reuse_existing_step7_whole_agent_low_spec_resource_queue": true,
+        "reuse_existing_step5_pg_transactions_idempotency_seat_uniqueness": true,
+        "distinct_simultaneous_seat_submissions_both_valid": true,
+        "atomic_reveal_after_five_genuine_seats": true,
+        "additional_api_per_key_lanes_required": false,
+        "additional_message_broker_required": false,
+        "timing_stagger_or_sleep_required": false,
+        "existing_runtime_operations_outbox_unchanged": true
       },
       "implementation_status": "NOT_STARTED",
       "runtime_tests_status": "NOT_RUN",
-      "security_tests_status": "NOT_RUN"
+      "security_tests_status": "NOT_RUN",
+      "recovery_policy": {
+        "docker": "CONTAINER_ISOLATION_VOLUME_PERSISTENCE_STOP_RECREATE",
+        "step7": "CURRENT_LOGICAL_AGENT_SCHEDULER_AUTHORIZATION",
+        "step5": "DURABLE_OPERATION_LEDGER_UNKNOWN_EXTERNAL_EFFECT_RECONCILIATION",
+        "no_new_recovery_manager": true,
+        "process_ram_persistence_assumed": false
+      }
     }
   },
   "checkpoint_public_github_default": false,
