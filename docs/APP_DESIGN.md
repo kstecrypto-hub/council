@@ -657,6 +657,14 @@ Settings manage provider credentials, model compatibility, connectors, permissio
 
 The UI exposes concise rationales and recorded actions, not a promise to reveal every internal reasoning step.
 
+### October 16 — Approved domain-general collective synthesis and final integration
+
+**The final intended deliverable is one independently re-reviewed integrated product/result, not a default best-of-five winner election.** Preserve five fully independent member approaches, final comparison with sealed assessments and evidence-linked discussion, and a **versioned Integration/Synthesis Blueprint** recording what each branch did better, supported contributions, compatibility trade-offs, exclusions and unresolved conflicts. A **dedicated non-voting Integration/Synthesis LLM** executes the blueprint inside a separately authorized and isolated workspace, producing a single target artifact under a user-approved **integration-specific** model/tool/resource budget. Its role is implementation/assembly with attributable decisions, not intellectual governance of the five members. No silent rights to peer Git repositories or unapproved data egress.
+
+The same five original members then **independently review the new integrated artifact again** against its exact version, final contract, evidence and observed verification. Sealed assessments and normal gateway/verification-only `/work` rules apply; material revisions produce new versions and invalidate affected earlier verification/reviews until actually re-established. Conduct the existing six-month-plus premortem on the **frozen integrated artifact and provisional report**, preserving hypothetical status and genuine disagreement. Final report editorial authority, explicit user acceptance, customer-owned archive verification and cleanup remain as already designed.
+
+**Applies equally outside software:** five independent research analyses -> one carefully sourced integrated research report/protocol; five engineering proposals -> one integrated design; and similarly for analysis/strategy/document projects. There need not be five fully complete competing implementations, nor Git/code-based evidence for non-software artifacts. Negative member outcomes contribute evidence without being mislabeled working solutions. The new integrator is not a sixth reviewer. The current 70/25/5 *suggested* budget split must be explicitly reallocated/approved to reserve meaningful synthesis and post-integration review capacity. [Complete Step 8.4 architecture](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md). **Architecture only—no implementation or tests.**
+
 ## 12. Final-report rules
 
 A drafting agent can assemble the report, but it has editorial, not adjudicative, authority.
