@@ -83,6 +83,14 @@ A member's completed negative investigation can provide critical evidence and se
 
 These refine approved Step 8.4, not the other Council decisions. [Detailed authoritative design](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md#9-october-16-owner-approved-step-84-interface-decisions-adr-26-through-adr-29). **Architecture approved; exact DTO/DDL/reconciliation IN DESIGN; code NOT STARTED; tests NOT RUN.**
 
+## October 16 — ADR-30 and ADR-31 approved Step 8.5A handoff rules
+
+**ADR-30 — Council-authored structured integration choices:** original member identities contribute recommendations, objections, supporting/counterevidence and changes of position as **real authenticated typed actions during the final comparison discussion**. The existing trusted backend assembles and validates the versioned Blueprint Decision Register from those source actions and their original complete message/evidence references; **no AI-generated retrospective consensus**, no fabricated silent member agreement or fifth review, no new solution supervisor. A supported Council recommendation controls the Integrator's default direction while material dissent and legitimate uncertainty persist.
+
+**ADR-31 — Immutable freeze and verified executable handoff:** a structurally validated Blueprint is first frozen at an exact source/contract/decision version. It becomes **executable guidance only after all five current-generation member discussion obligations, normal /done certificates and closeouts, no active required verification and actual checkpoint closure with independently observed local snapshot-grant/route revocation**. A frozen hash, model readiness claim or **forced incomplete** closeout alone cannot admit integration; accepted DISPUTED/DEFERRED limitations do not falsely become agreement, while unapproved material project/permission changes require user authorization. The Final Integrator separately needs approved new source grant, budget, provider/egress and sandbox admission.
+
+[Full Step 8.5A rule specification](STEP_8_5_STRUCTURED_COUNCIL_BLUEPRINT_HANDOFF.md). **Only these two handoff policies are owner-approved; complete Step 8.5 exact DTO/DDL/recovery and Step 8 overall remain IN DESIGN. No application implementation, migrations or runtime tests.**
+
 ## Completion policy
 
 SPECIFIED means requirements have been written. IN DESIGN means named design decisions or integration details remain open. IMPLEMENTED requires executable behavior and a code reference. VERIFIED requires actual test execution, scope/environment, and result evidence. A test plan, stub, mock, static documentation check, or successful push cannot by itself complete a runtime step. No row above marks runtime work completed.
