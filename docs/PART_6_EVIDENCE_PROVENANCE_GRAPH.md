@@ -256,6 +256,14 @@ Step 6 does not require:
 
 These may be revisited only when real project/evaluation evidence justifies them.
 
+## October 16 — approved source and integrated-version impact semantics (Step 8.4 ADR-26/28/29)
+
+The five independent candidates/findings feed a source/evidence-bound Integration/Synthesis Blueprint. A distinct non-voting integrator may make **recorded bounded technical choices** within user-approved priorities, referencing alternatives, compatible constraints, underlying evidence, dissent and exact revised artifact versions. Graph mechanical edges record exact source/evidence/experiment/claim versions -> blueprint contribution -> integration decision/deviation -> output artifact version -> actual verification -> five-member reviewed disposition -> premortem concern (hypothetical). An integrator judgment of technical merit remains an **attributed interpretation**, not a trusted mechanical fact.
+
+For integrated revisions, affected claims, protected checks, source dependencies and report lines are traced with existing explicit dependency/support-group relationships. **A missing graph edge is not proof of independence**. Where unchanged applicability can be demonstrated, record exact equivalence evidence; for localized substantive updates, require five authentic fresh sealed **delta reviews** of the new version and its dependent scope, while wide/high-risk/unknown changes demand full five-member sealed review. Prior PASSED results remain historical facts about their own precise versions, never assertions that an updated artifact passed without real evidence.
+
+A frozen integrated deliverable/report pair is the exact subject of **five independently sealed six-month-plus premortem submissions**. Hypothetical risk mechanisms, present-day suggested tests and later reassessment triggers remain separate from observed evidence. Material changes invalidate affected current applicability without rewriting history. No automatic general-purpose truth scores, no fifth reviewer substitution, no fabricated studies or tests. [Full policy](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md). **Design only; not implemented or tested.**
+
 ## 16. Completion boundary
 
 Part 6 is DESIGNED because the product-level behavior is fixed for:
