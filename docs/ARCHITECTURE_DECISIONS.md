@@ -91,6 +91,18 @@ These refine approved Step 8.4, not the other Council decisions. [Detailed autho
 
 [Full Step 8.5A rule specification](STEP_8_5_STRUCTURED_COUNCIL_BLUEPRINT_HANDOFF.md). **Only these two handoff policies are owner-approved; complete Step 8.5 exact DTO/DDL/recovery and Step 8 overall remain IN DESIGN. No application implementation, migrations or runtime tests.**
 
+## October 16 — ADR-32 through ADR-35: approved Step 8.5B Final Integrator runtime policies
+
+**ADR-32 — Persistent logical non-voting Integrator:** one current logical execution identity, separately authorized customer-owned isolated durable workspace/manifest and parent-scoped tools/worker calls, persists through provider sessions/authorized whole-container restarts. No sixth Council peer, no writable original member repos, no controller-side per-worker restart manager and no promise to resume in-memory processes.
+
+**ADR-33 — Separate authored output intent from verified frozen result:** Integrator declares its intended exact code/non-code output and evidence/limitations. The trusted runtime independently fences writes, reconciles relevant pending/UNKNOWN effects, verifies immutable pinned artifact/hash/authorized source scope and reference reconstruction, quiesces/suspends the whole Integrator and observes resource release; **only then** records an integrated result eligible for peer review. Model text is neither an actual artifact nor protected test PASS.
+
+**ADR-34 — Crash-safe continuation within existing Step 5/7 trust:** stable integration identity/workspace and attributable decisions persist; crashed/timeout/expired grant and exhausted budget operations fence stale epochs, reconcile real Docker/Git/artifact/provider and possible cost effects, and resume same logical agent only with renewed scopes, resource and protected review budget. Never blindly retry consequential UNKNOWN effects, fabricate readiness or assume Docker restored worker stacks.
+
+**ADR-35 — Five original members review only exact verified integrated output:** a distinct immutable read-only artifact and version-bound post-integration review generation is visible to the same **five original Council member seats** after mechanical freeze and approved grants. Five authentic sealed submissions are required; the Integrator may not count as a member or alter the reviewed candidate. Material new versions under same logical Integrator follow ADR-28 five delta/full sealed review, ADR-29 premortem, explicit user acceptance and verified archive.
+
+[Full Step 8.5B specification](STEP_8_5B_FINAL_INTEGRATOR_EXECUTION_AND_RECOVERY.md). These are **owner-approved design policies only**. Step 8 and exact Step 3/4/5 DTO/DDL/transaction/recovery integration remain IN DESIGN. Application code/migrations NOT STARTED; tests NOT RUN.
+
 ## Completion policy
 
 SPECIFIED means requirements have been written. IN DESIGN means named design decisions or integration details remain open. IMPLEMENTED requires executable behavior and a code reference. VERIFIED requires actual test execution, scope/environment, and result evidence. A test plan, stub, mock, static documentation check, or successful push cannot by itself complete a runtime step. No row above marks runtime work completed.
