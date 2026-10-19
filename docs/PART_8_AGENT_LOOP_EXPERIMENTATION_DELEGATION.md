@@ -1,6 +1,6 @@
 # Part 8 - Agent loop, structured experimentation, and delegation
 
-**Design status:** IN DESIGN. **Decisions 8.1 (nested Karpathy-style experimentation), 8.2 (sandbox-local worker autonomy/resource monitoring), and 8.2a (Docker-volume persistence without a central worker-recovery manager): ACCEPTED, October 14, 2026.** Complete action protocol, final-phase/failure transitions and full Step 8 closure remain to be designed.
+**Design status:** DESIGNED (October 19 exact v1 contract; runtime NOT STARTED). **Decisions 8.1 (nested Karpathy-style experimentation), 8.2 (sandbox-local worker autonomy/resource monitoring), and 8.2a (Docker-volume persistence without a central worker-recovery manager): ACCEPTED, October 14, 2026.** Complete action protocol, final-phase/failure transitions and full Step 8 closure remain to be designed.
 
 **Implementation:** NOT STARTED. **Runtime/evaluation tests:** NOT RUN.
 
@@ -178,3 +178,8 @@ Step 8's member autonomy and Karpathy-style optional hypothesis/test loop are un
 
 
 **October 16 owner simplification (supersedes earlier ADR-40 queue requirement):** Do **not** add per-key internal-API submission queues, queue-specific DTOs or a new failure-recovery manager. Reuse the existing **Step 7 low-spec whole-agent scheduler**, existing **Step 5 PostgreSQL transaction/locks/idempotency/outbox** for simultaneous submissions, and **Docker persistent volumes/container lifecycle** for infrastructure recovery. The existing trusted runtime—not Docker—still owns agent permissions/checkpoint/budgets and reconciliation of uncertain external API/Git/provider effects. ADR-36–39 remain approved; ADR-40 is **SUPERSEDED**. [Authoritative lean 8.5C+D specification](STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md). **Architecture only, no runtime implementation or tests.**
+
+
+## October 19 — final v1 design completion boundary
+
+See [Step 2 snapshot protocol](STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md), [Steps 3–5 exact contracts](STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md), [Step 8 agent/finalization contract](STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md), and [unrun verification cases](STEP_2_TO_8_VERIFICATION_MATRIX_V1.md). Earlier 'interfaces IN DESIGN' annotations are historical and superseded **for the exact v1 contract**. Steps 2–5 and 8 are **DESIGNED ONLY**; provider/OS implementation choices in Steps 9–11 remain to be made. No executable implementation, SQL migrations or runtime tests.
