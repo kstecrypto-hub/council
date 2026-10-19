@@ -508,7 +508,7 @@ OCTOBER 16 — APPROVED JOINT STEP 8.5C+D, SIMULTANEOUS SUBMISSIONS WITHOUT EXTR
 - AUTHORITATIVE docs/STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md. Policy APPROVED. Exact Step 3/4/5 DTO/DDL/migration and fault tests STILL IN DESIGN/NOT STARTED. Implementation/tests NOT RUN.
 
 STEP 9 - PROVIDER ADAPTERS AND MODEL SWITCHING
-Status: TO DESIGN / IMPLEMENT
+Status: DESIGNED - owner-approved v1 provider/shared-MCP architecture, implementation NOT STARTED, runtime tests NOT RUN
 
 Complete product
 ~~~~~~~~~~~~~~~~
@@ -518,8 +518,9 @@ Complete product
 - Capability registry, pricing, compatibility tests, fallback policy.
 - Provider-specific data-sharing restrictions.
 
-MVP must implement
-~~~~~~~~~~~~~~~~~~
+MVP must implement (design specified; not yet implemented)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- One trusted common model gateway with initially DeepSeek, OpenAI and Anthropic remote adapter targets, with compatible local inference only after actual feature/resource verification; no exact supported model IDs claimed before testing.
 - A common model adapter interface.
 - Per-user BYOK credential configuration and verification for enabled remote providers, with credential references (not raw keys) used by the trusted gateway.
 - Local-model operation without remote API keys where hardware/tool-loop compatibility checks pass.
@@ -531,6 +532,9 @@ MVP must implement
 - Record tokens, cached tokens when reported, latency, and cost when known.
 - Carry forward the approved Step 7 default of up to two concurrent remote calls per provider, subordinate to actual account/provider limits, and per-provider versioned pricing/metering and operation-class timeouts for atomic budget settlement.
 - Capability check before assigning a task requiring tools/context features.
+- A common Council-managed tool broker/MCP client layer shared by all models: MCP servers correspond to approved tools/services or isolated tenant contexts, NEVER required per model; each provider adapter translates native model tool proposals/results. A model must pass tool-call/continuation probes; a registry entry alone is insufficient.
+- Each model/worker receives only actor-, phase-, source-, and grant-scoped allowed tools; untrusted MCP discovery cannot elevate permissions; raw secrets and direct agent-to-MCP sockets remain prohibited.
+- The original five Council seats remain five regardless of model-provider selection; Orchestrator and non-voting Integrator have separate profiles, not votes.
 - No silent provider fallback.
 
 Defer until after MVP evidence
@@ -882,3 +886,7 @@ OCTOBER 19 — STEPS 2–8 CROSS-STEP RECONCILIATION (SPECIFIED IN DESIGN)
 ## October 19 — exact v1 interface specification and truth-in-status
 
 Steps 2–5 and 8 **have completed their v1 architecture/interface specification**, using [Step 2 snapshot/transfer](STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md), [Steps 3–5 relational/typed/transaction contracts](STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md), [Step 8 action/finalization contracts](STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md), and [verification scenarios](STEP_2_TO_8_VERIFICATION_MATRIX_V1.md). Previous language describing these exact interfaces as design-open is superseded **only at the v1 design specification level**; historical descriptions remain for decision provenance. No physical PostgreSQL migration, compiled DTOs, provider/domain adapter, actual grant probe, Docker implementation, running application or runtime/security/concurrency/model test was performed. **Implementation NOT STARTED; tests NOT RUN.** Implementation-time capacity, model/provider capability and specific customer Contract configurations are intentionally not locked by this architecture design. ADR-40 extra submission queues remain superseded.
+
+OCTOBER 19 — STEP 9 OWNER-APPROVED MODEL GATEWAY + SHARED MCP DESIGN
+- Owner accepted the six Step 9 recommendations and confirmed shared Council tool infrastructure: a provider/model does NOT need a dedicated MCP server. Council acts as the authenticated, policy-scoped MCP host/client/broker; one tool server can be shared by different models while **distinct original members keep separate tool/source permissions**. Step 9.3 capability registry checks model tool-call competence, not MCP execution authority.
+- [Authoritative Step 9 provider and shared-MCP v1 design](STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1.md) specifies provider-normalized requests, native continuation behavior, source/egress consent, BYOK and five protected budget scopes, capability probes, tool routing and verified boundary switching. **DESIGNED only; implementation NOT STARTED, provider/MCP/runtime/security tests NOT RUN.**
