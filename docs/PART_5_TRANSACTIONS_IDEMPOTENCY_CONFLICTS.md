@@ -437,3 +437,8 @@ Step 5 design was reopened only for these interfaces; execution/race/side-effect
 
 
 **October 16 owner simplification (supersedes earlier ADR-40 queue requirement):** Do **not** add per-key internal-API submission queues, queue-specific DTOs or a new failure-recovery manager. Reuse the existing **Step 7 low-spec whole-agent scheduler**, existing **Step 5 PostgreSQL transaction/locks/idempotency/outbox** for simultaneous submissions, and **Docker persistent volumes/container lifecycle** for infrastructure recovery. The existing trusted runtime—not Docker—still owns agent permissions/checkpoint/budgets and reconciliation of uncertain external API/Git/provider effects. ADR-36–39 remain approved; ADR-40 is **SUPERSEDED**. [Authoritative lean 8.5C+D specification](STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md). **Architecture only, no runtime implementation or tests.**
+
+
+## October 19 — exact v1 design closure (implementation pending)
+
+Steps 2–5 and 8 are specified in [Step 2 snapshot protocol](STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md), [Steps 3–5 exact contract](STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md), [Step 8 action/finalization](STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md) and [unexecuted verification matrix](STEP_2_TO_8_VERIFICATION_MATRIX_V1.md). Earlier unresolved exact-contract questions have been resolved at the v1 **DESIGN** level; do not implement superseded ADR-40 extra API queues. No product code, applied database migrations, runtime/security/provider or concurrency tests. Implementation NOT STARTED, tests NOT RUN.
