@@ -169,7 +169,7 @@ for relpath in ('STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md','STEPS_3_TO_5_EXACT_IN
     assert (root / 'docs' / relpath).exists()
 
 step9 = contract['step9']
-assert step9['design_status'] == 'DESIGNED'
+assert step9['design_status'] == 'IN_DESIGN'
 assert step9['per_model_mcp_server_required'] is False
 assert step9['direct_model_to_mcp_bypass'] is False
 assert step9['auto_fallback'].startswith('DISABLED')
@@ -179,7 +179,7 @@ assert step9['initial_shared_local_inference_concurrency_cap'] == contract['step
 assert {'ADR-41', 'ADR-42'} <= {x['id'] for x in contract['requirements']}
 assert all(x['implementation_status'] == 'NOT_STARTED' and x['test_status'] == 'NOT_RUN' for x in contract['requirements'] if x['id'] in {'ADR-41', 'ADR-42'})
 step9_scope = scope_text.split('STEP 9 -', 1)[1].split('STEP 10 -', 1)[0]
-assert 'Status: DESIGNED' in step9_scope
+assert 'Status: IN DESIGN' in step9_scope
 assert 'Council-managed tool broker/MCP client layer shared by all models' in step9_scope
 step9_doc = (root / 'docs' / 'STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1.md').read_text(encoding='utf-8')
 for phrase in ('NO PER-MODEL MCP SERVER IS REQUIRED', 'NO PER-MODEL MCP SERVER', 'ModelRequestV1', 'ExposedToolManifestV1', 'NOT RUN'):

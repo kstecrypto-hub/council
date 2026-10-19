@@ -1,6 +1,6 @@
 # Step 9 — Model providers, unified gateway and shared MCP/tool contract v1
 
-**Owner-approved architecture decisions: October 19, 2026. Status: DESIGNED as a v1 specification only. Implementation NOT STARTED; provider compatibility, security, runtime and MCP integration tests NOT RUN.** This specification implements the design intent of [Step 9](MVP_SCOPE_BY_STEP.txt), [models and provider controls](APP_DESIGN.md), [Steps 3–5 atomic/typed operations](STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md), [Step 7 budgets/resources](PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md), [Step 8 action protocol](STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md) and [local-source consent](STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md). **It does not create a working model gateway, MCP server, adapter, provider connection, or any tested provider compatibility claim.**
+**Owner-approved architecture decisions: October 19, 2026. Status: IN DESIGN — draft working contract, not a finalized owner-reviewed operational design. Implementation NOT STARTED; provider compatibility, security, runtime and MCP integration tests NOT RUN.** This specification implements the design intent of [Step 9](MVP_SCOPE_BY_STEP.txt), [models and provider controls](APP_DESIGN.md), [Steps 3–5 atomic/typed operations](STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md), [Step 7 budgets/resources](PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md), [Step 8 action protocol](STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md) and [local-source consent](STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md). **It does not create a working model gateway, MCP server, adapter, provider connection, or any tested provider compatibility claim.**
 
 ## 1. Approved decisions and non-goals
 
@@ -181,9 +181,13 @@ Initial MVP can ship with selection **at run start** and the ability to record/d
 
 **Verification rule:** These are **design acceptance cases, not executed tests**. A real PASS needs actual adapter+gateway+MCP tool instance and authenticated run, provider version/date, fixture, observed event/receipt evidence, output hash, rate/usage accounting and negative access probes where appropriate. Provider docs/model availability must be checked again at implementation time. Council runtime, native tool adapter, MCP client/server connections, provider contracts, UI, pricing/live token-metering and all tests remain **NOT STARTED / NOT RUN**.
 
-## 9. Design versus implementation completion boundary
+## 9. Draft operational design requiring owner discussion
 
-**DESIGNED** means the approved v1 ownership, actor inheritance, provider interface, registry fields, shared tool/MCP boundary, preflight authorization and cost handling, switching gates, failure semantics and verification matrix above are specified. It **does not** mean OpenAI, Anthropic, DeepSeek or a local engine has been connected, that any current model actually passed tool-use probes, that an MCP server was installed, or that a safe live inference cost/profile exists.
+**The preceding interface, DTO and flow choices are provisional proposals, not decisions individually reviewed or approved by the owner.** The owner approved the overall gateway/shared-MCP direction, not that every provider or MCP flow was worked out. Work through real call -> tool proposal -> broker execution -> model continuation scenarios; MCP service connection/auth/isolation; registry qualifications and failure behavior; credentials, provider egress and budgets; same-provider context resume versus model switching; and local inference responsibilities. Revise this draft based on those discussions before declaring Step 9 DESIGNED. No implementation or runtime testing has started.
+
+## 10. Design versus implementation completion boundary
+
+**FUTURE DESIGN CLOSURE** requires owner-reviewed agreement on the v1 ownership, actor inheritance, provider interface, registry fields, shared tool/MCP boundary, preflight authorization and cost handling, switching gates, failure semantics and verification matrix above are specified. It **does not** mean OpenAI, Anthropic, DeepSeek or a local engine has been connected, that any current model actually passed tool-use probes, that an MCP server was installed, or that a safe live inference cost/profile exists.
 
 Implementation next requires selecting exact currently available model/SDK/HTTP versions, secret storage, customer egress/provider choices, actual tool integrations, any customer-approved local runtime and measured resources, migrations, adapter code, capability probes, event/usage settlement and the tests above. Implementation and runtime tests are a **separately authorized later task** under the unchanged Council plan.
 
