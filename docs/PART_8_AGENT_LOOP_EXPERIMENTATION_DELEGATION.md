@@ -1,6 +1,6 @@
 # Part 8 - Agent loop, structured experimentation, and delegation
 
-**Design status:** DESIGNED (October 19 exact v1 contract; runtime NOT STARTED). **Decisions 8.1 (nested Karpathy-style experimentation), 8.2 (sandbox-local worker autonomy/resource monitoring), and 8.2a (Docker-volume persistence without a central worker-recovery manager): ACCEPTED, October 14, 2026.** Complete action protocol, final-phase/failure transitions and full Step 8 closure remain to be designed.
+**Design status:** DESIGNED (October 19 exact v1 contract; runtime NOT STARTED). **Decisions 8.1 (nested Karpathy-style experimentation), 8.2 (sandbox-local worker autonomy/resource monitoring), and 8.2a (Docker-volume persistence without a central worker-recovery manager): ACCEPTED, October 14, 2026.** The October 19 exact v1 contract now specifies action observations, final-phase/failure transitions and termination guards; implementation and verification remain unstarted.
 
 **Implementation:** NOT STARTED. **Runtime/evaluation tests:** NOT RUN.
 
