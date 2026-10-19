@@ -75,7 +75,7 @@ Defer until after MVP evidence
 
 
 STEP 2 - REPOSITORY LAYOUT, DEPENDENCIES, AND IMPORT RULES
-Status: REOPENED IN DESIGN - older public-GitHub baseline superseded by local-first ADR-17; no implementation
+Status: DESIGNED - older public-GitHub baseline superseded by local-first ADR-17; no implementation
 
 Complete product
 ~~~~~~~~~~~~~~~~
@@ -114,7 +114,7 @@ Primary specification: docs/STEPS_3_TO_5_DEPLOYABLE_ARCHITECTURE_2026_10_15.md
 - Preserve the prior Step 3 canonical data, Step 4 state/authority and Step 5 transactional UNKNOWN commitments. No test/build now; finish exact schema/DTO/transfer/guard/recovery design before separately authorized implementation.
 
 STEP 3 - POSTGRESQL SCHEMA AND VERSIONING
-Status: REOPENED IN DESIGN - prior design baseline preserved; local checkpoint and privacy integration pending, implementation NOT STARTED, tests NOT RUN
+Status: DESIGNED - prior design baseline preserved; local checkpoint and privacy integration pending, implementation NOT STARTED, tests NOT RUN
 Primary specification: docs/POSTGRES_DATA_MODEL.md
 
 Complete product
@@ -164,7 +164,7 @@ MVP can simplify
 
 
 STEP 4 - TYPED COMMANDS, EVENTS, STATE MACHINES, AND INTERACTION CONTRACTS
-Status: REOPENED IN DESIGN - prior design baseline preserved; local checkpoint and privacy integration pending, implementation NOT STARTED, tests NOT RUN
+Status: DESIGNED - prior design baseline preserved; local checkpoint and privacy integration pending, implementation NOT STARTED, tests NOT RUN
 Primary specifications: docs/TYPED_INTERACTION_CONTRACTS.md and docs/PART_4A_AUTHORITY_BOUNDARIES.md
 
 Complete product
@@ -210,7 +210,7 @@ Defer until after MVP evidence
 
 
 STEP 5 - TRANSACTIONS, IDEMPOTENCY, AND CONFLICT HANDLING
-Status: REOPENED IN DESIGN - prior design baseline preserved; local checkpoint and privacy integration pending, implementation NOT STARTED, tests NOT RUN
+Status: DESIGNED - prior design baseline preserved; local checkpoint and privacy integration pending, implementation NOT STARTED, tests NOT RUN
 Primary specification: docs/PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md
 
 Complete product
@@ -877,3 +877,8 @@ OCTOBER 15 ADR-22 LATER OWNER CORRECTION: OpenAI Moderation is a hosted HTTPS AP
 OCTOBER 19 — STEPS 2–8 CROSS-STEP RECONCILIATION (SPECIFIED IN DESIGN)
 - See docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md (R1–R7) for stable non-voting Integrator identity, one exact integrated final-acceptance package, five original-member review generations, versioned premortem, customer-local grant expiry and revocation, non-software artifact manifests, five protected user-approved spending scopes, and evidence-first contested Council recommendation handling.
 - Historical public-checkpoint/70-25-5/local-moderation/separate API queue directions are superseded. Follow newer ADRs and the lean Step 8.5C+D design. Steps 2–5 and 8 remain IN DESIGN; no runtime implementation or tests executed.
+
+
+## October 19 — exact v1 interface specification and truth-in-status
+
+Steps 2–5 and 8 **have completed their v1 architecture/interface specification**, using [Step 2 snapshot/transfer](STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md), [Steps 3–5 relational/typed/transaction contracts](STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md), [Step 8 action/finalization contracts](STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md), and [verification scenarios](STEP_2_TO_8_VERIFICATION_MATRIX_V1.md). Previous language describing these exact interfaces as design-open is superseded **only at the v1 design specification level**; historical descriptions remain for decision provenance. No physical PostgreSQL migration, compiled DTOs, provider/domain adapter, actual grant probe, Docker implementation, running application or runtime/security/concurrency/model test was performed. **Implementation NOT STARTED; tests NOT RUN.** Implementation-time capacity, model/provider capability and specific customer Contract configurations are intentionally not locked by this architecture design. ADR-40 extra submission queues remain superseded.
