@@ -359,7 +359,7 @@
     },
     {
       "id": "ADR-41",
-      "design_status": "OWNER_APPROVED_V1_ARCHITECTURE_DESIGNED_ONLY",
+      "design_status": "PRINCIPLE_APPROVED_OPERATIONAL_DETAILS_IN_DESIGN",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -367,7 +367,7 @@
     },
     {
       "id": "ADR-42",
-      "design_status": "OWNER_APPROVED_V1_ARCHITECTURE_DESIGNED_ONLY",
+      "design_status": "PRINCIPLE_APPROVED_OPERATIONAL_DETAILS_IN_DESIGN",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -1089,7 +1089,7 @@
     "design_reconciliation_status": "SPECIFIED_IN_DESIGN_IMPLEMENTATION_NOT_STARTED_TESTS_NOT_RUN"
   },
   "step9": {
-    "design_status": "DESIGNED",
+    "design_status": "IN_DESIGN",
     "specification_path": "docs/STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1.md",
     "owner_approved_date": "2026-10-19",
     "scope": "UNIFIED_TRUSTED_MODEL_GATEWAY_WITH_SHARED_POLICY_MEDIATED_MCP_TOOLS",
@@ -1127,6 +1127,18 @@
     "test_scenarios": "docs/STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1.md#8-exact-qualification-toolmcp-security-and-failure-scenarios--planned-not-run",
     "runtime_implementation_status": "NOT_STARTED",
     "runtime_tests_status": "NOT_RUN",
-    "security_tests_status": "NOT_RUN"
+    "security_tests_status": "NOT_RUN",
+    "design_discussion_status": "OWNER_APPROVED_PRINCIPLES_OPERATIONAL_WORKFLOWS_NOT_REVIEWED",
+    "remaining_design_discussions": [
+      "full_model_call_and_tool_loop_example",
+      "MCP_tool_server_connection_isolation_and_permissions",
+      "provider_specific_tool_and_reasoning_continuation",
+      "model_registry_qualification_and_feature_degradation",
+      "credential_and_egress_connection_setup",
+      "cost_preflight_usage_unknown_and_retries",
+      "model_selection_inheritance_integrator_and_worker_runtime",
+      "checkpoint_safe_model_switch_handover_and_failure",
+      "local_model_capability_runtime_and_host_allocation"
+    ]
   }
 }
