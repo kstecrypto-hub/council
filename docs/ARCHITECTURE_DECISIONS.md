@@ -151,3 +151,8 @@ Step 7 is DESIGNED as a specification (approved October 14, amended by October 1
 ## October 19 — Steps 2–8 reconciliation (SPECIFIED IN DESIGN)
 
 [Cross-step contract R1–R7](STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md) aligns ADR-17/22/26–39 and superseded ADR-40 with persistent **non-voting** Integrator identity, typed exact-integrated-result user acceptance, five-member sealed review/premortem generations, independently verified local snapshot/Integrators' grant expiry, Git-or-content-hashed domain-specific artifact lineage, ADR-27 five user-approved protected funding scopes, and conditional evidence-first Council recommendation/deviation/escalation. Older incompatible text is historical only. No new API queue, service, automatic majority voting or per-worker recovery daemon. **This closes only the named documentation contradictions, not the remaining physical DTO/DDL design or Steps 2–5/8 overall. Implementation NOT STARTED; runtime/security/model tests NOT RUN.**
+
+
+## October 19 — final v1 design completion boundary
+
+See [Step 2 snapshot protocol](STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md), [Steps 3–5 exact contracts](STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md), [Step 8 agent/finalization contract](STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md), and [unrun verification cases](STEP_2_TO_8_VERIFICATION_MATRIX_V1.md). Earlier 'interfaces IN DESIGN' annotations are historical and superseded **for the exact v1 contract**. Steps 2–5 and 8 are **DESIGNED ONLY**; provider/OS implementation choices in Steps 9–11 remain to be made. No executable implementation, SQL migrations or runtime tests.
