@@ -108,7 +108,7 @@ OCTOBER 15 OWNER APPROVAL: UNIFIED TRUST + OpenAI Moderation SAFEGUARD + COMMAND
 Status: APPROVED ARCHITECTURE DIRECTION; Steps 2-5 remain IN DESIGN. Implementation/tests NOT STARTED/NOT RUN.
 Primary specification: docs/STEPS_3_TO_5_DEPLOYABLE_ARCHITECTURE_2026_10_15.md
 - Deploy a modular unified trusted Council control application on customer infrastructure, with separate physical Docker host privilege, member sandbox, DB and native Git/snapshot boundaries.
-- Invoke local open-weight OpenAI Moderation API on relevant semantic ingress/egress through approved gateways; deterministic identity, read-grant, file scope, egress, budget and epoch guards always enforce capability. Fail closed for new affected guarded work on model unavailability; guard deployment hardware/capacity is an open design task.
+- Invoke the customer-authorized hosted OpenAI Moderation API on relevant semantic ingress/egress through approved gateways; deterministic identity, read-grant, file scope, egress, budget and epoch guards always enforce capability. Fail closed for new affected guarded work on model unavailability; guard deployment hardware/capacity is an open design task.
 - Peer member interfaces offer typed requests to list/read server-selected immutable checkpoint objects, text-only messages and structured peer actions. No arbitrary agent SendFile/upload/attachment or direct peer-to-peer Git or network path; server alone resolves and delivers authorized content. Artifact responses do not bundle or auto-follow with chat messages.
 - Distinguish Council from a generic agent swarm: five private independent candidates, semantic member-declared arrivals, sealed reviews before reveal, evidence-linked peer challenges and reproducible verification-only work, honest incomplete outcomes, source/provenance graph and permitted customer-owned archival.
 - Preserve the prior Step 3 canonical data, Step 4 state/authority and Step 5 transactional UNKNOWN commitments. No test/build now; finish exact schema/DTO/transfer/guard/recovery design before separately authorized implementation.
@@ -331,7 +331,7 @@ MVP must implement
 - Raw user API credentials remain in trusted secret storage and only the scoped runtime model bridge may use them; they never enter agent sandboxes, repos, ordinary logs, or client-side persistence.
 - Council budget gates limit authorized requests but do not guarantee provider-invoice caps; report uncertain usage/settlement honestly.
 - Simple hard per-phase/member/run budgets plus a protected checkpoint/review/finalization reserve.
-- User approves every project ceiling and allocation; propose configurable 70% development / 25% protected checkpoint reviews / 5% protected orchestration and finalization, splitting development equally by monetary value across five peers by default; each phase/member also needs an approved token ceiling. No silent top-up.
+- User approves every project ceiling and five separately protected project-specific spending scopes, including independent member development, checkpoint comparison, Integrator execution, five original-member integrated-result review/premortem, and orchestration/report/archive. No default 70/25/5 or mandatory equal split applies; each phase/member needs approved token and cost ceilings. No silent top-up.
 - Default remote cap: up to two concurrent requests per provider, further reduced by actual provider limits; initial local inference cap: one job, increased only after measured model/runtime hardware + tool-loop compatibility.
 - Resource admission protects approximately 20% of host RAM as an adjustable initial target, increased when observed OS/Council overhead requires; VRAM is measured separately; under pressure stop admissions then safely quiesce work and confirm resource release.
 - Infrastructure recovery: three default retries with increasing 5s/30s/120s delays; individual tool/provider operations have class-specific timeouts, never a global agent-reasoning deadline.
@@ -498,7 +498,7 @@ OCTOBER 16 — APPROVED STEP 8.5B INTEGRATOR LIFECYCLE AND REVIEW POLICIES (ADR-
 - Applies to research and other non-code artifacts with approved content-hashed manifests, not only software Git commits.
 - Detailed design: docs/STEP_8_5B_FINAL_INTEGRATOR_EXECUTION_AND_RECOVERY.md. Policies APPROVED; exact Step 3/4/5 DTO/DDL/transaction code and runtime tests still IN DESIGN/NOT STARTED.
 
-OCTOBER 16 — APPROVED JOINT STEP 8.5C+D, EXACT-TIME SUBMISSION QUEUES (ADR-36 THROUGH 40)
+OCTOBER 16 — APPROVED JOINT STEP 8.5C+D, SIMULTANEOUS SUBMISSIONS WITHOUT EXTRA QUEUES (ADR-36–39; ADR-40 SUPERSEDED)
 - One typed, versioned actor-authorized Blueprint -> Integrator -> verified integrated output -> five genuine original-member sealed review -> sealed premortem -> exact final report/package -> explicit user acceptance -> verified customer archive and cleanup lifecycle.
 - All artifacts, reviews, premortems and acceptance packages bind exact immutable hashes/generations; stale or mixed versions cannot count. Actual review completion is independent of domain/test correctness and user approval/delivery.
 - External effects follow existing durable PostgreSQL intent/outbox, committed event order, epoch fencing, correct budget reservations and UNKNOWN reconciliation. No false atomicity across PostgreSQL, Docker, provider, Git and artifact store.
@@ -683,7 +683,7 @@ MVP must implement
 - Peer challenges/revisions.
 - Basic candidate/repo/test status.
 - Usage/cost display.
-- Show user approval and editable initial 70/25/5 project budget allocations, per-member/per-phase monetary and token ceilings, protected review funds, BYOK/local provider setup, cost uncertainty, and BUDGET_EXHAUSTED / INCOMPLETE top-up/stop actions.
+- Show user approval and editable five protected project-specific budget scopes, per-member/per-phase monetary and token ceilings, protected review funds, BYOK/local provider setup, cost uncertainty, and BUDGET_EXHAUSTED / INCOMPLETE top-up/stop actions.
 - Activity stream via SSE.
 - A minimal final/evaluation view.
 
@@ -873,3 +873,7 @@ OCTOBER 15 ADR-22 LATER OWNER CORRECTION: OpenAI Moderation is a hosted HTTPS AP
 
 
 **October 16 owner simplification (supersedes earlier ADR-40 queue requirement):** Do **not** add per-key internal-API submission queues, queue-specific DTOs or a new failure-recovery manager. Reuse the existing **Step 7 low-spec whole-agent scheduler**, existing **Step 5 PostgreSQL transaction/locks/idempotency/outbox** for simultaneous submissions, and **Docker persistent volumes/container lifecycle** for infrastructure recovery. The existing trusted runtime—not Docker—still owns agent permissions/checkpoint/budgets and reconciliation of uncertain external API/Git/provider effects. ADR-36–39 remain approved; ADR-40 is **SUPERSEDED**. [Authoritative lean 8.5C+D specification](STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md). **Architecture only, no runtime implementation or tests.**
+
+OCTOBER 19 — STEPS 2–8 CROSS-STEP RECONCILIATION (SPECIFIED IN DESIGN)
+- See docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md (R1–R7) for stable non-voting Integrator identity, one exact integrated final-acceptance package, five original-member review generations, versioned premortem, customer-local grant expiry and revocation, non-software artifact manifests, five protected user-approved spending scopes, and evidence-first contested Council recommendation handling.
+- Historical public-checkpoint/70-25-5/local-moderation/separate API queue directions are superseded. Follow newer ADRs and the lean Step 8.5C+D design. Steps 2–5 and 8 remain IN DESIGN; no runtime implementation or tests executed.
