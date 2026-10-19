@@ -49,10 +49,11 @@ assert len(contract['requirements']) >= 18
 assert {'ADR-13', 'ADR-14', 'ADR-15', 'ADR-16', 'ADR-17', 'ADR-18'} <= {x['id'] for x in contract['requirements']}
 assert contract['requirements'][0]['design_status'] == 'SUPERSEDED_BY_ADR_17'
 assert contract['step11']['negative_exclusion_policy'] == 'no_universal_blacklist_or_silent_filter_based_on_prior_failure'
-assert contract['step8']['design_status'] == 'DESIGNED'
+assert contract['step8']['design_status'] == 'IN_DESIGN'
 assert contract['step8']['runtime_implementation_status'] == 'NOT_STARTED'
 assert contract['step8']['runtime_tests_status'] == 'NOT_RUN'
-assert contract['step8']['experiment_is_optional_under_act'] is True
+assert contract['step8']['experiment_is_optional_under_act'] is False
+assert contract['step8']['karpathy_feedback_cycle_is_core'] is True
 assert contract['step8']['separate_ai_judge_or_experiment_scheduler'] is False
 assert contract['step8']['worker_may_declare_parent_checkpoint_ready'] is False
 assert contract['step8']['checkpoint_work_excursion'] == 'verification_only_disposable_read_only_candidate'
@@ -130,11 +131,11 @@ assert 'no internet-public publication' in local_repos or 'No internet-public pu
 assert 'Status: DESIGNED' in (root / 'docs/MVP_SCOPE_BY_STEP.txt').read_text(encoding='utf-8').split('STEP 7 -', 1)[1].split('STEP 8 -', 1)[0]
 assert '**Design status:** DESIGNED' in (root / 'docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md').read_text(encoding='utf-8')
 step8_spec = (root / 'docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md').read_text(encoding='utf-8')
-assert '**Design status:** DESIGNED' in step8_spec
+assert '**Design status:** IN DESIGN' in step8_spec
 assert 'HYPOTHESIS -> CHANGE/ALTERNATIVE -> TEST/CHECK -> OBSERVE' in step8_spec
 assert 'KEEP | REVISE | DISCARD | INCONCLUSIVE' in step8_spec
 step8_scope = scope_text.split('STEP 8 -', 1)[1].split('STEP 9 -', 1)[0]
-assert 'Status: DESIGNED' in step8_scope
+assert 'Status: IN DESIGN' in step8_scope
 assert 'optional' in step8_scope.lower()
 assert 'no fixed worker-count or delegation-depth limit' in step8_scope
 assert '2–5' in step8_scope
