@@ -380,6 +380,14 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-44",
+      "design_status": "OWNER_APPROVED_POLICY_EXACT_INTERFACE_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -665,7 +673,8 @@
     "budget_exhaustion_means_completion": false,
     "pending_design": [
       "ADR43_FEEDBACK_CYCLE_RUNTIME_PROMPT_AND_COMMAND_BINDING",
-      "ADR43_MATERIAL_APPROACH_EVIDENCE_COVERAGE_AND_UNTESTABLE_CLAIM_HANDLING"
+      "ADR43_MATERIAL_APPROACH_EVIDENCE_COVERAGE_AND_UNTESTABLE_CLAIM_HANDLING",
+      "ADR44_EXACT_DTO_SELF_REVIEW_VERSION_INVALIDATION_AND_UI_PRESENTATION"
     ],
     "implementation_and_tests_pending": true,
     "member_controls_local_worker_count_and_depth": true,
@@ -943,7 +952,13 @@
     "verification_matrix": "docs/STEP_2_TO_8_VERIFICATION_MATRIX_V1.md",
     "karpathy_feedback_cycle_is_core": true,
     "standard_member_loop": "HYPOTHESIS_APPROACH_ACT_DOMAIN_APPROPRIATE_CHECK_OBSERVE_KEEP_REVISE_DISCARD_INCONCLUSIVE_RECORD_REPEAT",
-    "karpathy_first_amendment": "docs/STEP_8_KARPATHY_FIRST_AGENT_LOOP_AMENDMENT.md"
+    "karpathy_first_amendment": "docs/STEP_8_KARPATHY_FIRST_AGENT_LOOP_AMENDMENT.md",
+    "adr44_self_review_policy": "docs/STEP_8_ADR44_FEEDBACK_CYCLE_AND_CHECKPOINT_SELF_REVIEW.md",
+    "self_review_required_before_each_normal_checkpoint": true,
+    "self_review_scope": "AUTHENTIC_PARENT_MEMBER_SAME_PHASE_AND_EXACT_RESULT_MANIFEST",
+    "self_review_gate": "MECHANICAL_PRESENCE_AUTHORSHIP_HASH_AND_GENERATION_ONLY_NO_INTELLECTUAL_QUALITY_JUDGE",
+    "core_feedback_cycle": "EVERY_SUBSTANTIVE_APPROACH_NO_REQUIRED_EXPERIMENT_PER_TRIVIAL_ACTION",
+    "integrator_output_intent_self_check_required": true
   },
   "checkpoint_public_github_default": false,
   "local_first_repository_specification": "docs/LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md",
