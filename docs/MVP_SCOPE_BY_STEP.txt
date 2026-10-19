@@ -114,7 +114,7 @@ Primary specification: docs/STEPS_3_TO_5_DEPLOYABLE_ARCHITECTURE_2026_10_15.md
 - Preserve the prior Step 3 canonical data, Step 4 state/authority and Step 5 transactional UNKNOWN commitments. No test/build now; finish exact schema/DTO/transfer/guard/recovery design before separately authorized implementation.
 
 STEP 3 - POSTGRESQL SCHEMA AND VERSIONING
-Status: DESIGNED - prior design baseline preserved; local checkpoint and privacy integration pending, implementation NOT STARTED, tests NOT RUN
+Status: DESIGNED - local checkpoint/privacy/finalization integrated in v1 specification; implementation NOT STARTED, tests NOT RUN
 Primary specification: docs/POSTGRES_DATA_MODEL.md
 
 Complete product
@@ -164,7 +164,7 @@ MVP can simplify
 
 
 STEP 4 - TYPED COMMANDS, EVENTS, STATE MACHINES, AND INTERACTION CONTRACTS
-Status: DESIGNED - prior design baseline preserved; local checkpoint and privacy integration pending, implementation NOT STARTED, tests NOT RUN
+Status: DESIGNED - local checkpoint/privacy/finalization integrated in v1 specification; implementation NOT STARTED, tests NOT RUN
 Primary specifications: docs/TYPED_INTERACTION_CONTRACTS.md and docs/PART_4A_AUTHORITY_BOUNDARIES.md
 
 Complete product
@@ -210,7 +210,7 @@ Defer until after MVP evidence
 
 
 STEP 5 - TRANSACTIONS, IDEMPOTENCY, AND CONFLICT HANDLING
-Status: DESIGNED - prior design baseline preserved; local checkpoint and privacy integration pending, implementation NOT STARTED, tests NOT RUN
+Status: DESIGNED - local checkpoint/privacy/finalization integrated in v1 specification; implementation NOT STARTED, tests NOT RUN
 Primary specification: docs/PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md
 
 Complete product
@@ -351,7 +351,7 @@ Defer until after MVP evidence
 
 
 STEP 8 - AGENT LOOP, COUNCIL PHASES, AND DELEGATION
-Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
+Status: DESIGNED - exact v1 interface specification completed; implementation NOT STARTED, tests NOT RUN
 Core governance is already designed.
 
 Accepted design decision 8.1 - member loop + optional experiments (October 14, 2026)
