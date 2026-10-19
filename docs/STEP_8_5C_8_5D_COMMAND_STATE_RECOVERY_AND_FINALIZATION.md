@@ -80,3 +80,8 @@ These are **test cases, not results**. Exact DTO/DDL/external adapter wiring is 
 ## 6. Current status
 
 Owner approved the **simplification and supersession of ADR-40**, while retaining ADR-36–39. This corrected document **supersedes** the earlier overengineered 8.5C/D queue proposal. **Council Step 8 remains IN DESIGN**, not marked DESIGN COMPLETED; implementation remains NOT STARTED and tests NOT RUN.
+
+
+## October 19 — exact v1 design specification boundary
+
+The earlier interface-design questions are specified in [Step 2 snapshot/transfer](STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md), [Steps 3–5 relational/typed/transaction contract](STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md), [Step 8 action/finalization contract](STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md), and [unexecuted verification matrix](STEP_2_TO_8_VERIFICATION_MATRIX_V1.md). Conflicting earlier claims that these **v1 interface choices** remain undecided are superseded, while original owner policies and archival decision history remain unchanged. Steps 2–5 and 8 are **DESIGNED** as specifications, not implemented. Physical migrations, code, real broker/provider integrations, actual concurrency/runtime/security/model tests **NOT STARTED / NOT RUN**. Implementation-time customer configuration and Step 9–11 adapter choices remain open. ADR-40 additional API submission queues remain superseded.
