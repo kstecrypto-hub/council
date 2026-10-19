@@ -542,7 +542,7 @@ Rejecting permission does not automatically fail the project. The requesting bra
 
 ### 10.2 Budget expansion
 
-The initial user-approved budget policy is immutable and versioned; propose a configurable 70% private development / 25% checkpoint review / 5% orchestration-finalization allocation. Equal monetary development shares across five seats are a starting suggestion only, not equal token entitlement. Users approve the hard run/member/semantic-phase token and cost ceilings and every material top-up or redistribution. The protected review/finalization pools cannot be debited by development without the appropriate new explicit authorization. The UI must distinguish a rough uncertain estimate from a ceiling and actual usage.
+The initial user-approved budget policy is immutable and versioned; propose five separately protected, project-specific user-approved scopes for independent members, checkpoint comparison, Integrator execution, post-integration five-member validation/premortem, and orchestration/report/archive. The historical 70/25/5 ratio and mandatory equal monetary member splits are not the current setup defaults. Users approve the hard run/member/semantic-phase token and cost ceilings and every material top-up or redistribution. The protected review/finalization pools cannot be debited by development without the appropriate new explicit authorization. The UI must distinguish a rough uncertain estimate from a ceiling and actual usage.
 
 If the run reaches a protected budget boundary:
 - new spend that would cross the boundary is blocked;
@@ -821,7 +821,7 @@ A member that exhausts its approved per-phase token/cost cap remains an **incomp
 
 Member activity changes do not change logical identity. Session rollover preserves the member and branch.
 
-A member cannot enter REVIEWING_PEER_WORK before the checkpoint runtime has verified authorized public publication of the frozen peer snapshot being reviewed.
+A member cannot enter REVIEWING_PEER_WORK before the checkpoint runtime has verified customer-authorized local immutable read-only snapshot export and intended recipient grant/readability for the frozen peer snapshot being reviewed.
 
 A member cannot enter RESPONDING_TO_CHALLENGE for a challenge it is not authorized to see.
 
@@ -1469,3 +1469,7 @@ User gates for **retention/share** are separate from checkpoint peer-grants: cus
 
 
 **October 16 owner simplification (supersedes earlier ADR-40 queue requirement):** Do **not** add per-key internal-API submission queues, queue-specific DTOs or a new failure-recovery manager. Reuse the existing **Step 7 low-spec whole-agent scheduler**, existing **Step 5 PostgreSQL transaction/locks/idempotency/outbox** for simultaneous submissions, and **Docker persistent volumes/container lifecycle** for infrastructure recovery. The existing trusted runtime—not Docker—still owns agent permissions/checkpoint/budgets and reconciliation of uncertain external API/Git/provider effects. ADR-36–39 remain approved; ADR-40 is **SUPERSEDED**. [Authoritative lean 8.5C+D specification](STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md). **Architecture only, no runtime implementation or tests.**
+
+## October 19 — binding Step 2–8 reconciliation of typed authorities (design only)
+
+See [R1–R7 cross-step source](STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md). The existing `AcceptCandidate` family, in normal integrated-result finalization, requires exact `integrated_output` target kind, current artifact manifest hash, frozen provisional report/package hash, required review/premortem generations and canonical expected version; an original member candidate identifier does not authorize final acceptance by substitution. No new acceptance service. Reuse scoped actor/command idempotency and generation guards for one logical non-voting Integrator outside original seat 1–5, authenticated user approvals, five-member review/premortem seals and current observed read grants. Return stale/ambiguous target as an explicit conflict. Non-code outputs bind content-hashed artifacts rather than fabricated Git IDs. Historical fixed 70/25/5, public checkpoints and ADR-40 extra API queues are superseded. Exact DTO/wire enums IN DESIGN; executable behavior NOT STARTED; runtime tests NOT RUN.

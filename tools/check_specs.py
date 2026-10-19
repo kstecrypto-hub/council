@@ -32,7 +32,10 @@ assert contract['step7']['runtime_implementation_status'] == 'NOT_STARTED'
 assert contract['step7']['runtime_tests_status'] == 'NOT_RUN'
 assert contract['step7']['no_general_reasoning_deadline'] is True
 assert contract['step7']['budget_exhaustion_not_semantic_readiness'] is True
-assert sum(contract['step7']['suggested_default_budget_allocation_percent'].values()) == 100
+assert 'suggested_default_budget_allocation_percent' not in contract['step7']
+assert contract['step7']['budget_allocation_policy'] == 'PROJECT_SPECIFIC_FIVE_PROTECTED_SCOPES_WITH_EXPLICIT_USER_APPROVAL_NO_UNIVERSAL_PERCENTAGES'
+assert contract['final_product_policy']['final_user_acceptance_target'] == 'EXACT_CURRENT_INTEGRATED_ARTIFACT_AND_FROZEN_REPORT_PACKAGE_NOT_ORIGINAL_MEMBER_CANDIDATE'
+assert contract['step8']['step8_5cd']['queue_policy']['additional_api_per_key_lanes_required'] is False
 assert contract['step7']['initial_remote_model_call_cap_per_provider'] == 2
 assert contract['step7']['initial_local_inference_concurrency_cap'] == 1
 assert contract['step7']['default_recovery_retries'] == 3
@@ -154,6 +157,12 @@ assert 'No Council-imposed fixed worker count' in step8_spec
 assert 'OOM' in step8_spec
 assert 'MemberSandboxOOMObserved' in (root / 'docs/TYPED_INTERACTION_CONTRACTS.md').read_text(encoding='utf-8')
 assert 'member_resource_monitor_latest' in (root / 'docs/POSTGRES_DATA_MODEL.md').read_text(encoding='utf-8')
+
+assert 'verified customer-authorized local immutable read-only snapshot export' in (root / 'docs/TYPED_INTERACTION_CONTRACTS.md').read_text(encoding='utf-8')
+assert 'the customer-authorized hosted OpenAI Moderation API' in scope_text
+assert 'Invoke local open-weight OpenAI Moderation API' not in scope_text
+assert 'per-current-checkpoint/review/premortem-generation internal API dispatch queues' not in (root / 'docs/CHECKPOINT_COMMUNICATION_GATEWAY.md').read_text(encoding='utf-8')
+assert 'R1. Steps 2/3' in (root / 'docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md').read_text(encoding='utf-8')
 
 print(f'Static specification checks passed: {len(files)} documents and {len(contract["requirements"])} tracked requirements.')
 print('Scope: documentation/contract consistency only. Runtime tests and comparative evaluations NOT RUN.')
