@@ -356,6 +356,22 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-41",
+      "design_status": "OWNER_APPROVED_V1_ARCHITECTURE_DESIGNED_ONLY",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-42",
+      "design_status": "OWNER_APPROVED_V1_ARCHITECTURE_DESIGNED_ONLY",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
