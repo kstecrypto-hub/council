@@ -89,3 +89,8 @@ Implement with **existing components** when build is later authorized: parent me
 **Approved policy choices:** (1) separate authored readiness intent from verified quiescence/freeze/arrival; (2) allow an explicit scoped concluded-without-viable-candidate result without treating it as completed implementation; (3) repetition checks stay at existing operation/safety controls and remain non-intellectual.
 
 **Still DESIGN OPEN:** exact Step 4 input/output events/versions and Step 5 transaction/UNKNOWN boundary; how Stage B handles edge-case workspace and in-flight files under Step 10; full Step 8.4 final review/termination intake. **Application implementation and runtime/evaluation tests: NOT STARTED / NOT RUN.**
+
+
+## October 19 — exact v1 design specification boundary
+
+The earlier interface-design questions are specified in [Step 2 snapshot/transfer](STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md), [Steps 3–5 relational/typed/transaction contract](STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md), [Step 8 action/finalization contract](STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md), and [unexecuted verification matrix](STEP_2_TO_8_VERIFICATION_MATRIX_V1.md). Conflicting earlier claims that these **v1 interface choices** remain undecided are superseded, while original owner policies and archival decision history remain unchanged. Steps 2–5 and 8 are **DESIGNED** as specifications, not implemented. Physical migrations, code, real broker/provider integrations, actual concurrency/runtime/security/model tests **NOT STARTED / NOT RUN**. Implementation-time customer configuration and Step 9–11 adapter choices remain open. ADR-40 additional API submission queues remain superseded.

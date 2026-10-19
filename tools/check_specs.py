@@ -11,14 +11,14 @@ assert contract['checkpoint_public_github_default'] is False
 assert contract['repository_backend_default'] == 'native_local_git'
 assert contract['cross_customer_knowledge_sharing_default'] is False
 assert contract['failure_memory_policy'] == 'success_first_conditional_failure_warning_never_universal_blacklist'
-assert contract['step2']['design_status'] == 'REOPENED_IN_DESIGN'
+assert contract['step2']['design_status'] == 'DESIGNED'
 assert contract['public_exposure_reversible'] is False
 assert contract['changes_council_source_repository_visibility'] is False
 assert contract['peer_verification_environment'] == 'separate_disposable'
 assert contract['private_work_requires_finite_slices'] is False
 for step_no in (3, 4, 5):
     row = contract[f'step{step_no}']
-    assert row['design_status'] == 'REOPENED_IN_DESIGN', step_no
+    assert row['design_status'] == 'DESIGNED', step_no
     assert row['baseline_design_status'] == 'DESIGNED_UNDER_SUPERSEDED_PUBLIC_GITHUB_POLICY', step_no
     assert row['implementation_status'] == 'NOT_STARTED', step_no
     assert row['runtime_tests_status'] == 'NOT_RUN', step_no
@@ -49,7 +49,7 @@ assert len(contract['requirements']) >= 18
 assert {'ADR-13', 'ADR-14', 'ADR-15', 'ADR-16', 'ADR-17', 'ADR-18'} <= {x['id'] for x in contract['requirements']}
 assert contract['requirements'][0]['design_status'] == 'SUPERSEDED_BY_ADR_17'
 assert contract['step11']['negative_exclusion_policy'] == 'no_universal_blacklist_or_silent_filter_based_on_prior_failure'
-assert contract['step8']['design_status'] == 'IN_DESIGN'
+assert contract['step8']['design_status'] == 'DESIGNED'
 assert contract['step8']['runtime_implementation_status'] == 'NOT_STARTED'
 assert contract['step8']['runtime_tests_status'] == 'NOT_RUN'
 assert contract['step8']['experiment_is_optional_under_act'] is True
@@ -112,7 +112,7 @@ assert 'NOT STARTED' in (root / 'README.md').read_text()
 scope_text = (root / 'docs/MVP_SCOPE_BY_STEP.txt').read_text(encoding='utf-8')
 for n in (3, 4, 5):
     section = scope_text.split(f'STEP {n} -', 1)[1].split(f'STEP {n+1} -', 1)[0]
-    assert 'Status: REOPENED IN DESIGN' in section, n
+    assert 'Status: DESIGNED' in section, n
 for doc, required in (
     ('POSTGRES_DATA_MODEL.md', '## 20. October 14 Part 3 design closure'),
     ('TYPED_INTERACTION_CONTRACTS.md', '## 26. October 14 Part 4 design closure'),
@@ -121,7 +121,7 @@ for doc, required in (
     text_doc = (root / 'docs' / doc).read_text(encoding='utf-8')
     assert required in text_doc, (doc, required)
     assert 'DESIGNED' in text_doc, doc
-assert 'Status: REOPENED IN DESIGN' in scope_text.split('STEP 2 -', 1)[1].split('STEP 3 -', 1)[0]
+assert 'Status: DESIGNED' in scope_text.split('STEP 2 -', 1)[1].split('STEP 3 -', 1)[0]
 local_repos = (root / 'docs/LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md').read_text(encoding='utf-8')
 assert 'Success-first retrieval' in local_repos
 assert 'FAILED_IN_CONTEXT' in local_repos
@@ -130,11 +130,11 @@ assert 'no internet-public publication' in local_repos or 'No internet-public pu
 assert 'Status: DESIGNED' in (root / 'docs/MVP_SCOPE_BY_STEP.txt').read_text(encoding='utf-8').split('STEP 7 -', 1)[1].split('STEP 8 -', 1)[0]
 assert '**Design status:** DESIGNED' in (root / 'docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md').read_text(encoding='utf-8')
 step8_spec = (root / 'docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md').read_text(encoding='utf-8')
-assert '**Design status:** IN DESIGN' in step8_spec
+assert '**Design status:** DESIGNED' in step8_spec
 assert 'HYPOTHESIS -> CHANGE/ALTERNATIVE -> TEST/CHECK -> OBSERVE' in step8_spec
 assert 'KEEP | REVISE | DISCARD | INCONCLUSIVE' in step8_spec
 step8_scope = scope_text.split('STEP 8 -', 1)[1].split('STEP 9 -', 1)[0]
-assert 'Status: IN DESIGN' in step8_scope
+assert 'Status: DESIGNED' in step8_scope
 assert 'optional' in step8_scope.lower()
 assert 'no fixed worker-count or delegation-depth limit' in step8_scope
 assert '2–5' in step8_scope
@@ -163,6 +163,10 @@ assert 'the customer-authorized hosted OpenAI Moderation API' in scope_text
 assert 'Invoke local open-weight OpenAI Moderation API' not in scope_text
 assert 'per-current-checkpoint/review/premortem-generation internal API dispatch queues' not in (root / 'docs/CHECKPOINT_COMMUNICATION_GATEWAY.md').read_text(encoding='utf-8')
 assert 'R1. Steps 2/3' in (root / 'docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md').read_text(encoding='utf-8')
+
+assert contract['step8']['pending_design'] == []
+for relpath in ('STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md','STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md','STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md','STEP_2_TO_8_VERIFICATION_MATRIX_V1.md'):
+    assert (root / 'docs' / relpath).exists()
 
 print(f'Static specification checks passed: {len(files)} documents and {len(contract["requirements"])} tracked requirements.')
 print('Scope: documentation/contract consistency only. Runtime tests and comparative evaluations NOT RUN.')
