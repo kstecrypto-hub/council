@@ -434,9 +434,9 @@ Configuration inheritance is:
 
 **Workspace default -> run default -> council-seat override -> worker default -> individual worker override.**
 
-All initially resolve to the chosen DeepSeek model.
+A DeepSeek starting profile may be proposed, but actual provider/model selection is **configurable and user-approved** per actor; no specific provider is universally forced or confused with training diversity.
 
-The UI shows where a setting is inherited and offers an explicit override. It also labels an all-DeepSeek council as same-model rather than implying training diversity.
+The UI shows where a setting is inherited and offers an explicit override. It labels an all-same-model Council as same-model, and never treats model-company diversity as proven independent reasoning. The Orchestrator and non-voting Final Integrator each have a separate model configuration outside the five original peer seats.
 
 ### MVP inference billing and user credentials
 
@@ -454,7 +454,7 @@ Each model entry records its provider, identifier, available capabilities, suppo
 
 DeepSeek's model-list endpoint is a discovery source for identifiers, not the sole authority for all capability and pricing details needed by the app. Those belong in the registry and compatibility tests. See [references](REFERENCES.md).
 
-Provider adapters normalize requests and results while preserving required provider-specific state. DeepSeek's documented thinking-mode tool-continuation handling stays inside its adapter; check the current API contract during implementation.
+Provider adapters normalize requests and results while preserving required provider-specific state. The **trusted Council tool broker/MCP client layer is shared across models**: one approved MCP tool server can serve multiple members through scoped tool authorization; a separate MCP server per AI model is unnecessary. The capability registry verifies whether each particular model can make and continue tool calls; it is **not** tool-server permission or the MCP integration itself. Council translates a model's native tool proposals into separately authorized typed broker operations, then returns observed results in the provider's native continuation format. DeepSeek's documented thinking-mode tool-continuation handling stays inside its adapter; check the current API contract during implementation.
 
 Provider continuation data is not automatically published to the council or displayed as an explanation of its conclusions.
 
@@ -795,7 +795,7 @@ PauseRun keeps the canonical run lifecycle ACTIVE with activity QUIESCING_FOR_PA
 
 ### Budget controls
 
-With BYOK, users approve project and phase spending allowances and the external providers bill their accounts directly; Council requires no upfront wallet deposit. These allowances restrict Council-authorized calls, not the provider's ultimate invoice. The approved MVP recommendation shown at setup is **70% development, 25% checkpoint/review, 5% orchestration/finalization**, fully editable before the user approves the Project Contract. Development allowance is initially split equally by **monetary value** across five members (not necessarily tokens); each member's per-phase token and cost ceilings are derived as a proposal from the versioned semantic phase plan and model pricing, then explicitly approved. Review and orchestration/finalization pools cannot be borrowed for private development silently. Insufficient allowance for a minimal reserved operation blocks dispatch and asks for a revised authorized configuration. Local LLMs still have a phase token allowance even without remote provider billing. Estimates of token usage remain non-binding uncertain planning forecasts.
+With BYOK, users approve project and phase spending allowances and the external providers bill their accounts directly; Council requires no upfront wallet deposit. These allowances restrict Council-authorized calls, not the provider's ultimate invoice. The current ADR-27 budget rule uses **five protected project-specific pools** (member work, checkpoint comparison, Integrator, five-member integrated review/premortem, orchestration/report/archive) with **no universal percentage or equal member share default**. Per-member and phase token/cost ceilings are proposed from the approved semantic phase plan and model pricing and then explicitly user-approved. Review and orchestration/finalization pools cannot be borrowed for private development silently. Insufficient allowance for a minimal reserved operation blocks dispatch and asks for a revised authorized configuration. Local LLMs still have a phase token allowance even without remote provider billing. Estimates of token usage remain non-binding uncertain planning forecasts.
 
 Inference admission uses the existing seat queue and measured resource-vector capacity, not an extra scheduler or a computer-power score. Initial remote API cap is **up to two concurrent requests per provider**, further reduced by actual rate/account limits; initial local inference cap is **one job**, increased only after model/runtime/tool-loop and host capacity testing. Default host RAM headroom target is **about 20% of physical RAM**, increased if measured OS + Council baseline demands more; GPU VRAM/disk are assessed separately. On host pressure: stop admissions, throttle, safely quiesce/suspend members if needed, and confirm resource release before reusing a slot.
 
@@ -978,3 +978,7 @@ This amendment **reopens affected Steps 2–5 interfaces** and informs Steps 8/1
 
 
 **October 16 owner simplification (supersedes earlier ADR-40 queue requirement):** Do **not** add per-key internal-API submission queues, queue-specific DTOs or a new failure-recovery manager. Reuse the existing **Step 7 low-spec whole-agent scheduler**, existing **Step 5 PostgreSQL transaction/locks/idempotency/outbox** for simultaneous submissions, and **Docker persistent volumes/container lifecycle** for infrastructure recovery. The existing trusted runtime—not Docker—still owns agent permissions/checkpoint/budgets and reconciliation of uncertain external API/Git/provider effects. ADR-36–39 remain approved; ADR-40 is **SUPERSEDED**. [Authoritative lean 8.5C+D specification](STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md). **Architecture only, no runtime implementation or tests.**
+
+### October 19 — Owner-approved Step 9 (ADR-41/42)
+
+[The authoritative provider and shared-MCP contract](STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1.md) establishes three initial remote adapter targets (DeepSeek, OpenAI, Anthropic) with conditional local inference; one trusted provider-neutral gateway and shared MCP/tool broker; individually scoped permissions for the original five members; independent Orchestrator/Integrator model profiles; versioned actual tool-capability probes, egress/BYOK/budget checks, native provider continuation handling and queued checkpoint-safe switching. **Neither a per-model MCP server nor provider-native direct MCP access is required or approved.** Provider tools may serve multiple models, but no permissions cross members. **Design only; no provider/MCP connection or runtime tests have been executed.**
