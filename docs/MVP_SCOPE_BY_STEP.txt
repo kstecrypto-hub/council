@@ -351,7 +351,7 @@ Defer until after MVP evidence
 
 
 STEP 8 - AGENT LOOP, COUNCIL PHASES, AND DELEGATION
-Status: DESIGNED - exact v1 interface specification completed; implementation NOT STARTED, tests NOT RUN
+Status: IN DESIGN - core v1 design retained, ADR-43 Karpathy-first feedback amendment requires operational integration; implementation NOT STARTED, tests NOT RUN
 Core governance is already designed.
 
 Accepted design decision 8.1 - member loop + optional experiments (October 14, 2026)
@@ -890,3 +890,7 @@ Steps 2–5 and 8 **have completed their v1 architecture/interface specification
 OCTOBER 19 — STEP 9 OWNER-APPROVED MODEL GATEWAY + SHARED MCP DESIGN
 - Owner accepted the six Step 9 recommendations and confirmed shared Council tool infrastructure: a provider/model does NOT need a dedicated MCP server. Council acts as the authenticated, policy-scoped MCP host/client/broker; one tool server can be shared by different models while **distinct original members keep separate tool/source permissions**. Step 9.3 capability registry checks model tool-call competence, not MCP execution authority.
 - [Authoritative Step 9 provider and shared-MCP v1 design](STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1.md) specifies provider-normalized requests, native continuation behavior, source/egress consent, BYOK and five protected budget scopes, capability probes, tool routing and verified boundary switching. **IN DESIGN; principles agreed but full operational details NOT OWNER-REVIEWED. Implementation NOT STARTED, provider/MCP/runtime/security tests NOT RUN.**
+
+OCTOBER 19 — STEP 8 ADR-43 KARPATHY-FIRST CORE LOOP
+- Owner superseded the OPTIONAL aspect of ADR-14: the hypothesis -> act/investigate -> domain-appropriate check -> observe -> member-authored disposition -> record cycle is Council's STANDARD method for every substantive approach, including substantive worker and Final Integrator work. Never force software-like tests for non-code analysis or impose an arbitrary iteration count. Evidence unverified/not-run must be honestly identified.
+- See [Step 8 Karpathy-first policy amendment](STEP_8_KARPATHY_FIRST_AGENT_LOOP_AMENDMENT.md). Earlier optional text is historical and superseded. Step 8 overall IN DESIGN for exact agent action/prompt binding; implementation NOT STARTED, runtime tests NOT RUN.
