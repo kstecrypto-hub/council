@@ -468,7 +468,7 @@
     "budget_allocation_policy": "PROJECT_SPECIFIC_FIVE_PROTECTED_SCOPES_WITH_EXPLICIT_USER_APPROVAL_NO_UNIVERSAL_PERCENTAGES"
   },
   "step3": {
-    "design_status": "REOPENED_IN_DESIGN",
+    "design_status": "DESIGNED",
     "implementation_status": "NOT_STARTED",
     "runtime_tests_status": "NOT_RUN",
     "specification_path": "docs/POSTGRES_DATA_MODEL.md",
@@ -486,15 +486,16 @@
     "budget_db_records": "approved_policy_accounts_reservations_resource_admissions_recovery",
     "archive_deletion_guard": "fresh_checkout_reference_closure_and_verified_accepted_project_restore",
     "baseline_design_status": "DESIGNED_UNDER_SUPERSEDED_PUBLIC_GITHUB_POLICY",
-    "pending_redesign": "LOCAL_GIT_SAFEGUARD_UNIFIED_CONTROL_TYPED_TRANSFER_AND_RETENTION_INTEGRATION",
+    "pending_redesign": "RECONCILED_V1_DESIGN_COMPLETE_IMPLEMENTATION_NOT_STARTED",
     "checkpoint_sharing": "local_customer_private_export_manifest_grants_observed_access_revoke",
     "unified_control_subdesign": "OWNER_APPROVED_DIRECTION_SCHEMA_IN_DESIGN",
     "semantic_policy_records": "VERSIONED_HOSTED_OPENAI_MODERATION_CATEGORIES_AND_CONSENT_RECEIPTS",
     "peer_artifact_state": "OPAQUE_MANIFEST_OBJECTS_READ_GRANTS_TRANSFER_RECEIPTS",
-    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md"
+    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md",
+    "v1_exact_interface": "docs/STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md"
   },
   "step4": {
-    "design_status": "REOPENED_IN_DESIGN",
+    "design_status": "DESIGNED",
     "implementation_status": "NOT_STARTED",
     "runtime_tests_status": "NOT_RUN",
     "specification_path": "docs/TYPED_INTERACTION_CONTRACTS.md",
@@ -532,15 +533,16 @@
     "pause_state": "ACTIVE_with_QUIESCING_FOR_PAUSE_then_PAUSED_after_guards",
     "stop_state": "STOPPING_then_CANCELLED_or_FAILED_cleanup_incomplete",
     "baseline_design_status": "DESIGNED_UNDER_SUPERSEDED_PUBLIC_GITHUB_POLICY",
-    "pending_redesign": "LOCAL_GIT_GUARD_COMMAND_ONLY_CONTENT_PROTOCOL_INTEGRATION",
+    "pending_redesign": "RECONCILED_V1_DESIGN_COMPLETE_IMPLEMENTATION_NOT_STARTED",
     "unified_control_subdesign": "OWNER_APPROVED_DIRECTION_COMMAND_DTO_IN_DESIGN",
     "agent_file_transfer": "REQUEST_ONLY_SERVER_RESOLVED_APPROVED_CONTENT_NO_SEND_FILE_ATTACHMENTS",
     "file_message_binding": "NO_AUTOMATIC_OR_INLINE_FOLLOWUP_CHAT",
     "guard_enforcement": "REMOTE_OPENAI_MODERATION_PLUS_DETERMINISTIC_LOCAL_AUTHORITY_AND_EGRESS_POLICY",
-    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md"
+    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md",
+    "v1_exact_interface": "docs/STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md"
   },
   "step5": {
-    "design_status": "REOPENED_IN_DESIGN",
+    "design_status": "DESIGNED",
     "implementation_status": "NOT_STARTED",
     "runtime_tests_status": "NOT_RUN",
     "specification_path": "docs/PART_5_TRANSACTIONS_IDEMPOTENCY_CONFLICTS.md",
@@ -571,14 +573,15 @@
     "projections": "committed_event_cursor_consistent_snapshot_authorization_filtered_replay",
     "finalization": "authorized_customer_owned_archive_export_and_restore_validation_before_control_db_teardown",
     "baseline_design_status": "DESIGNED_UNDER_SUPERSEDED_PUBLIC_GITHUB_POLICY",
-    "pending_redesign": "LOCAL_SNAPSHOT_GUARD_EGRESS_TRANSFERS_REVOKE_UNKNOWN_INTEGRATION",
+    "pending_redesign": "RECONCILED_V1_DESIGN_COMPLETE_IMPLEMENTATION_NOT_STARTED",
     "unified_control_subdesign": "OWNER_APPROVED_DIRECTION_RECOVERY_CONTRACTS_IN_DESIGN",
     "guard_operational_effect": "REQUIRED_HOSTED_MODERATION_IF_AUTHORIZED_AND_ELIGIBLE_NO_SILENT_BYPASS",
     "file_transfer": "CONTENT_HASH_GENERATION_POLICY_BOUND_SERVER_DELIVERY_RECEIPTS",
-    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md"
+    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md",
+    "v1_exact_interface": "docs/STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md"
   },
   "step8": {
-    "design_status": "IN_DESIGN",
+    "design_status": "DESIGNED",
     "accepted_subdesigns": [
       "8.1_MEMBER_LOOP_OPTIONAL_KARPATHY_STYLE_EXPERIMENTATION",
       "8.2_SANDBOX_LOCAL_WORKER_AUTONOMY_AND_TRUSTED_DOCKER_MONITORING",
@@ -636,24 +639,7 @@
     "checkpoint_work_excursion": "verification_only_disposable_read_only_candidate",
     "fixed_reasoning_iteration_or_experiment_count": false,
     "budget_exhaustion_means_completion": false,
-    "pending_design": [
-      "complete_action_observation_schema",
-      "step8_3_exact_step4_and_step5_event_operation_integration",
-      "step8_5_cross_step_interface_acceptance_scenarios",
-      "step8_4_exact_blueprint_dto_and_conflict_governance",
-      "step8_4_integration_budget_revision_and_permissions",
-      "step8_4_five_sealed_post_integration_review_generation",
-      "step8_4_premortem_final_report_version_binding",
-      "step8_5_exact_member_decision_authorship_payloads_and_blueprint_freeze_commands",
-      "step8_5_checkpoint_frontier_and_revocation_race_transaction_reconciliation",
-      "step8_5_persistent_integrator_lifecycle_recovery",
-      "step8_5_post_integration_review_premortem_exact_states",
-      "step8_5b_exact_integrator_actor_and_output_intent_verified_observation_DTOs",
-      "step8_5b_workspace_identity_provision_and_unknown_effect_recovery",
-      "step8_5b_integrated_output_review_generation_closeout_and_revision_transaction_guards",
-      "step8_5cd_exact_typed_commands_finalization_DTO_and_DDL_reconciliation",
-      "step8_5cd_final_package_archive_verified_cleanup_runtime_acceptance_tests"
-    ],
+    "pending_design": [],
     "implementation_and_tests_pending": true,
     "member_controls_local_worker_count_and_depth": true,
     "fixed_member_local_worker_count_cap": null,
@@ -925,7 +911,9 @@
         "process_ram_persistence_assumed": false
       }
     },
-    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md"
+    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md",
+    "v1_exact_interface": "docs/STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md",
+    "verification_matrix": "docs/STEP_2_TO_8_VERIFICATION_MATRIX_V1.md"
   },
   "checkpoint_public_github_default": false,
   "local_first_repository_specification": "docs/LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md",
@@ -952,7 +940,7 @@
   ],
   "new_repositories_and_knowledge_design_integration": "IN_DESIGN",
   "step2": {
-    "design_status": "REOPENED_IN_DESIGN",
+    "design_status": "DESIGNED",
     "baseline_design_status": "DESIGNED_UNDER_SUPERSEDED_PUBLIC_GITHUB_POLICY",
     "repository_backend_default": "native_local_git",
     "source_ownership": "customer",
@@ -969,10 +957,11 @@
     "revocation_independently_verified": true,
     "final_export": "customer_approved_destination_only",
     "remote_source_egress": "requires_separate_permission",
-    "remaining_design": "protocol_artifacts_dependencies_recovery_steps3_to5",
+    "remaining_design": "IMPLEMENTATION_TIME_ADAPTER_CONFIG_ONLY",
     "specification_path": "docs/STEP_2_CUSTOMER_LOCAL_GIT_CHECKPOINT.md",
     "implementation_status": "NOT_STARTED",
-    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md"
+    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md",
+    "v1_exact_interface": "docs/STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md"
   },
   "step11": {
     "design_status": "IN_DESIGN",
