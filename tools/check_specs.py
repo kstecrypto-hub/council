@@ -54,6 +54,9 @@ assert contract['step8']['runtime_implementation_status'] == 'NOT_STARTED'
 assert contract['step8']['runtime_tests_status'] == 'NOT_RUN'
 assert contract['step8']['experiment_is_optional_under_act'] is False
 assert contract['step8']['karpathy_feedback_cycle_is_core'] is True
+assert contract['step8']['self_review_required_before_each_normal_checkpoint'] is True
+assert contract['step8']['integrator_output_intent_self_check_required'] is True
+assert {'ADR-43', 'ADR-44'} <= {r['id'] for r in contract['requirements']}
 assert contract['step8']['separate_ai_judge_or_experiment_scheduler'] is False
 assert contract['step8']['worker_may_declare_parent_checkpoint_ready'] is False
 assert contract['step8']['checkpoint_work_excursion'] == 'verification_only_disposable_read_only_candidate'
