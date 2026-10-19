@@ -372,6 +372,14 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-43",
+      "design_status": "OWNER_APPROVED_CORE_POLICY_OPERATIONAL_RECONCILIATION_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -597,9 +605,9 @@
     "v1_exact_interface": "docs/STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md"
   },
   "step8": {
-    "design_status": "DESIGNED",
+    "design_status": "IN_DESIGN",
     "accepted_subdesigns": [
-      "8.1_MEMBER_LOOP_OPTIONAL_KARPATHY_STYLE_EXPERIMENTATION",
+      "8.1_ADR43_MANDATORY_EVIDENCE_FEEDBACK_CORE_NO_FORCED_EXPERIMENT_EVERY_ACTION",
       "8.2_SANDBOX_LOCAL_WORKER_AUTONOMY_AND_TRUSTED_DOCKER_MONITORING",
       "8.2A_DOCKER_PERSISTENT_VOLUME_MEMBER_MANAGED_WORKER_RESUME",
       "8.3_MEMBER_AUTHORED_READINESS_INTENT_AND_TRUSTED_VERIFIED_FREEZE",
@@ -629,7 +637,7 @@
     "runtime_tests_status": "NOT_RUN",
     "outer_loop": "Council_semantic_phases_five_independent_members_checkpoint_sealed_review_revision",
     "member_loop": "member_chooses_reason_act_delegate_ask_user_continue_checkpoint_ready_blocked",
-    "experiment_is_optional_under_act": true,
+    "experiment_is_optional_under_act": false,
     "experiment_stages": [
       "HYPOTHESIS",
       "CHANGE_OR_ALTERNATIVE",
@@ -655,7 +663,10 @@
     "checkpoint_work_excursion": "verification_only_disposable_read_only_candidate",
     "fixed_reasoning_iteration_or_experiment_count": false,
     "budget_exhaustion_means_completion": false,
-    "pending_design": [],
+    "pending_design": [
+      "ADR43_FEEDBACK_CYCLE_RUNTIME_PROMPT_AND_COMMAND_BINDING",
+      "ADR43_MATERIAL_APPROACH_EVIDENCE_COVERAGE_AND_UNTESTABLE_CLAIM_HANDLING"
+    ],
     "implementation_and_tests_pending": true,
     "member_controls_local_worker_count_and_depth": true,
     "fixed_member_local_worker_count_cap": null,
@@ -929,7 +940,10 @@
     },
     "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md",
     "v1_exact_interface": "docs/STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md",
-    "verification_matrix": "docs/STEP_2_TO_8_VERIFICATION_MATRIX_V1.md"
+    "verification_matrix": "docs/STEP_2_TO_8_VERIFICATION_MATRIX_V1.md",
+    "karpathy_feedback_cycle_is_core": true,
+    "standard_member_loop": "HYPOTHESIS_APPROACH_ACT_DOMAIN_APPROPRIATE_CHECK_OBSERVE_KEEP_REVISE_DISCARD_INCONCLUSIVE_RECORD_REPEAT",
+    "karpathy_first_amendment": "docs/STEP_8_KARPATHY_FIRST_AGENT_LOOP_AMENDMENT.md"
   },
   "checkpoint_public_github_default": false,
   "local_first_repository_specification": "docs/LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md",
