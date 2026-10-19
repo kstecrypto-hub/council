@@ -406,12 +406,7 @@
     "runtime_implementation_status": "NOT_STARTED",
     "runtime_tests_status": "NOT_RUN",
     "requires_approved_user_budget": true,
-    "suggested_default_budget_allocation_percent": {
-      "private_development": 70,
-      "protected_checkpoint_review": 25,
-      "protected_orchestration_finalization": 5
-    },
-    "member_development_allocation": "equal_monetary_shares_by_default_configurable",
+    "member_development_allocation": "USER_APPROVED_PER_SEAT_AND_PHASE_NOT_UNIVERSAL_EQUAL_DEFAULT",
     "user_approves_run_and_phase_token_and_cost_limits": true,
     "initial_remote_model_call_cap_per_provider": 2,
     "initial_local_inference_concurrency_cap": 1,
@@ -469,7 +464,8 @@
     "resource_monitor_approved": true,
     "resource_monitor_specification_path": "docs/PART_7_MEMBER_SCHEDULING_RECOVERY_RESOURCES.md",
     "member_workspace_storage": "stable_private_docker_volume",
-    "council_worker_recovery_daemon_required": false
+    "council_worker_recovery_daemon_required": false,
+    "budget_allocation_policy": "PROJECT_SPECIFIC_FIVE_PROTECTED_SCOPES_WITH_EXPLICIT_USER_APPROVAL_NO_UNIVERSAL_PERCENTAGES"
   },
   "step3": {
     "design_status": "REOPENED_IN_DESIGN",
@@ -494,7 +490,8 @@
     "checkpoint_sharing": "local_customer_private_export_manifest_grants_observed_access_revoke",
     "unified_control_subdesign": "OWNER_APPROVED_DIRECTION_SCHEMA_IN_DESIGN",
     "semantic_policy_records": "VERSIONED_HOSTED_OPENAI_MODERATION_CATEGORIES_AND_CONSENT_RECEIPTS",
-    "peer_artifact_state": "OPAQUE_MANIFEST_OBJECTS_READ_GRANTS_TRANSFER_RECEIPTS"
+    "peer_artifact_state": "OPAQUE_MANIFEST_OBJECTS_READ_GRANTS_TRANSFER_RECEIPTS",
+    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md"
   },
   "step4": {
     "design_status": "REOPENED_IN_DESIGN",
@@ -539,7 +536,8 @@
     "unified_control_subdesign": "OWNER_APPROVED_DIRECTION_COMMAND_DTO_IN_DESIGN",
     "agent_file_transfer": "REQUEST_ONLY_SERVER_RESOLVED_APPROVED_CONTENT_NO_SEND_FILE_ATTACHMENTS",
     "file_message_binding": "NO_AUTOMATIC_OR_INLINE_FOLLOWUP_CHAT",
-    "guard_enforcement": "REMOTE_OPENAI_MODERATION_PLUS_DETERMINISTIC_LOCAL_AUTHORITY_AND_EGRESS_POLICY"
+    "guard_enforcement": "REMOTE_OPENAI_MODERATION_PLUS_DETERMINISTIC_LOCAL_AUTHORITY_AND_EGRESS_POLICY",
+    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md"
   },
   "step5": {
     "design_status": "REOPENED_IN_DESIGN",
@@ -576,7 +574,8 @@
     "pending_redesign": "LOCAL_SNAPSHOT_GUARD_EGRESS_TRANSFERS_REVOKE_UNKNOWN_INTEGRATION",
     "unified_control_subdesign": "OWNER_APPROVED_DIRECTION_RECOVERY_CONTRACTS_IN_DESIGN",
     "guard_operational_effect": "REQUIRED_HOSTED_MODERATION_IF_AUTHORIZED_AND_ELIGIBLE_NO_SILENT_BYPASS",
-    "file_transfer": "CONTENT_HASH_GENERATION_POLICY_BOUND_SERVER_DELIVERY_RECEIPTS"
+    "file_transfer": "CONTENT_HASH_GENERATION_POLICY_BOUND_SERVER_DELIVERY_RECEIPTS",
+    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md"
   },
   "step8": {
     "design_status": "IN_DESIGN",
@@ -925,7 +924,8 @@
         "no_new_recovery_manager": true,
         "process_ram_persistence_assumed": false
       }
-    }
+    },
+    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md"
   },
   "checkpoint_public_github_default": false,
   "local_first_repository_specification": "docs/LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md",
@@ -971,7 +971,8 @@
     "remote_source_egress": "requires_separate_permission",
     "remaining_design": "protocol_artifacts_dependencies_recovery_steps3_to5",
     "specification_path": "docs/STEP_2_CUSTOMER_LOCAL_GIT_CHECKPOINT.md",
-    "implementation_status": "NOT_STARTED"
+    "implementation_status": "NOT_STARTED",
+    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md"
   },
   "step11": {
     "design_status": "IN_DESIGN",
@@ -1073,6 +1074,13 @@
     "intellectual_direction_authority": "ORIGINAL_FIVE_COUNCIL_MEMBERS",
     "integrator_must_follow_council_blueprint_default": true,
     "consensus_weight": "MEANINGFUL_NONDETERMINISTIC_REBUTTABLE_EVIDENCE_DEPENDENT",
-    "council_decision_register": true
+    "council_decision_register": true,
+    "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md",
+    "final_user_acceptance_target": "EXACT_CURRENT_INTEGRATED_ARTIFACT_AND_FROZEN_REPORT_PACKAGE_NOT_ORIGINAL_MEMBER_CANDIDATE",
+    "contested_council_recommendation": "EVIDENCE_FIRST_AUTHENTIC_MEMBER_POSITIONS_CONDITIONAL_REVERSIBLE_SELECTION_OR_EXPLICIT_USER_DECISION_IF_AUTHORITY_REQUIRED",
+    "integrator_logical_identity": "ONE_RUN_SCOPED_NONVOTING_ACTOR_OUTSIDE_FIVE_MEMBER_SEATS",
+    "domain_neutral_artifact_identity": "SOFTWARE_LOCAL_GIT_COMMIT_TREE_OR_NONCODE_CONTENT_HASHED_MANIFEST",
+    "source_grant_expiry": "FAIL_CLOSED_REAUTHORIZE_EXACT_SCOPE_AFTER_VERIFIED_REVOCATION_AND_EPOCH_CHECK",
+    "design_reconciliation_status": "SPECIFIED_IN_DESIGN_IMPLEMENTATION_NOT_STARTED_TESTS_NOT_RUN"
   }
 }
