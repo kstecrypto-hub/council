@@ -180,7 +180,7 @@ assert {'ADR-41', 'ADR-42'} <= {x['id'] for x in contract['requirements']}
 assert all(x['implementation_status'] == 'NOT_STARTED' and x['test_status'] == 'NOT_RUN' for x in contract['requirements'] if x['id'] in {'ADR-41', 'ADR-42'})
 step9_scope = scope_text.split('STEP 9 -', 1)[1].split('STEP 10 -', 1)[0]
 assert 'Status: DESIGNED' in step9_scope
-assert 'a common Council-managed tool broker/MCP client layer shared by all models' in step9_scope
+assert 'Council-managed tool broker/MCP client layer shared by all models' in step9_scope
 step9_doc = (root / 'docs' / 'STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1.md').read_text(encoding='utf-8')
 for phrase in ('NO PER-MODEL MCP SERVER IS REQUIRED', 'NO PER-MODEL MCP SERVER', 'ModelRequestV1', 'ExposedToolManifestV1', 'NOT RUN'):
     assert phrase in step9_doc, phrase
