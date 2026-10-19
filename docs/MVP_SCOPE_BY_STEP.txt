@@ -508,7 +508,7 @@ OCTOBER 16 — APPROVED JOINT STEP 8.5C+D, SIMULTANEOUS SUBMISSIONS WITHOUT EXTR
 - AUTHORITATIVE docs/STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md. Policy APPROVED. Exact Step 3/4/5 DTO/DDL/migration and fault tests STILL IN DESIGN/NOT STARTED. Implementation/tests NOT RUN.
 
 STEP 9 - PROVIDER ADAPTERS AND MODEL SWITCHING
-Status: DESIGNED - owner-approved v1 provider/shared-MCP architecture, implementation NOT STARTED, runtime tests NOT RUN
+Status: IN DESIGN - principles agreed, detailed operational workflows still require owner discussion; implementation NOT STARTED, tests NOT RUN
 
 Complete product
 ~~~~~~~~~~~~~~~~
@@ -889,4 +889,4 @@ Steps 2–5 and 8 **have completed their v1 architecture/interface specification
 
 OCTOBER 19 — STEP 9 OWNER-APPROVED MODEL GATEWAY + SHARED MCP DESIGN
 - Owner accepted the six Step 9 recommendations and confirmed shared Council tool infrastructure: a provider/model does NOT need a dedicated MCP server. Council acts as the authenticated, policy-scoped MCP host/client/broker; one tool server can be shared by different models while **distinct original members keep separate tool/source permissions**. Step 9.3 capability registry checks model tool-call competence, not MCP execution authority.
-- [Authoritative Step 9 provider and shared-MCP v1 design](STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1.md) specifies provider-normalized requests, native continuation behavior, source/egress consent, BYOK and five protected budget scopes, capability probes, tool routing and verified boundary switching. **DESIGNED only; implementation NOT STARTED, provider/MCP/runtime/security tests NOT RUN.**
+- [Authoritative Step 9 provider and shared-MCP v1 design](STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1.md) specifies provider-normalized requests, native continuation behavior, source/egress consent, BYOK and five protected budget scopes, capability probes, tool routing and verified boundary switching. **IN DESIGN; principles agreed but full operational details NOT OWNER-REVIEWED. Implementation NOT STARTED, provider/MCP/runtime/security tests NOT RUN.**
