@@ -366,13 +366,13 @@ Retain the established loop ideas: bounded work, observable feedback, external p
 
 The **outer Council loop** moves through user-approved, Orchestrator-prepared, outcome-based semantic phases: independent work, member-declared checkpoint arrivals, public pinned snapshots, sealed independent reviews, discussion, private revision, and final evaluation. A **persistent member agentic loop** chooses what to reason about and whether to ACT, DELEGATE, ASK_USER, CONTINUE, CHECKPOINT_READY or BLOCKED; it inspects results and records attributable progress, then repeats. The runtime enforces mechanical permissions and budgets, not intellectual solution selection or readiness.
 
-Inside a member's ACT workflow, an **optional Karpathy-style experiment cycle** may run as described below. This is an embedded method, not another orchestrator, model-supervised judge, mandatory after every action, or universal optimizer. Step 11 starts a fresh model session for the *same* logical member near context limits; that is context continuity, not a new member or a mandatory Council checkpoint.
+**Current ADR-43/45:** each member follows mandatory outer strategic approach/evidence validation enclosing inner execution/check/repair. Specific formal experiments remain optional where useful; no new strategic hypothesis for every inner action.
 
 Each logical agent retains its identity, assignments, workers, findings, and unresolved challenges across sessions.
 
 Fresh sessions are continuations, not additional independent reviewers.
 
-### Optional structured experimentation (accepted Step 8.1)
+### Mandatory substantive evidence-feedback; optional formal experiments (ADR-43/45)
 
 Each Council member can choose to run a structured experimental cycle within its own agentic work:
 
@@ -697,9 +697,9 @@ The **five original Council members determine the evidence-backed recommended in
 
 The separate non-voting Integrator **follows Council direction by default**, uses bounded execution discretion for integration mechanics, and records any material evidence- or compatibility-justified departure for subsequent review by the original five. Different model training is not a reason to silently relitigate Council's high-level intellectual recommendation; no new central winner-selecting agent is introduced. Hard contract/permissions/budget changes require existing user approval. This policy applies to research evidence synthesis as well as software and every other supported domain. [Step 8.4 ADR-26 clarification](STEP_8_4_COLLECTIVE_SYNTHESIS_AND_FINAL_INTEGRATION.md#91-adr-26--bounded-intellectual-discretion-for-the-final-integrator). Design only.
 
-### October 16 — approved joint Step 8.5C+D and small API submission queues
+### October 16 historical keyed API queue proposal — ADR-40 superseded
 
-The [combined specification](STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md) preserves one authoritative typed run/Integrator/five-member review/premortem/user acceptance/verified archive protocol with immutable version-scoped claims. The owner's **small bounded per-aggregate internal API queues** serialize processing of conflicting same-time submissions (especially fifth sealed review, `/done`/checkpoint messages and freeze/reveal) without arbitrary sleeps or artificially offset model completion times. Distinct member seats remain independently represented; queued work is not considered durably accepted until canonical database receipt/inbox exists. Existing PostgreSQL event clock, unique seat/generation constraints, idempotency and transaction locks remain **necessary** across API processes and crashes. No new brokers, global task serial bottleneck, sixth reviewer or second global lifecycle.
+The [combined specification](STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md) preserves versioned finalization and original-five genuine reviews. **Do not implement the withdrawn ADR-40 keyed API queues.** Same-time submissions use Step 5 PG idempotency, locks, seat uniqueness and event clock, with Step 7 existing resource scheduler; no new submission queue or timing sleeps.
 
 UI distinguishes exact artifact verification from actual protected checks, completed five-person review from positive findings, premortem from observed future outcome, and user acceptance from verified customer-owned delivery/cleanup. Design-only; no code or tests.
 

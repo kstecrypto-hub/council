@@ -360,10 +360,10 @@ Primary working specification: docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION
 
 The outer Council loop follows the Orchestrator's approved semantic phases, five independent private candidates, all-five checkpoint arrivals, sealed peer reviews, discussion and private revisions. A persistent member's **own** agentic loop reasons -> selects an authorized action -> observes/records the result -> repeats until that member reports readiness, blocking or another legitimate lifecycle outcome. The runtime does not intellectually judge readiness. Candidate readiness, checkpoint communication /done, BLOCKED and Step 7 budget exhaustion remain separate outcomes.
 
-**Optional Karpathy-style autoresearch inside ACT**:
+**Standard strategic evidence-feedback and inner execution/check/repair; formal experiments optional**:
 HYPOTHESIS -> CHANGE or ALTERNATIVE -> TEST/CHECK -> OBSERVE -> KEEP | REVISE | DISCARD | INCONCLUSIVE -> RECORD -> return to the same member's loop.
 
-- This is a first-class **optional workflow**, not mandatory for each action, not a replacement for ordinary tools/reasoning, and not a separate AI supervisor/scheduler.
+- The evidence-feedback method is standard for substantive approaches (ADR-43/45); only particular formal empirical experiments are optional. No hypothesis per trivial action.
 - Works for code, research, or other domains: compare baselines and counterexamples; numerical benchmarks only when meaningful, with units, conditions, uncertainty and regressions. No universal scalar score or automatic winner selection.
 - Experiments retain exact hypothesis, baseline/changed source or repo SHA, environment/test/data versions, operations, results, limitations, member decision and immutable attributable evidence. Reverted/failed work retains the experiment record, not necessarily failed code.
 - An authorized worker may perform a bounded experiment for its parent member; child calls use parent branch permissions and phase budget, and results return to the parent. Parent alone decides whether to integrate, revise, discard, or declare the **parent's** semantic checkpoint ready.
@@ -502,7 +502,7 @@ OCTOBER 16 — APPROVED JOINT STEP 8.5C+D, SIMULTANEOUS SUBMISSIONS WITHOUT EXTR
 - One typed, versioned actor-authorized Blueprint -> Integrator -> verified integrated output -> five genuine original-member sealed review -> sealed premortem -> exact final report/package -> explicit user acceptance -> verified customer archive and cleanup lifecycle.
 - All artifacts, reviews, premortems and acceptance packages bind exact immutable hashes/generations; stale or mixed versions cannot count. Actual review completion is independent of domain/test correctness and user approval/delivery.
 - External effects follow existing durable PostgreSQL intent/outbox, committed event order, epoch fencing, correct budget reservations and UNKNOWN reconciliation. No false atomicity across PostgreSQL, Docker, provider, Git and artifact store.
-- OWNER REQUEST: small bounded per-conflict-aggregate queues WITHIN THE INTERNAL TRUSTED API to serialize simultaneous incoming commands. No millisecond staggering or sleeps, no new message broker or global queue bottleneck. Queued volatile requests do NOT count as accepted until durably persisted; PG locks, seat-unique constraints, expected generations, idempotency, event clock remain authoritative even across separate API workers.
+- **Historical superseded ADR-40:** do NOT build keyed API queues. Use existing Step 5 PostgreSQL transaction/idempotency/seat uniqueness/event-clock and Step 7 whole-agent resource queue; no delays or new broker.
 - Five original-member independent reviews remain genuinely private and all-five atomic; the final Integrator never counts as a reviewer. Premortem target is pinned integrated artifact + frozen provisional report pair.
 - User acceptance, actual protected checks, archive reconstruction/reference closure and verified cleanup are distinct; only actual required finalization proofs may mark RunCompleted.
 - AUTHORITATIVE docs/STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md. Policy APPROVED. Exact Step 3/4/5 DTO/DDL/migration and fault tests STILL IN DESIGN/NOT STARTED. Implementation/tests NOT RUN.
