@@ -146,9 +146,9 @@ In addition to per-container stats, measure **host RAM headroom** (initial adjus
 
 **Scope/status:** accepted **Step 8.2 resource/worker policy** and **Step 8.2a Docker volume persistence**. The parent member owns all ordinary worker restart/merge choices; no central worker recovery architecture remains to specify. Step 8 remains **IN DESIGN** for exact member action protocol and final-phase/checkpoint/termination conditions; implementation and runtime tests remain **NOT STARTED / NOT RUN**.
 
-## Step 8.1 accepted — nested member reasoning and optional Karpathy-style experiments (October 14)
+## Historical Step 8.1 optional formal experiments — ADR-43/45 substantive feedback is mandatory
 
-The member's existing general-purpose agentic loop can optionally perform a Karpathy/autoresearch-inspired experiment **under ACT**: `HYPOTHESIS -> CHANGE/ALTERNATIVE -> TEST/CHECK -> OBSERVE -> KEEP/REVISE/DISCARD/INCONCLUSIVE -> RECORD`, then return to the same member loop. This is an **optional workflow** chosen by the member, not a fixed procedure after every action, a second AI supervisor, scheduler, quality scorer, or coding-only optimizer. For research/noncoding work, `TEST/CHECK` may be evidence comparisons, counterexamples and assumption checks rather than numerical benchmarks.
+Current ADR-43/45: each original member's substantive work runs an outer strategy/evidence-validation cycle enclosing an inner task/action/check/repair loop. A distinct formal controlled experiment remains optional where useful; checking material observations and truthful reporting is not optional. No strategic hypothesis is required for every trivial step.
 
 The experiment/attempt ledger must preserve attributable hypothesis, baseline and changed source/repo SHA or alternative, versioned test/data/environment inputs, durable operation IDs, results/failures/regressions, units/measurement conditions or qualitative evidence, limitations, and the member's own KEEP/REVISE/DISCARD/INCONCLUSIVE disposition. Failed/reverted code need not be retained, but the **evidence and experiment outcome record** remains. Agent-edited exploratory tests never replace trusted protected acceptance tests.
 
@@ -156,7 +156,7 @@ Delegated workers may run an authorized branch-local experiment using the parent
 
 At a checkpoint, sealed review and private local pinned snapshot scope/read-only rules still apply. `/work` uses disposable **verification-only** sandboxes: no authoritative candidate edits or pushes, and no overriding protected evaluation. Subsequent private revisions wait for verified checkpoint closure. Experiments survive session rollover under the same logical member, and a budget limit cannot force intellectual completion.
 
-**Design status:** only Step 8.1 is accepted, with [the working Part 8 specification](PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md). **Step 8 remains IN DESIGN; runtime implementation NOT STARTED and tests NOT RUN.** The remaining Step 8 areas are action/worker lifecycle, delegation ceilings, final candidate/termination transitions, and checkpoint integration.
+**Historical October 14 status superseded for v1 interfaces:** October 19 specifies Step 8 v1 finalization/action interfaces; ADR-43/45 operational prompt/command integration, real code, migrations and tests remain pending.
 
 ## October 14 Steps 3–5 design closure (implementation explicitly pending)
 
