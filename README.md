@@ -116,3 +116,8 @@ Steps 2–5 and 8 **have completed their v1 architecture/interface specification
 ## October 20 — ADR-45 approved nested reasoning loops
 
 [Step 8 ADR-45](docs/STEP_8_ADR45_NESTED_STRATEGY_EXECUTION_LOOPS.md) clarifies that every original member uses **one outer strategic hypothesis/approach-validation loop** containing **one inner execution/check/repair loop**. Normal implementation fixes do not require new strategic hypotheses; foundational disconfirming evidence may escalate early. Intermediate checks and final candidate-level validation remain distinct; the mandatory ADR-44 member self-review, five-peer checkpoints and existing budgets/permissions remain. **Policy approved and committed; command/prompt integration still IN DESIGN; application NOT IMPLEMENTED; runtime and comparative tests NOT RUN.**
+
+
+## October 20 — ADR-46 safe tool concurrency in shared MCP
+
+[Step 9 ADR-46](docs/STEP_9_ADR46_TOOL_CALL_ORDERING_AND_MCP_ISOLATION.md) approves sequential execution of tools **within each model turn** while allowing actually isolated independent tool calls across different Council members, even via the same registered MCP tool. Per-call authenticated seat/tenant/grant/operation/result binding and credential/cache isolation prevent cross-member disclosure; conflicting external writes require target-level safety, and stateful tool connections/instances are split by scope as necessary. Existing Step 5/7 ledger, concurrency admission and UNKNOWN reconciliation are reused; no global API queue or per-LLM MCP server. **Design approved; Step 9 operational review still open; application implementation NOT STARTED, integration/security tests NOT RUN.**
