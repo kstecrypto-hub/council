@@ -4,41 +4,31 @@
 
 This policy **supersedes only ADR-14's word "optional" for the core evidence-feedback cycle**. It does **not** supersede the user's approved Council architecture, the five independent member seats, their autonomy, sealed checkpoint communication, Step 7 resource limits, protected Step 8.5 integration and five-member re-review, or the original optionality of *specific executable experiments*. Read [Part 8](PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md), [Step 8 exact action and finalization contracts](STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md), and the [Step 9 discussion draft](STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1.md) together.
 
-## 1. Binding intellectual workflow
+## 1. Binding intellectual workflow — ADR-45 nested strategy and execution
 
-**Council reasoning agents run on the Karpathy-style evidence-feedback cycle PLUS the Council-specific governance and execution specifications.** The Karpathy loop is no longer an optional branch hidden under `ACT`: it is the **normal parent cycle for substantive investigation, development, analysis, and integration**.
+**October 20 owner-approved refinement:** Council reasoning agents use **two nested loops**, not a newly stated strategic hypothesis for each implementation step. [ADR-45](STEP_8_ADR45_NESTED_STRATEGY_EXECUTION_LOOPS.md) is authoritative for this granularity change; ADR-43's mandatory evidence discipline and ADR-44's checkpoint self-review still apply.
 
 ```text
-ONE ORIGINAL COUNCIL MEMBER (same logical agent across sessions)
-  approved Project Contract, own evidence/workspace and semantic phase
-     |
-     v
-  FORM HYPOTHESIS / CHOOSE APPROACH / STATE EXPECTED OBSERVATION
-     |
-     v
-  ACT / INVESTIGATE / CONSTRUCT / DELEGATE within approved authority
-     |
-     v
-  TEST / CHECK / CHALLENGE with domain-appropriate available evidence
-     |
-     v
-  OBSERVE actual result or honestly record NOT_RUN / BLOCKED / UNKNOWN
-     |
-     v
-  MEMBER'S OWN DISPOSITION: KEEP | REVISE | DISCARD | INCONCLUSIVE
-     |
-     v
-  RECORD rationale, exact source/test/environment versions and provenance
-     |
-     +----> next hypothesis / revision / action as member chooses
-     +----> ask the user where required; wait/block honestly
-     +----> member-authored CHECKPOINT_READY or concluded investigation,
-             subject to the existing trusted mechanical admission gates
+ONE ORIGINAL COUNCIL MEMBER (same identity through bounded sessions)
+  OUTER STRATEGIC LOOP:
+    APPROVED OBJECTIVE -> APPROACH/HYPOTHESIS + SUCCESS/FAILURE CRITERIA
+      |
+      +-- INNER EXECUTION/IMPROVEMENT LOOP:
+      |    choose next task -> REASON / ACT / DELEGATE / INVESTIGATE
+      |    -> check observed intermediate result -> fix/refine -> repeat
+      |    (NO new strategic hypothesis or outer decision on every inner action)
+      |
+      +-- evaluate meaningful candidate/outcome against original criteria
+      +-- member-authored KEEP / REVISE / DISCARD / INCONCLUSIVE + evidence
+      +-- continue, choose another approach or conclude the approved phase
+      |
+      +-- exact-version ADR-44 self-review -> authored readiness intent
+          -> trusted mechanical checks -> five original peers' checkpoint
 ```
 
-The loop is **mandatory as the standard process for each materially advanced approach or conclusion**, not mandatory as a newly logged experiment after every model token, message, trivial filesystem operation, or context-summary step. A single cycle may span many existing `REASON`, `ACT`, `DELEGATE` and `RECORD_FINDING` commands. Where practical no execution/test is possible, the agent must **record the specific limitation**, attempt appropriate alternative corroboration or counterexample analysis when available, classify the observation accurately (`NOT_RUN`, `BLOCKED` or `INCONCLUSIVE`), and avoid claiming the result was verified.
+**Routine bugs are inner-loop concerns; fundamental counterevidence can escape early to the outer loop.** The parent reasoning member decides when evidence undermines the approach, with no fixed retry count, algorithmic quality judge, required second architecture vote or forced completion of a known-bad approach. Applicable interim tests/checks occur *inside* execution, and meaningful candidate-level validation occurs before honest readiness when available; no final result is automatically certified merely because the inner loop ran.
 
-The agent—not the Orchestrator, Auditor, Integrator-as-supervisor, gateway or a universal numeric evaluator—chooses hypotheses, alternatives, meaningful tests and dispositions. The existing customer-approved Contract defines requirements and evidence expectations. No fixed iteration count, mandatory experimental program, automatic scalar winner selection, forced time-box, or model-authored false PASS/READY is introduced.
+A given inner iteration may cover many existing `REASON`, `ACT`, `DELEGATE` and `RECORD_FINDING` actions. It need not introduce a fresh strategic `HYPOTHESIS`, `RECORD_EXPERIMENT` or disposition. Specific tactical hypotheses and experiments remain available when they help; material observations and limits must remain attributable through the existing Step 6/8 evidence records. Where no meaningful executable test is possible, do appropriate domain-specific checks or truthfully record NOT_RUN / BLOCKED / INCONCLUSIVE. No fixed iteration count, forced scalar metric, new scheduler, second judge, extra database or changed five-member governance.
 
 ## 2. Who uses this cycle?
 
@@ -64,7 +54,7 @@ A successful command only proves that command's observed effects. It does not pr
 
 ## 4. Fit with existing steps and minimum evidence
 
-- **Step 8 loop owner:** member/worker/Integrator controls the intelligent hypothesis → action → evaluation → disposition → repeat cycle. Use existing Step 8 experiment/attempt and Step 6 evidence/provenance records. A trace/reference must exist for every **material approach presented as a concluded finding**, or an explicit reason that evaluation was impossible; minor actions need not generate new durable records. No additional experiment scheduler, supervisory agent, queue or dedicated experiment database.
+- **Step 8 loop owner:** original members control the outer hypothesis/approach → nested execution/check/refinement → candidate validation → outer disposition cycle; workers act within delegated inner scope, and the constrained Integrator does likewise under its Blueprint. Use existing Step 8 experiment/attempt and Step 6 evidence/provenance records. A trace/reference must exist for every **material approach presented as a concluded finding**, or an explicit reason that evaluation was impossible; minor actions need not generate new durable records. No additional experiment scheduler, supervisory agent, queue or dedicated experiment database.
 - **Step 7:** existing whole-member scheduling, aggregate worker resource limits and five user-approved protected budgets still control which model/tool operations are possible. Budget exhaustion remains `INCOMPLETE`, not forced readiness.
 - **Step 9:** **every model inference and brokered tool operation** from these reasoning loops uses the trusted gateway/broker and current authorizations, moderation where applicable, deterministic checks, provider-native tool continuation and cost reporting. A member's purely local permitted computation is not itself a new Step 9 model request; Step 10 still constrains it.
 - **Step 10:** the existing approved sandbox/verifier permissions govern execution. A checkpoint `/work` verification loop is **read-only verification** against pinned snapshots; no repairs or source writes until normal checkpoint closure. The Integrator's iterative workspace is separately scoped and frozen before the original five review it.
