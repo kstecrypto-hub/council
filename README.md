@@ -4,7 +4,7 @@
 
 Council is a general-purpose, evidence-grounded investigation platform governed by peer agents. Each council member develops its own analysis using workers, challenges other members' findings, revises its position when justified, and contributes to a traceable result.
 
-DeepSeek is the initial default for every agent. Per-agent provider/model selection remains part of the design so mixed-model councils can be enabled later.
+Five original Council reasoning members have **equal authority and no main/lead LLM**. The normal setup assigns each a **different user-approved capable, qualified reasoning model**; deliberate same-model baselines require explicit user selection. The supported provider/model catalog has **no arbitrary five- or ten-model cap** and no forced DeepSeek or other vendor default. See [ADR-47](docs/STEP_9_ADR47_OPEN_ENDED_PEER_MODEL_SELECTION.md).
 
 ## Start here
 
@@ -121,3 +121,5 @@ Steps 2–5 and 8 **have completed their v1 architecture/interface specification
 ## October 20 — ADR-46 safe tool concurrency in shared MCP
 
 [Step 9 ADR-46](docs/STEP_9_ADR46_TOOL_CALL_ORDERING_AND_MCP_ISOLATION.md) approves sequential execution of tools **within each model turn** while allowing actually isolated independent tool calls across different Council members, even via the same registered MCP tool. Per-call authenticated seat/tenant/grant/operation/result binding and credential/cache isolation prevent cross-member disclosure; conflicting external writes require target-level safety, and stateful tool connections/instances are split by scope as necessary. Existing Step 5/7 ledger, concurrency admission and UNKNOWN reconciliation are reused; no global API queue or per-LLM MCP server. **Design approved; Step 9 operational review still open; application implementation NOT STARTED, integration/security tests NOT RUN.**
+
+**October 20 ADR-47:** [Model-neutral peer selection](docs/STEP_9_ADR47_OPEN_ENDED_PEER_MODEL_SELECTION.md) supersedes every historical uniform-DeepSeek/default-vendor initialization or interpretation of example adapters as a closed model list. Model selection and capability checks remain design-only; no provider integrations or runtime tests have been performed.

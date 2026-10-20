@@ -12,7 +12,7 @@
 
 The app is a general-purpose investigation platform governed by a council of agents. Each council member develops its own analysis using sub-agents, challenges the others' work, revises its position when justified, and contributes to a shared, evidence-backed result.
 
-DeepSeek powers everything initially. Models remain interchangeable through the UI.
+Council has **five equal original reasoning-member seats** and no main/lead LLM or preferred vendor. Normally configure **different user-approved, qualified capable models** for each seat from an open-ended registry (five, ten or more qualified choices are supported by design). Deliberate same-model baselines are possible only when selected explicitly. See [ADR-47](STEP_9_ADR47_OPEN_ENDED_PEER_MODEL_SELECTION.md).
 
 The application's central feature is not the conversation between agents. It is the inspectable relationship between what they did, what they observed, what they concluded, and what subsequently changed.
 
@@ -434,7 +434,7 @@ Configuration inheritance is:
 
 **Workspace default -> run default -> council-seat override -> worker default -> individual worker override.**
 
-A DeepSeek starting profile may be proposed, but actual provider/model selection is **configurable and user-approved** per actor; no specific provider is universally forced or confused with training diversity.
+No model/vendor is the global default; per-actor user-approved model choices should normally give each of the five equal original seats a distinct capable, qualified reasoning model. Same-model control setups require explicit user selection and labeling. No fixed top-five ranking or model/provider catalog cap exists. [ADR-47](STEP_9_ADR47_OPEN_ENDED_PEER_MODEL_SELECTION.md).
 
 The UI shows where a setting is inherited and offers an explicit override. It labels an all-same-model Council as same-model, and never treats model-company diversity as proven independent reasoning. The Orchestrator and non-voting Final Integrator each have a separate model configuration outside the five original peer seats.
 
@@ -452,9 +452,9 @@ User-approved Council budgets and phase allowances gate Council-authorized model
 
 Each model entry records its provider, identifier, available capabilities, supported settings, context allowance, credential reference, configured pricing, and last compatibility check.
 
-DeepSeek's model-list endpoint is a discovery source for identifiers, not the sole authority for all capability and pricing details needed by the app. Those belong in the registry and compatibility tests. See [references](REFERENCES.md).
+Any provider's model discovery is merely untrusted identifier metadata, never proof of capability, ranking, compatibility or pricing. Provider adapters and actual role-specific qualification determine eligible entries; the catalog is open-ended, not limited to the first example providers. See [references](REFERENCES.md).
 
-Provider adapters normalize requests and results while preserving required provider-specific state. The **trusted Council tool broker/MCP client layer is shared across models**: one approved MCP tool server can serve multiple members through scoped tool authorization; a separate MCP server per AI model is unnecessary. The capability registry verifies whether each particular model can make and continue tool calls; it is **not** tool-server permission or the MCP integration itself. Council translates a model's native tool proposals into separately authorized typed broker operations, then returns observed results in the provider's native continuation format. DeepSeek's documented thinking-mode tool-continuation handling stays inside its adapter; check the current API contract during implementation.
+Provider adapters normalize requests and results while preserving required provider-specific state. The **trusted Council tool broker/MCP client layer is shared across models**: one approved MCP tool server can serve multiple members through scoped tool authorization; a separate MCP server per AI model is unnecessary. The capability registry verifies whether each particular model can make and continue tool calls; it is **not** tool-server permission or the MCP integration itself. Council translates a model's native tool proposals into separately authorized typed broker operations, then returns observed results in the provider's native continuation format. Each provider's actual native tool/reasoning-continuation requirements remain inside that adapter and require version-specific verification during implementation.
 
 Provider continuation data is not automatically published to the council or displayed as an explanation of its conclusions.
 
@@ -909,9 +909,9 @@ This ordering avoids creating an impressive dashboard before the underlying reco
 
 ### Initial configuration
 
-Start with five fixed logical council members, all using the selected DeepSeek model, and a shared limit of four concurrent model calls.
+Start with five equal original Council member seats, normally **five distinct user-approved qualified capable reasoning models** and NO main model/vendor. The provider/model catalog is open-ended. Step 7 admits up to two concurrent remote calls per provider initially and one shared local inference job, subject to actual limits; no old shared four-call cap.
 
-Workers are created dynamically, with two worker-delegation levels beneath each council member as an initial cap. Read-only evidence tools are enabled; executable tools are opt-in.
+Workers are created dynamically with **no fixed count/delegation-depth cap** inside each authorized sandbox; only aggregate sandbox resources, permission scopes and parent budgets constrain them. Read-only evidence tools are enabled; executable tools are opt-in.
 
 The Project Orchestrator generates project-specific communication checkpoints from the approved Project Contract; there is no globally fixed checkpoint count. At minimum, the policy must preserve an independent beginning and provide a mature-candidate peer-review stage before final acceptance. Adaptive checkpoints may be inserted from structured escalation signals.
 
@@ -982,3 +982,7 @@ This amendment **reopens affected Steps 2–5 interfaces** and informs Steps 8/1
 ### October 19 — Owner-approved Step 9 (ADR-41/42)
 
 [The authoritative provider and shared-MCP contract](STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1.md) establishes three initial remote adapter targets (DeepSeek, OpenAI, Anthropic) with conditional local inference; one trusted provider-neutral gateway and shared MCP/tool broker; individually scoped permissions for the original five members; independent Orchestrator/Integrator model profiles; versioned actual tool-capability probes, egress/BYOK/budget checks, native provider continuation handling and queued checkpoint-safe switching. **Neither a per-model MCP server nor provider-native direct MCP access is required or approved.** Provider tools may serve multiple models, but no permissions cross members. **Design only; no provider/MCP connection or runtime tests have been executed.**
+
+### October 20 — ADR-47 no primary model and no catalog cardinality limit
+
+[ADR-47](STEP_9_ADR47_OPEN_ENDED_PEER_MODEL_SELECTION.md) supersedes the prior uniform DeepSeek start. The protocol's five original peer seats are not a cap on available LLMs; there is no main LLM. Normally assign distinct, qualified currently capable models to each seat, with explicit user selection and deliberate same-model exceptions only. An open-ended registry can include five, ten or more models and qualified adapters. No static vendor ranking or automatic model winner. Orchestrator and Integrator remain separately configured non-voting roles. Implementation and tests NOT STARTED / NOT RUN.

@@ -319,7 +319,7 @@
     },
     {
       "id": "ADR-36",
-      "design_status": "OWNER_APPROVED_STEP8_5CD_POLICY_PHYSICAL_DTO_DDL_API_QUEUE_IMPLEMENTATION_PENDING",
+      "design_status": "OWNER_APPROVED_STEP8_5CD_POLICY_IMPLEMENTATION_NOT_STARTED_NO_ADDITIONAL_API_QUEUES",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -327,7 +327,7 @@
     },
     {
       "id": "ADR-37",
-      "design_status": "OWNER_APPROVED_STEP8_5CD_POLICY_PHYSICAL_DTO_DDL_API_QUEUE_IMPLEMENTATION_PENDING",
+      "design_status": "OWNER_APPROVED_STEP8_5CD_POLICY_IMPLEMENTATION_NOT_STARTED_NO_ADDITIONAL_API_QUEUES",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -335,7 +335,7 @@
     },
     {
       "id": "ADR-38",
-      "design_status": "OWNER_APPROVED_STEP8_5CD_POLICY_PHYSICAL_DTO_DDL_API_QUEUE_IMPLEMENTATION_PENDING",
+      "design_status": "OWNER_APPROVED_STEP8_5CD_POLICY_IMPLEMENTATION_NOT_STARTED_NO_ADDITIONAL_API_QUEUES",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -343,7 +343,7 @@
     },
     {
       "id": "ADR-39",
-      "design_status": "OWNER_APPROVED_STEP8_5CD_POLICY_PHYSICAL_DTO_DDL_API_QUEUE_IMPLEMENTATION_PENDING",
+      "design_status": "OWNER_APPROVED_STEP8_5CD_POLICY_IMPLEMENTATION_NOT_STARTED_NO_ADDITIONAL_API_QUEUES",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -384,6 +384,30 @@
     {
       "id": "ADR-44",
       "design_status": "OWNER_APPROVED_POLICY_EXACT_INTERFACE_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-45",
+      "design_status": "OWNER_APPROVED_TWO_NESTED_LOOPS_OPERATIONAL_BINDING_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-46",
+      "design_status": "OWNER_APPROVED_PER_TURN_TOOL_ORDERING_AND_SHARED_MCP_ISOLATION_DESIGN_ONLY",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-47",
+      "design_status": "OWNER_APPROVED_NO_MAIN_MODEL_DISTINCT_PEERS_OPEN_ENDED_QUALIFIED_CATALOG_DESIGN_ONLY",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -638,14 +662,14 @@
       "8.5CD_ADR37_IMMUTABLE_EXACT_ARTIFACT_REVIEW_PREMORTEM_USER_GENERATIONS",
       "8.5CD_ADR38_OUTBOX_UNKNOWN_AND_EPOCH_RECOVERY",
       "8.5CD_ADR39_USER_ACCEPTANCE_SEPARATE_FROM_VERIFIED_ARCHIVE_CLEANUP",
-      "8.5CD_ADR40_SUPERSEDED_REUSE_STEP7_SCHEDULER_STEP5_POSTGRES_DOCKER"
+      "8.5CD_ADR40_SUPERSEDED_REUSE_STEP7_SCHEDULER_STEP5_POSTGRES_DOCKER",
+      "8_ADR45_OUTER_STRATEGY_NESTS_INNER_EXECUTION_CHECK_REPAIR"
     ],
     "specification_path": "docs/PART_8_AGENT_LOOP_EXPERIMENTATION_DELEGATION.md",
     "runtime_implementation_status": "NOT_STARTED",
     "runtime_tests_status": "NOT_RUN",
     "outer_loop": "Council_semantic_phases_five_independent_members_checkpoint_sealed_review_revision",
     "member_loop": "member_chooses_reason_act_delegate_ask_user_continue_checkpoint_ready_blocked",
-    "experiment_is_optional_under_act": false,
     "experiment_stages": [
       "HYPOTHESIS",
       "CHANGE_OR_ALTERNATIVE",
@@ -958,7 +982,11 @@
     "self_review_scope": "AUTHENTIC_PARENT_MEMBER_SAME_PHASE_AND_EXACT_RESULT_MANIFEST",
     "self_review_gate": "MECHANICAL_PRESENCE_AUTHORSHIP_HASH_AND_GENERATION_ONLY_NO_INTELLECTUAL_QUALITY_JUDGE",
     "core_feedback_cycle": "EVERY_SUBSTANTIVE_APPROACH_NO_REQUIRED_EXPERIMENT_PER_TRIVIAL_ACTION",
-    "integrator_output_intent_self_check_required": true
+    "integrator_output_intent_self_check_required": true,
+    "core_evidence_feedback_optional": false,
+    "formal_executable_experiments_optional": true,
+    "nested_member_loops": "OUTER_STRATEGY_EVIDENCE_VALIDATION_CONTAINS_INNER_TASK_CHECK_REPAIR",
+    "new_strategic_hypothesis_required_per_inner_action": false
   },
   "checkpoint_public_github_default": false,
   "local_first_repository_specification": "docs/LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md",
@@ -1122,11 +1150,6 @@
     "specification_path": "docs/STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1.md",
     "owner_approved_date": "2026-10-19",
     "scope": "UNIFIED_TRUSTED_MODEL_GATEWAY_WITH_SHARED_POLICY_MEDIATED_MCP_TOOLS",
-    "initial_remote_provider_adapters": [
-      "DeepSeek",
-      "OpenAI",
-      "Anthropic"
-    ],
     "compatible_local_provider_adapter": "OPTIONAL_ONLY_AFTER_MODEL_RUNTIME_TOOL_LOOP_AND_RESOURCE_PROBES",
     "exact_model_ids": "IMPLEMENTATION_TIME_DISCOVERY_AND_VERIFICATION",
     "default_provider_choice": "USER_APPROVED_CONFIGURABLE_NEVER_AUTOMATICALLY_FORCED",
@@ -1160,7 +1183,7 @@
     "design_discussion_status": "OWNER_APPROVED_PRINCIPLES_OPERATIONAL_WORKFLOWS_NOT_REVIEWED",
     "remaining_design_discussions": [
       "full_model_call_and_tool_loop_example",
-      "MCP_tool_server_connection_isolation_and_permissions",
+      "MCP_concrete_server_isolation_qualification_and_runtime_tests",
       "provider_specific_tool_and_reasoning_continuation",
       "model_registry_qualification_and_feature_degradation",
       "credential_and_egress_connection_setup",
@@ -1168,6 +1191,17 @@
       "model_selection_inheritance_integrator_and_worker_runtime",
       "checkpoint_safe_model_switch_handover_and_failure",
       "local_model_capability_runtime_and_host_allocation"
-    ]
+    ],
+    "example_nonexclusive_provider_adapter_families": [
+      "OpenAI",
+      "Anthropic",
+      "DeepSeek"
+    ],
+    "no_main_reasoning_model": true,
+    "distinct_qualified_models_per_original_seat_by_default": true,
+    "same_model_control_requires_explicit_user_choice": true,
+    "unrestricted_catalog_entry_count_by_architecture": true,
+    "maximum_supported_model_count": null,
+    "model_selection_policy": "TASK_SUITABLE_CURRENTLY_CAPABLE_QUALIFIED_USER_APPROVED_NO_FIXED_VENDOR_RANKING_OR_DEFAULT"
   }
 }

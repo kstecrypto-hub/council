@@ -52,11 +52,13 @@ assert contract['step11']['negative_exclusion_policy'] == 'no_universal_blacklis
 assert contract['step8']['design_status'] == 'IN_DESIGN'
 assert contract['step8']['runtime_implementation_status'] == 'NOT_STARTED'
 assert contract['step8']['runtime_tests_status'] == 'NOT_RUN'
-assert contract['step8']['experiment_is_optional_under_act'] is False
+assert contract['step8']['core_evidence_feedback_optional'] is False
+assert contract['step8']['formal_executable_experiments_optional'] is True
+assert contract['step8']['new_strategic_hypothesis_required_per_inner_action'] is False
 assert contract['step8']['karpathy_feedback_cycle_is_core'] is True
 assert contract['step8']['self_review_required_before_each_normal_checkpoint'] is True
 assert contract['step8']['integrator_output_intent_self_check_required'] is True
-assert {'ADR-43', 'ADR-44'} <= {r['id'] for r in contract['requirements']}
+assert {'ADR-43', 'ADR-44', 'ADR-45', 'ADR-46', 'ADR-47'} <= {r['id'] for r in contract['requirements']}
 assert contract['step8']['separate_ai_judge_or_experiment_scheduler'] is False
 assert contract['step8']['worker_may_declare_parent_checkpoint_ready'] is False
 assert contract['step8']['checkpoint_work_excursion'] == 'verification_only_disposable_read_only_candidate'
@@ -166,10 +168,14 @@ assert 'verified customer-authorized local immutable read-only snapshot export' 
 assert 'the customer-authorized hosted OpenAI Moderation API' in scope_text
 assert 'Invoke local open-weight OpenAI Moderation API' not in scope_text
 assert 'per-current-checkpoint/review/premortem-generation internal API dispatch queues' not in (root / 'docs/CHECKPOINT_COMMUNICATION_GATEWAY.md').read_text(encoding='utf-8')
+assert 'DeepSeek powers everything initially' not in (root / 'docs/APP_DESIGN.md').read_text(encoding='utf-8')
+assert 'DeepSeek is the initial default' not in (root / 'AGENTS.md').read_text(encoding='utf-8')
+assert 'all using the selected DeepSeek model' not in (root / 'docs/APP_DESIGN.md').read_text(encoding='utf-8')
+assert 'API_QUEUE_IMPLEMENTATION_PENDING' not in (root / 'docs/architecture_contract.json').read_text(encoding='utf-8')
 assert 'R1. Steps 2/3' in (root / 'docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md').read_text(encoding='utf-8')
 
-assert contract['step8']['pending_design'] == []
-for relpath in ('STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md','STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md','STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md','STEP_2_TO_8_VERIFICATION_MATRIX_V1.md'):
+assert set(contract['step8']['pending_design']) == {'ADR43_FEEDBACK_CYCLE_RUNTIME_PROMPT_AND_COMMAND_BINDING', 'ADR43_MATERIAL_APPROACH_EVIDENCE_COVERAGE_AND_UNTESTABLE_CLAIM_HANDLING', 'ADR44_EXACT_DTO_SELF_REVIEW_VERSION_INVALIDATION_AND_UI_PRESENTATION'}
+for relpath in ('STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md','STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md','STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md','STEP_2_TO_8_VERIFICATION_MATRIX_V1.md','STEP_9_ADR47_OPEN_ENDED_PEER_MODEL_SELECTION.md'):
     assert (root / 'docs' / relpath).exists()
 
 step9 = contract['step9']
@@ -177,11 +183,16 @@ assert step9['design_status'] == 'IN_DESIGN'
 assert step9['per_model_mcp_server_required'] is False
 assert step9['direct_model_to_mcp_bypass'] is False
 assert step9['auto_fallback'].startswith('DISABLED')
-assert step9['initial_remote_provider_adapters'] == ['DeepSeek', 'OpenAI', 'Anthropic']
+assert step9['example_nonexclusive_provider_adapter_families'] == ['OpenAI', 'Anthropic', 'DeepSeek']
+assert step9['no_main_reasoning_model'] is True
+assert step9['distinct_qualified_models_per_original_seat_by_default'] is True
+assert step9['same_model_control_requires_explicit_user_choice'] is True
+assert step9['unrestricted_catalog_entry_count_by_architecture'] is True
+assert step9['maximum_supported_model_count'] is None
 assert step9['initial_remote_provider_concurrency_cap'] == contract['step7']['initial_remote_model_call_cap_per_provider']
 assert step9['initial_shared_local_inference_concurrency_cap'] == contract['step7']['initial_local_inference_concurrency_cap']
 assert {'ADR-41', 'ADR-42'} <= {x['id'] for x in contract['requirements']}
-assert all(x['implementation_status'] == 'NOT_STARTED' and x['test_status'] == 'NOT_RUN' for x in contract['requirements'] if x['id'] in {'ADR-41', 'ADR-42'})
+assert all(x['implementation_status'] == 'NOT_STARTED' and x['test_status'] == 'NOT_RUN' for x in contract['requirements'] if x['id'] in {'ADR-41', 'ADR-42', 'ADR-45', 'ADR-46', 'ADR-47'})
 step9_scope = scope_text.split('STEP 9 -', 1)[1].split('STEP 10 -', 1)[0]
 assert 'Status: IN DESIGN' in step9_scope
 assert 'Council-managed tool broker/MCP client layer shared by all models' in step9_scope
