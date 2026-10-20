@@ -1,6 +1,6 @@
 # Part 8 - Agent loop, structured experimentation, and delegation
 
-**Design status:** IN DESIGN (ADR-43 Karpathy-first owner-approved amendment needs operational reconciliation; runtime NOT STARTED). **Decisions 8.1 (nested Karpathy-style experimentation), 8.2 (sandbox-local worker autonomy/resource monitoring), and 8.2a (Docker-volume persistence without a central worker-recovery manager): ACCEPTED, October 14, 2026.** The October 19 exact v1 contract now specifies action observations, final-phase/failure transitions and termination guards; implementation and verification remain unstarted.
+**Design status:** IN DESIGN (ADR-43/44 and owner-approved ADR-45 two nested member loops require remaining operational prompt/command reconciliation; runtime NOT STARTED). **Decisions 8.1 (nested Karpathy-style experimentation), 8.2 (sandbox-local worker autonomy/resource monitoring), and 8.2a (Docker-volume persistence without a central worker-recovery manager): ACCEPTED, October 14, 2026.** The October 19 exact v1 contract now specifies action observations, final-phase/failure transitions and termination guards; implementation and verification remain unstarted.
 
 **Implementation:** NOT STARTED. **Runtime/evaluation tests:** NOT RUN.
 
@@ -35,7 +35,7 @@ OUTER COUNCIL LOOP
       -> return to the member agentic loop
 ```
 
-**ADR-43 supersedes the former optionality:** evidence-driven hypothesis -> action -> domain-appropriate check -> observed result -> member-authored disposition -> record is the STANDARD cycle for substantive Council work, not a separate supervisor or scheduler. The agent chooses appropriate meaningful checks and iterations; a formal executable experiment is not mandatory for every trivial action or untestable domain claim. See [ADR-43](STEP_8_KARPATHY_FIRST_AGENT_LOOP_AMENDMENT.md). Some tasks require source comparison or qualitative counterexample checks, others reproducible code experiments; some tasks require no structured experiments at all.
+**ADR-45 clarifies the prior ADR-43 rule:** the full strategic hypothesis -> approach pursuit -> meaningful candidate validation -> member-authored disposition is the **OUTER** standard loop. Each member's **INNER** execution loop chooses tasks, acts/delegates, checks intermediate results and repairs them **without mandatory new strategic hypotheses on every action**. Early escalation returns to the outer loop for foundational counterevidence. This is not a separate supervisor or scheduler. The agent chooses appropriate meaningful checks and iterations; a formal executable experiment is not mandatory for every trivial action or untestable domain claim. See [ADR-43](STEP_8_KARPATHY_FIRST_AGENT_LOOP_AMENDMENT.md). Some tasks require source comparison or qualitative counterexample checks, others reproducible code experiments; some tasks require no structured experiments at all.
 
 The Karpathy autoresearch pattern informs **controlled change, evaluation, observation, decision and experiment logging**. It does not impose its original fixed-duration experiment, single numerical objective, coding-only file restriction or indefinite repeat policy on Council.
 
@@ -187,3 +187,8 @@ See [Step 2 snapshot protocol](STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md), [Steps 
 ## October 19 ADR-43 owner amendment
 
 **Authoritative for this change:** [Karpathy-first loop](STEP_8_KARPATHY_FIRST_AGENT_LOOP_AMENDMENT.md). This supersedes earlier historical phrases saying experimentation is optional as the member's overall working method. Particular executable tests remain context-dependent; each meaningful approach must undergo an evidence check or record truthful NOT_RUN/BLOCKED/INCONCLUSIVE limits. Applies to original Council members, their substantive-worker work and the non-voting Final Integrator under unchanged Council governance. **Step 8 IN DESIGN pending operational command/prompt integration; no runtime code or tests.**
+
+
+## October 20 ADR-45 — nested strategy and execution loops (approved policy; design only)
+
+[Authoritative two-loop decision](STEP_8_ADR45_NESTED_STRATEGY_EXECUTION_LOOPS.md): each of the five original members runs an **outer strategic hypothesis/approach validation loop** around its **inner task execution, testing, repair and incremental-improvement loop**. A normal inner action or worker result does not reset the global hypothesis; useful intermediate checks are continuous, meaningful end-of-approach validation is separate, and material counterevidence may promote early outer reconsideration. Workers remain parent-scoped; the non-voting Integrator follows the approved Blueprint. Step 6/8 evidence, ADR-44 current-version self-review, five independent sealed checkpoints and existing budget/privacy/tool gates are unchanged. Historical optional or per-action-full-hypothesis descriptions above are superseded where inconsistent. **Operational integration IN DESIGN; implementation NOT STARTED; tests NOT RUN.**
