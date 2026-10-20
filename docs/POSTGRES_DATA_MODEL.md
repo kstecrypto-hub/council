@@ -488,9 +488,9 @@ Required canonical tables include:
 - `revisions`
 - `coverage_items`
 
-### Step 8.1 optional structured experiment records (accepted October 14; no migrations)
+### Step 8 formal experiment records — optional formal trials, mandatory substantive feedback
 
-A member can choose to use the Karpathy-style controlled experiment workflow **inside ACT**, but experiments are optional and remain branch-private before checkpoint publication. Store their durable identities/provenance using these versioned canonical records alongside the existing `analysis_steps`, `evidence_items`, `claims`, `assumptions`, `revisions` and operational attempts; do not create a separate experiment database or solver.
+Current ADR-43/45 requires outer strategic approach/evidence validation enclosing an inner execution/check/repair loop. A formal controlled experiment is optional where suitable, preserving branch-private evidence before approved checkpoints. Use existing analysis/experiment/attempt records; no new judge or database.
 
 - `council_core.experiments`: experiment ID, run/branch/owning logical member, semantic phase, optional delegated worker/task, attributed hypothesis and baseline/alternative references, created event/time, status, relevant assumptions and current disposition reference. A worker cannot become the authoritative parent-member author.
 - `council_core.experiment_attempts`: immutable experiment/attempt number, tool and model operation IDs, exact tested repo/base/change SHAs or source/data/fixture hashes, environment/test versions, measured metrics **with units, evaluation conditions, uncertainty**, or qualitative observations/contradictions, associated outputs/artifact hashes, real execution state (including NOT_RUN/BLOCKED/FAILED), failure/regression evidence and timestamp; UNIQUE(experiment_id, attempt_no).
