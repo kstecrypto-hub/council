@@ -420,6 +420,14 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-49",
+      "design_status": "OWNER_APPROVED_GRAPH_AND_WORKING_MEMORY_EXISTING_CONTINUATION_STEP11_DETAILS_IN_DESIGN",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -1046,6 +1054,23 @@
   },
   "step11": {
     "design_status": "IN_DESIGN",
+    "owner_approved_continuation_policy": "ADR-49_GRAPH_EVIDENCE_PLUS_BOUNDED_MEMBER_WORKING_MEMORY_CANONICAL_STATE_FIRST",
+    "memory_views": [
+      "scoped_typed_evidence_graph_over_canonical_postgres",
+      "bounded_member_working_memory_with_context_packet_and_manifest"
+    ],
+    "runtime_effect_truth_source": "step5_step7_canonical_operation_authority_budget_epoch_and_retry_records",
+    "continuation_preserves_same_original_logical_member": true,
+    "new_memory_or_recovery_service_required": false,
+    "separate_graph_or_vector_db_required_for_cooldown_continuation": false,
+    "mcp_cooldown_agent_busy_wait_required": false,
+    "private_branch_memory_leakage_allowed": false,
+    "continuation_packet_is_canonical_external_effect_authority": false,
+    "pending_design": [
+      "exact_packet_and_context_manifest_selection_and_schema",
+      "graph_index_freshness_and_retrieval_quality",
+      "customer_approved_archive_promotion_and_reference_validation"
+    ],
     "retention_tiers": [
       "temporary_deployment",
       "customer_owned_opt_in_project_archive",
