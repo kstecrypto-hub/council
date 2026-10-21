@@ -428,6 +428,14 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-50",
+      "design_status": "OWNER_APPROVED_IMMEDIATE_OPERATION_OBSERVATIONS_MINIMAL_TYPED_GRAPH_ON_MATERIAL_FINDINGS_NO_PER_ACTION_COMPACTION_DESIGN_ONLY",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -1055,6 +1063,26 @@
   "step11": {
     "design_status": "IN_DESIGN",
     "owner_approved_continuation_policy": "ADR-49_GRAPH_EVIDENCE_PLUS_BOUNDED_MEMBER_WORKING_MEMORY_CANONICAL_STATE_FIRST",
+    "immediate_logging_policy": "ADR-50_OPERATIONS_INTENT_BEFORE_DISPATCH_OBSERVATIONS_ON_RECEIPT_GRAPH_ESSENTIAL_EDGES_WITH_MATERIAL_FINDING",
+    "minimal_ontology_reuses_existing_canonical_records": true,
+    "minimal_ontology_reference_types": [
+      "Actor",
+      "Operation",
+      "Observation",
+      "Artifact",
+      "Finding",
+      "Hypothesis"
+    ],
+    "mechanical_graph_origin": "RUNTIME_TRUSTED_OBSERVATIONS",
+    "semantic_graph_origin": "AGENT_INTERPRETATION_WITH_SOURCE_LINKED_EVIDENCE",
+    "semantic_graph_findings_required_for_every_tool_call": false,
+    "model_inference_required_for_operational_logging": false,
+    "second_model_memory_summary_after_each_tool_call_required": false,
+    "working_memory_compaction_after_each_tool_call_required": false,
+    "graph_retrieval_after_each_tool_call_required": false,
+    "essential_graph_relationships_saved_atomically_with_canonical_finding": true,
+    "graph_search_projections_may_lag_with_freshness_watermark_and_canonical_fallback": true,
+
     "memory_views": [
       "scoped_typed_evidence_graph_over_canonical_postgres",
       "bounded_member_working_memory_with_context_packet_and_manifest"
