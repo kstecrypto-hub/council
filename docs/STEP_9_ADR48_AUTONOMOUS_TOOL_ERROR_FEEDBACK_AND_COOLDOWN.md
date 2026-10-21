@@ -77,6 +77,10 @@ Status `RETRY_LATER` is a **presentation/admission classification** layered on c
 
 Tests are specified only: live MCP/provider behavior, rate limits, authorization, idempotency, saved timers, resource usage, concurrency and failure injection must be measured later during explicitly authorized implementation/verification.
 
+## October 21 ADR-49 — durable agent continuity during recovery
+
+[Approved Step 11 graph + normal working memory and continuation](STEP_11_ADR49_GRAPH_WORKING_MEMORY_AND_CONTINUATION.md) uses the **existing** bounded context packet/manifest, typed evidence graph, private workspace and canonical operation ledger to preserve the *same* logical agent while MCP retry cooldowns/provider sessions are interrupted. A waiting agent with no independent useful work may safely yield via Step 7 whole-member scheduling instead of hot-polling, then reload current approved context and actual `retry_not_before`/UNKNOWN state. **The operation ledger overrides model notes** about completed work or retry eligibility. All current ADR-48 retry, permission, provenance, per-member isolation and uncertainty safeguards remain unchanged. No separate AI memory or tool-recovery supervisor. **Design only; runtime tests NOT RUN.**
+
 ## 6. Scope boundary
 
-**ADR-47 policy APPROVED and documented.** Step 9 overall remains **IN DESIGN** pending remaining owner-reviewed operational details. **Implementation NOT STARTED, tests NOT RUN.** Do not mark tool recovery, concurrency isolation, or performance as operational solely because a Markdown design was pushed.
+**ADR-48 policy APPROVED and documented.** Step 9 overall remains **IN DESIGN** pending remaining owner-reviewed operational details. **Implementation NOT STARTED, tests NOT RUN.** Do not mark tool recovery, concurrency isolation, or performance as operational solely because a Markdown design was pushed.
