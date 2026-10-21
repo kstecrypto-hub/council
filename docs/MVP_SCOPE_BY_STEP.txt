@@ -520,7 +520,7 @@ Complete product
 
 MVP must implement (design specified; not yet implemented)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- One trusted common model gateway with initially DeepSeek, OpenAI and Anthropic remote adapter targets, with compatible local inference only after actual feature/resource verification; no exact supported model IDs claimed before testing.
+- One trusted common model gateway with an open-ended, user-approved pool of verified model/provider adapters (no main/default model or fixed vendor list, per ADR-47); compatible local inference only after actual model/runtime/tool-loop/resource verification, and no exact supported IDs claimed before testing.
 - A common model adapter interface.
 - Per-user BYOK credential configuration and verification for enabled remote providers, with credential references (not raw keys) used by the trusted gateway.
 - Local-model operation without remote API keys where hardware/tool-loop compatibility checks pass.
@@ -544,6 +544,13 @@ Defer until after MVP evidence
 - Huge provider catalog.
 - Fine-grained worker-level switching UI.
 - Optional Council-managed inference payments, prepaid credits/wallet, and per-token markup/resale model, subject to separate business, provider, payment, security, and compliance design.
+
+
+OCTOBER 21 — STEP 9.3 ADR-51 LIGHTWEIGHT MODEL TOOL COMPATIBILITY PROBE
+- Owner approved the minimal actual model/adapter communication check, NOT a model intelligence benchmark or new permission mechanism: on first configuration or relevant model/API/adapter/local-runtime/template/parser change, register a temporary **synthetic fake echo tool** in the trusted gateway, obtain a real native structured tool proposal, validate ID/name/arguments, return a **new unseen nonce**, and verify provider-native tool-result continuation reports that nonce.
+- Repeat with a **synthetic FAILED tool result** and verify correct error continuation. Deterministic checks use the real adapter/native request protocol but **no actual Git/MCP/database/customer file/host operation, extra LLM judge, new service or per-action qualification**. Log exact versioned observation/usage in existing registry. Transient outages can be inconclusive rather than proof a model family has no tool capability.
+- This is Step 9.3 **technical compatibility only**, not whether the model may attempt a difficult problem or exercise freedom inside its authorized sandbox; Step 9/10 existing external brokers separately enforce permission, egress and resource scope. Probe inference is real and subject to approved BYOK/budget accounting. Full approved policy and unexecuted P9-40..50 cases: docs/STEP_9_ADR51_LIGHTWEIGHT_MODEL_TOOL_COMPATIBILITY_PROBE.md.
+- Step 9 overall remains **IN DESIGN** pending remaining provider-native operational workflows/credential/egress/cost/switching/local-runtime review. No adapter, provider, fake harness, local model, MCP or runtime security test has been implemented or run.
 
 
 STEP 10 - TOOLS, PERMISSIONS, AND EXECUTION ENVIRONMENTS
