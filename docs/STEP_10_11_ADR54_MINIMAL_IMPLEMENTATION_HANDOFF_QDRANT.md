@@ -2,6 +2,10 @@
 
 **Owner-approved design direction: October 21, 2026.** **Scope:** implementation-ready MVP policy for Steps 10 and 11, without reopening already-approved Steps 5, 7, 8, 9, ADR-49/50/52/53, or imposing a new supervisory service. **Status: SPECIFICATION APPROVED ONLY.** No Docker/network implementation, Qdrant collection, SQL migration, integration, provider call, runtime test, or security verification has been performed. Implementation agents choose ordinary engineering details and demonstrate the required behaviors; no claim of production readiness.
 
+## Git backend boundary — original local-first decision remains unchanged
+
+**Council's actual runtime uses native Git entirely on customer/company-controlled local storage or a separately approved private deployment.** Each of the five member workspaces has its own isolated local repository. The trusted *customer-local* snapshot gateway exports only approved pinned read-only trees at checkpoints, grants/revokes scoped peer access, and verifies archival/recovery without internet GitHub. Accepted project archives and source-linked learning also reside in permitted customer-controlled local Git/artifact storage. **Online GitHub is neither the runtime repository service nor a default publication/checkpoint/archival backend; it is only being used to maintain these project design documents.** Optional remote publishing/integration always requires separate explicit customer authorization. This preserves ADR-17/18 and Step 2 unchanged.
+
 ## Step 10 — normal Docker lifecycle with an enforced outbound boundary
 
 1. **Keep the existing shared, trusted Council connector/MCP broker.** Models propose typed tool calls; they do not connect directly to MCP servers or receive raw provider/service credentials. MCP tools can contact their **specifically authorized outside services** as their purpose requires; the trusted broker validates caller, tool, external target, permissions, account, effect and current authorization. A tool is not implicitly allowed arbitrary onward internet access.
