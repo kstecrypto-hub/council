@@ -552,9 +552,10 @@
     "resource_release_requires_trusted_backend_confirmation": true,
     "spending_lock_order": [
       "deployment_event_clock",
+      "funding_owner_provider_account_budget",
       "run_budget",
       "spend_pool",
-      "member_phase_budget"
+      "optional_member_phase_budget"
     ],
     "reserve_commit_precedes_external_dispatch": true,
     "unknown_dispatched_usage_remains_reserved": true,
