@@ -82,7 +82,7 @@ assert contract['step8']['new_strategic_hypothesis_required_per_inner_action'] i
 assert contract['step8']['karpathy_feedback_cycle_is_core'] is True
 assert contract['step8']['self_review_required_before_each_normal_checkpoint'] is True
 assert contract['step8']['integrator_output_intent_self_check_required'] is True
-assert {'ADR-43', 'ADR-44', 'ADR-45', 'ADR-46', 'ADR-47', 'ADR-48', 'ADR-49', 'ADR-50'} <= {r['id'] for r in contract['requirements']}
+assert {'ADR-43', 'ADR-44', 'ADR-45', 'ADR-46', 'ADR-47', 'ADR-48', 'ADR-49', 'ADR-50', 'ADR-51'} <= {r['id'] for r in contract['requirements']}
 assert contract['step8']['separate_ai_judge_or_experiment_scheduler'] is False
 assert contract['step8']['worker_may_declare_parent_checkpoint_ready'] is False
 assert contract['step8']['checkpoint_work_excursion'] == 'verification_only_disposable_read_only_candidate'
@@ -199,11 +199,34 @@ assert 'API_QUEUE_IMPLEMENTATION_PENDING' not in (root / 'docs/architecture_cont
 assert 'R1. Steps 2/3' in (root / 'docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md').read_text(encoding='utf-8')
 
 assert set(contract['step8']['pending_design']) == {'ADR43_FEEDBACK_CYCLE_RUNTIME_PROMPT_AND_COMMAND_BINDING', 'ADR43_MATERIAL_APPROACH_EVIDENCE_COVERAGE_AND_UNTESTABLE_CLAIM_HANDLING', 'ADR44_EXACT_DTO_SELF_REVIEW_VERSION_INVALIDATION_AND_UI_PRESENTATION'}
-for relpath in ('STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md','STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md','STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md','STEP_2_TO_8_VERIFICATION_MATRIX_V1.md','STEP_9_ADR47_OPEN_ENDED_PEER_MODEL_SELECTION.md'):
+for relpath in ('STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md','STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md','STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md','STEP_2_TO_8_VERIFICATION_MATRIX_V1.md','STEP_9_ADR47_OPEN_ENDED_PEER_MODEL_SELECTION.md','STEP_9_ADR51_LIGHTWEIGHT_MODEL_TOOL_COMPATIBILITY_PROBE.md'):
     assert (root / 'docs' / relpath).exists()
 
 step9 = contract['step9']
 assert step9['design_status'] == 'IN_DESIGN'
+# ADR-51 design-only Step 9.3 probe method; these are static contract checks, NOT executed provider probes.
+probe = step9['step9_3_probe_policy']
+assert probe['design_status'] == 'OWNER_APPROVED_ADR_51_LIGHTWEIGHT_MODEL_TOOL_PROTOCOL_CHECK_DESIGN_ONLY'
+assert probe['harness_location'] == 'EXISTING_TRUSTED_GATEWAY_NO_EXTRA_SERVICE'
+assert probe['tool_kind'] == 'SYNTHETIC_FAKE_ECHO_AND_FAKE_FAILED_RESULT'
+assert probe['valid_native_structured_call_required'] is True
+assert probe['provider_native_tool_call_id_and_result_continuation_required'] is True
+assert probe['unseen_result_nonce_echo_required'] is True
+assert probe['fake_failure_continuation_required'] is True
+assert probe['deterministic_validation_no_judge_llm'] is True
+assert probe['uses_live_mcp_or_real_external_effect'] is False
+assert probe['probe_before_every_tool_call_required'] is False
+assert probe['run_on_model_configuration_and_relevant_version_change'] is True
+assert probe['local_model_runtime_quantization_template_parser_version_bound'] is True
+assert probe['versioned_existing_registry_evidence_required'] is True
+assert probe['provider_timeout_may_be_inconclusive'] is True
+assert probe['charge_actual_model_probe_inference_to_authorized_budget'] is True
+assert probe['intelligence_or_task_complexity_gate_allowed'] is False
+assert probe['new_external_sandbox_permission_layer_required'] is False
+assert probe['sandbox_local_intellectual_autonomy_preserved'] is True
+assert probe['runtime_implementation_status'] == 'NOT_STARTED'
+assert probe['runtime_tests_status'] == 'NOT_RUN'
+
 assert step9['per_model_mcp_server_required'] is False
 assert step9['direct_model_to_mcp_bypass'] is False
 assert step9['auto_fallback'].startswith('DISABLED')
