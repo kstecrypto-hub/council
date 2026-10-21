@@ -13,7 +13,7 @@ Council retains **two complementary intellectual memory views**:
 
 There is also a **third necessary authority category, but it is NOT another AI memory system**: Step 3–5 canonical PostgreSQL operation/permission/budget/lease/epoch/event records determine the *actual* state of a tool, whether an external action was observed, when the service cooldown expires and whether a retry is authorized. Graph facts and model summaries cannot overrule these records. User-approved, customer-controlled local Git/hashed artifacts hold reproducible project files and explicitly retained accepted-project learning; these are existing storage mechanisms, not another live reasoning memory.
 
-**Do not add Redis, a second graph database, a dedicated vector database, a new memory agent, a cooldown-memory service, or another scheduler solely for recovery/context continuity.** Step 11's retrieval quality may be evaluated later, without prejudging a more complex storage/index requirement.
+**Do not add Redis, a second canonical graph database, a new memory agent, a cooldown-memory service, or another scheduler solely for recovery/context continuity.** ADR-54 specifically approves Qdrant for *long-term archived-project RAG*, not current-run session recovery; Qdrant is a rebuildable retrieval index over retained local Git/artifact sources, not a new live authority. Do not use pgvector for this RAG layer.
 
 ### October 21 ADR-50 — immediate logging, selectively immediate graph semantics
 
