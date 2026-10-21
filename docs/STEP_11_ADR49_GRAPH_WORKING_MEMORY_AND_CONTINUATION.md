@@ -44,6 +44,10 @@ The **context manifest** separately captures which exact scoped records, version
 
 There is **no automatic new user question** for ordinary tool recovery, and no automatic user permission, spending increase, egress expansion, checkpoint readiness or success declaration.
 
+### October 21 ADR-52 — provider interruption gets graph + compacted memory
+
+[Approved Step 9 interruption-reconstruction policy](STEP_9_ADR52_PROVIDER_INTERRUPTION_CONTEXT_RECONSTRUCTION.md) consumes **the latest persisted, permitted compacted working packet**, **relevant current, authorized graph findings** including new material observations since that packet, and **trusted Step 5/7 exact operation state**. Before any restarted inference, validate current member/phase/epoch/grant, budget and unknown effects. Explicitly tell the same model/member that its provider connection was interrupted; preserve original outer strategy, inner task, and true completed versus pending tool status. Resume provider-native same-profile context only when real call IDs and session state remain valid; otherwise construct a fresh bounded context for the same model profile. A stale packet cannot erase fresh graph or overwrite canonical effects, and no graph/context refresh is required for every normal tool action. No forced extra LLM compaction, no separate memory/retry service or silent provider switch; **Step 11 still IN DESIGN; implementation/tests NOT STARTED/NOT RUN.**
+
 ## 4. Privacy, scope and long-term retention
 
 - Each Council member's active graph neighborhoods, notes and continuation packets are **private to that member/parent authority**. Another member sees only independently authorized frozen checkpoint publications under the existing local gateway and sealed-review barriers. Tool results, queued failures and retriever caches cannot become covert inter-member communication.
