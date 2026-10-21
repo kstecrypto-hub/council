@@ -553,6 +553,13 @@ OCTOBER 21 — STEP 9.3 ADR-51 LIGHTWEIGHT MODEL TOOL COMPATIBILITY PROBE
 - Step 9 overall remains **IN DESIGN** pending remaining provider-native operational workflows/credential/egress/cost/switching/local-runtime review. No adapter, provider, fake harness, local model, MCP or runtime security test has been implemented or run.
 
 
+OCTOBER 21 — STEP 9 PROVIDER INTERRUPTION RECOVERY ADR-52
+- **Owner-approved:** if a model provider connection/session is interrupted, keep the **same Council logical member** and original ADR-45 outer strategy/inner task. Admit through current Step 7 identity/phase/epoch/budget/grants, then reconstruct context using (a) latest persisted permitted **compacted working memory**, (b) **latest relevant authorized graph evidence** committed after that packet, and (c) **actual Step 5/7 tool/provider operation outcomes**, unresolved UNKNOWNs and usage reservations.
+- Notify the model that its provider connection was interrupted and let it continue autonomously. If native same-model provider continuation is valid, use real original provider tool-call/result IDs; otherwise make a fresh bounded session for **the same approved model profile**, without hidden reasoning-state replay or silent provider switch.
+- **Never reexecute completed tool effects** merely due to a lost model response. A proposed-but-not-executed call stays a proposal; a dispatched external effect with lost ACK remains UNKNOWN pending reconciliation; no fabricated result receipt, new user troubleshooting prompt, per-action compacting, global queue, polling agent or special 3–7-minute cooldown for model transport interruptions. ADR-48's 3–7-minute rule remains for known transient MCP tool services. Existing Step 7 scheduler handles safe yield/wake when readiness permits.
+- Authoritative ADR and P9-51..62 planned scenarios: docs/STEP_9_ADR52_PROVIDER_INTERRUPTION_CONTEXT_RECONSTRUCTION.md. **Interruption-recovery policy APPROVED; Step 9 overall IN DESIGN**, unresolved provider/budget/egress and switching details pending owner review; implementation/protocol/security/runtime tests NOT STARTED / NOT RUN.
+
+
 STEP 10 - TOOLS, PERMISSIONS, AND EXECUTION ENVIRONMENTS
 Status: PARTLY DESIGNED
 
