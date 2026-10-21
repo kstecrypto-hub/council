@@ -49,6 +49,16 @@ assert len(contract['requirements']) >= 18
 assert {'ADR-13', 'ADR-14', 'ADR-15', 'ADR-16', 'ADR-17', 'ADR-18'} <= {x['id'] for x in contract['requirements']}
 assert contract['requirements'][0]['design_status'] == 'SUPERSEDED_BY_ADR_17'
 assert contract['step11']['negative_exclusion_policy'] == 'no_universal_blacklist_or_silent_filter_based_on_prior_failure'
+# Documentation contract guards only; Council agent memory/recovery remains unimplemented.
+assert contract['step11']['design_status'] == 'IN_DESIGN'
+assert contract['step11']['continuation_preserves_same_original_logical_member'] is True
+assert contract['step11']['continuation_packet_is_canonical_external_effect_authority'] is False
+assert contract['step11']['new_memory_or_recovery_service_required'] is False
+assert contract['step11']['separate_graph_or_vector_db_required_for_cooldown_continuation'] is False
+assert contract['step11']['mcp_cooldown_agent_busy_wait_required'] is False
+assert contract['step11']['private_branch_memory_leakage_allowed'] is False
+assert contract['step11']['runtime_implementation_status'] == 'NOT_STARTED'
+assert contract['step11']['runtime_tests_status'] == 'NOT_RUN'
 assert contract['step8']['design_status'] == 'IN_DESIGN'
 assert contract['step8']['runtime_implementation_status'] == 'NOT_STARTED'
 assert contract['step8']['runtime_tests_status'] == 'NOT_RUN'
@@ -58,7 +68,7 @@ assert contract['step8']['new_strategic_hypothesis_required_per_inner_action'] i
 assert contract['step8']['karpathy_feedback_cycle_is_core'] is True
 assert contract['step8']['self_review_required_before_each_normal_checkpoint'] is True
 assert contract['step8']['integrator_output_intent_self_check_required'] is True
-assert {'ADR-43', 'ADR-44', 'ADR-45', 'ADR-46', 'ADR-47', 'ADR-48'} <= {r['id'] for r in contract['requirements']}
+assert {'ADR-43', 'ADR-44', 'ADR-45', 'ADR-46', 'ADR-47', 'ADR-48', 'ADR-49'} <= {r['id'] for r in contract['requirements']}
 assert contract['step8']['separate_ai_judge_or_experiment_scheduler'] is False
 assert contract['step8']['worker_may_declare_parent_checkpoint_ready'] is False
 assert contract['step8']['checkpoint_work_excursion'] == 'verification_only_disposable_read_only_candidate'
