@@ -82,7 +82,7 @@ assert contract['step8']['new_strategic_hypothesis_required_per_inner_action'] i
 assert contract['step8']['karpathy_feedback_cycle_is_core'] is True
 assert contract['step8']['self_review_required_before_each_normal_checkpoint'] is True
 assert contract['step8']['integrator_output_intent_self_check_required'] is True
-assert {'ADR-43', 'ADR-44', 'ADR-45', 'ADR-46', 'ADR-47', 'ADR-48', 'ADR-49', 'ADR-50', 'ADR-51'} <= {r['id'] for r in contract['requirements']}
+assert {'ADR-43', 'ADR-44', 'ADR-45', 'ADR-46', 'ADR-47', 'ADR-48', 'ADR-49', 'ADR-50', 'ADR-51', 'ADR-52'} <= {r['id'] for r in contract['requirements']}
 assert contract['step8']['separate_ai_judge_or_experiment_scheduler'] is False
 assert contract['step8']['worker_may_declare_parent_checkpoint_ready'] is False
 assert contract['step8']['checkpoint_work_excursion'] == 'verification_only_disposable_read_only_candidate'
@@ -199,7 +199,7 @@ assert 'API_QUEUE_IMPLEMENTATION_PENDING' not in (root / 'docs/architecture_cont
 assert 'R1. Steps 2/3' in (root / 'docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md').read_text(encoding='utf-8')
 
 assert set(contract['step8']['pending_design']) == {'ADR43_FEEDBACK_CYCLE_RUNTIME_PROMPT_AND_COMMAND_BINDING', 'ADR43_MATERIAL_APPROACH_EVIDENCE_COVERAGE_AND_UNTESTABLE_CLAIM_HANDLING', 'ADR44_EXACT_DTO_SELF_REVIEW_VERSION_INVALIDATION_AND_UI_PRESENTATION'}
-for relpath in ('STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md','STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md','STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md','STEP_2_TO_8_VERIFICATION_MATRIX_V1.md','STEP_9_ADR47_OPEN_ENDED_PEER_MODEL_SELECTION.md','STEP_9_ADR51_LIGHTWEIGHT_MODEL_TOOL_COMPATIBILITY_PROBE.md'):
+for relpath in ('STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md','STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md','STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md','STEP_2_TO_8_VERIFICATION_MATRIX_V1.md','STEP_9_ADR47_OPEN_ENDED_PEER_MODEL_SELECTION.md','STEP_9_ADR51_LIGHTWEIGHT_MODEL_TOOL_COMPATIBILITY_PROBE.md','STEP_9_ADR52_PROVIDER_INTERRUPTION_CONTEXT_RECONSTRUCTION.md'):
     assert (root / 'docs' / relpath).exists()
 
 step9 = contract['step9']
@@ -226,6 +226,30 @@ assert probe['new_external_sandbox_permission_layer_required'] is False
 assert probe['sandbox_local_intellectual_autonomy_preserved'] is True
 assert probe['runtime_implementation_status'] == 'NOT_STARTED'
 assert probe['runtime_tests_status'] == 'NOT_RUN'
+# ADR-52 generic provider-session interruption and same-member context reconstruction, specification-only.
+interrupted = step9['provider_interruption_recovery']
+assert interrupted['design_status'] == 'OWNER_APPROVED_ADR_52_SAME_MEMBER_COMPACTED_MEMORY_GRAPH_LEDGER_RESUME_DESIGN_ONLY'
+assert interrupted['restore_same_logical_member_and_original_strategy'] is True
+assert interrupted['notify_model_previous_provider_connection_interrupted'] is True
+assert interrupted['canonical_operations_permissions_budgets_checked_before_context_or_dispatch'] is True
+assert interrupted['recovery_context'] == [
+    'LATEST_PERMITTED_PERSISTED_COMPACTED_WORKING_MEMORY',
+    'FRESH_RELEVANT_AUTHORIZED_GRAPH_EVIDENCE_SINCE_COMPACTION',
+    'CURRENT_STEP5_STEP7_CANONICAL_OPERATION_STATUS_AND_OBSERVED_RESULTS',
+]
+assert interrupted['valid_same_profile_native_provider_session_continuation_allowed'] is True
+assert interrupted['otherwise_start_fresh_bounded_same_model_profile_session'] is True
+assert interrupted['auto_switch_provider_on_connection_drop'] is False
+assert interrupted['reexecute_confirmed_completed_tools'] is False
+assert interrupted['autodispatch_undispatched_tool_proposals'] is False
+assert interrupted['unknown_external_effects_require_reconciliation'] is True
+assert interrupted['mcp_3_to_7_minute_cooldown_applies_to_all_provider_interruptions'] is False
+assert interrupted['no_new_recovery_queue_agent_or_service'] is True
+assert interrupted['forced_per_tool_context_refresh_or_compaction'] is False
+assert interrupted['routine_user_interaction_required'] is False
+assert interrupted['runtime_implementation_status'] == 'NOT_STARTED'
+assert interrupted['runtime_tests_status'] == 'NOT_RUN'
+
 
 assert step9['per_model_mcp_server_required'] is False
 assert step9['direct_model_to_mcp_bypass'] is False
