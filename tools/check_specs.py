@@ -59,6 +59,20 @@ assert contract['step11']['mcp_cooldown_agent_busy_wait_required'] is False
 assert contract['step11']['private_branch_memory_leakage_allowed'] is False
 assert contract['step11']['runtime_implementation_status'] == 'NOT_STARTED'
 assert contract['step11']['runtime_tests_status'] == 'NOT_RUN'
+# ADR-50 is specification-only; verify minimal ontology and no per-call LLM memory work.
+assert contract['step11']['immediate_logging_policy'] == 'ADR-50_OPERATIONS_INTENT_BEFORE_DISPATCH_OBSERVATIONS_ON_RECEIPT_GRAPH_ESSENTIAL_EDGES_WITH_MATERIAL_FINDING'
+assert contract['step11']['minimal_ontology_reuses_existing_canonical_records'] is True
+assert set(contract['step11']['minimal_ontology_reference_types']) == {'Actor', 'Operation', 'Observation', 'Artifact', 'Finding', 'Hypothesis'}
+assert contract['step11']['mechanical_graph_origin'] == 'RUNTIME_TRUSTED_OBSERVATIONS'
+assert contract['step11']['semantic_graph_origin'] == 'AGENT_INTERPRETATION_WITH_SOURCE_LINKED_EVIDENCE'
+assert contract['step11']['semantic_graph_findings_required_for_every_tool_call'] is False
+assert contract['step11']['model_inference_required_for_operational_logging'] is False
+assert contract['step11']['second_model_memory_summary_after_each_tool_call_required'] is False
+assert contract['step11']['working_memory_compaction_after_each_tool_call_required'] is False
+assert contract['step11']['graph_retrieval_after_each_tool_call_required'] is False
+assert contract['step11']['essential_graph_relationships_saved_atomically_with_canonical_finding'] is True
+assert contract['step11']['graph_search_projections_may_lag_with_freshness_watermark_and_canonical_fallback'] is True
+
 assert contract['step8']['design_status'] == 'IN_DESIGN'
 assert contract['step8']['runtime_implementation_status'] == 'NOT_STARTED'
 assert contract['step8']['runtime_tests_status'] == 'NOT_RUN'
@@ -68,7 +82,7 @@ assert contract['step8']['new_strategic_hypothesis_required_per_inner_action'] i
 assert contract['step8']['karpathy_feedback_cycle_is_core'] is True
 assert contract['step8']['self_review_required_before_each_normal_checkpoint'] is True
 assert contract['step8']['integrator_output_intent_self_check_required'] is True
-assert {'ADR-43', 'ADR-44', 'ADR-45', 'ADR-46', 'ADR-47', 'ADR-48', 'ADR-49'} <= {r['id'] for r in contract['requirements']}
+assert {'ADR-43', 'ADR-44', 'ADR-45', 'ADR-46', 'ADR-47', 'ADR-48', 'ADR-49', 'ADR-50'} <= {r['id'] for r in contract['requirements']}
 assert contract['step8']['separate_ai_judge_or_experiment_scheduler'] is False
 assert contract['step8']['worker_may_declare_parent_checkpoint_ready'] is False
 assert contract['step8']['checkpoint_work_excursion'] == 'verification_only_disposable_read_only_candidate'
