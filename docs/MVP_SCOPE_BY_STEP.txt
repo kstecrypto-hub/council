@@ -599,6 +599,14 @@ Those remain complete-product features unless an experiment proves them necessar
 STEP 11 - CONTEXT RETRIEVAL, GRAPH RETRIEVAL, AGENT MEMORY, AND ROLLOVER
 Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
 
+Approved October 21 ADR-49 — Graph memory + normal working memory + existing continuation (SPECIFICATION ONLY)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Preserve two intellectual memory views: a scoped **typed evidence/decision graph** of current approaches, claims, source lineage, experiments, objections and conditional failures; plus **normal per-member working memory** for the current outer strategy, inner task, notes, progress and next intended action. Use existing PostgreSQL/canonical data, bounded continuation packets/context manifests and member-private durable workspace. No fourth AI memory, separate graph DB, Redis/vector DB or recovery manager is needed for this use case.
+- **Canonical Step 5/7 operation/budget/permission/epoch/lease/next_retry_not_before state wins over the model's memory.** On 3–7-minute transient MCP cooldown/provider loss, the original logical member can safely yield its existing whole-member slot (when appropriate), persist bounded evidence-linked context, and resume after current auth, status and resource checks. No busy-waiting, unconditional retries, presumed cancellation or new strategic hypothesis on each resume.
+- The continuation packet references the current Contract/phase, outer hypothesis, inner task, decisive graph/evidence IDs and versions, repository/worker progress, pending operation/attempt IDs and known uncertainty, and next intended action; context manifest records precisely what was retrieved, with source/event-watermark freshness. Fresh model context is **reconstructed**, not a promise to restore raw model RAM, hidden reasoning or running worker process stacks.
+- Existing five-member private/authorized-checkpoint scope and pinned shared prior-project memory snapshot remain intact. Success-first conditional Git-backed lessons and original sources are only retained/shown under customer authority. No cross-branch graph/memory leak, model switch, auto budget/egress permission or new scheduling service.
+- See docs/STEP_11_ADR49_GRAPH_WORKING_MEMORY_AND_CONTINUATION.md; ten planned M49-01..10 continuity/isolation tests are **NOT RUN**. Step 11 full retrieval/ranking, exact DTOs, archive/reference validation and runtime integration remain **IN DESIGN**. Implementation NOT STARTED, tests NOT RUN.
+
 Accepted new design direction (October 14; ADR-17/18; integration still in design)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Customer's active project and any authorized long-term project reconstruction package stay **under customer ownership** on local/private storage. No vendor access or cross-customer reuse is implied.
