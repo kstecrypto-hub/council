@@ -32,6 +32,7 @@ assert contract['step7']['runtime_implementation_status'] == 'NOT_STARTED'
 assert contract['step7']['runtime_tests_status'] == 'NOT_RUN'
 assert contract['step7']['no_general_reasoning_deadline'] is True
 assert contract['step7']['budget_exhaustion_not_semantic_readiness'] is True
+assert contract['step7']['spending_lock_order'] == ['deployment_event_clock', 'funding_owner_provider_account_budget', 'run_budget', 'spend_pool', 'optional_member_phase_budget']
 # ADR-53 modifies the previously mandatory BYOK and per-member-per-phase hard cap defaults.
 assert contract['step7']['requires_approved_user_budget'] is False
 assert contract['step7']['requires_approved_funding_owner_budget'] is True
