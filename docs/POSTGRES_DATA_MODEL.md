@@ -515,6 +515,8 @@ Projection edge over canonical records.
 
 The graph is a projection of canonical records. It may not become an independent source of truth.
 
+**October 21 ADR-50 — small operation/evidence ontology, immediate persistence:** [Approved Step 11 policy](STEP_11_ADR50_MINIMAL_OPERATION_ONTOLOGY_AND_IMMEDIATE_EVIDENCE_PERSISTENCE.md) maps logical `Actor`, `Operation`, `Observation`, `Artifact`, `Finding` and `Hypothesis` to **existing** Council actor, Step 5 operation/attempt, result/event, artifact, Step 6 claim/evidence and Step 8 experiment tables. `PERFORMED`, `USED`, `PRODUCED`, `REFERENCES` are mechanical runtime-backed link semantics; `SUPPORTED_BY`, `SUPPORTS`, `CONTRADICTS`, `TESTS`, `REVISES` are attributable agent-authored semantics where justified. No separate event log/graph-node tables are mandated by these names; prefer canonical foreign keys, scoped references and existing `graph_relationships.origin=RUNTIME|AGENT_INTERPRETATION`. Step 5 intent occurs before external dispatch; observed outcome/error/UNKNOWN is appended on actual receipt; semantic finding and its necessary graph edges and event commit atomically. Optional graph index projection may lag with watermark/fresh canonical fallback. No semantic node for every trivial code error and no new memory-compaction/model invocation after every call. Source-grant, private-member RLS and idempotency apply. **Design only; DDL/schema migrations/runtime tests NOT RUN.**
+
 ## 8. Continuity and agent-memory storage hooks
 
 The persistence layer already supports **continuity memory**, but the exact memory-selection policy is intentionally deferred to the context/memory design step.
