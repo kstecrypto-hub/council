@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "decision_date": "2026-10-19",
+  "decision_date": "2026-10-21",
   "scope": "specification_only",
   "logical_member_count": 5,
   "member_count_changes_require_explicit_revision": true,
@@ -459,6 +459,14 @@
     {
       "id": "ADR-53",
       "design_status": "OWNER_APPROVED_OPERATOR_BYOK_ENCRYPTED_CREDENTIALS_MCP_ONLY_EXTERNAL_AGENT_TOOLS_AND_ADAPTIVE_PROTECTED_SPENDING_DESIGN_ONLY",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
+    },
+    {
+      "id": "ADR-54",
+      "design_status": "OWNER_APPROVED_STEP10_STEP11_MVP_HANDOFF_LOCAL_GIT_MCP_NETWORK_CONTAINMENT_QDRANT_ARCHIVED_RAG_SPECIFICATION_ONLY",
       "implementation_status": "NOT_STARTED",
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
@@ -1097,6 +1105,18 @@
     "implementation_status": "NOT_STARTED",
     "cross_step_reconciliation": "docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md",
     "v1_exact_interface": "docs/STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md"
+  },
+  "step10": {
+    "design_status": "MVP_HANDOFF_APPROVED_ADR54_IMPLEMENTATION_DETAILS_DELEGATED",
+    "specification_path": "docs/STEP_10_11_ADR54_MINIMAL_IMPLEMENTATION_HANDOFF_QDRANT.md",
+    "runtime_backend": "COUNCIL_MANAGED_DOCKER_WITH_CUSTOMER_CONTROLLED_NATIVE_LOCAL_GIT",
+    "network_policy": "DENY_DIRECT_AGENT_EXTERNAL_EGRESS_ALLOW_ONLY_SCOPED_INTERNAL_TOOL_BRIDGE",
+    "external_tool_path": "TRUSTED_COUNCIL_MCP_BROKER_APPROVED_EXTERNAL_TARGETS",
+    "named_member_volumes": true,
+    "equal_fair_shares_of_AVAILABLE_RESOURCES_AFTER_HOST_RESERVE": true,
+    "external_sandbox_checker_before_admission": true,
+    "runtime_implementation_status": "NOT_STARTED",
+    "runtime_tests_status": "NOT_RUN"
   },
   "step11": {
     "design_status": "MVP_HANDOFF_APPROVED_ADR54_IMPLEMENTATION_DETAILS_DELEGATED",
