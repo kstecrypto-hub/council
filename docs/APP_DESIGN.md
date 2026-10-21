@@ -745,6 +745,10 @@ At a high level, the canonical model includes:
 
 Every relevant record carries project/run scope, attribution, version information, timestamps, and access classification. Branch-private canonical rows are enforced through backend authorization plus PostgreSQL row-level security tied to explicit publication/delivery records rather than prompt convention.
 
+### October 21 owner-approved ADR-49 — graph and normal agent memory for recovery (Step 11)
+
+[Authoritative continuation direction](STEP_11_ADR49_GRAPH_WORKING_MEMORY_AND_CONTINUATION.md): use the existing **typed evidence/decision graph** for hypotheses, claims, context-dependent success/failure observations, objections and provenance, plus the existing **normal per-member working memory** of current outer strategy/inner plan and bounded **context manifests/continuation packets** in temporary Council storage and member-private persistent workspaces. On MCP cooldown, context rollover, provider loss or Docker recovery, resume the same original member: validate **current canonical operation/UNKNOWN/retry, resource, epoch and permission state first**, then reload a bounded versioned packet and retrieve authorized, current graph evidence. An agent's note cannot override a Step 5 observed effect or claim permission; no automatic user retry prompt, cross-member graph leak, full hidden reasoning restore or blanket new hypothesis. Long-term accepted-project knowledge remains customer-owned Git-backed and consent-gated. Do **not** introduce a dedicated memory database, global RAG service, Redis, extra queue or AI recovery supervisor. **Step 11 policy direction APPROVED; detailed retrieval/DTO/archive design IN DESIGN; implementation NOT STARTED; tests NOT RUN.**
+
 ### PostgreSQL graph representation
 
 Use indexed node references and typed relationship records. Use bounded recursive queries with cycle handling for dependency traversal; consult PostgreSQL's current documentation during implementation. See [references](REFERENCES.md).
