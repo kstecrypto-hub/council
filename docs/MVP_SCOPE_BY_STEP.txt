@@ -597,6 +597,14 @@ Those remain complete-product features unless an experiment proves them necessar
 
 
 STEP 11 - CONTEXT RETRIEVAL, GRAPH RETRIEVAL, AGENT MEMORY, AND ROLLOVER
+
+October 21 ADR-50 — approved immediate operational evidence and small graph ontology (design only)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- **Every brokered action:** trusted Step 5 ledger commits authorized intent before external tool dispatch and verified observed result/error/UNKNOWN as soon as received. No model call needed to perform automatic operational logging. An ambiguous external effect stays UNKNOWN and is reconciled per Step 5/ADR-48.
+- **Graph on meaningful knowledge:** register a canonical new hypothesis/finding/experiment/decision and its essential evidence/relationship edges in the same transaction, immediately when the agent submits that material finding. Use existing Actor/Operation/Observation/Artifact/Finding/Hypothesis references and small RUNTIME mechanical versus AGENT_INTERPRETATION semantic edge vocabulary. Never manufacture a graph conclusion just from success/failure, create an extensive ontology, or add semantic graph nodes for every mundane tool call.
+- **Do not inflate context:** normal working-memory summary and continuation packet are updated on meaningful plan change or controlled suspension/rollover, NOT each action. Graph retrieval is on demand; expensive indexes may lag with event watermark and canonical fallback. Model provides material relationship annotations in ordinary responses; no extra summarizing/model-processing pass. Use current Part 3/5/6/8 records, no new queue or memory store.
+- Full policy and planned M50-01..11 cases: docs/STEP_11_ADR50_MINIMAL_OPERATION_ONTOLOGY_AND_IMMEDIATE_EVIDENCE_PERSISTENCE.md. Step 11 overall IN DESIGN; actual SQL, provider/tool integration and token/performance/recovery tests NOT STARTED / NOT RUN.
+
 Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
 
 Approved October 21 ADR-49 — Graph memory + normal working memory + existing continuation (SPECIFICATION ONLY)
