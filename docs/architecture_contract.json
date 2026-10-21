@@ -444,6 +444,14 @@
       "test_status": "NOT_RUN",
       "implementation_evidence": [],
       "test_evidence": []
+    },
+    {
+      "id": "ADR-52",
+      "design_status": "OWNER_APPROVED_SAME_MEMBER_PROVIDER_INTERRUPTION_RECOVERY_FROM_COMPACTED_MEMORY_FRESH_SCOPED_GRAPH_AND_CANONICAL_LEDGER_DESIGN_ONLY",
+      "implementation_status": "NOT_STARTED",
+      "test_status": "NOT_RUN",
+      "implementation_evidence": [],
+      "test_evidence": []
     }
   ],
   "private_work_scheduler": "fixed_seat_admission_when_capacity_available",
@@ -1241,6 +1249,30 @@
     "initial_shared_local_inference_concurrency_cap": 1,
     "native_provider_tool_continuation": "ADAPTER_PRIVATE_NOT_TRANSPORTED_AS_PUBLIC_COUNCIL_REASONING",
     "native_hosted_tools_without_trusted_broker": "NOT_ALLOWED_FOR_SENSITIVE_COUNCIL_OPERATIONS",
+    "provider_interruption_recovery": {
+      "design_status": "OWNER_APPROVED_ADR_52_SAME_MEMBER_COMPACTED_MEMORY_GRAPH_LEDGER_RESUME_DESIGN_ONLY",
+      "specification_path": "docs/STEP_9_ADR52_PROVIDER_INTERRUPTION_CONTEXT_RECONSTRUCTION.md",
+      "restore_same_logical_member_and_original_strategy": true,
+      "notify_model_previous_provider_connection_interrupted": true,
+      "canonical_operations_permissions_budgets_checked_before_context_or_dispatch": true,
+      "recovery_context": [
+        "LATEST_PERMITTED_PERSISTED_COMPACTED_WORKING_MEMORY",
+        "FRESH_RELEVANT_AUTHORIZED_GRAPH_EVIDENCE_SINCE_COMPACTION",
+        "CURRENT_STEP5_STEP7_CANONICAL_OPERATION_STATUS_AND_OBSERVED_RESULTS"
+      ],
+      "valid_same_profile_native_provider_session_continuation_allowed": true,
+      "otherwise_start_fresh_bounded_same_model_profile_session": true,
+      "auto_switch_provider_on_connection_drop": false,
+      "reexecute_confirmed_completed_tools": false,
+      "autodispatch_undispatched_tool_proposals": false,
+      "unknown_external_effects_require_reconciliation": true,
+      "mcp_3_to_7_minute_cooldown_applies_to_all_provider_interruptions": false,
+      "no_new_recovery_queue_agent_or_service": true,
+      "forced_per_tool_context_refresh_or_compaction": false,
+      "routine_user_interaction_required": false,
+      "runtime_implementation_status": "NOT_STARTED",
+      "runtime_tests_status": "NOT_RUN"
+    },
     "uncertain_usage": "PRESERVE_RESERVATIONS_AND_UNKNOWN_OUTCOME_UNTIL_RECONCILED",
     "model_switching": "USER_APPROVED_QUEUED_AT_SAFE_CHECKPOINT_OR_VERIFIED_QUIESCENT_PHASE_BOUNDARY",
     "auto_fallback": "DISABLED_BY_DEFAULT_NOT_IN_MVP",
@@ -1275,7 +1307,7 @@
     "security_tests_status": "NOT_RUN",
     "design_discussion_status": "OWNER_APPROVED_PRINCIPLES_OPERATIONAL_WORKFLOWS_NOT_REVIEWED",
     "remaining_design_discussions": [
-      "full_model_call_and_tool_loop_example",
+      "provider_specific_native_tool_continuation_edge_cases_after_ADR52_generic_recovery",
       "MCP_concrete_server_isolation_qualification_and_runtime_tests",
       "provider_specific_tool_and_reasoning_continuation",
       "model_registry_metadata_and_version_scoped_feature_reconciliation_after_ADR51_probe_method",
