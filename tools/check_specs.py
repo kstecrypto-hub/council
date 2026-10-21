@@ -32,8 +32,24 @@ assert contract['step7']['runtime_implementation_status'] == 'NOT_STARTED'
 assert contract['step7']['runtime_tests_status'] == 'NOT_RUN'
 assert contract['step7']['no_general_reasoning_deadline'] is True
 assert contract['step7']['budget_exhaustion_not_semantic_readiness'] is True
+# ADR-53 modifies the previously mandatory BYOK and per-member-per-phase hard cap defaults.
+assert contract['step7']['requires_approved_user_budget'] is False
+assert contract['step7']['requires_approved_funding_owner_budget'] is True
+assert contract['step7']['operator_funded_pilot_default'] is True
+assert contract['step7']['optional_user_byok'] is True
+assert contract['step7']['user_approves_run_and_phase_token_and_cost_limits'] is False
+assert contract['step7']['funding_owner_approves_run_account_and_five_protected_pool_spend_limits'] is True
+assert contract['step7']['optional_hard_member_phase_token_cost_limits'] is True
+assert contract['phase_budget_policy']['per_member_per_phase_token_ceiling_required'] is False
+assert contract['phase_budget_policy']['per_member_per_phase_cost_ceiling_required'] is False
+assert contract['phase_budget_policy']['optional_member_phase_token_ceiling_allowed'] is True
+assert contract['phase_budget_policy']['optional_member_phase_cost_ceiling_allowed'] is True
+assert contract['phase_budget_policy']['adaptive_member_phase_shares_within_authorized_pool'] is True
+assert contract['phase_budget_policy']['five_protected_spend_pools_and_funded_run_account_exposure_required'] is True
+assert contract['phase_budget_policy']['extension_or_cross_pool_transfer_requires_funding_owner_authorization'] is True
+
 assert 'suggested_default_budget_allocation_percent' not in contract['step7']
-assert contract['step7']['budget_allocation_policy'] == 'PROJECT_SPECIFIC_FIVE_PROTECTED_SCOPES_WITH_EXPLICIT_USER_APPROVAL_NO_UNIVERSAL_PERCENTAGES'
+assert contract['step7']['budget_allocation_policy'] == 'PROJECT_SPECIFIC_FIVE_PROTECTED_FUNDED_SCOPES_ADAPTIVE_WITHIN_POOL_OPERATOR_OR_USER_APPROVAL_NO_UNIVERSAL_PERCENTAGES'
 assert contract['final_product_policy']['final_user_acceptance_target'] == 'EXACT_CURRENT_INTEGRATED_ARTIFACT_AND_FROZEN_REPORT_PACKAGE_NOT_ORIGINAL_MEMBER_CANDIDATE'
 assert contract['step8']['step8_5cd']['queue_policy']['additional_api_per_key_lanes_required'] is False
 assert contract['step7']['initial_remote_model_call_cap_per_provider'] == 2
@@ -82,7 +98,7 @@ assert contract['step8']['new_strategic_hypothesis_required_per_inner_action'] i
 assert contract['step8']['karpathy_feedback_cycle_is_core'] is True
 assert contract['step8']['self_review_required_before_each_normal_checkpoint'] is True
 assert contract['step8']['integrator_output_intent_self_check_required'] is True
-assert {'ADR-43', 'ADR-44', 'ADR-45', 'ADR-46', 'ADR-47', 'ADR-48', 'ADR-49', 'ADR-50', 'ADR-51', 'ADR-52'} <= {r['id'] for r in contract['requirements']}
+assert {'ADR-43', 'ADR-44', 'ADR-45', 'ADR-46', 'ADR-47', 'ADR-48', 'ADR-49', 'ADR-50', 'ADR-51', 'ADR-52', 'ADR-53'} <= {r['id'] for r in contract['requirements']}
 assert contract['step8']['separate_ai_judge_or_experiment_scheduler'] is False
 assert contract['step8']['worker_may_declare_parent_checkpoint_ready'] is False
 assert contract['step8']['checkpoint_work_excursion'] == 'verification_only_disposable_read_only_candidate'
@@ -199,7 +215,7 @@ assert 'API_QUEUE_IMPLEMENTATION_PENDING' not in (root / 'docs/architecture_cont
 assert 'R1. Steps 2/3' in (root / 'docs/STEPS_2_TO_8_CROSS_STEP_RECONCILIATION_2026_10_19.md').read_text(encoding='utf-8')
 
 assert set(contract['step8']['pending_design']) == {'ADR43_FEEDBACK_CYCLE_RUNTIME_PROMPT_AND_COMMAND_BINDING', 'ADR43_MATERIAL_APPROACH_EVIDENCE_COVERAGE_AND_UNTESTABLE_CLAIM_HANDLING', 'ADR44_EXACT_DTO_SELF_REVIEW_VERSION_INVALIDATION_AND_UI_PRESENTATION'}
-for relpath in ('STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md','STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md','STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md','STEP_2_TO_8_VERIFICATION_MATRIX_V1.md','STEP_9_ADR47_OPEN_ENDED_PEER_MODEL_SELECTION.md','STEP_9_ADR51_LIGHTWEIGHT_MODEL_TOOL_COMPATIBILITY_PROBE.md','STEP_9_ADR52_PROVIDER_INTERRUPTION_CONTEXT_RECONSTRUCTION.md'):
+for relpath in ('STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md','STEPS_3_TO_5_EXACT_INTERFACE_CONTRACT_V1.md','STEP_8_ACTION_AND_FINALIZATION_CONTRACT_V1.md','STEP_2_TO_8_VERIFICATION_MATRIX_V1.md','STEP_9_ADR47_OPEN_ENDED_PEER_MODEL_SELECTION.md','STEP_9_ADR51_LIGHTWEIGHT_MODEL_TOOL_COMPATIBILITY_PROBE.md','STEP_9_ADR52_PROVIDER_INTERRUPTION_CONTEXT_RECONSTRUCTION.md','STEP_9_ADR53_OPERATOR_BYOK_CREDENTIALS_MCP_EGRESS_ADAPTIVE_SPENDING.md'):
     assert (root / 'docs' / relpath).exists()
 
 step9 = contract['step9']
@@ -251,6 +267,22 @@ assert interrupted['runtime_implementation_status'] == 'NOT_STARTED'
 assert interrupted['runtime_tests_status'] == 'NOT_RUN'
 
 
+# ADR-53 specification guards only — not executed credential or network security tests.
+assert step9['remote_inference_billing'] == 'OPERATOR_FUNDED_PILOT_DEFAULT_OR_OPTIONAL_USER_BYOK_ACTUAL_PROVIDER_ACCOUNT_OWNER_BILLED_NO_PREPAID_RESELLER_WALLET'
+assert step9['operator_credential_default_pilot'] is True
+assert step9['user_byok_supported_optional'] is True
+assert step9['automatic_fallback_to_other_funding_owner_key'] is False
+assert step9['n8n_code_snippet_copied_without_license_clearance'] is False
+assert step9['agent_external_tool_path'] == 'APPROVED_MCP_VIA_EXISTING_TRUSTED_BROKER'
+assert step9['model_inference_path'] == 'NATIVE_TRUSTED_PROVIDER_GATEWAY_NOT_MCP_REQUIRED'
+assert step9['trusted_internal_host_and_snapshot_ops_use_native_contracts'] is True
+assert step9['sandbox_direct_external_network_egress_allowed'] is False
+assert step9['sandbox_network_boundary_enforcement_step10_status'] == 'IN_DESIGN_NOT_IMPLEMENTED_OR_TESTED'
+assert step9['funded_account_run_and_five_protected_pool_hard_exposure_required'] is True
+assert step9['automatic_member_phase_share_reallocation_within_authorized_pool'] is True
+assert step9['mandatory_member_phase_hard_token_cost_caps'] is False
+assert step9['price_or_success_guarantee_from_token_estimate'] is False
+assert step9['no_wallet_reseller_in_mvp'] is True
 assert step9['per_model_mcp_server_required'] is False
 assert step9['direct_model_to_mcp_bypass'] is False
 assert step9['auto_fallback'].startswith('DISABLED')
