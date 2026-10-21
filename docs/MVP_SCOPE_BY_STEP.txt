@@ -71,7 +71,7 @@ Defer until after MVP evidence
 - Sophisticated host-pressure heuristics.
 - Multiple execution backends beyond the one needed by the MVP.
 - Advanced distributed deployment.
-- Sophisticated priority scoring and arbitrary time-based private-work slices are not required in the MVP; fixed seat admission order, semantic checkpoints, and phase token/cost ceilings are.
+- Sophisticated priority scoring and arbitrary time-based private-work slices are not required in the MVP; fixed seat admission order, semantic checkpoints, **funded run/account and five protected spend-pool ceilings** are required. **ADR-53 supersedes mandatory fixed per-member/phase hard token/cost ceilings**; optional caps remain available.
 
 
 STEP 2 - REPOSITORY LAYOUT, DEPENDENCIES, AND IMPORT RULES
@@ -305,7 +305,7 @@ MVP must implement
 ~~~~~~~~~~~~~~~~~~
 - Configurable active Council-member work-sandbox slots independent of the fixed logical member count.
 - The Orchestrator sets outcome-based semantic phases/checkpoint criteria in the versioned Project Contract; a member, not the runtime, declares CHECKPOINT_READY.
-- Each member has a configurable hard token and cost allowance per phase; consumption by delegated workers and session continuations is included in the applicable scope.
+- Each member/phase has attributable token/cost usage and may have an **optional configured** hard token/cost allowance; ADR-53 instead requires hard aggregate funded run/account and protected pool exposure. Delegated workers and session continuations remain charged to the applicable scope.
 - Exhaustion of the phase allowance records BUDGET_EXHAUSTED / INCOMPLETE and durably suspends the member without fabricating readiness, /done, or acceptance. An authorized user may allocate more budget.
 - A member that reaches the current checkpoint releases scarce private-work execution capacity and cannot proceed beyond the barrier.
 - Checkpoint review opens only after every required Council member reaches the same semantic checkpoint.
@@ -325,13 +325,13 @@ MVP must implement
 - Configurable max concurrent local sandboxes.
 - Trusted Council-host-side Docker Engine API stats/events monitoring per **whole member** sandbox, with adaptive/cgroup hard limits and configurable 2–5s samples, 80%/90% assigned-RAM soft-pressure response, WSL2/host memory and free-disk checks, and separate GPU/VRAM monitoring when supported. This policy does not guarantee preventing OOM kills and does not impose an internal worker-count cap.
 - A failed/BLOCKED member remains a required logical Council seat; no silently reduced five-member barrier.
-- BYOK/local-inference MVP; provider accounts bill users directly. Council-authorized budget gates are not guaranteed provider-invoice limits.
+- ADR-53 operator-funded API keys as default pilot, optional user BYOK or local inference; provider bills the **actual key owner**. Council's authorized request gates do not guarantee the final provider invoice or problem completion.
 - Per-run, per-phase, per-member token/cost metering and conservative pre-dispatch reservations.
-- Users approve their run/phase budgets and connect their own remote-provider API credentials (BYOK), or use compatible local models with no remote key; in the MVP providers bill users directly and Council does not run a prepaid token wallet.
-- Raw user API credentials remain in trusted secret storage and only the scoped runtime model bridge may use them; they never enter agent sandboxes, repos, ordinary logs, or client-side persistence.
+- Operator approves operator-funded pilot exposure, BYOK users authorize their own provider accounts when selected; supported local models require no remote key. Provider bills actual key owner. Five protected project-specific pools and run/account caps are approved by actual funding authority. No prepaid token wallet.
+- Raw operator and optional user BYOK API credentials remain encrypted in trusted secret storage; only scoped model bridge or trusted MCP credential resolver can use appropriate keys. They never enter agent sandboxes, repos, model prompts, regular logs or client-side persistence.
 - Council budget gates limit authorized requests but do not guarantee provider-invoice caps; report uncertain usage/settlement honestly.
-- Simple hard per-phase/member/run budgets plus a protected checkpoint/review/finalization reserve.
-- User approves every project ceiling and five separately protected project-specific spending scopes, including independent member development, checkpoint comparison, Integrator execution, five original-member integrated-result review/premortem, and orchestration/report/archive. No default 70/25/5 or mandatory equal split applies; each phase/member needs approved token and cost ceilings. No silent top-up.
+- Hard funded run/account and five separately protected pools, with **adaptive same-pool member/phase planning shares** and optional tighter hard phase/member limits; required checkpoint/review/finalization reserves remain protected.
+- Actual funding owner (operator pilot or BYOK user) authorizes monetary exposure and five protected project-specific spending scopes: independent member development, checkpoint comparison, Integrator execution, five original-member integrated-result review/premortem, and orchestration/report/archive. No default 70/25/5, mandatory equal split or compulsory hard phase/member quota. **Adaptive within-pool member/phase shares** are allowed; no silent cross-protected-pool transfer or total exposure top-up.
 - Default remote cap: up to two concurrent requests per provider, further reduced by actual provider limits; initial local inference cap: one job, increased only after measured model/runtime hardware + tool-loop compatibility.
 - Resource admission protects approximately 20% of host RAM as an adjustable initial target, increased when observed OS/Council overhead requires; VRAM is measured separately; under pressure stop admissions then safely quiesce work and confirm resource release.
 - Infrastructure recovery: three default retries with increasing 5s/30s/120s delays; individual tool/provider operations have class-specific timeouts, never a global agent-reasoning deadline.
@@ -378,7 +378,7 @@ Accepted Step 8.2 worker autonomy and monitoring policy (October 14, 2026)
 - Initial **configurable** policy: 2–5-second metrics samples, warnings/limits on new brokered heavy work at about 80% of assigned sandbox RAM, stronger admission denial plus safe whole-member quiescence if pressure persists near 90%. These are heuristic thresholds, not guaranteed OOM prevention. Step 7's approximately 20% host RAM headroom remains separate and adjustable.
 - The monitor controls **new trusted gateway/broker actions and entire sandbox lifecycle**, not arbitrary local process forks or individual worker scheduling. Unsafe/stale monitoring blocks additional heavy admissions; OOM events trigger durable same-member recovery rather than forced semantic readiness.
 - The Docker daemon socket is never given to agent-controlled containers. Optional separately isolated child containers need a trusted scoped broker and must still count against the parent's aggregate approved resources.
-- Worker-created model calls still use the trusted BYOK provider gateway and per-phase cost/token reservations; all children inherit the same or narrower authority. They cannot escape branch isolation, access raw credentials, grade Council peers, or declare their parent's CHECKPOINT_READY.
+- Worker-created model calls still use the trusted **operator-funded or optional BYOK provider gateway** and relevant funded run/account/protected-pool reservations; optional configured phase/member limits also apply. All children inherit the same or narrower authority. They cannot escape branch isolation, access raw credentials, grade Council peers, or declare their parent's CHECKPOINT_READY.
 - The default shared **local inference gateway** concurrency limit in Step 7 is not a fixed cap on ordinary worker processes inside a sandbox.
 
 Accepted Step 8.2a persistence decision (October 14, 2026)
@@ -522,9 +522,9 @@ MVP must implement (design specified; not yet implemented)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - One trusted common model gateway with an open-ended, user-approved pool of verified model/provider adapters (no main/default model or fixed vendor list, per ADR-47); compatible local inference only after actual model/runtime/tool-loop/resource verification, and no exact supported IDs claimed before testing.
 - A common model adapter interface.
-- Per-user BYOK credential configuration and verification for enabled remote providers, with credential references (not raw keys) used by the trusted gateway.
+- **Operator-owned encrypted provider credentials by default for pilot**, optional user BYOK credentials, and local inference without remote credentials. The trusted gateway resolves opaque credential refs; actual provider account owner pays.
 - Local-model operation without remote API keys where hardware/tool-loop compatibility checks pass.
-- No prepaid Council wallet, Council-owned inference credits, or mandatory reseller billing in the MVP.
+- No prepaid Council wallet, customer inference-credit resale, or merchant payment/markup engine in MVP. **Operator paying its own API provider bills is permitted and is the pilot default**.
 - At least enough adapters to run a genuinely model-diverse council if accounts
   and APIs are available.
 - Per-seat provider/model selection at run start.
@@ -543,7 +543,7 @@ Defer until after MVP evidence
 - Automatic fallback.
 - Huge provider catalog.
 - Fine-grained worker-level switching UI.
-- Optional Council-managed inference payments, prepaid credits/wallet, and per-token markup/resale model, subject to separate business, provider, payment, security, and compliance design.
+- Optional **customer-facing** managed inference payments, prepaid credits/wallet, or per-token markup/resale model remain deferred and require separate business/provider/payment/legal design; operator paying for its own pilot provider key is already permitted.
 
 
 OCTOBER 21 — STEP 9.3 ADR-51 LIGHTWEIGHT MODEL TOOL COMPATIBILITY PROBE
@@ -558,6 +558,14 @@ OCTOBER 21 — STEP 9 PROVIDER INTERRUPTION RECOVERY ADR-52
 - Notify the model that its provider connection was interrupted and let it continue autonomously. If native same-model provider continuation is valid, use real original provider tool-call/result IDs; otherwise make a fresh bounded session for **the same approved model profile**, without hidden reasoning-state replay or silent provider switch.
 - **Never reexecute completed tool effects** merely due to a lost model response. A proposed-but-not-executed call stays a proposal; a dispatched external effect with lost ACK remains UNKNOWN pending reconciliation; no fabricated result receipt, new user troubleshooting prompt, per-action compacting, global queue, polling agent or special 3–7-minute cooldown for model transport interruptions. ADR-48's 3–7-minute rule remains for known transient MCP tool services. Existing Step 7 scheduler handles safe yield/wake when readiness permits.
 - Authoritative ADR and P9-51..62 planned scenarios: docs/STEP_9_ADR52_PROVIDER_INTERRUPTION_CONTEXT_RECONSTRUCTION.md. **Interruption-recovery policy APPROVED; Step 9 overall IN DESIGN**, unresolved provider/budget/egress and switching details pending owner review; implementation/protocol/security/runtime tests NOT STARTED / NOT RUN.
+
+
+OCTOBER 21 — STEP 9 ADR-53 OPERATOR/BYOK KEYS, EXTERNAL MCP AND ADAPTIVE FUNDING
+- Approved operator-owned API keys for pilot by default, user-supplied BYOK as optional choice, compatible local inference without provider key. The **actual provider account owner pays**; no silent switching between owner and BYOK funding and no Council customer payment/wallet/reseller system.
+- Both credential types stay **encrypted in the existing trusted control plane**, using an n8n-inspired separated master/data-key and rotation design; Council is closed source and **does not directly reuse commercially restricted n8n snippets unless exact code licensing/provenance is cleared**. No n8n runtime/service is introduced.
+- Agent can freely operate in its bounded sandbox: local Git/files/Python/processes/tests/workers. **Agent-initiated outside network/services** (external Git, web/search, databases, SaaS, package registries and downloads) use **approved MCP via trusted Council broker**. **Step 10 must enforce no direct external egress** using actual container network policies, not merely tool-call filtering. External model inference stays a native trusted gateway API; local control-plane/snapshot/host operations retain native trusted paths.
+- Cost estimation does **not** promise a result, fixed final fee or project completion. Funding owner authorizes finite account/run exposure and five protected pool ceilings; adaptive within-pool member/semantic-phase shares are allowed without new approval, optional user-configured hard phase/member token ceilings are honored, and cross-pool transfers or increased external spending need new funding authorization. Report actual/unknown provider usage; `BUDGET_EXHAUSTED / INCOMPLETE` never implies readiness. No fixed universal pool percentages or equal shares.
+- Normative policy and unexecuted P9-63..76 acceptance cases: docs/STEP_9_ADR53_OPERATOR_BYOK_CREDENTIALS_MCP_EGRESS_ADAPTIVE_SPENDING.md. Step 9 overall **IN DESIGN**, Step 7 schedule/cost principles DESIGNED AS AMENDED, Step 10 external network containment PARTLY DESIGNED. Runtime implementation, encryption/network isolation tests and provider billing reconciliation tests NOT RUN.
 
 
 STEP 10 - TOOLS, PERMISSIONS, AND EXECUTION ENVIRONMENTS
@@ -586,7 +594,7 @@ MVP must implement
   the candidate is reproducible.
 - Clean rebuild test before treating an executable candidate as valid.
 - No provider/API credentials inside candidate containers.
-- BYOK API secrets held outside candidate/agent sandboxes in trusted, scoped credential storage; brokered provider calls only, with no raw key disclosure to agent tools.
+- Operator and optional BYOK API keys stored **encrypted in trusted scoped control-plane storage** outside agent sandboxes; brokered provider calls only, no raw key disclosure to agents. n8n-inspired envelope encryption is a **design reference**, not a copied source-code dependency.
 - No raw Docker socket exposed to agents.
 - Simple typed tool permissions.
 - Read/write access only to the branch's approved repo/workspace.
@@ -717,7 +725,7 @@ MVP must implement
 - Peer challenges/revisions.
 - Basic candidate/repo/test status.
 - Usage/cost display.
-- Show user approval and editable five protected project-specific budget scopes, per-member/per-phase monetary and token ceilings, protected review funds, BYOK/local provider setup, cost uncertainty, and BUDGET_EXHAUSTED / INCOMPLETE top-up/stop actions.
+- Show approved operator-funded or BYOK funding owner/account, editable five protected project-specific budgets, funded run/account exposure, **adaptive per-member/phase usage and optional configured hard caps**, protected review funds, local model setup, reported/reserved/UNKNOWN costs and BUDGET_EXHAUSTED / INCOMPLETE continuation/stop actions.
 - Activity stream via SSE.
 - A minimal final/evaluation view.
 
