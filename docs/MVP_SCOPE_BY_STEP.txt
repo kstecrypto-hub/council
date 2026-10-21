@@ -155,9 +155,9 @@ MVP must implement
 MVP can simplify
 ~~~~~~~~~~~~~~~~
 - One PostgreSQL instance.
-- No separate physical databases.
-- No vector database.
-- No graph database.
+- One canonical PostgreSQL instance for active Council state; Qdrant is a separate, customer-controlled derived index for archived long-term RAG (ADR-54).
+- No pgvector for long-term RAG.
+- No separate canonical graph database.
 - Minimal **customer-local, retention-approved** Git-backed archive/index sufficient for accepted candidate metadata and permitted evidence references.
 - Match My PC persistence tables may exist but do not need to be exercised by
   the MVP if Match My PC itself is deferred.
@@ -569,7 +569,7 @@ OCTOBER 21 — STEP 9 ADR-53 OPERATOR/BYOK KEYS, EXTERNAL MCP AND ADAPTIVE FUNDI
 
 
 STEP 10 - TOOLS, PERMISSIONS, AND EXECUTION ENVIRONMENTS
-Status: PARTLY DESIGNED
+Status: MVP DESIGN HANDOFF APPROVED (ADR-54); IMPLEMENTATION/TESTS NOT STARTED
 
 Pre-design consideration
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -627,11 +627,11 @@ October 21 ADR-50 — approved immediate operational evidence and small graph on
 - **Do not inflate context:** normal working-memory summary and continuation packet are updated on meaningful plan change or controlled suspension/rollover, NOT each action. Graph retrieval is on demand; expensive indexes may lag with event watermark and canonical fallback. Model provides material relationship annotations in ordinary responses; no extra summarizing/model-processing pass. Use current Part 3/5/6/8 records, no new queue or memory store.
 - Full policy and planned M50-01..11 cases: docs/STEP_11_ADR50_MINIMAL_OPERATION_ONTOLOGY_AND_IMMEDIATE_EVIDENCE_PERSISTENCE.md. Step 11 overall IN DESIGN; actual SQL, provider/tool integration and token/performance/recovery tests NOT STARTED / NOT RUN.
 
-Status: IN DESIGN - approved amendments recorded; remaining design/integration work open
+Status: MVP DESIGN HANDOFF APPROVED (ADR-54); implementation details and runtime/integration tests pending
 
 Approved October 21 ADR-49 — Graph memory + normal working memory + existing continuation (SPECIFICATION ONLY)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- Preserve two intellectual memory views: a scoped **typed evidence/decision graph** of current approaches, claims, source lineage, experiments, objections and conditional failures; plus **normal per-member working memory** for the current outer strategy, inner task, notes, progress and next intended action. Use existing PostgreSQL/canonical data, bounded continuation packets/context manifests and member-private durable workspace. No fourth AI memory, separate graph DB, Redis/vector DB or recovery manager is needed for this use case.
+- Preserve two intellectual memory views: a scoped **typed evidence/decision graph** of current approaches, claims, source lineage, experiments, objections and conditional failures; plus **normal per-member working memory** for the current outer strategy, inner task, notes, progress and next intended action. Use existing PostgreSQL/canonical data, bounded continuation packets/context manifests and member-private durable workspace. No new current-run graph/continuation database, Redis or recovery manager. ADR-54 separately selects Qdrant for archived cross-project RAG, not as another source of live operational truth.
 - **Canonical Step 5/7 operation/budget/permission/epoch/lease/next_retry_not_before state wins over the model's memory.** On 3–7-minute transient MCP cooldown/provider loss, the original logical member can safely yield its existing whole-member slot (when appropriate), persist bounded evidence-linked context, and resume after current auth, status and resource checks. No busy-waiting, unconditional retries, presumed cancellation or new strategic hypothesis on each resume.
 - The continuation packet references the current Contract/phase, outer hypothesis, inner task, decisive graph/evidence IDs and versions, repository/worker progress, pending operation/attempt IDs and known uncertainty, and next intended action; context manifest records precisely what was retrieved, with source/event-watermark freshness. Fresh model context is **reconstructed**, not a promise to restore raw model RAM, hidden reasoning or running worker process stacks.
 - Existing five-member private/authorized-checkpoint scope and pinned shared prior-project memory snapshot remain intact. Success-first conditional Git-backed lessons and original sources are only retained/shown under customer authority. No cross-branch graph/memory leak, model switch, auto budget/egress permission or new scheduling service.
@@ -956,3 +956,8 @@ OCTOBER 20 ADR-48 — AUTONOMOUS TOOL ERROR FEEDBACK AND MCP COOLDOWN
 - Known transient MCP overload/network/rate-limit failures: **3–7 minute (180–420-second) INITIAL service/account-scoped cooldown**, longer Retry-After/backoff where required; other authorized independent tool operations continue. No arbitrary fixed agent-safe-tool retry count, but enforce real budget, permissions, scope, resource limits and no tight polling. Deterministic Python/argument/test errors: allow corrected attempts without mandatory infrastructure cooldown.
 - Timeout after a potentially consequential write: **UNKNOWN must be reconciled before any retry**; waiting alone proves nothing. Prohibited/revoked/budget-blocked operation is never authorized by delay. Model-provider failure before a response requires normal provider operation reconciliation, not invented tool output. Reuse Step 5 ledger/outbox and Step 7 admission; no new queue/supervisor/timer database. The older *finite 3-attempt 5s/30s/120s* infrastructure restart guidance is **separate** from this MCP tool cooldown policy and is NOT erased.
 - Normative policy and P9-30..39 planned tests: docs/STEP_9_ADR48_AUTONOMOUS_TOOL_ERROR_FEEDBACK_AND_COOLDOWN.md. Step 9 overall IN DESIGN; app implementation NOT STARTED, runtime and security tests NOT RUN.
+
+OCTOBER 21 ADR-54 — FINAL STEP 10/11 MVP IMPLEMENTATION HANDOFF
+- Implementation owners follow docs/STEP_10_11_ADR54_MINIMAL_IMPLEMENTATION_HANDOFF_QDRANT.md. Step 10: use existing Council broker/MCP, actual sandbox outbound-network deny, Docker named volumes and normal lifecycle, Step 7 resource admission/monitor and external sandbox checker. Agent processes may not bypass Council external tool permissions using curl/Python/DNS.
+- Step 11: canonical active evidence graph, operations and continuation stay in PostgreSQL plus member-private workspace. At customer-authorized project closure export source-linked graph/actions/evidence to **customer-owned native local Git/artifact archives**, optionally summarize/select significant lessons and index those in customer-controlled Qdrant vector/payload collections. Do not use pgvector for archived RAG; embed only new/changed useful chunks. Qdrant is a derived, rebuildable retrieval index, not the live authoritative state. No internet GitHub backend for Council member repositories/checkpoints/archives (ADR-17).
+- ADR-54 supersedes the historical blanket no-vector-DB MVP default, but does not change Step 2 native local Git, Step 9 trusted tool broker or ADR-49 same-member continuation. APPROVED SPECIFICATION ONLY; no implementation/testing has occurred.
