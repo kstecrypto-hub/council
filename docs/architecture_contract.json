@@ -33,7 +33,10 @@
     "user_acceptance"
   ],
   "event_ordering": "deployment_transactional_event_clock",
-  "long_term_learning_store": "customer_owned_git_archive_with_optional_permitted_general_knowledge",
+  "long_term_learning_store": "customer_owned_native_local_git_archive_with_optional_permitted_general_knowledge",
+  "council_runtime_git_backend": "CUSTOMER_OWNED_NATIVE_LOCAL_GIT_NOT_ONLINE_GITHUB",
+  "long_term_archive_rag_backend": "QDRANT_CUSTOMER_CONTROLLED_REBUILDABLE_DERIVED_INDEX_NOT_PGVECTOR",
+  "long_term_archive_rag_design_source": "docs/STEP_10_11_ADR54_MINIMAL_IMPLEMENTATION_HANDOFF_QDRANT.md",
   "runtime_implementation_status": "NOT_STARTED",
   "runtime_test_status": "NOT_RUN",
   "requirements": [
@@ -1096,7 +1099,14 @@
     "v1_exact_interface": "docs/STEP_2_SNAPSHOT_TRANSFER_CONTRACT_V1.md"
   },
   "step11": {
-    "design_status": "IN_DESIGN",
+    "design_status": "MVP_HANDOFF_APPROVED_ADR54_IMPLEMENTATION_DETAILS_DELEGATED",
+    "long_term_rag_index": "QDRANT_LOCAL_PRIVATE_INDEX_OF_SOURCE_LINKED_ARCHIVED_LESSONS",
+    "long_term_rag_source_of_truth": "CUSTOMER_OWNED_NATIVE_LOCAL_GIT_AND_AUTHORIZED_ARTIFACT_ARCHIVE",
+    "pgvector_for_rag": false,
+    "long_term_rag_embed_new_or_changed_significant_content_only": true,
+    "long_term_rag_same_permitted_snapshot_for_all_five_members": true,
+    "active_canonical_graph_database": "POSTGRESQL",
+    "online_github_for_runtime_agent_repos_checkpoints_or_archive": false,
     "owner_approved_continuation_policy": "ADR-49_GRAPH_EVIDENCE_PLUS_BOUNDED_MEMBER_WORKING_MEMORY_CANONICAL_STATE_FIRST",
     "immediate_logging_policy": "ADR-50_OPERATIONS_INTENT_BEFORE_DISPATCH_OBSERVATIONS_ON_RECEIPT_GRAPH_ESSENTIAL_EDGES_WITH_MATERIAL_FINDING",
     "minimal_ontology_reuses_existing_canonical_records": true,
@@ -1126,6 +1136,7 @@
     "continuation_preserves_same_original_logical_member": true,
     "new_memory_or_recovery_service_required": false,
     "separate_graph_or_vector_db_required_for_cooldown_continuation": false,
+    "qdrant_is_separate_archived_project_rag_not_session_continuation": true,
     "mcp_cooldown_agent_busy_wait_required": false,
     "private_branch_memory_leakage_allowed": false,
     "continuation_packet_is_canonical_external_effect_authority": false,
