@@ -60,14 +60,23 @@ assert 'sealed_review' in contract['checkpoint_phases']
 assert set(contract['done_requires']) == {'checkpoint_generation', 'processed_message_sequence', 'expected_obligation_version'}
 assert len(contract['separate_outcomes']) == 4
 assert contract['event_ordering'] == 'deployment_transactional_event_clock'
-assert contract['long_term_learning_store'] == 'customer_owned_git_archive_with_optional_permitted_general_knowledge'
+assert contract['long_term_learning_store'] == 'customer_owned_native_local_git_archive_with_optional_permitted_general_knowledge'
+assert contract['council_runtime_git_backend'] == 'CUSTOMER_OWNED_NATIVE_LOCAL_GIT_NOT_ONLINE_GITHUB'
+assert contract['long_term_archive_rag_backend'] == 'QDRANT_CUSTOMER_CONTROLLED_REBUILDABLE_DERIVED_INDEX_NOT_PGVECTOR'
 assert len({x['id'] for x in contract['requirements']}) == len(contract['requirements'])
 assert len(contract['requirements']) >= 18
 assert {'ADR-13', 'ADR-14', 'ADR-15', 'ADR-16', 'ADR-17', 'ADR-18'} <= {x['id'] for x in contract['requirements']}
 assert contract['requirements'][0]['design_status'] == 'SUPERSEDED_BY_ADR_17'
 assert contract['step11']['negative_exclusion_policy'] == 'no_universal_blacklist_or_silent_filter_based_on_prior_failure'
 # Documentation contract guards only; Council agent memory/recovery remains unimplemented.
-assert contract['step11']['design_status'] == 'IN_DESIGN'
+assert contract['step10']['design_status'] == 'MVP_HANDOFF_APPROVED_ADR54_IMPLEMENTATION_DETAILS_DELEGATED'
+assert contract['step10']['network_policy'] == 'DENY_DIRECT_AGENT_EXTERNAL_EGRESS_ALLOW_ONLY_SCOPED_INTERNAL_TOOL_BRIDGE'
+assert contract['step10']['runtime_implementation_status'] == 'NOT_STARTED'
+assert contract['step10']['runtime_tests_status'] == 'NOT_RUN'
+assert contract['step11']['design_status'] == 'MVP_HANDOFF_APPROVED_ADR54_IMPLEMENTATION_DETAILS_DELEGATED'
+assert contract['step11']['long_term_rag_index'].startswith('QDRANT_')
+assert contract['step11']['pgvector_for_rag'] is False
+assert contract['step11']['online_github_for_runtime_agent_repos_checkpoints_or_archive'] is False
 assert contract['step11']['continuation_preserves_same_original_logical_member'] is True
 assert contract['step11']['continuation_packet_is_canonical_external_effect_authority'] is False
 assert contract['step11']['new_memory_or_recovery_service_required'] is False
@@ -99,7 +108,7 @@ assert contract['step8']['new_strategic_hypothesis_required_per_inner_action'] i
 assert contract['step8']['karpathy_feedback_cycle_is_core'] is True
 assert contract['step8']['self_review_required_before_each_normal_checkpoint'] is True
 assert contract['step8']['integrator_output_intent_self_check_required'] is True
-assert {'ADR-43', 'ADR-44', 'ADR-45', 'ADR-46', 'ADR-47', 'ADR-48', 'ADR-49', 'ADR-50', 'ADR-51', 'ADR-52', 'ADR-53'} <= {r['id'] for r in contract['requirements']}
+assert {'ADR-43', 'ADR-44', 'ADR-45', 'ADR-46', 'ADR-47', 'ADR-48', 'ADR-49', 'ADR-50', 'ADR-51', 'ADR-52', 'ADR-53', 'ADR-54'} <= {r['id'] for r in contract['requirements']}
 assert contract['step8']['separate_ai_judge_or_experiment_scheduler'] is False
 assert contract['step8']['worker_may_declare_parent_checkpoint_ready'] is False
 assert contract['step8']['checkpoint_work_excursion'] == 'verification_only_disposable_read_only_candidate'
@@ -182,6 +191,9 @@ assert 'HYPOTHESIS -> CHANGE/ALTERNATIVE -> TEST/CHECK -> OBSERVE' in step8_spec
 assert 'KEEP | REVISE | DISCARD | INCONCLUSIVE' in step8_spec
 step8_scope = scope_text.split('STEP 8 -', 1)[1].split('STEP 9 -', 1)[0]
 assert 'Status: IN DESIGN' in step8_scope
+assert 'Status: MVP DESIGN HANDOFF APPROVED' in scope_text.split('STEP 10 -', 1)[1].split('STEP 11 -', 1)[0]
+assert 'Status: MVP DESIGN HANDOFF APPROVED' in scope_text.split('STEP 11 -', 1)[1].split('STEP 12 -', 1)[0]
+assert 'Qdrant' in (root / 'docs/STEP_10_11_ADR54_MINIMAL_IMPLEMENTATION_HANDOFF_QDRANT.md').read_text()
 assert 'optional' in step8_scope.lower()
 assert 'no fixed worker-count or delegation-depth limit' in step8_scope
 assert '2–5' in step8_scope
