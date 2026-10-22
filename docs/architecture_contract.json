@@ -2,6 +2,7 @@
   "schema_version": 1,
   "decision_date": "2026-10-21",
   "scope": "specification_only",
+  "current_specification_guide": "docs/CURRENT_SPEC.md",
   "logical_member_count": 5,
   "member_count_changes_require_explicit_revision": true,
   "repository_visibility_cycle": [
@@ -506,9 +507,14 @@
     ]
   },
   "mvp_inference_billing": {
-    "remote_provider_payment": "BYOK_direct_provider_to_user",
+    "remote_provider_payment": "OPERATOR_FUNDED_PILOT_DEFAULT_USER_BYOK_OPTIONAL_BILL_ACTUAL_FUNDING_ACCOUNT_OWNER",
+    "operator_funded_pilot_default": true,
+    "user_byok_optional": true,
+    "funding_owner_approves_account_run_and_five_protected_pools": true,
+    "mandatory_member_phase_hard_caps": false,
     "local_inference": "supported_if_compatible_without_remote_api_key",
-    "user_approved_run_phase_token_cost_budgets": true,
+    "user_approved_run_phase_token_cost_budgets": false,
+    "user_approves_project_scope_and_data_egress": true,
     "council_prepaid_wallet_required": false,
     "council_token_reseller_required": false,
     "council_budget_enforcement_scope": "Council_authorized_dispatch_not_provider_invoice_guarantee",

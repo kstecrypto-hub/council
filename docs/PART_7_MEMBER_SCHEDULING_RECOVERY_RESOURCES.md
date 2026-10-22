@@ -1,5 +1,7 @@
 # Part 7 - member execution scheduling, recovery, and resource controls
 
+**Read [CURRENT_SPEC.md](CURRENT_SPEC.md) first:** older BYOK-only, 70/25/5, mandatory per-member hard caps and duplicate internal-API queue descriptions are superseded by ADR-27/40/53. Funding owner approves five hard protected pools and account/run exposure; optional member/phase caps are not imposed automatically.
+
 **Design status:** DESIGNED (specification approved October 14, 2026).
 **Scope:** runtime scheduling of Council-member execution environments, checkpoint barriers, resource limits, recovery, pause/stop, and budget controls.  
 **Implementation status:** NOT STARTED. **Runtime acceptance tests:** NOT RUN.

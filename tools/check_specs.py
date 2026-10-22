@@ -316,6 +316,30 @@ step9_doc = (root / 'docs' / 'STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1
 for phrase in ('NO PER-MODEL MCP SERVER IS REQUIRED', 'NO PER-MODEL MCP SERVER', 'ModelRequestV1', 'ExposedToolManifestV1', 'NOT RUN'):
     assert phrase in step9_doc, phrase
 
+# Current-authority consistency guards: these do not execute a Council application.
+guide_path = root / 'docs' / 'CURRENT_SPEC.md'
+guide = guide_path.read_text(encoding='utf-8')
+agents_text = (root / 'AGENTS.md').read_text(encoding='utf-8')
+handoff_text = (root / 'docs' / 'IMPLEMENTATION_HANDOFF.md').read_text(encoding='utf-8')
+blueprint_text = (root / 'docs' / 'STEP_8_5_STRUCTURED_COUNCIL_BLUEPRINT_HANDOFF.md').read_text(encoding='utf-8')
+typed_text = (root / 'docs' / 'TYPED_INTERACTION_CONTRACTS.md').read_text(encoding='utf-8')
+assert contract['current_specification_guide'] == 'docs/CURRENT_SPEC.md'
+assert contract['mvp_inference_billing']['operator_funded_pilot_default'] is True
+assert contract['mvp_inference_billing']['user_byok_optional'] is True
+assert contract['mvp_inference_billing']['funding_owner_approves_account_run_and_five_protected_pools'] is True
+assert contract['mvp_inference_billing']['mandatory_member_phase_hard_caps'] is False
+assert contract['mvp_inference_billing']['user_approved_run_phase_token_cost_budgets'] is False
+assert 'ADR-53' in guide and 'ADR-40' in guide and 'NOT STARTED' in guide
+assert 'docs/CURRENT_SPEC.md' in agents_text
+assert 'Propose, but never impose without approval, the configurable 70/25/5 budget split' not in agents_text
+assert 'Bring Your Own API Key or compatible local inference is the MVP' not in agents_text
+assert 'MVP requires **BYOK for all remote providers**' not in handoff_text
+assert 'approved full public-history manifests' not in handoff_text
+assert 'full repo-public and failed-private transitions' not in handoff_text
+assert "The owner's **small keyed internal API queues** serialize" not in blueprint_text
+assert 'incrementally decode UTF-8' in typed_text
+assert 'streaming and non-streaming API delivery modes' in typed_text
+
 print(f'Static specification checks passed: {len(files)} documents and {len(contract["requirements"])} tracked requirements.')
 print('Scope: documentation/contract consistency only. Runtime tests and comparative evaluations NOT RUN.')
 

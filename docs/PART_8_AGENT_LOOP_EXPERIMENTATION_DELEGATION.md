@@ -1,5 +1,7 @@
 # Part 8 - Agent loop, structured experimentation, and delegation
 
+**Current implementation-policy map:** [CURRENT_SPEC.md](CURRENT_SPEC.md). Historical notes that Step 8.4/8.5 v1 interfaces remain undecided were superseded at the October 19 *design* handoff; ADR-43/44/45 make substantive outer/inner evidence-feedback mandatory, while individual formal experiments remain contextual/optional. Application/runtime tests NOT STARTED/NOT RUN.
+
 **Design status:** IN DESIGN (ADR-43/44 and owner-approved ADR-45 two nested member loops require remaining operational prompt/command reconciliation; runtime NOT STARTED). **Decisions 8.1 (nested Karpathy-style experimentation), 8.2 (sandbox-local worker autonomy/resource monitoring), and 8.2a (Docker-volume persistence without a central worker-recovery manager): ACCEPTED, October 14, 2026.** The October 19 exact v1 contract now specifies action observations, final-phase/failure transitions and termination guards; implementation and verification remain unstarted.
 
 **Implementation:** NOT STARTED. **Runtime/evaluation tests:** NOT RUN.

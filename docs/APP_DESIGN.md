@@ -1,5 +1,7 @@
 # Council - complete app design
 
+**Current policy/supersession entrypoint:** [CURRENT_SPEC.md](CURRENT_SPEC.md). Dated baseline explanations below do not supersede newer approved ADR-17/22/27/43–54 or exact v1 interface contracts; this remains a design repository, not application code.
+
 **October 13, 2026 amendment:** [decision/status index](ARCHITECTURE_DECISIONS.md). Requirements below are specifications; application implementation is NOT STARTED and runtime tests are NOT RUN.
 
 **Design baseline:** approved in the project conversation on September 10, 2026.  

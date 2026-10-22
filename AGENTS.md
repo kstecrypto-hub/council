@@ -2,7 +2,7 @@
 
 ## Authority and current stage
 
-This is an approved-design repository, not an implemented application. Read `docs/APP_DESIGN.md` in full before proposing or implementing changes. Then read `docs/POSTGRES_DATA_MODEL.md` and `docs/TYPED_INTERACTION_CONTRACTS.md`; read `docs/IMPLEMENTATION_HANDOFF.md` next. The latest explicit owner instruction is authoritative; supporting handoff notes do not silently override the complete design.
+This is a design-specification repository, not an implemented application. **Read [docs/CURRENT_SPEC.md](docs/CURRENT_SPEC.md) first** to resolve current policy versus superseded historical instructions. Then read the detailed authoritative topical documents relevant to the task (and the full `docs/APP_DESIGN.md` for end-to-end implementation). Latest explicit owner-approved policy remains authoritative. Do not implement old directions simply because they appear earlier in this long file.
 
 The initial authorization was to create a repository and publish the approved design. It was not an instruction to build the application. Do not start application implementation solely because this file exists. A later explicit implementation request authorizes work within its stated scope; do not then ask for redundant confirmation.
 
@@ -25,9 +25,9 @@ The initial authorization was to create a repository and publish the approved de
 - Perform the six-month-plus premortem as a hypothetical review now. Do not invent future observations or silently schedule future runs.
 - A final report assembler has editorial authority only. It may not erase unresolved objections or silently pick the winner of a factual dispute.
 - Require scoped permissions for tools and provider changes. Keep credentials outside model prompts, browser state, generated code, and ordinary logs.
-- Account for retries, failures, child agents, and parallel reservations in budgets. Preserve the user's approved per-phase token/cost ceilings and protected checkpoint/review/finalization allowance. Exhaustion leaves the member BUDGET_EXHAUSTED / INCOMPLETE, never CHECKPOINT_READY, /done, or forced consensus. Propose, but never impose without approval, the configurable 70/25/5 budget split; use nonbinding uncertain token forecasts only for planning.
+- Account for retries, failures, child agents, and parallel reservations in budgets. Enforce funding-owner-approved account/run exposure and five protected project-specific spending pools; optional per-member/per-phase hard ceilings apply only when expressly approved. Exhaustion leaves the member BUDGET_EXHAUSTED / INCOMPLETE, never CHECKPOINT_READY, /done, or forced consensus. Do not propose a universal percentage allocation; shares inside an approved pool are adaptive within the funding policy. Forecasts remain nonbinding.
 - Step 7 schedules whole member environments in fixed 1->5 seat order when capacity frees; do not impose mandatory periodic private-work slices, fixed reasoning-call counts, or general reasoning deadlines. Individual provider/tool operations still require safety timeouts. Default remote concurrency starts at two per provider (subject to stricter actual limits), local inference at one until verified safe; use resource-vector admission and preserve host headroom.
-- Bring Your Own API Key or compatible local inference is the MVP; provider bills the user directly and Council owns no prepaid token wallet. Provider secrets remain outside all agent-controlled sandboxes and are reachable only through authorized, revocable runtime bridges. Council budget limits govern its own dispatch, not final provider invoices.
+- The pilot defaults to operator-funded provider API accounts/keys, with optional user BYOK or qualified local inference. Actual providers bill the corresponding funding account owner; Council has no prepaid token-reseller wallet in the MVP. Provider secrets remain outside all agent-controlled sandboxes and are reachable only through authorized, revocable runtime bridges. Council budget limits govern its own dispatch, not final provider invoices.
 - For executable projects, execution isolation is transparent to the agent. The agent acts as though it owns a normal machine and controls everything visible inside its environment, including destructive changes. The runtime owns only the invisible isolation/lifecycle boundary and must prevent escape, cross-branch access, protected credential access, or direct canonical-state mutation. Host matching is opt-in.
 - In Match My PC mode, treat the approved Environment Contract as the boundary. Do not collect unrelated host data, infer permission from mere device/software presence, or silently upgrade compatible/bridged behavior to exact verification.
 - Never give an agent or ordinary Council process unrestricted administrator, Docker-daemon, or kernel access. Elevated host operations go through the typed local privileged broker and only within approved capability scope.
@@ -65,7 +65,7 @@ A documentation edit can be SPECIFIED without being IMPLEMENTED or VERIFIED. Do 
 
 Persist hypothesis, exact baseline/change and environment/test inputs, measured or qualitative results, failures/regressions, and member dispositions with Step 6 source/provenance lineage. Agent-created exploratory tests are not a substitute for protected acceptance checks. A worker can perform a parent-authorized experiment under the parent's capabilities, branch and budget, but cannot approve parent readiness or cross-peer changes. During checkpoint `/work`, frozen authoritative candidates remain read-only and only disposable verifier environments execute tests. Failed/inconclusive experiment records survive if code changes are reverted.
 
-**Step 8 remains IN DESIGN**; Steps 8.2 and 8.2a now settle sandbox-local worker autonomy **and Docker-based worker-file persistence**. No new Council per-worker recovery system or mandatory worker merge protocol remains to design. Member action/observation schemas and final phase/checkpoint gates remain open. These approvals do not authorize or claim runtime implementation.
+**Step 8 remains IN DESIGN**; Steps 8.2 and 8.2a now settle sandbox-local worker autonomy **and Docker-based worker-file persistence**. No new Council per-worker recovery system or mandatory worker merge protocol remains to design. The October 19 v1 action/finalization and checkpoint interface **design** is now specified; implementation-time integration and runtime tests remain open. This older October 14 subdesign did not itself authorize implementation.
 
 ## Accepted Step 8.2 — no internal worker cap; Docker controls the sandbox (October 14, 2026)
 
@@ -129,7 +129,7 @@ Before changing the runtime agent-loop architecture, consult [Step 8.3 completio
 
 [Orchestrator development-method library](docs/ORCHESTRATOR_DEVELOPMENT_PATTERN_LIBRARY.md) provides **optional, source-tagged, versioned local patterns** to propose better user-approved *semantic* checkpoint outcomes. No match means requirements-derived planning, never fabricated references or blocked project setup. Do not use it to mandate implementation details, choose peer solutions, change intellectual authority, absorb private branch reasoning or bypass Step 11 retention/opt-in. Reuse existing plan/contract records and application components.
 
-**Status:** ADR-23 Step 8.3 owner-approved policy, ADR-24 planning-library owner-approved design direction. Step 8.4/8.5 and exact wire DTOs still IN DESIGN. Runtime NOT IMPLEMENTED, tests NOT RUN.
+**Historical status for the October 15 decisions (superseded as to v1 interfaces on October 19):** ADR-23/24 were approved; the subsequent Step 8.4/8.5 v1 action and finalization interfaces are now design-specified. Runtime NOT IMPLEMENTED; tests NOT RUN.
 
 ## October 16 owner-approved Step 8.4: one final integrated artifact in every domain (ADR-25)
 
@@ -169,13 +169,13 @@ Integrator `OUTPUT_READY_INTENT` is **model-authored**; trusted backend separate
 
 No implementations, migrations, evaluations or runtime tests have occurred. Step 8 still IN DESIGN.
 
-## October 16 approved combined Step 8.5C+D and lightweight API submission lanes (ADR-36–40)
+## October 16 Step 8.5C+D transitions — no extra API submission lanes (ADR-36–39; ADR-40 withdrawn)
 
 Read [joint 8.5C+D source of truth](docs/STEP_8_5C_8_5D_COMMAND_STATE_RECOVERY_AND_FINALIZATION.md) before changing final-stage transitions. Use ONE existing trusted typed command/event/state mechanism with exact Blueprint, output, five-member sealed review, frozen artifact/report premortem, final package/acceptance and observed archive/teardown version identities. Maintain original Council's five seats and integrator's non-voting execution-only role. Do not conflate report drafting, authored ready intent, mechanically verified artifact, protected test PASSED, completed peer review, user acceptance or delivered `RunCompleted`.
 
 **Historical superseded ADR-40 — DO NOT BUILD:** Old per-key internal API queues are withdrawn. Concurrent member submissions use existing Step 5 PostgreSQL transactions, idempotency, seat uniqueness and event ordering; Step 7 schedules whole-agent resource admission. No extra queues.
 
-**Approved SPECIFICATIONS ONLY** — Step 8.5C/D policy approved, precise executable DTO/DDL/transaction/queue runtime and fault-test work IN DESIGN, no implementation/test run.
+**Approved SPECIFICATIONS ONLY** — Step 8.5C/D v1 typed transitions are specified; physical DTO/DDL compilation, executable transactional code and fault tests are NOT IMPLEMENTED/NOT RUN. No new API-submission queue is permitted by ADR-40.
 
 ## October 15 owner correction ADR-22: OpenAI Moderation API is hosted
 
@@ -195,7 +195,7 @@ Steps 2–5 and 8 **have completed their v1 architecture/interface specification
 
 ## October 19 — Step 9 accepted provider/MCP architecture (design only)
 
-Use [Step 9 v1 specification](docs/STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1.md). Implement one trusted provider-neutral model gateway, with initially DeepSeek, OpenAI and Anthropic adapter targets, optional qualified local model, per-original-member and separate Orchestrator/non-voting Integrator settings, provider-native tool/reasoning continuation, verified capability profiles, BYOK scoped secrets, data-egress consents, five user-approved spend pools and no silent model fallback. **Never create a dedicated MCP server per AI model**: model adapters normalize tool requests/results while Council's existing authenticated trusted tool broker and MCP client(s) mediate registered tool-service servers. MCP services can be shared across different models, but authorization always remains per actor/seat, grant, phase, customer and epoch; never give any sandbox direct MCP server credentials or bypass the broker using remote-provider hosted tool features. MCP tool discovery is untrusted metadata, not authority. External effects and provider costs stay under Part 5 operations and UNKNOWN reconciliation, Step 7 admission and immutable provenance. **Step 9 IN DESIGN — these are provisional interface proposals and agreed principles, not a completed operational design. Implementation not started and all qualification scenarios NOT RUN.**
+Use [Step 9 v1 specification](docs/STEP_9_PROVIDER_ADAPTER_AND_SHARED_MCP_CONTRACT_V1.md). Implement one trusted provider-neutral model gateway, with initially DeepSeek, OpenAI and Anthropic adapter targets, optional qualified local model, per-original-member and separate Orchestrator/non-voting Integrator settings, provider-native tool/reasoning continuation, verified capability profiles, encrypted operator or optional user BYOK secrets, data-egress consents, five funding-owner-approved protected pools and no silent model fallback. **Never create a dedicated MCP server per AI model**: model adapters normalize tool requests/results while Council's existing authenticated trusted tool broker and MCP client(s) mediate registered tool-service servers. MCP services can be shared across different models, but authorization always remains per actor/seat, grant, phase, customer and epoch; never give any sandbox direct MCP server credentials or bypass the broker using remote-provider hosted tool features. MCP tool discovery is untrusted metadata, not authority. External effects and provider costs stay under Part 5 operations and UNKNOWN reconciliation, Step 7 admission and immutable provenance. **Step 9 IN DESIGN — these are provisional interface proposals and agreed principles, not a completed operational design. Implementation not started and all qualification scenarios NOT RUN.**
 
 ## October 19 — ADR-43 supersedes optional Karpathy experimentation
 

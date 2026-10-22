@@ -912,6 +912,10 @@ On connection or reconnect, the frontend first loads a canonical snapshot contai
 
 SSE then delivers incremental events after the snapshot position.
 
+**Transport-integrity requirement (implementation acceptance, not a new service):** the frontend must incrementally decode UTF-8 and buffer arbitrarily split network chunks until complete SSE records exist (including multiline data and events split across reads). The client must never parse a partial chunk as a complete event. Test multibyte UTF-8, frame boundaries, reconnect, duplicate delivery and gap recovery. Provider-native streaming/tool chunks belong to the Step 9 adapter, not this frontend event stream.
+
+**One canonical orchestration path:** streaming and non-streaming API delivery modes must invoke the same authenticated command/state/operation/event contracts and the same approval, budget, UNKNOWN-effect and verification gates. Only presentation/delivery differs. Regression tests must cover both paths for initial provider failures, interrupted responses and finalization.
+
 If an event gap is detected, the client refreshes from the canonical snapshot rather than guessing.
 
 Decision dialogs are keyed by interaction_request_id. Activity cards are keyed by entity identity and activity projection. This separation ensures status replay cannot create duplicate prompts.

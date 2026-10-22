@@ -1,6 +1,11 @@
 COUNCIL - MVP SCOPE BY DESIGN STEP
 ==================================
 
+CURRENT IMPLEMENTATION POLICY: docs/CURRENT_SPEC.md (2026-10-22).
+Historical October 14 'reopened interfaces' statements below were superseded
+for Step 2-5/8 exact v1 design on October 19; executable implementation and
+runtime tests remain NOT STARTED / NOT RUN. ADR-53 funding applies.
+
 **Owner's October 14 ADR-17/18 amendment supersedes old public-GitHub and vendor-retained customer-learning defaults.** Steps 2–5 design interfaces have been REOPENED for local snapshots, customer-controlled retention and typed gateway migration. Existing substantive design baselines remain documented, but no runtime implementation/tests exist. See docs/LOCAL_REPOSITORY_AND_KNOWLEDGE_RETENTION.md.
 
 Purpose
